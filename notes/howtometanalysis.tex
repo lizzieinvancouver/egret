@@ -1,0 +1,100 @@
+\documentclass{article}[11pt]
+\usepackage[top=1.00in, bottom=1.0in, left=1in, right=1.25in]{geometry}
+\usepackage{hyperref}
+\renewcommand{\baselinestretch}{1.1}
+\parindent 0pt
+\usepackage{setspace}
+
+\begin{document}
+Started 5 July 2021\\
+Written for the germination database ...\\
+
+{\bf Lizzie's guidelines on how to start a meta-analysis}\\
+
+
+\emph{Overview:} Just like an experiment, when you do a meta-analysis you need to do it in a way that others could follow your methods and get (roughly) the same results. This is the basics of how Lizzie does it, but you can check for more info from places like \href{http://www.prisma-statement.org/}{PRISMA}.\\
+
+Without further ado, here are your basic steps.
+
+\section{Search for relevant papers}
+
+\begin{enumerate}
+\item {\bf Come up with reasonable search terms.} We need search terms to use in ISI (and potentially Google Scholar) that will capture most of the relevant papers, but will not return so many results that the list of papers to review is impossible. As a rule of thumb, I generally am hoping for search terms that return $<$1000 papers (but $<$2000 can work for bigger projects like this) and that at least 20\% of papers look promising after an abstract review. If $>$80\% of papers look relevant you may have too narrow search terms. 
+\vspace{1ex}\\
+Once you're happy with your search terms, I suggest running them by someone else (like Lizzie) along with how many total papers that is, and do a subsample to estimate how many look promising. 
+\vspace{1ex}\\
+For the germination project, check out the main \verb|README| for the aim of the project, and the data/early folder has some search terms to start with. 
+\item {\bf Record your search terms, the date you ran the search and what ISI edition you used.} Different universities pay for different access to ISI, you need to know what collections you searched and what years were included (universities also pay for a certain set of years). 
+\item{\bf Download the search results.} You can generally download as a tabular form (Excel, tab delimited etc.) and a TXT (I usually download each). If you download the abstract of each article then you can do the next step without internet. No harm in also downloading a form that works with BIBTEX and your own reference software (try Mendeley or Zotero and/or ask in the lab what folks use). 
+\item {\bf Review each abstract} and exclude any papers you can tell will not work for this meta-analysis. Create a key and record the reason for excluding each paper. 
+\end{enumerate}
+
+A few {\bf don'ts}...
+\begin{enumerate}
+\item Do not exclude papers based on language; try to use a translation service to see if the paper is relevant. 
+\item If you cannot find a PDF of a paper, don't let that stop you! You can try \href{unpaywall}{https://unpaywall.org/} to see if a version may be lurking on the web. If that does not work, ask a librarian (tell them it's on the behalf of Lizzie). They should be able to help. If they can't, forward the email and exact article request to Lizzie.
+\item Don't forget to include why you excluded a paper.
+\end{enumerate}
+
+\section{Develop a structure for the data you will scrape}
+
+This is seriously the most critical part of any meta-analysis according to Lizzie. You want to develop a database (aka an Excel or CSV file with metadata and column headers) that will allow you to enter all the data you'll eventually need to run analyses, but not to the point that you enter \emph{tons} of data you will never need. Most people come up with databases without enough columns and spend the rest of the lives (okay, not really, it just feels that way), going back to the papers to enter new data they wish they had collected on the first pass. \\
+
+So, review what the OSPREE database looked like, review a lot of papers to see what info you may want, ask Lizzie and spend a while finalizing this (Lizzie has literally spent days debating how to do this in working groups with lots of experts so this is an important and tricky skill). You'll likely miss something, that's okay! But spending more time here is better than entering all the data to find later that we wish we had a different format. \\
+
+Okay, so steps to do this part:
+\begin{enumerate}
+\item Review other examples of similar databases then develop your own first attempt at your database's structure
+\item Once you think you're happy, start entering papers (see below section)
+\item As you enter papers, refine your meta-data (it needs to work so that others can understand it and enter data themselves)
+\item As you enter papers, adjust your database structure
+\item Check in with Lizzie for advice as you go. 
+\item When you think you're happy enter at least another 5-10 papers and make sure you're good.
+\end{enumerate}
+
+
+Here's a list of common columns (they should have an underscore instead of white space).
+\begin{enumerate}
+\item ID -- authoryear ID
+\item first author
+\item publication year
+\item lat
+\item lon
+\item elevation
+\item genus
+\item species
+\item varetc -- variety, subspecies etc.
+\item material 
+\item date of study
+\item treatment
+\item response value
+\item response units
+\item response sample size
+\item response error value 
+\item response error type -- SD, variance, SE etc. (this is a good example of where we should standardize what folks enter)
+\item data scraped or downloaded
+\item figtable of data
+\end{enumerate}
+
+A few {\bf do's}...
+\begin{enumerate}
+\item Be a splitter, not a lumper. Have a separate column for numbers and units (e.g., 10 m would be entered in one column as `10' and another units column as `m')
+\item When in doubt include an extra column.
+\item Put the most common columns together at the start
+\item Avoid special characters (they read into R as gobbly gook)! Write out Greek letters (e.g., micromol). Avoid white space in column names and wherever possible (for exmaple, R reads `gnu' as different than `gnu '). 
+\item Use lowercase letters as much as possible.
+\item Encourage standard formatting whenever possible---if you see common methods or such, then develop a list of options for what people can enter. Much of the later work is standardizing everyone's formatting so getting people to enter stuff consistently to start helps a lot. 
+\end{enumerate}
+
+\section{Scrape data from papers!}
+
+Eventually once you and at least someone else are happy with your database and have scraped a few papers, it's time to scrape the rest! For that, we will get help from the whole lab. Here's some basic steps (we need to work on this section):
+
+\begin{enumerate}
+\item Review each paper, highlighting info you may need to enter and noting any data publication info and/or figures with data we want.
+\item When data is published, go get it! And see if you can extract the data we need.
+\item If you need to scrape data from papers, we can. See \verb|howtoscrapedata| for now (and let's expand this with your and Lizzie's help).
+\item Work up some materials on how to do this, so others can learn from you ...
+\end{enumerate}
+
+\end{document}

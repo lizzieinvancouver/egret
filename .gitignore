@@ -1,0 +1,17 @@
+*synctex.gz
+*.Rdata
+*.RData
+*.Rda
+*.rds
+*.rda
+*.Rds
+*.Rhistory
+*.DS_Store
+*.docx
+*.ppt
+*.pptx
+*.aux
+*.log
+*.blg
+
+notposting/
