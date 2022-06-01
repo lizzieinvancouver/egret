@@ -1,4 +1,5 @@
 *synctex.gz
+*.Rapp.history
 *.Rdata
 *.RData
 *.Rda
