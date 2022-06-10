@@ -1,0 +1,35 @@
+﻿datasetID,study,entered.by,genus,species,variety,woody,source.population,provenance.lat,provenance.long,provenance.altitude,continent,no.indiv.collected,year.collected,year.germination,treatment,chill.temp,chill.duration,germ.temp,other.treatment,photoperiod,humidity,chemical,chemcial.concent,trt.duration,scarification,scarif.type,soaking,soaked.in,soaking.duration,respvar,response,resp.error,reps,n.per.rep,germ.duration,figure
+Arslan11,exp1,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2200,Europe,50,2009,,dark,,,20,,0,,water,0,24h,N,,Y,sodium hypochlorite,3,per.germ,24,2,3,25,25,table 1
+Arslan12,exp2,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2201,Europe,50,2009,,dark,,,20,,0,,GA3,100,24h,N,,Y,sodium hypochlorite,3,per.germ,64,4,3,25,25,table 1
+Arslan13,exp3,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2202,Europe,50,2009,,dark,,,20,,0,,GA3,150,24h,N,,Y,sodium hypochlorite,3,per.germ,63,3,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark,,,20,,0,,GA3,250,24h,N,,Y,sodium hypochlorite,3,per.germ,75,6,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark,,,20,,0,,water,0,24h,N,,Y,sodium hypochlorite,3,mgt,14.7,0.8,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark,,,20,,0,,GA3,100,24h,N,,Y,sodium hypochlorite,3,mgt,10.9,0.8,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark,,,20,,0,,GA3,150,24h,N,,Y,sodium hypochlorite,3,mgt,9.5,1.1,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark,,,20,,0,,GA3,250,24h,N,,Y,sodium hypochlorite,3,mgt,9.2,0.4,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark/moist/chill,4,15,20,,0,,water,0,24h,N,,Y,sodium hypochlorite,,per.germ,56,4,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark/moist/chill,4,15,20,,0,,GA3,100,24h,N,,Y,sodium hypochlorite,,per.germ,91,5,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark/moist/chill,4,15,20,,0,,GA3,150,24h,N,,Y,sodium hypochlorite,,per.germ,97,1,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark/moist/chill,4,15,20,,0,,GA3,250,24h,N,,Y,sodium hypochlorite,,per.germ,97,1,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark/moist/chill,4,15,20,,0,,water,0,24h,N,,Y,sodium hypochlorite,,mgt,8.6,0.9,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark/moist/chill,4,15,20,,0,,GA3,100,24h,N,,Y,sodium hypochlorite,,mgt,5,0.2,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark/moist/chill,4,15,20,,0,,GA3,150,24h,N,,Y,sodium hypochlorite,,mgt,4.8,0.1,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,dark/moist/chill,4,15,20,,0,,GA3,250,24h,N,,Y,sodium hypochlorite,,mgt,4.4,0.7,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light,4,15,20,,0,,water,0,24h,N,,Y,sodium hypochlorite,,per.germ,0,0,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light,4,15,20,,0,,GA3,100,24h,N,,Y,sodium hypochlorite,,per.germ,20,2,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light,4,15,20,,0,,GA3,150,24h,N,,Y,sodium hypochlorite,,per.germ,24,2,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light,4,15,20,,0,,GA3,250,24h,N,,Y,sodium hypochlorite,,per.germ,29,1,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light,4,15,20,,0,,water,0,24h,N,,Y,sodium hypochlorite,,mgt,0,0,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light,4,15,20,,0,,GA3,100,24h,N,,Y,sodium hypochlorite,,mgt,16.9,1.5,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light,4,15,20,,0,,GA3,150,24h,N,,Y,sodium hypochlorite,,mgt,16.1,0.6,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light,4,15,20,,0,,GA3,250,24h,N,,Y,sodium hypochlorite,,mgt,16.5,1.1,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/moist/chill,4,15,20,,0,,water,0,24h,N,,Y,sodium hypochlorite,,per.germ,9,1,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/moist/chill,4,15,20,,0,,GA3,100,24h,N,,Y,sodium hypochlorite,,per.germ,64,6,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/moist/chill,4,15,20,,0,,GA3,150,24h,N,,Y,sodium hypochlorite,,per.germ,65,3,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/moist/chill,4,15,20,,0,,GA3,250,24h,N,,Y,sodium hypochlorite,,per.germ,68,6,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/moist/chill,4,15,20,,0,,water,0,24h,N,,Y,sodium hypochlorite,,mgt,12.2,0.5,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/moist/chill,4,15,20,,0,,GA3,100,24h,N,,Y,sodium hypochlorite,,mgt,7.3,0.6,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/moist/chill,4,15,20,,0,,GA3,150,24h,N,,Y,sodium hypochlorite,,mgt,10,0.1,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/moist/chill,4,15,20,,0,,GA3,250,24h,N,,Y,sodium hypochlorite,,mgt,9.5,0,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/scarification,4,15,20,,0,,0,0,24h,Y,80% H2SO4,Y,sodium hypochlorite,,per.germ,37,6,3,25,25,table 1
+Arslan14,exp4,DL,Androsace,villosa,NA,N,"Uludag Mt, Turkey",,,2203,Europe,50,2009,,light/scarification,4,15,20,,0,,0,0,24h,Y,80% H2SO4,Y,sodium hypochlorite,,mgt,17.6,0.8,3,25,25,table 1
