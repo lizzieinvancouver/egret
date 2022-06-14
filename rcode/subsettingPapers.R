@@ -16,13 +16,13 @@ pap <- read.csv("data/oegres_fullsearch.csv")
 
 strsplit(pap$Authors, c(";"))
 
-pap$studyID <- as.numeric(unlist(lapply(strsplit(pap$Authors, split = c(";", ",", " "), "[", 2))))
+#pap$studyID <- as.numeric(unlist(lapply(strsplit(pap$Authors, split = c(";", ",", " "), "[", 2))))
 
 pap$first <- unlist(lapply( strsplit(pap$Authors, split= c(";")), "[", 1))
 strsplit(pap$first, c(","))
 
-pap$firstTemp <- unlist(lapply( strsplit(first, split= c(",")), "[", 1))
-pap$surname <- unlist(lapply( strsplit(firstTemp, split= c(" ")), "[", 1))
+pap$firstTemp <- unlist(lapply( strsplit(pap$first, split= c(",")), "[", 1))
+pap$surname <- unlist(lapply( strsplit(pap$firstTemp, split= c(" ")), "[", 1))
 
 pap$surname[pap$surname == "de"] <- "de Casas"
 pap$surname[pap$surname == "De"] <- "De Wilde"
@@ -42,7 +42,7 @@ papA <- subset(pap, accept_reject == "A")
 # sampling without replacement
 toReview <- sample(x = papA$studyID, size = 100, replace = FALSE) #
 
-
+papers <- papA[papA$studyID]
 # # split up an entry based on a character/symbol/numer, example with hypen:
 # strsplit(df$Sample.Description, "-")
 # # then make a new column...
