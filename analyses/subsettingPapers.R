@@ -6,15 +6,15 @@ options(stringsAsFactors=FALSE)
 
 if(length(grep("deirdreloughnan", getwd())>0)) {
   setwd("~/Documents/github/oegres")
-} else if(length(grep("Lizzie", getwd())>0)) {
-  setwd("~/Documents/git/projects/others/deirdre/")
+} else if(length(grep("lizzie", getwd())>0)) {
+  setwd("~/Documents/git/projects/oegres/")
 } else{
   setwd("~/deirdre/Synchrony") # for midge
 }
 
-pap <- read.csv("data/oegres_fullsearch.csv")
+pap <- read.csv("data/oegres_fullsearch.csv") 
 
-strsplit(pap$Authors, c(";"))
+head(strsplit(pap$Authors, c(";")))
 
 #pap$studyID <- as.numeric(unlist(lapply(strsplit(pap$Authors, split = c(";", ",", " "), "[", 2))))
 
