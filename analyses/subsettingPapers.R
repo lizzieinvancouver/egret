@@ -35,14 +35,30 @@ pap$studyID <- paste(pap$surname, yr, sep = "")
 
 head(pap$studyID)
 
-# Accepted papers
+# Remove rejected papers
 unique(pap$accept_reject)
-papA <- subset(pap, accept_reject == "A")
+papA <- subset(pap, accept_reject != "R")
+
+#remove all non-english papers
+unique(pap$language)
+
+lang <- c("French", "Portuguese", "Persian","Italian","Korean", "Spanish")
+papA <- papA[!papA$language %in% lang, ]
+
+#remove crops
+unique(pap$crops)
+papA <- subset(papA, crops != "C")
 
 # sampling without replacement
 toReview <- sample(x = papA$studyID, size = 100, replace = FALSE) #
 
-papers <- papA[papA$studyID]
+papers <- papA[papA$studyID %in% toReview, ]
+
+#sometimes there are duplicates - but I only one from a given author
+papers$dup <- duplicated(papers[,c("studyID")])
+papersDup <- subset(papers, dup != "TRUE") 
+
+write.csv(papersDup, "papersToReview2.csv", row.names = T)
 # # split up an entry based on a character/symbol/numer, example with hypen:
 # strsplit(df$Sample.Description, "-")
 # # then make a new column...
