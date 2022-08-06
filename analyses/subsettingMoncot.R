@@ -72,10 +72,10 @@ sort(unique(papNames$genus))
 multiple <- c("multiple", "Multiple", "Multple","Mutiple", "")
 papNames <- papNames[!papNames$genus %in% multiple, ]
 
-sp.class.clean.ncbi <- tax_name(sort(unique(papA$genus)), get = c("genus","family","order","class","phylum","kingdom", "division"), db = "ncbi")
-sp.class.clean.itis <- tax_name("Abies", get = c("genus","family","order","class","phylum","kingdom", "division"), db = "itis")
+#sp.class.clean.ncbi <- tax_name(sort(unique(papA$genus)), get = c("genus","family","order","class","phylum","kingdom", "division"), db = "ncbi")
+#sp.class.clean.itis <- tax_name("Iris", get = c("genus","family","order","class","phylum","kingdom", "division", "clade"), db = "ncbi")
 
-# write.csv(sp.class.clean, "data/taxonomicInfoNCBI.csv", row.names = F)
+2# write.csv(sp.class.clean, "data/taxonomicInfoNCBI.csv", row.names = F)
 # write.csv(sp.class.clean.itis, "data/taxonomicInfoITIS.csv", row.names = F)
 
 sp.class.clean <- read.csv("data/taxonomicInfoNCBI.csv")
@@ -88,6 +88,36 @@ papTaxa <- merge(papA, sp.class.clean, by = "genus")
 # Olea
 # Paris
 
-monocots <- c("Poaceae", "Orchidaceae", "Liliaceae", "Arecaceae", "Iridaceae") 
+monocots <- c("Poaceae", "Orchidaceae", "Liliaceae", "Arecaceae", "Iridaceae","Acoraceae", "Burmanniaceae","Cyclanthaceae","Dioscoreaceae","Nartheciaceae","Pandanaceae","Petrosaviaceae","Stemonaceae","Taccaceae","Velloziaceae") 
 
 eudicot <- papTaxa[!papTaxa$family %in% monocots, ]
+monocots <- papTaxa[papTaxa$family %in% monocots, ]
+
+names <- sort(unique(papNames$genus))
+
+res = lapply(names, function(w) {
+  Sys.sleep(8) # sleep for a second, possibly less to avoid rate limit
+  get_uid(sci_com = w, division_filter = "eudicots")
+})
+
+class(res)
+str(res)
+
+resAttr <- lapply(res, attributes)
+eudicotFiltered <- as.data.frame(do.call(rbind, resAttr))
+eudicotFiltered$genus <- names
+t <- data.frame(eudicotFiltered)
+write.csv(t, "data/eudicotFiltered.csv", row.names = F)
+
+resm = lapply(names[1:20], function(w) {
+  Sys.sleep(8) # sleep for a second, possibly less to avoid rate limit
+  get_uid(sci_com = w, division_filter = "monocot")
+})
+
+
+capture.output(summary(eudicotFiltered), file = "data/eudicotFiltered.csv")
+apply(eudicotFiltered, function(x) write.table( data.frame(x), 'data/eudicotFiltered.csv'  , append= T, sep=',' ))
+
+sink("data/eudicotFiltered.csv")
+print(eudicotFiltered)
+sink()
