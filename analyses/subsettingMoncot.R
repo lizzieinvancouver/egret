@@ -12,6 +12,8 @@ if(length(grep("deirdreloughnan", getwd())>0)) {
   setwd("~/Documents/github/oegres")
 } else if(length(grep("lizzie", getwd())>0)) {
   setwd("~/Documents/git/projects/oegres/")
+} else if(length(grep("buonaiuto", getwd())>0)) {
+  setwd("~/git/oegres/")
 } else{
   setwd("~/deirdre/oegres") # for midge
 }
@@ -120,4 +122,9 @@ apply(eudicotFiltered, function(x) write.table( data.frame(x), 'data/eudicotFilt
 
 sink("data/eudicotFiltered.csv")
 print(eudicotFiltered)
-sink()
+?sink()
+unique(eudicot$order)
+
+cot.order<-c("Acorales","Alismatales", "Asparagales",
+"Dioscoreales", "Liliales","Pandanales","Petrosaviales", "Arecales",
+"Commelinales","Poales","Zingiberales")
