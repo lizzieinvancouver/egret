@@ -91,15 +91,23 @@ papTaxa <- merge(papA, sp.class.clean, by = "genus")
 # Paris
 
 monocots <- c("Poaceae", "Orchidaceae", "Liliaceae", "Arecaceae", "Iridaceae","Acoraceae", "Burmanniaceae","Cyclanthaceae","Dioscoreaceae","Nartheciaceae","Pandanaceae","Petrosaviaceae","Stemonaceae","Taccaceae","Velloziaceae") 
+cot.order<-c("Acorales","Alismatales", "Asparagales",
+             "Dioscoreales", "Liliales","Pandanales","Petrosaviales", "Arecales",
+             "Commelinales","Poales","Zingiberales")
+
 
 eudicot <- papTaxa[!papTaxa$family %in% monocots, ]
+eudicot2 <- papTaxa[!papTaxa$order %in% cot.order, ]
 monocots <- papTaxa[papTaxa$family %in% monocots, ]
+monocots2 <- papTaxa[papTaxa$order %in% cot.order, ]
+
+
 
 names <- sort(unique(papNames$genus))
 
 res = lapply(names, function(w) {
   Sys.sleep(8) # sleep for a second, possibly less to avoid rate limit
-  get_uid(sci_com = w, division_filter = "eudicots")
+  get_uid(sci_com = w, division_filter = "eudicot2")
 })
 
 class(res)
@@ -125,6 +133,4 @@ print(eudicotFiltered)
 ?sink()
 unique(eudicot$order)
 
-cot.order<-c("Acorales","Alismatales", "Asparagales",
-"Dioscoreales", "Liliales","Pandanales","Petrosaviales", "Arecales",
-"Commelinales","Poales","Zingiberales")
+
