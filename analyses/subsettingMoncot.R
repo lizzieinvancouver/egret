@@ -7,6 +7,7 @@ options(stringsAsFactors=FALSE)
 
 library(Taxonstand)
 library(taxize)
+library(stringr)
 
 if(length(grep("deirdreloughnan", getwd())>0)) {
   setwd("~/Documents/github/oegres")
@@ -64,20 +65,30 @@ papA$species[papA$species == "discolor Hemsley"] <- "discolor"
 
 papA$genus[papA$genus == "malus"] <- "Malus"
 
+papA$genus[papA$genus == "Multiple"] <- "multiple"
+papA$genus[papA$genus == "Multple"] <- "multiple"
+papA$genus[papA$genus == "Mutiple"] <- "multiple"
+
 papA$species.name <- paste(papA$genus, papA$species, sep = " ")
 
+papA$genus[papA$genus == "mutiple multiple"] <- "multiple"
+papA$genus[papA$genus == "mutiple spp."] <- "multiple"
+
+papA$species.name <- trimws(papA$species.name)
+
 sort(unique(papA$genus))
+sort(unique(papA$species.name))
 
 papNames <- papA[, c("genus","species.name")] 
 sort(unique(papNames$genus))
 
-multiple <- c("multiple", "Multiple", "Multple","Mutiple", "")
-papNames <- papNames[!papNames$genus %in% multiple, ]
+#multiple <- c("multiple", "Multiple", "Multple","Mutiple", "")
+#papNames <- papNames[!papNames$genus %in% multiple, ]
 
 #sp.class.clean.ncbi <- tax_name(sort(unique(papA$genus)), get = c("genus","family","order","class","phylum","kingdom", "division"), db = "ncbi")
 #sp.class.clean.itis <- tax_name("Iris", get = c("genus","family","order","class","phylum","kingdom", "division", "clade"), db = "ncbi")
 
-2# write.csv(sp.class.clean, "data/taxonomicInfoNCBI.csv", row.names = F)
+# write.csv(sp.class.clean, "data/taxonomicInfoNCBI.csv", row.names = F)
 # write.csv(sp.class.clean.itis, "data/taxonomicInfoITIS.csv", row.names = F)
 
 sp.class.clean <- read.csv("data/taxonomicInfoNCBI.csv")
@@ -91,7 +102,8 @@ papTaxa <- merge(papA, sp.class.clean, by = "genus")
 # Paris
 
 monocots <- c("Poaceae", "Orchidaceae", "Liliaceae", "Arecaceae", "Iridaceae","Acoraceae", "Burmanniaceae","Cyclanthaceae","Dioscoreaceae","Nartheciaceae","Pandanaceae","Petrosaviaceae","Stemonaceae","Taccaceae","Velloziaceae") 
-cot.order<-c("Acorales","Alismatales", "Asparagales",
+
+cot.order<-c("Acora les","Alismatales", "Asparagales",
              "Dioscoreales", "Liliales","Pandanales","Petrosaviales", "Arecales",
              "Commelinales","Poales","Zingiberales")
 
@@ -101,36 +113,58 @@ eudicot2 <- papTaxa[!papTaxa$order %in% cot.order, ]
 monocots <- papTaxa[papTaxa$family %in% monocots, ]
 monocots2 <- papTaxa[papTaxa$order %in% cot.order, ]
 
+length(unique(eudicot2$species.name))
+length(unique(eudicot2$studyID))
+
+eudicot2Sub <- eudicot2[, c( "studyID", "Publication.Type", "Authors", "Article.Title",   
+                             "Source.Title", "Volume", "Issue", "Start.Page",  
+                             "Publication.Year", "species", "accept_reject", "reason_reject",
+                             "language", "available", "paper_pulled", "crops",           
+                             "notes", "checkedby" )]
+eudicot2Sub$ subset <- "eudicot"
+
+oegres <- read.csv("data/oegres.csv")
+oegres$subset <- "old"
 
 
-names <- sort(unique(papNames$genus))
+names(eudicot2Sub)
+names(oegres)
 
-res = lapply(names, function(w) {
-  Sys.sleep(8) # sleep for a second, possibly less to avoid rate limit
-  get_uid(sci_com = w, division_filter = "eudicot2")
-})
+newSub <- merge(oegres, eudicot2Sub, 
+              by = c("studyID", "Publication.Type", "Authors", "Article.Title",   
+                      "Source.Title", "Volume", "Issue", "Start.Page",  
+                      "Publication.Year", "species", "accept_reject", "reason_reject",
+                      "language", "available", "paper_pulled", "crops", "notes", "checkedby"), all.y = T)
 
-class(res)
-str(res)
-
-resAttr <- lapply(res, attributes)
-eudicotFiltered <- as.data.frame(do.call(rbind, resAttr))
-eudicotFiltered$genus <- names
-t <- data.frame(eudicotFiltered)
-write.csv(t, "data/eudicotFiltered.csv", row.names = F)
-
-resm = lapply(names[1:20], function(w) {
-  Sys.sleep(8) # sleep for a second, possibly less to avoid rate limit
-  get_uid(sci_com = w, division_filter = "monocot")
-})
-
-
-capture.output(summary(eudicotFiltered), file = "data/eudicotFiltered.csv")
-apply(eudicotFiltered, function(x) write.table( data.frame(x), 'data/eudicotFiltered.csv'  , append= T, sep=',' ))
-
-sink("data/eudicotFiltered.csv")
-print(eudicotFiltered)
-?sink()
-unique(eudicot$order)
-
+write.csv(newSub, "data/oegresEudicot.csv", row.names = F)
+# names <- sort(unique(papNames$genus))
+# 
+# res = lapply(names, function(w) {
+#   Sys.sleep(8) # sleep for a second, possibly less to avoid rate limit
+#   get_uid(sci_com = w, division_filter = "eudicot2")
+# })
+# 
+# class(res)
+# str(res)
+# 
+# resAttr <- lapply(res, attributes)
+# eudicotFiltered <- as.data.frame(do.call(rbind, resAttr))
+# eudicotFiltered$genus <- names
+# t <- data.frame(eudicotFiltered)
+# write.csv(t, "data/eudicotFiltered.csv", row.names = F)
+# 
+# resm = lapply(names[1:20], function(w) {
+#   Sys.sleep(8) # sleep for a second, possibly less to avoid rate limit
+#   get_uid(sci_com = w, division_filter = "monocot")
+# })
+# 
+# 
+# capture.output(summary(eudicotFiltered), file = "data/eudicotFiltered.csv")
+# apply(eudicotFiltered, function(x) write.table( data.frame(x), 'data/eudicotFiltered.csv'  , append= T, sep=',' ))
+# 
+# sink("data/eudicotFiltered.csv")
+# print(eudicotFiltered)
+# ?sink()
+# unique(eudicot$order)
+# 
 
