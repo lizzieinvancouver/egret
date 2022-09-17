@@ -137,34 +137,4 @@ newSub <- merge(oegres, eudicot2Sub,
                       "language", "available", "paper_pulled", "crops", "notes", "checkedby"), all.y = T)
 
 write.csv(newSub, "data/oegresEudicot.csv", row.names = F)
-# names <- sort(unique(papNames$genus))
-# 
-# res = lapply(names, function(w) {
-#   Sys.sleep(8) # sleep for a second, possibly less to avoid rate limit
-#   get_uid(sci_com = w, division_filter = "eudicot2")
-# })
-# 
-# class(res)
-# str(res)
-# 
-# resAttr <- lapply(res, attributes)
-# eudicotFiltered <- as.data.frame(do.call(rbind, resAttr))
-# eudicotFiltered$genus <- names
-# t <- data.frame(eudicotFiltered)
-# write.csv(t, "data/eudicotFiltered.csv", row.names = F)
-# 
-# resm = lapply(names[1:20], function(w) {
-#   Sys.sleep(8) # sleep for a second, possibly less to avoid rate limit
-#   get_uid(sci_com = w, division_filter = "monocot")
-# })
-# 
-# 
-# capture.output(summary(eudicotFiltered), file = "data/eudicotFiltered.csv")
-# apply(eudicotFiltered, function(x) write.table( data.frame(x), 'data/eudicotFiltered.csv'  , append= T, sep=',' ))
-# 
-# sink("data/eudicotFiltered.csv")
-# print(eudicotFiltered)
-# ?sink()
-# unique(eudicot$order)
-# 
 
