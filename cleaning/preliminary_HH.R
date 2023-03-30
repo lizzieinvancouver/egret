@@ -76,6 +76,7 @@ column_names <- colnames(oegres_data)
 for(i in 1:length(column_names)) {
   oegres_check <- oegres[,c("datasetID", column_names[i])]
   oegres_check <- oegres_check[!is.na(oegres_check[2]),]
+  oegres_check <- oegres_check[which(oegres_check[2] != "NA"),]
   oegres_data[1,column_names[i]] <- length(unique(oegres_check$datasetID))
 }
 oegres_data <- gather(oegres_data, column, num_paper)
@@ -111,7 +112,7 @@ data_inspection <- ggplot(oegres_data, aes(x = column, y = num_paper, fill = Imp
       size = 5
     )
 data_inspection
-ggsave(plot=data_inspection, filename="cleaning/preliminary_HH/overview.png", width = 15, height = 10, limitsize = FALSE)
+# ggsave(plot=data_inspection, filename="cleaning/preliminary_HH/overview.png", width = 15, height = 10, limitsize = FALSE)
 
 ### Inspecting the genus - species - variety + woody/crop##########
   # Make a reference list of all the names
@@ -153,6 +154,32 @@ mapview(oegres_map, map.types = "Stamen.Watercolor", zcol = "year.collected")
 unique(oegres$storage.type) # Format sync + Differentiate between strat & stored + Is container necessary? -- Missing a lot of info while scraping, also room temp
 unique(oegres$storage.time) # Need cleaning -- what to do when there are 2 storage schemes?
 unique(oegres$storage.temp) # Need cleaning -- what to do when there are 2 storage schemes? How to account for fluctuation?
+unique(oegres$storage.humidity) # Need cleaning
+
+### Chill
+unique(oegres$chill.temp) # Split
+unique(oegres$chill.duration)
+
+### Germination
+unique(oegres$germ.temp) #Germ during strat -- So is chill.temp or germ.temp?
+unique(oegres$germ.duration) # A few negative number
+unique(oegres$photoperiod) # Small fix for alternating
+
+### Chemical
+unique(oegres$chemical)
+unique(oegres$chemcial.concent)
+unique(oegres$trt.duration)
+
+### Scarification
+unique(oegres[which(oegres$scarification == "Y"), c("datasetID")]) # Only around 36 papers
+unique(oegres[which(oegres$scarification == "N"), c("datasetID")]) # ~131 papers
+unique(oegres$scarif.type) # Sync
+
+### Soaking
+unique(oegres[which(oegres$soaking == "Y"), c("datasetID")]) # ~67 papers
+unique(oegres[which(oegres$soaking == "N"), c("datasetID")]) # ~112 papers
+unique(oegres$soaked.in) # Differentiate between soaking and chem
+unique(oegres$soaking.duration)
 
 ### Treatment
 unique(oegres$treatment)
