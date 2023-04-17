@@ -4,12 +4,11 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ### Housekeeping
-setwd("C:/Users/17782/Documents/GitHub/oegres")
+setwd("~/GitHub/oegres")
 rm(list = ls()) # Clear whatever is already in R's memory
 options(stringsAsFactors=FALSE)# Make sure words are read in as characters rather than factors
 
 ### Libraries
-library("readxl")
 library(sf)
 library(mapview)
 library(ggplot2)
@@ -18,55 +17,7 @@ library(tidyr)
 library(utils)
 
 ### Import data##############################
-folder <- list.dirs(path = "data", full.names = FALSE, recursive = TRUE)
-folder <- folder[3:9] # Obtain the folders needed
-#Match cols:
-  # Deidre
-  oegres_DL.xlsx <- read_xlsx("data/oegres_DL.xlsx", sheet = "data_detailed")
-  oegres_DL.xlsx$germ.tim.zero <- oegres_DL.xlsx$germ.time.zero
-  oegres_DL.xlsx <- subset(oegres_DL.xlsx, select = c("datasetID", "study", "entered.by", "genus", "species", "variety",
-                                                      "woody", "crop", "source.population", "provenance.lat", "provenance.long", "provenance.altitude",
-                                                      "continent", "no.indiv.collected", "year.collected", "year.germination", "storage.type", "storage.time",
-                                                      "storage.humidity", "storage.temp", "treatment", "chill.temp", "chill.duration", "germ.temp",
-                                                      "other.treatment", "photoperiod", "chemical", "chemcial.concent", "trt.duration", "scarification",
-                                                      "scarif.type", "soaking", "soaked.in", "soaking.duration", "seed.mass.given", "respvar",
-                                                      "response", "error.type", "resp.error", "reps", "n.per.rep", "germ.duration",
-                                                      "germ.tim.zero", "figure", "Notes"))
-  # Tolu
-  oegres_TA.xlsx <- read_xlsx(paste("data/", "oegres_TA", "/", "oegres_TA.xlsx", sep = ""), sheet = "data_detailed")
-  oegres_TA.xlsx$Notes <- oegres_TA.xlsx$notes
-  oegres_TA.xlsx <- subset(oegres_TA.xlsx, select = c("datasetID", "study", "entered.by", "genus", "species", "variety",
-                                                      "woody", "crop", "source.population", "provenance.lat", "provenance.long", "provenance.altitude",
-                                                      "continent", "no.indiv.collected", "year.collected", "year.germination", "storage.type", "storage.time",
-                                                      "storage.humidity", "storage.temp", "treatment", "chill.temp", "chill.duration", "germ.temp",
-                                                      "other.treatment", "photoperiod", "chemical", "chemcial.concent", "trt.duration", "scarification",
-                                                      "scarif.type", "soaking", "soaked.in", "soaking.duration", "seed.mass.given", "respvar",
-                                                      "response", "error.type", "resp.error", "reps", "n.per.rep", "germ.duration",
-                                                      "germ.tim.zero", "figure", "Notes"))
-  
-  # Sophia
-  oegres_SC.xlsx <- read_xlsx(paste("data/", "oegres_SC", "/", "oegres_SC.xlsx", sep = ""), sheet = "data_detailed")
-  oegres_SC.xlsx$germ.tim.zero <- oegres_SC.xlsx$germ.time.zero
-  oegres_SC.xlsx$Notes <- oegres_SC.xlsx$notes
-  oegres_SC.xlsx <- subset(oegres_SC.xlsx, select = c("datasetID", "study", "entered.by", "genus", "species", "variety",
-                                                      "woody", "crop", "source.population", "provenance.lat", "provenance.long", "provenance.altitude",
-                                                      "continent", "no.indiv.collected", "year.collected", "year.germination", "storage.type", "storage.time",
-                                                      "storage.humidity", "storage.temp", "treatment", "chill.temp", "chill.duration", "germ.temp",
-                                                      "other.treatment", "photoperiod", "chemical", "chemcial.concent", "trt.duration", "scarification",
-                                                      "scarif.type", "soaking", "soaked.in", "soaking.duration", "seed.mass.given", "respvar",
-                                                      "response", "error.type", "resp.error", "reps", "n.per.rep", "germ.duration",
-                                                      "germ.tim.zero", "figure", "Notes"))
-oegres <- rbind(oegres_DL.xlsx, oegres_TA.xlsx, oegres_SC.xlsx)
-#oegres <- data.frame(matrix(data=NA, nrow = 0, ncol = 45))
-folder <- folder[1:5]
-for(i in 1:length(folder)) {
-  file <- list.files(paste("data/", folder[i], sep = ""), pattern = NULL, all.files = TRUE, full.names = FALSE)
-  file <- file[3]
-  dataframe <- read_xlsx(paste("data/", folder[i], "/", file, sep = ""), sheet = "data_detailed")
-  #colnames(oegres) <- colnames(dataframe)
-  oegres <- rbind(oegres, dataframe)
-  assign(file, dataframe)
-}
+oegres <- read.csv("input/raw_oegres.csv")
 
 ### Inspecting how much data we have for each columns##########
 oegres_data <- data.frame(matrix(data=NA, nrow = 0, ncol = 45))
@@ -112,12 +63,16 @@ data_inspection <- ggplot(oegres_data, aes(x = column, y = num_paper, fill = Imp
       size = 5
     )
 data_inspection
-# ggsave(plot=data_inspection, filename="cleaning/preliminary_HH/overview.png", width = 15, height = 10, limitsize = FALSE)
+#ggsave(plot=data_inspection, filename="cleaning/preliminary_HH/overview.png", width = 15, height = 10, limitsize = FALSE)
+
+### #Studies
+studies <- unique(oegres[,c("datasetID","entered.by")]) #~174
+check <- unique(oegres[,c("datasetID","species")]) #~271
 
 ### Inspecting the genus - species - variety + woody/crop##########
   # Make a reference list of all the names
-unique(oegres$genus) # ~138
-unique(oegres$species) # ~ 236
+unique(oegres$genus) # ~137
+unique(paste(oegres$genus, oegres$species)) # ~ 243-245
 unique(oegres$variety) # Rarely specified (~32)
   # Crop
 unique(oegres$datasetID[which(oegres$crop == "Y")]) # 1 paper -- Should we reject it?
@@ -191,3 +146,32 @@ unique(oegres[which(oegres$no.indiv.collected != "NA" & !is.na(oegres$no.indiv.c
 unique(oegres$respvar) # Format sync + Check definitions
 unique(oegres[which(is.na(oegres$respvar)),]) # HH's papers -- Will check
 unique(oegres$germ.tim.zero) # Can we normalize this?
+
+### Table of treatments (raw)
+chemical <- unique(oegres$chemical)
+chemical <- chemical[!(chemical %in% c("NA ClO - 10min", "NA ClO - 5min", "NA ClO - 60min", "NA ClO - 90min", "NA ClO - 120min", "NA ClO - 180min", "control"))]
+chemical <- chemical[!is.na(chemical)]
+chemical <- append(chemical, c("NaClO"))
+chemical_df <- data.frame(treatment = "chemical", range = chemical)
+chill <- unique(oegres$chill.temp)
+chill <- chill[!(chill %in% c("45050"))]
+chill <- chill[!is.na(chill)]
+chill <- append(chill, c("4-5"))
+chill_df <- data.frame(treatment = "stratification", range = chill)
+germ <- unique(oegres$germ.temp)
+germ <- germ[!(germ %in% c("44696","44854","44727","44859","4.8170000000000002","1.77","9.7330000000000005","14.714", "19.957999999999998",
+                           "24.873999999999999", "29.855", "34.835999999999999", "3.1379999999999999", "5.4450000000000003",
+                           "7.6109999999999998", "9.8119999999999994", "11.552", "16.876999999999999", "19.256", "21.279",
+                           "23.303000000000001", "25.184999999999999", "26.747", "28.486000000000001", "1.768",
+                           "4.0250000000000004", "6.3680000000000003", "8.3559999999999999", "10.593", "13.185", "15.741",
+                           "18.404","20.213999999999999", "26.001000000000001", "27.954000000000001", "didn't mention"))] #Check MN
+germ <- germ[!is.na(germ)]
+germ <- append(germ, c("25/15","30/15","30/20","20/10","15/5","15/6","25/10"))
+germ_df <- data.frame(treatment = "germination", range = germ)
+photo <- unique(oegres$photoperiod)
+photo <- photo[!(photo %in% c("0.3444444444444445"))]
+photo <- photo[!is.na(photo)]
+photo <- append(photo, c("alternating 8/16"))
+photo_df <- data.frame(treatment = "photoperiod", range = photo)
+treatment <- rbind(chemical_df, chill_df, germ_df, photo_df)
+write.csv(treatment, "cleaning/preliminary_HH/treatment.csv", row.names = FALSE)
