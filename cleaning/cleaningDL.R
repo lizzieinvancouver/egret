@@ -73,6 +73,21 @@ oegres <- data.frame(oegres)
 # General chekcs:
 
 #1. fix typos and minor issues:
+(sort(unique(oegres$genus)))
+oegres$genus[which(oegres$genus == "Deginia")] <- "Degenia"
+
+unique(oegres$species)
+
+oegres$species[which(oegres$species == "acutifolius L.")] <- "acutifolius"
+oegres$species[which(oegres$species == "ammoniacum D.")] <- "ammoniacum"
+oegres$species[which(oegres$species == "Amurensis")] <- "amurensis"
+oegres$species[which(oegres$species == "aviculare L.")] <- "aviculare"
+oegres$species[which(oegres$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
+oegres$species[which(oegres$species == "Pagoda")] <- "pagoda"
+oegres$species[which(oegres$species == "Sylvestris L.")] <- "sylvestris"
+
+oegres$sp.name <- paste(oegres$genus, oegres$species, sep = "_")
+
 unique(oegres$study)
 oegres$study <- gsub(" ","", oegres$study)
 
@@ -207,3 +222,32 @@ oegres$respvar[which(oegres$respvar == "MGT")] <- "mgt"
 # TO CHECK
 # is germ.rt germ rate?
 # what is germ.prob
+
+oegres$response <- as.numeric(oegres$response)
+range(oegres$response, na.rm =T)
+
+# I assume NG should be NA
+oegres$response[which(oegres$response == "NG")] <- "NA"
+oegres$response[which(oegres$response == "NA*")] <- "NA"
+
+#TO CHECK what is "NA*"
+
+unique(oegres$error.type)
+oegres$error.type[which(oegres$error.type == "mean+/-SE")] <- "SE"
+oegres$error.type[which(oegres$error.type == "mean+/-SD")] <- "SD"
+oegres$error.type[which(oegres$error.type == "not specified")] <- "not.specified"
+
+# TO CHECK what is xz
+
+unique(oegres$resp.error)
+
+unique(oegres$reps)
+
+unique(oegres$n.per.rep)
+unique(oegres$germ.duration)
+# TO CHECK
+# why are there so many with decimal places? should it not be in days?
+
+unique(oegres$germ.tim.zero)
+# TO CHECK - "TRUE"
+
