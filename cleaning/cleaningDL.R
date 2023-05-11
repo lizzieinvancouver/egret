@@ -73,13 +73,51 @@ oegres <- data.frame(oegres)
 # General chekcs:
 
 #1. fix typos and minor issues:
-(sort(unique(oegres$genus)))
-oegres$genus[which(oegres$genus == "Deginia")] <- "Degenia"
+### Clean Species ##############################
+oegres$species <- tolower(oegres$species)
+oegres_species <- unique(paste(oegres$genus, oegres$species))
+# Use taxize package to inspect
+ref <- gnr_datasources() # Full list of databases available
+fix_names <- gnr_resolve(sci = oegres_species, with_canonical_ranks = T)
+oegres_species_fix <- unique(fix_names$matched_name2)
+names_changed <- setdiff(oegres_species, oegres_species_fix)
+names_changed
+# Fix#########################################
+oegres$species[which(oegres$genus == "Colutea" & oegres$species == "bohsei")] <- "buhsei"
+oegres$species[which(oegres$genus == "Abies" & oegres$species == "amabils")] <- "amabilis"
+oegres$species[which(oegres$genus == "Lathyrus" & oegres$species == "sativa")] <- "sativus"
+oegres$species[which(oegres$genus == "Carex" & oegres$species == "crytolepis")] <- "cryptolepis"
+oegres$species[which(oegres$genus == "Vicia" & oegres$species == "bythinica")] <- "bithynica"
+oegres$species[which(oegres$genus == "Penstemon" & oegres$species == "commarhenus")] <- "comarrhenus"
+oegres$species[which(oegres$genus == "Asparagus" & oegres$species == "acutifolius l.")] <- "acutifolius"
+oegres$species[which(oegres$genus == "Pinus" & oegres$species == "sylvestris l.")] <- "sylvestris"
+oegres$species[which(oegres$genus == "Polygonum" & oegres$species == "aviculare l.")] <- "aviculare"
+oegres$species[which(oegres$genus == "Dorema" & oegres$species == "ammoniacum d.")] <- "ammoniacum"
+oegres$species[which(oegres$genus == "Tradescantia" & oegres$species == "ohioensis")] <- "ohiensis"
+oegres$species[which(oegres$genus == "Betula" & oegres$species == "albo-sinensis")] <- "albosinensis"
 
-unique(oegres$species)
+oegres$genus[which(oegres$genus == "Pterocaryafra" & oegres$species == "fraxinifolia")] <- "Pterocarya"
+oegres$genus[which(oegres$genus == "Leontice\r\n" & oegres$species == "incerta")] <- "Leontice"
+oegres$genus[which(oegres$genus == "Aanigozanthos" & oegres$species == "flavidus")] <- "Anigozanthos"
+oegres$genus[which(oegres$genus == "Deginia" & oegres$species == "velebitica")] <- "Degenia"
+oegres$genus[which(oegres$genus == "Lingularia" & oegres$species == "sibirica")] <- "Ligularia"
+oegres$genus[which(oegres$genus == "Eucalytpus" & oegres$species == "delegatensis")] <- "Eucalyptus"
 
-oegres$species[which(oegres$species == "acutifolius L.")] <- "acutifolius"
-oegres$species[which(oegres$species == "ammoniacum D.")] <- "ammoniacum"
+oegres$genus[which(oegres$genus == "Jasminus" & oegres$species == "fruiticans")] <- "Jasminum"
+oegres$species[which(oegres$genus == "Jasminum" & oegres$species == "fruiticans")] <- "fruticans"
+
+oegres$variety[which(oegres$genus == "Pedicularis" & oegres$species == "longiflora var.\r\ntubiformis")] <- "tubiformis"
+oegres$species[which(oegres$genus == "Pedicularis" & oegres$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
+# Confirm####################################
+oegres_species <- unique(paste(oegres$genus, oegres$species))
+fix_names <- gnr_resolve(sci = oegres_species, with_canonical_ranks = T)
+oegres_species_fix <- unique(fix_names$matched_name2)
+names_changed <- setdiff(oegres_species, oegres_species_fix) # Confirm this is of length 0
+names_changed
+### To check: Echinacea angustifolia, purpurea, pallida -- 3 species in 1 study
+
+
+
 oegres$species[which(oegres$species == "Amurensis")] <- "amurensis"
 oegres$species[which(oegres$species == "aviculare L.")] <- "aviculare"
 oegres$species[which(oegres$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
