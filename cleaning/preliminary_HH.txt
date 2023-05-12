@@ -1,0 +1,16 @@
+MARCH 30TH, 2023
+	1. Combine data from all
+	2. From the figure preliminary_HH/overview.png, we seems to have sufficient data
+	3. From the figure preliminary_HH/region.png --> data clusters, note that the map only include studies with lat long info -- will find a way to integrate continent
+	4. Tasks:
+		+ Fill in year germination
+		+ Clean storage -- what to do if there are 2 storage schemes? Temp fluctuation? What is room temp? Remove containers? Format sync + Differentiate between strat & stored?
+		+ Sync respvar and germ.tim.zero
+		+ Look into treatment + other treatment -- CHALLENGE: some are filled before we added new columns
+		+ Lat long range
+		+ Chill (strat) -- continuous/alternating -- Should we split into stages?
+		+ Germination -- Germ during strat -- chill.temp or germ.temp? A few neg values for germ.duration
+		+ Photoperiod -- Small fix for alternating a/b
+		+ Chemical -- Should we split into stages?
+		+ Not many studies have scarification (~ 36/171), Sync scar type
+		+ Differentiate between soaking and chemical, Format sync
