@@ -25,6 +25,10 @@ assigned$datasetID[which(assigned$datasetID == "amini2018")] <- "amini18"
 assigned$datasetID[which(assigned$datasetID == "pipinus12")] <- "pipinis12"
 assigned$datasetID[which(assigned$datasetID == "picciau18")] <- "picciau19"
 
+assigned$dupPap <- duplicated(assigned[,c("datasetID", "Arthurs")])
+assigned$dupID <- duplicated(assigned[,c("datasetID")])
+temp <- subset(assigned, dupPap == "TRUE")
+
 #Deirdre 
 egret_DL.xlsx <- read_xlsx("data/egret_DL.xlsx", sheet = "data_detailed")
 length(unique(egret_DL.xlsx$datasetID)) #7
@@ -47,9 +51,9 @@ egret_CRD.xlsx <- read_xlsx("data/egret_CRD.xlsx", sheet = "data_detailed")
 length(unique(egret_CRD.xlsx$datasetID)) #4
 
 # Justin
-egret_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_23.8.2023.xlsx", sep = ""), sheet = "data_detailed")
+egret_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_18.10.2023.xlsx", sep = ""), sheet = "data_detailed")
 colnames(egret_JN.xlsx)[colnames(egret_JN.xlsx) == "germ.tim.zero"] <- "germ.time.zero"
-length(unique(egret_JN.xlsx$datasetID)) #56
+length(unique(egret_JN.xlsx$datasetID)) #58
 
 # Britany
 egret_BW.xlsx <- read_xlsx("data/egret_BW.xlsx", sheet = "data_detailed")
@@ -117,7 +121,7 @@ colnames(source_SC.xlsx)[colnames(source_SC.xlsx) == "...20"] <- "scraped.by"
 source_CRD.xlsx <- read_xlsx("data/egret_CRD.xlsx", sheet = "source")
 
 # Justin
-source_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_23.8.2023.xlsx", sep = ""), sheet = "source")
+source_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_18.10.2023.xlsx", sep = ""), sheet = "source")
 
 # Britany
 source_BW.xlsx <- read_xlsx("data/egret_BW.xlsx", sheet = "source_ill")
@@ -140,7 +144,7 @@ source_AZ.xlsx <- read_xlsx(paste("data/", "egret_AZ", "/", "egret_AZ.xlsx", sep
 
 source_JS.xlsx <- read_xlsx(paste("data/", "egret_JS", "/", "egret_JS.xlsx", sep = ""), sheet = "source")
 
-sourceTab <- rbind(source_TA.xlsx[,1:20], source_BW.xlsx[,1:20], source_CRD.xlsx[,1:20], source_MN.xlsx[,1:20], source_DK.xlsx[,1:20], #, source_HHN.xlsx,
+sourceTab <- rbind(source_TA.xlsx[,1:20], source_BW.xlsx[,1:20], source_CRD.xlsx[,1:20], source_MN.xlsx[,1:20], source_DK.xlsx[,1:20], source_HHN.xlsx[,1:20],
                    source_JS.xlsx[,1:20], source_AZ.xlsx[,1:20],  source_DL.xlsx[,1:20],  source_JN.xlsx[,1:20], source_DM.xlsx[,1:20], source_GG.xlsx[,1:20], source_SC.xlsx[,1:20])
 
 # How many papers were rejected after being looked at?
@@ -166,9 +170,9 @@ nonEngPap <- unique(notEnglish$studyID)
 #######################################################
 # How many papers are not accounted for?
 
-missing <- assigned[!assigned$datasetID %in% scrapedPap,] # 252
-missing <- missing[!missing$datasetID %in% rejectedPap,] # 170
-missing <- missing[!missing$datasetID %in% nonEngPap,] #90
+missing <- assigned[!assigned$datasetID %in% scrapedPap,] # 250
+missing <- missing[!missing$datasetID %in% rejectedPap,] # 141
+missing <- missing[!missing$datasetID %in% nonEngPap,] #68
 
 unique(missing$datasetID)
 
