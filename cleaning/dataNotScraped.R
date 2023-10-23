@@ -135,9 +135,16 @@ source_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_18.10.2023
 
 # Britany
 source_BW.xlsx <- read_xlsx("data/egret_BW.xlsx", sheet = "source_ill")
+source_BW2.xlsx <- read_xlsx("data/egret_BW.xlsx", sheet = "source")
 colnames(source_BW.xlsx)[colnames(source_BW.xlsx) == "assigned_to"] <- "scraped.by"
+colnames(source_BW2.xlsx)[colnames(source_BW2.xlsx) == "assigned_to"] <- "scraped.by"
 
 source_MN.xlsx <- read_xlsx(paste("data/", "egret_MN", "/", "egret_MN.xlsx", sep = ""), sheet = "source")
+source_MN.xlsx$accept_reject[which(source_MN.xlsx$studyID == "xiena")] <- "R"
+source_MN.xlsx$reason_reject[which(source_MN.xlsx$studyID == "xiena")] <- "insuff source info"
+source_MN.xlsx$accept_reject[which(source_MN.xlsx$studyID == "xuna")] <- "R"
+source_MN.xlsx$reason_reject[which(source_MN.xlsx$studyID == "xuna")] <- "insuff source info"
+
 
 source_HHN.xlsx <- read_xlsx(paste("data/", "egret_HHN", "/", "egret_HHN.xlsx", sep = ""), sheet = "source")
 
@@ -161,7 +168,7 @@ source_AZ.xlsx <- read_xlsx(paste("data/", "egret_AZ", "/", "egret_AZ.xlsx", sep
 
 source_JS.xlsx <- read_xlsx(paste("data/", "egret_JS", "/", "egret_JS.xlsx", sep = ""), sheet = "source")
 
-sourceTab <- rbind(source_TA.xlsx[,1:20], source_BW.xlsx[,1:20], source_CRD.xlsx[,1:20], source_MN.xlsx[,1:20], source_DK.xlsx[,1:20], source_HHN.xlsx[,1:20],
+sourceTab <- rbind(source_TA.xlsx[,1:20], source_BW.xlsx[,1:20],source_BW2.xlsx[,1:20], source_CRD.xlsx[,1:20], source_MN.xlsx[,1:20], source_DK.xlsx[,1:20], source_HHN.xlsx[,1:20],
                    source_JS.xlsx[,1:20], source_AZ.xlsx[,1:20],  source_DL.xlsx[,1:20],  source_JN.xlsx[,1:20], source_DM.xlsx[,1:20], source_GG.xlsx[,1:20], source_SC.xlsx[,1:20])
 
 # How many papers were rejected after being looked at?
@@ -178,7 +185,7 @@ rejectedPap <- unique(rej$studyID)
 # What papers were not in english?
 unique(sourceTab$language)
 
-notEng <- c("not english", "not in english'","not in english","Korean","spanish","Japanese","not enlgish","not enligsh" ,"Persian" ,"Spanish","Chinese","Turkish","Arabic", "Not english","Mandarin","Russian","Portuguese","Italian","korean","chinese -english translation avaiilable but can't find it on websie without knowing chinese", "Estonian")
+notEng <- c("not english", "not in english'","not in english","Korean","spanish","Japanese","not enlgish","not enligsh" ,"Persian" ,"Spanish","Chinese","Turkish","Arabic", "Not english","Mandarin","Russian","Portuguese","Italian","korean","chinese -english translation avaiilable but can't find it on websie without knowing chinese", "Estonian", "farsi")
 notEnglish <- sourceTab[sourceTab$language %in% notEng, ]
 
 nonEngPap <- unique(notEnglish$studyID)
@@ -191,7 +198,7 @@ missing <- assigned[!assigned$datasetID %in% scrapedPap,] # 250
 missing <- missing[!missing$datasetID %in% rejectedPap,] # 141
 missing <- missing[!missing$datasetID %in% nonEngPap,] #65
 
-miaPapers <- c("mughal10","mutele15","yahyaoglu06","Tashev08", "racek07","povoa09","morris16", "gere15")
+miaPapers <- c("mughal10","mutele15","yahyaoglu06","Tashev08", "racek07","povoa09","morris16", "gere15","xiena","xuna")
 missing <- missing[!missing$datasetID %in% miaPapers,] #57
 
 tbd <- c("elisafenko15","maithani90","tanuja20",
