@@ -12,7 +12,7 @@ UPDATED 1 June 2022
 
 After Dan (B) and Sophia Collins worked on this all spring, we agreed we should try new search terms and start anew. Dan worked through several searches and we together selected the best ones. See OEGRES_searchnotes.txt
 
-Google link for papers (Lizzie moved other stuff that used to be here to the repo): https://drive.google.com/drive/folders/1vfD6LDYfLU_bXT1duVkKw1l-g7eEnK97?usp=sharing
+Google link for papers (Lizzie moved other stuff that used to be here to the repo): https://drive.google.com/drive/folders/1LZf1vbaJTT9qldi1rFNR3TpSBpyaAp-R
 
 Some notes from meeting with Dan, Lizzie, Deirdre (late May 2022):
 
