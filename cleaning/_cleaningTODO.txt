@@ -1,0 +1,43 @@
+Started 28 Nov 2023
+By Lizzie and Deirdre
+Ferry to Nanaimo!
+
+How to fix cleaning files ....
+
+coordinate_cleaning_TA.R 
+	1) UPDATE to master data file (and delete all the code that reads in piecemeal data)
+	2) Decide what of the name cleaning and early cleaning should stay
+	3) Mv the code that averages ranges to a separate file for now
+	4) Clean up the lat/lon code (standardize white space)
+	5) Figure out what is happening at the end of the code, and decide to keep or not
+	6) Add comments 
+	7) Subset by continent and make sure points end up in correct continent 
+	8) Eventually source in a pipeline cleaning file 
+	9) Rename! And move to source folder
+
+
+cleaningDL.R 
+	1) Deirdre will fix to be master file -- read in all input as csv.	
+	2) Extract out any code that does separate things and make as separate file (give good names and put in source folder). 
+		- clean_species.R
+		- clean_other.R (column cleaning) 
+
+cleaningJS.R
+	1) UPDATE to master data file (and delete all the code that reads in piecemeal data) 
+	2) Delete all the species name cleaning (it's copied)
+	3) Variously add remaining to 
+		- clean_other.R
+		- clean_misc.R (random entry cleaning)
+
+
+preliminary_DM.R 
+	1) UPDATE to master data file (and delete all the code that reads in piecemeal data) 
+	2) Save some the stuff about 95% and plotting (after getting it to run and moving where the figures go) to a new file.
+	3) Rename as checkdata_distributions.R
+
+
+preliminary_HH.R
+	1) UPDATE to master data file (and delete all the code that reads in piecemeal data) 
+	2) Some might move into a cleaning file ... check! Move etc.
+	3) Move the mapping code into new file
+	4) Rename as checkdata_maps. R
