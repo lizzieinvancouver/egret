@@ -67,3 +67,13 @@ unique(timy$chill.duration)
 unique(timy$chill.temp)
 unique(timy$germ.temp)
 ggplot(timy,aes(germ.temp,response))+stat_summary(aes(color=genus))
+
+dr<-dplyr::filter(chill,respvar %in% c("per.germ.cumulative"))
+
+ggplot(dr,aes(germ.duration,response))+geom_point()
+
+library(drc)
+
+c<-drm(response~germ.duration,factor(source.population), data=dr,fct = LL.3(fixed = c(NA, NA, NA), names = c("b", "gmax", "e50")), type ="continuous")
+summary(c)
+plot(c)
