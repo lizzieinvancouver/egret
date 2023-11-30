@@ -51,7 +51,7 @@ egret_CRD.xlsx <- read_xlsx("data/egret_CRD.xlsx", sheet = "data_detailed")
 length(unique(egret_CRD.xlsx$datasetID)) #4
 
 # Justin
-egret_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_18.10.2023.xlsx", sep = ""), sheet = "data_detailed")
+egret_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_personal_3.11.2023.xlsx", sep = ""), sheet = "data_detailed")
 colnames(egret_JN.xlsx)[colnames(egret_JN.xlsx) == "germ.tim.zero"] <- "germ.time.zero"
 length(unique(egret_JN.xlsx$datasetID)) #58
 
@@ -102,9 +102,13 @@ egret$datasetID[which(egret$datasetID == "picciau18")] <- "picciau19"
 numbAssigned <- nrow(assigned) #487
 numbScraped <- length(unique(egret$datasetID)) # 280
 
-numbScraped/numbAssigned # 57%
+numbScraped/numbAssigned # 50%
 
 scrapedPap <- unique(egret$datasetID)
+
+# Subset to create list scraped for Selena to check pdfs
+
+pdfNeeded <- assigned[assigned$datasetID %in% scrapedPap, ]
 ##################################################################
 ## So why was just under half not scraped?
 
@@ -131,7 +135,7 @@ colnames(source_SC.xlsx)[colnames(source_SC.xlsx) == "...20"] <- "scraped.by"
 source_CRD.xlsx <- read_xlsx("data/egret_CRD.xlsx", sheet = "source")
 
 # Justin
-source_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_18.10.2023.xlsx", sep = ""), sheet = "source")
+source_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_personal_3.11.2023.xlsx", sep = ""), sheet = "source")
 
 # Britany
 source_BW.xlsx <- read_xlsx("data/egret_BW.xlsx", sheet = "source_ill")
@@ -198,29 +202,34 @@ missing <- assigned[!assigned$datasetID %in% scrapedPap,] # 250
 missing <- missing[!missing$datasetID %in% rejectedPap,] # 141
 missing <- missing[!missing$datasetID %in% nonEngPap,] #65
 
-miaPapers <- c("mughal10","mutele15","yahyaoglu06","Tashev08", "racek07","povoa09","morris16", "gere15","xiena","xuna")
+miaPapers <- c("mughal10","mutele15","yahyaoglu06","Tashev08", "racek07","povoa09","morris16", "gere15","xiena","xuna","zhangna", "zhaona", "denny04","weerakoon81","feurtado05")
 missing <- missing[!missing$datasetID %in% miaPapers,] #57
 
-tbd <- c("elisafenko15","maithani90","tanuja20",
-         "fetouh14",
-         "feurtado05",
-         "barnhill82",
-         "jensen09",
-         "joshi03",
-         "chien09",
-         "denny04",
-         "morozowska02",
-         "mughal07","masoomeh09",
-         "mulaudzi09",
-         "nasri14",
-         "santos19",
-         "liu09","liu04", # unclear if ILL ever done
-         "ikeda01",
-         "kazinczi98",
-         "baek21","vaghefi09","vahdati06", "vahdati12","veatch-blohm11","veiga-barbosa14", # assigned to Lizzie, Fredi, Dan
-         "edwards73" # done, but dup so edwards73_1 and _2
-        
-         )
+tbd <- c( "baek21","vaghefi09","vahdati06", "vahdati12","veatch-blohm11","veiga-barbosa14", "leon06","markovic20",
+          "fetouh14", # Hoai Huong
+          "masoomeh09","morozowska02","tashev08", #ILL
+          "barnhill82","jensen09","joshi03", # Daejong
+          "elisafenko15", "maithani90", # Britany
+          "tang10", # justin,
+          "edwards73" )# done)
+  
+  
+  # "elisafenko15","maithani90","tanuja20",
+  #        "fetouh14",
+  #        "feurtado05",
+  #        "barnhill82",
+  #        "jensen09",
+  #        "joshi03",
+  #        "morozowska02",
+  #        "mughal07","masoomeh09",
+  #        "mulaudzi09",
+  #        "liu09","liu04", # unclear if ILL ever done
+  #        "ikeda01",
+  #        "kazinczi98",
+  #        "baek21","vaghefi09","vahdati06", "vahdati12","veatch-blohm11","veiga-barbosa14", "leon06", # assigned to Lizzie, Fredi, Dan
+  #        "edwards73" # done, but dup so edwards73_1 and _2
+  #       
+  #       )
 missing <- missing[!missing$datasetID %in% tbd,] #57
 
 sort(unique(missing$datasetID)) #33

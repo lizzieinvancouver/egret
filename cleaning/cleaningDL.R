@@ -45,7 +45,7 @@ egret_CRD.xlsx <- read_xlsx("data/egret_CRD.xlsx", sheet = "data_detailed")
 length(unique(egret_CRD.xlsx$datasetID)) #4
 
 # Justin
-egret_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_personal_3.11.2023.xlsx", sep = ""), sheet = "data_detailed")
+egret_JN.xlsx <- read_xlsx(paste("data/", "egret_JN", "/", "egret_JN_personal_2023.11.26.xlsx", sep = ""), sheet = "data_detailed")
 colnames(egret_JN.xlsx)[colnames(egret_JN.xlsx) == "germ.tim.zero"] <- "germ.time.zero"
 length(unique(egret_JN.xlsx$datasetID)) #58
 
@@ -149,6 +149,7 @@ egret$species[which(egret$species == "aviculare L.")] <- "aviculare"
 egret$species[which(egret$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
 egret$species[which(egret$species == "Pagoda")] <- "pagoda"
 egret$species[which(egret$species == "Sylvestris L.")] <- "sylvestris"
+
 
 # Confirm ####################################
 egret_species <- unique(paste(egret$genus, egret$species))
@@ -377,3 +378,24 @@ unique(egret$germ.duration)
 unique(egret$germ.tim.zero)
 # TO CHECK - "TRUE"
 
+#write.csv(egret, "analyses/output/egretData.csv", row.names = FALSE)
+
+sort(unique(egret$datasetID))
+
+# how many studies do we have that time curves?
+
+curved <- egret[, c("datasetID", "sp.name", "germ.duration")]
+curved <- unique(curved)
+
+none <- c("N/A", NA, "NA (<35)", "NA")
+curved <- curved[!curved$germ.duration %in% none, ]
+
+curved$count <- 1
+noDurations <- aggregate(curved["count"], curved[c("datasetID", "sp.name")], FUN = sum)
+
+temp <- subset(noDurations, count >5)
+
+curvedStudy <- unique(temp$datasetID)
+
+curvy <- egret[egret$datasetID %in% curvedStudy, ]
+unique(curvy$respvar)
