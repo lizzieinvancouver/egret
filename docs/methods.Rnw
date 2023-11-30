@@ -57,14 +57,10 @@
 
 %\title{Title}
 
-%<<label=runcode1,  echo=TRUE>>=
-%summary(object)
-%@
 \section*{Methods} %without number
 \subsection*{EGRET database}
 <<label=runcode1,  echo=FALSE>>=
-getwd()
-source("..//analyses/cleaning/datachecking.R")
+source("analyses/cleaning/datachecking.R")
 @
 
 A systematic review was conducted of the scientific literature that sufficiently documented experimentally controlled germination trials. Specifically, we conducted a search on ISI Web of Science using the following terms:\\
@@ -73,17 +69,21 @@ TOPIC = ("germination rate" OR "germination tim*" OR "mean germination time" OR 
 The search was performed on 27 May 2022 %by Dan, accessed through Harvard University
 yielding 1,360 results, of which 1,203 were research articles that entered the first review process %abstract were reviewed
 Articles were excluded if:\\
+
+\begin{enumerate}
 \item study species were crops, e.g. cultivated varieties that underwent anthropogenic selection alternating dormancy traits % only 488 studies remained
 \item treatments didn't include environmental variables
 \item studies were conducted in the field, i.e. no controlled environments
 \item treatments were pooled, sequential or in other ways not clearly distinguishable
 \item written in a languages other than English %perhaps check again
 \item reminder for future: what do we do with studies without error
+\end{enumerate}
 
 250 papers, XX
 \Sexpr{noStudy}
 \Sexpr{noSpp}
 \Sexpr{nRow}
+
 
 1,360 results
 included only research articles: 1,203 articles
