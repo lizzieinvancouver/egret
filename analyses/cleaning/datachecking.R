@@ -15,8 +15,8 @@ library(viridis)
 
 if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("~/Documents/github/egret")
-} else if(length(grep("Lizzie", getwd()) > 0)) {
-  setwd("~/Documents/git/projects/others/deirdre/Synchrony")
+} else if(length(grep("frederik", getwd()) > 0)) {
+  setwd("~/github/egret")
 } else{
   setwd("/Users/Lizzie/Documents/git/projects/egret/analyses") # for Lizzie
 }
@@ -27,4 +27,3 @@ d <- read.csv("analyses/output/egretData.csv")
 noStudy <- length(unique(d$datasetID))
 noSpp <- length(unique(d$sp.name))
 nRow <- nrow(d)
-
