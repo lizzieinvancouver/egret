@@ -52,7 +52,7 @@
 \begin{document}
 \renewcommand{\bibname}{References}%names reference list 
 
-\input{methods-concordance} % For RStudio hiccups
+\SweaveOpts{concordance=TRUE} % For RStudio hiccups
 
 
 %\title{Title}
@@ -62,11 +62,10 @@
 %@
 \section*{Methods} %without number
 \subsection*{EGRET database}
-\begin{Schunk}
-\begin{Soutput}
-[1] "/Users/frederik/github/egret/docs"
-\end{Soutput}
-\end{Schunk}
+<<label=runcode1,  echo=FALSE>>=
+getwd()
+source("..//analyses/cleaning/datachecking.R")
+@
 
 A systematic review was conducted of the scientific literature that sufficiently documented experimentally controlled germination trials. Specifically, we conducted a search on ISI Web of Science using the following terms:\\
 TOPIC = ("germination rate" OR "germination tim*" OR "mean germination time" OR "t50" OR "time to germination") AND ("chill*" OR "stratification") \\
@@ -82,9 +81,9 @@ Articles were excluded if:\\
 \item reminder for future: what do we do with studies without error
 
 250 papers, XX
-250
-334
-30649
+\Sexpr{noStudy}
+\Sexpr{noSpp}
+\Sexpr{nRow}
 
 1,360 results
 included only research articles: 1,203 articles
