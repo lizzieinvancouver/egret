@@ -20,11 +20,11 @@ cleaningDL.R
 		- clean_other.R (column cleaning) 
 
 cleaningJS.R
-	3) Variously add remaining to 
-		- clean_other.R
-		- clean_misc.R (random entry cleaning)
+	1) Now named clean_other.R and clean_yeargermination.R 
+	2) Lizzie did what she could, someone needs to go through clean_other.R again, once we have a better sense of what columns to fully clean. 
 
 
+START here! 
 preliminary_DM.R 
 	1) UPDATE to master data file (and delete all the code that reads in piecemeal data) 
 	2) Save some the stuff about 95% and plotting (after getting it to run and moving where the figures go) to a new file.
