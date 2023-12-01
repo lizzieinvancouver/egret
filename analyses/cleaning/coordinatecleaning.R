@@ -1,131 +1,45 @@
-# code taken from cleaningDL.R
-# aim of this code is to combine the cleaning work of on Dinara and Hoai Huong 
+## Updated 30 November 2023 ##
+## By Lizzie and Deirdre ##
 
-# Also to determine what datasets are still missing
+## Adds lat/lon coordinates when we did not have them (manually looked up by Tolu Amuwo) #
+# and does some other cleaning and mapping ##
+## Original file called coordinate_cleaning_TA.R ##
+
+# setwd
 if(length(grep("deirdreloughnan", getwd()) > 0)) {
-  setwd("~/Documents/github/oegres")
-} else if(length(grep("Lizzie", getwd()) > 0)) {
-  setwd("~/Documents/git/projects/others/deirdre/Synchrony")
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
 } else{
-  setwd("/home/deirdre/Synchrony") # for midge
+  setwd("boomdittyboom") # for midge
 }
 
+# housekeeping
 rm(list = ls()) # Clear whatever is already in R's memory
 options(stringsAsFactors=FALSE)# Make sure words are read in as characters rather than factors
 
-### Libraries
-library("readxl") # To read Excel files
-library(taxize) # To clean species names
-
-### Import data##############################
-folder <- list.dirs(path = "data", full.names = FALSE, recursive = TRUE)
-folder <- folder[3:9] # Obtain the folders needed
-
-### Merge Data##############################
-#Match cols:
-# DL
-egret_DL.xlsx <- read_xlsx("data/egret_DL.xlsx", sheet = "data_detailed")
-egret_DL.xlsx$germ.tim.zero <- egret_DL.xlsx$germ.time.zero
-egret_DL.xlsx <- subset(egret_DL.xlsx, select = c("datasetID", "study", "entered.by", "genus", "species", "variety",
-                                                  "woody", "crop", "source.population", "provenance.lat", "provenance.long", "provenance.altitude",
-                                                  "continent", "no.indiv.collected", "year.collected", "year.germination", "storage.type", "storage.time",
-                                                  "storage.humidity", "storage.temp", "treatment", "chill.temp", "chill.duration", "germ.temp",
-                                                  "other.treatment", "photoperiod", "chemical", "chemcial.concent", "trt.duration", "scarification",
-                                                  "scarif.type", "soaking", "soaked.in", "soaking.duration", "seed.mass.given", "respvar",
-                                                  "response", "error.type", "resp.error", "reps", "n.per.rep", "germ.duration",
-                                                  "germ.tim.zero", "figure", "Notes"))
-# TA
-egret_TA.xlsx <- read_xlsx(paste("data/", "oegres_TA", "/", "oegres_TA.xlsx", sep = ""), sheet = "data_detailed")
-egret_TA.xlsx$Notes <- egret_TA.xlsx$notes
-egret_TA.xlsx <- subset(egret_TA.xlsx, select = c("datasetID", "study", "entered.by", "genus", "species", "variety",
-                                                  "woody", "crop", "source.population", "provenance.lat", "provenance.long", "provenance.altitude",
-                                                  "continent", "no.indiv.collected", "year.collected", "year.germination", "storage.type", "storage.time",
-                                                  "storage.humidity", "storage.temp", "treatment", "chill.temp", "chill.duration", "germ.temp",
-                                                  "other.treatment", "photoperiod", "chemical", "chemcial.concent", "trt.duration", "scarification",
-                                                  "scarif.type", "soaking", "soaked.in", "soaking.duration", "seed.mass.given", "respvar",
-                                                  "response", "error.type", "resp.error", "reps", "n.per.rep", "germ.duration",
-                                                  "germ.tim.zero", "figure", "Notes"))
-
-# SC
-egret_SC.xlsx <- read_xlsx(paste("data/", "oegres_SC", "/", "oegres_SC.xlsx", sep = ""), sheet = "data_detailed")
-egret_SC.xlsx$germ.tim.zero <- egret_SC.xlsx$germ.time.zero
-egret_SC.xlsx$Notes <- egret_SC.xlsx$notes
-egret_SC.xlsx <- subset(egret_SC.xlsx, select = c("datasetID", "study", "entered.by", "genus", "species", "variety",
-                                                  "woody", "crop", "source.population", "provenance.lat", "provenance.long", "provenance.altitude",
-                                                  "continent", "no.indiv.collected", "year.collected", "year.germination", "storage.type", "storage.time",
-                                                  "storage.humidity", "storage.temp", "treatment", "chill.temp", "chill.duration", "germ.temp",
-                                                  "other.treatment", "photoperiod", "chemical", "chemcial.concent", "trt.duration", "scarification",
-                                                  "scarif.type", "soaking", "soaked.in", "soaking.duration", "seed.mass.given", "respvar",
-                                                  "response", "error.type", "resp.error", "reps", "n.per.rep", "germ.duration",
-                                                  "germ.tim.zero", "figure", "Notes"))
-egret <- rbind(egret_DL.xlsx, egret_TA.xlsx, egret_SC.xlsx)
-folder <- folder[1:5]
-for(i in 1:length(folder)) {
-  file <- list.files(paste("data/", folder[i], sep = ""), pattern = NULL, all.files = TRUE, full.names = FALSE)
-  file <- file[3]
-  dataframe <- read_xlsx(paste("data/", folder[i], "/", file, sep = ""), sheet = "data_detailed")
-  egret <- rbind(egret, dataframe)
-  assign(file, dataframe)
-}
-egret$datasetID <- tolower(egret$datasetID)
-egret$datasetID[which(egret$datasetID == "acosta12")] <- "acosta13"
-egret$datasetID[which(egret$datasetID == "brandel2005")] <- "brandel05"
-egret$datasetID[which(egret$datasetID == "airi2009")] <- "airi09"
-egret$datasetID[which(egret$datasetID == "alptekin2002")] <- "alptekin02"
-egret$datasetID[which(egret$datasetID == "amini2018")] <- "amini18"
-egret$datasetID[which(egret$datasetID == "pipinus12")] <- "pipinis12"
-egret$datasetID[which(egret$datasetID == "picciau18")] <- "picciau19"
-
-egret <- data.frame(egret)
-
-# code for cleaning the coordinates in the egret dataset...finding missing coordinates...etc.
 ## load packages ##
 library(leaflet)
 library(sp)
 library(sf)
-################
 
-# fixing wild decimal places 
+# grab the data 
+egret <- read.csv("input/egretData.csv")
 
-unique(egret$provenance.lat)
-egret$provenance.lat[which(egret$provenance.lat == "33.825278 - 34.136389")] <- "34.01"
-egret$provenance.long[which(egret$provenance.long == "107.373333 - 107.861389")] <- "107.82"
-
-
-egret$provenance.lat[which(egret$provenance.lat == "32.133333333333297")] <- "32.13"
-egret$provenance.lat[which(egret$provenance.lat == "24.105556")] <- "24.11"
-egret$provenance.lat[which(egret$provenance.lat == "24.083")] <- "24.08"
-egret[which(egret$provenance.lat == "38.967 and 37.9"),] # seeds originated from 2 places
-
-egret[which(egret$provenance.lat == "~34-34.666667"),] # if there's a range, do we choose the upper/lower value or midpoint
-
+# Work by Tolu Amuwo where she looked up locations and manually added lat/lon
 na.coords <- egret[which(is.na(egret$provenance.lat)),]
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "Chuanren04")] <- "56.13"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "Chuanren04")] <- "-106.347"
-
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "Albrecht20")] <- "37.838"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "Albrecht20")] <- "83.826"
-
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "Bhatt00")] <- "29.392"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "Bhatt00")] <- "79.74"
-
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "Boscagli01")] <- "41.656"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "Boscagli01")] <- "12.99"
 
-egret$datasetID[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1993")] <- "Aldridge1992"
-egret$datasetID[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1994")] <- "Aldridge1992"
-egret$datasetID[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1995")] <- "Aldridge1992"
-egret$datasetID[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1996")] <- "Aldridge1992"
-egret$datasetID[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1997")] <- "Aldridge1992"
-egret$datasetID[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1998")] <- "Aldridge1992"
+# The below only run assuming Aldridge199X gets fixed elsewhere
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1992")] <- "46.73"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "Aldridge1992")] <- "94.69"
-egret$study[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1992" & egret$study == "exp3")] <- "exp2"
-egret$study[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1992" & egret$study == "exp4")] <- "exp2"
-egret$study[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1992" & egret$study == "exp5")] <- "exp2"
-egret$study[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1992" & egret$study == "exp6")] <- "exp2"
-egret$study[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1992" & egret$study == "exp7")] <- "exp2"
-egret$study[which(is.na(egret$provenance.lat) & egret$datasetID == "Aldridge1992" & egret$study == "exp8")] <- "exp2"
 
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "Amini2018")] <- "36.812"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "Amini2018")] <- "54.945"
@@ -155,8 +69,6 @@ egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "N
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "Naumovski05" & egret$source.population == "University of Zagreb, Croatia")] <- "45.811"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "Naumovski05" & egret$source.population == "University of Zagreb, Croatia")] <- "15.97"
 
-
-
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "Necajeva13")] <- "56.997"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "Necajeva13")] <- "24.023"
 
@@ -168,13 +80,11 @@ egret$datasetID[which(egret$datasetID == "Sacande05")] <- "Sacande04"
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "Sacande04")] <- "0.283"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "Sacande04")] <- "34.752"
 
-
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "barros12")] <- "37.78"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "barros12")] <- "-25.497"
 
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "basaran12")] <- "41.28"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "basaran12")] <- "36.336"
-
 
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "jacquemart21" & egret$source.population == "Aise, France")] <- "47.27"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "jacquemart21" & egret$source.population == "Aise, France")] <- "6.331"
@@ -286,7 +196,6 @@ egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "m
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "meyer95" & egret$source.population == "Central, Utah, USA")] <- "37.417"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "meyer95" & egret$source.population == "Central, Utah, USA")] <- "-113.625"
 
-
 egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "martinik14")] <- "49.818"
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "martinik14")] <- "15.473"
 
@@ -311,7 +220,7 @@ egret$provenance.lat[which(is.na(egret$provenance.lat) & egret$datasetID == "par
 egret$provenance.long[which(is.na(egret$provenance.long) & egret$datasetID == "parvin15")] <- "50.972"
 ############################################################################
 
-## fixing continent points
+## fixing continent points ... this needs to BE CHECKED!
 
 egret$continent[which(egret$continent == "USA")] <- "North America"
 
@@ -344,7 +253,7 @@ egret$provenance.long[which(egret$continent == "Asia" & egret$provenance.lat == 
 egret$provenance.lat[which(egret$continent == "Africa" & egret$provenance.lat == "-39.983333")] <- "-33.988"
 ############################################################################
 
-## projecting coordinates onto a basemap
+## projecting coordinates onto a basemap this needs to BE CHECKED!
 
 na.coords <- egret[which(is.na(egret$provenance.lat)),]
 

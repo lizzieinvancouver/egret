@@ -1,144 +1,32 @@
-# aim of this code is to combine the cleaning work of on Dinara and Hoai Huong
-# all of this is Deirdre's cleaning code
+## Updated 30 November 2023 ##
+## By Lizzie and Deirdre ##
 
+## ADD Here...
+## Original file called coordinate_cleaning_TA.R ##
 
-#11/08/2023 I (Julie) have gone through some of the comments Deirdre made, checking certain weird values etc
-# I couldn't find some papers because I no longer have access to the EGRET google drive
-
-#just for Julie: directory name:
-setwd("/home/julie/EGRET/egret")
-
-# Also to determine what datasets are still missing
+# setwd
 if(length(grep("deirdreloughnan", getwd()) > 0)) {
-  setwd("~/Documents/github/oegres")
-} else if(length(grep("Lizzie", getwd()) > 0)) {
-  setwd("~/Documents/git/projects/others/deirdre/Synchrony")
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
 } else{
-  setwd("/home/deirdre/Synchrony") # for midge
+  setwd("boomdittyboom") # for midge
 }
 
+# housekeeping
 rm(list = ls()) # Clear whatever is already in R's memory
 options(stringsAsFactors=FALSE)# Make sure words are read in as characters rather than factors
 
-### Libraries
-library("readxl") # To read Excel files
-library(taxize) # To clean species names
+## load packages ##
+library(leaflet)
+library(sp)
+library(sf)
 
-### Import data##############################
-folder <- list.dirs(path = "data", full.names = FALSE, recursive = TRUE)
-folder <- folder[3:9] # Obtain the folders needed
-
-### Merge Data##############################
-#Match cols:
-# DL
-egret_DL.xlsx <- read_xlsx("data/egret_DL.xlsx", sheet = "data_detailed")
-egret_DL.xlsx$germ.tim.zero <- egret_DL.xlsx$germ.time.zero
-egret_DL.xlsx <- subset(egret_DL.xlsx, select = c("datasetID", "study", "entered.by", "genus", "species", "variety",
-                                                    "woody", "crop", "source.population", "provenance.lat", "provenance.long", "provenance.altitude",
-                                                    "continent", "no.indiv.collected", "year.collected", "year.germination", "storage.type", "storage.time",
-                                                    "storage.humidity", "storage.temp", "treatment", "chill.temp", "chill.duration", "germ.temp",
-                                                    "other.treatment", "photoperiod", "chemical", "chemcial.concent", "trt.duration", "scarification",
-                                                    "scarif.type", "soaking", "soaked.in", "soaking.duration", "seed.mass.given", "respvar",
-                                                    "response", "error.type", "resp.error", "reps", "n.per.rep", "germ.duration",
-                                                    "germ.tim.zero", "figure", "Notes"))
-# TA
-egret_TA.xlsx <- read_xlsx(paste("/home/julie/Documents/Temp Ecology Lab/EGRET/", "oegres_TA.xlsx", sep = ""), sheet = "data_detailed")
-egret_TA.xlsx$Notes <- egret_TA.xlsx$notes
-egret_TA.xlsx <- subset(egret_TA.xlsx, select = c("datasetID", "study", "entered.by", "genus", "species", "variety",
-                                                    "woody", "crop", "source.population", "provenance.lat", "provenance.long", "provenance.altitude",
-                                                    "continent", "no.indiv.collected", "year.collected", "year.germination", "storage.type", "storage.time",
-                                                    "storage.humidity", "storage.temp", "treatment", "chill.temp", "chill.duration", "germ.temp",
-                                                    "other.treatment", "photoperiod", "chemical", "chemcial.concent", "trt.duration", "scarification",
-                                                    "scarif.type", "soaking", "soaked.in", "soaking.duration", "seed.mass.given", "respvar",
-                                                    "response", "error.type", "resp.error", "reps", "n.per.rep", "germ.duration",
-                                                    "germ.tim.zero", "figure", "Notes"))
-
-# SC
-egret_SC.xlsx <- read_xlsx(paste("/home/julie/Documents/Temp Ecology Lab/EGRET/", "oegres_SC.xlsx", sep = ""), sheet = "data_detailed")
-egret_SC.xlsx$germ.tim.zero <- egret_SC.xlsx$germ.time.zero
-egret_SC.xlsx$Notes <- egret_SC.xlsx$notes
-egret_SC.xlsx <- subset(egret_SC.xlsx, select = c("datasetID", "study", "entered.by", "genus", "species", "variety",
-                                                    "woody", "crop", "source.population", "provenance.lat", "provenance.long", "provenance.altitude",
-                                                    "continent", "no.indiv.collected", "year.collected", "year.germination", "storage.type", "storage.time",
-                                                    "storage.humidity", "storage.temp", "treatment", "chill.temp", "chill.duration", "germ.temp",
-                                                    "other.treatment", "photoperiod", "chemical", "chemcial.concent", "trt.duration", "scarification",
-                                                    "scarif.type", "soaking", "soaked.in", "soaking.duration", "seed.mass.given", "respvar",
-                                                    "response", "error.type", "resp.error", "reps", "n.per.rep", "germ.duration",
-                                                    "germ.tim.zero", "figure", "Notes"))
-egret <- rbind(egret_DL.xlsx, egret_TA.xlsx, egret_SC.xlsx)
-folder <- folder[1:5]
-for(i in 1:length(folder)) {
-  file <- list.files(paste("data/", folder[i], sep = ""), pattern = NULL, all.files = TRUE, full.names = FALSE)
-  file <- file[3]
-  dataframe <- read_xlsx(paste("data/", folder[i], "/", file, sep = ""), sheet = "data_detailed")
-  egret <- rbind(egret, dataframe)
-  assign(file, dataframe)
-}
-
-egret$datasetID <- tolower(egret$datasetID)
-egret$datasetID[which(egret$datasetID == "acosta12")] <- "acosta13"
-egret$datasetID[which(egret$datasetID == "brandel2005")] <- "brandel05"
-egret$datasetID[which(egret$datasetID == "airi2009")] <- "airi09"
-egret$datasetID[which(egret$datasetID == "alptekin2002")] <- "alptekin02"
-egret$datasetID[which(egret$datasetID == "amini2018")] <- "amini18"
-egret$datasetID[which(egret$datasetID == "pipinus12")] <- "pipinis12"
-egret$datasetID[which(egret$datasetID == "picciau18")] <- "picciau19"
-
-egret <- data.frame(egret)
+# grab the data 
+egret <- read.csv("input/egretData.csv")
 
 # General chekcs:
 
-#1. fix typos and minor issues:
-### Clean Species ##############################
-egret$species <- tolower(egret$species)
-egret_species <- unique(paste(egret$genus, egret$species))
-# Use taxize package to inspect
-# ref <- gnr_datasources() # Full list of databases available
-# fix_names <- gnr_resolve(sci = egret_species, with_canonical_ranks = T)
-# egret_species_fix <- unique(fix_names$matched_name2)
-# names_changed <- setdiff(egret_species, egret_species_fix)
-# names_changed
-# Fix#########################################
-egret$species[which(egret$genus == "Colutea" & egret$species == "bohsei")] <- "buhsei"
-egret$species[which(egret$genus == "Abies" & egret$species == "amabils")] <- "amabilis"
-egret$species[which(egret$genus == "Lathyrus" & egret$species == "sativa")] <- "sativus"
-egret$species[which(egret$genus == "Carex" & egret$species == "crytolepis")] <- "cryptolepis"
-egret$species[which(egret$genus == "Vicia" & egret$species == "bythinica")] <- "bithynica"
-egret$species[which(egret$genus == "Penstemon" & egret$species == "commarhenus")] <- "comarrhenus"
-egret$species[which(egret$genus == "Asparagus" & egret$species == "acutifolius l.")] <- "acutifolius"
-egret$species[which(egret$genus == "Pinus" & egret$species == "sylvestris l.")] <- "sylvestris"
-egret$species[which(egret$genus == "Polygonum" & egret$species == "aviculare l.")] <- "aviculare"
-egret$species[which(egret$genus == "Dorema" & egret$species == "ammoniacum d.")] <- "ammoniacum"
-egret$species[which(egret$genus == "Tradescantia" & egret$species == "ohioensis")] <- "ohiensis"
-egret$species[which(egret$genus == "Betula" & egret$species == "albo-sinensis")] <- "albosinensis"
-
-egret$genus[which(egret$genus == "Pterocaryafra" & egret$species == "fraxinifolia")] <- "Pterocarya"
-egret$genus[which(egret$genus == "Leontice\r\n" & egret$species == "incerta")] <- "Leontice"
-egret$genus[which(egret$genus == "Aanigozanthos" & egret$species == "flavidus")] <- "Anigozanthos"
-egret$genus[which(egret$genus == "Deginia" & egret$species == "velebitica")] <- "Degenia"
-egret$genus[which(egret$genus == "Lingularia" & egret$species == "sibirica")] <- "Ligularia"
-egret$genus[which(egret$genus == "Eucalytpus" & egret$species == "delegatensis")] <- "Eucalyptus"
-
-egret$genus[which(egret$genus == "Jasminus" & egret$species == "fruiticans")] <- "Jasminum"
-egret$species[which(egret$genus == "Jasminum" & egret$species == "fruiticans")] <- "fruticans"
-
-egret$variety[which(egret$genus == "Pedicularis" & egret$species == "longiflora var.\r\ntubiformis")] <- "tubiformis"
-egret$species[which(egret$genus == "Pedicularis" & egret$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
-# Confirm####################################
-egret_species <- unique(paste(egret$genus, egret$species))
-fix_names <- gnr_resolve(sci = egret_species, with_canonical_ranks = T)
-egret_species_fix <- unique(fix_names$matched_name2)
-names_changed <- setdiff(egret_species, egret_species_fix) # Confirm this is of length 0
-names_changed
-### TO CHECK: Echinacea angustifolia, purpurea, pallida -- 3 species in 1 study - can't find - JS
-
-egret$species[which(egret$species == "Amurensis")] <- "amurensis"
-egret$species[which(egret$species == "aviculare L.")] <- "aviculare"
-egret$species[which(egret$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
-egret$species[which(egret$species == "Pagoda")] <- "pagoda"
-egret$species[which(egret$species == "Sylvestris L.")] <- "sylvestris"
-
-egret$sp.name <- paste(egret$genus, egret$species, sep = "_")
 
 unique(egret$study)
 egret$study <- gsub(" ","", egret$study)

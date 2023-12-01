@@ -5,15 +5,12 @@ Ferry to Nanaimo!
 How to fix cleaning files ....
 
 coordinate_cleaning_TA.R 
-	1) UPDATE to master data file (and delete all the code that reads in piecemeal data)
-	2) Decide what of the name cleaning and early cleaning should stay
-	3) Mv the code that averages ranges to a separate file for now
-	4) Clean up the lat/lon code (standardize white space)
+	1-4) Done. 
 	5) Figure out what is happening at the end of the code, and decide to keep or not
 	6) Add comments 
 	7) Subset by continent and make sure points end up in correct continent 
 	8) Eventually source in a pipeline cleaning file 
-	9) Rename! And move to source folder
+	9) Eventually move to source folder
 
 
 cleaningDL.R 
@@ -23,8 +20,6 @@ cleaningDL.R
 		- clean_other.R (column cleaning) 
 
 cleaningJS.R
-	1) UPDATE to master data file (and delete all the code that reads in piecemeal data) 
-	2) Delete all the species name cleaning (it's copied)
 	3) Variously add remaining to 
 		- clean_other.R
 		- clean_misc.R (random entry cleaning)
