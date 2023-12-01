@@ -83,9 +83,8 @@ length(unique(egret_AZ$datasetID)) #12
 dim(egret_AZ) #1071   45
 
 egret_JS <- read.csv("data/egret_JS.csv")
-egret_JS <- egret_JS[complete.cases(egret_JS$datasetID),] # tons of empty rows!  # 757 rows actual data
+egret_JS <- egret_JS[complete.cases(egret_JS$response),] # tons of empty rows!  # 757 rows actual data
 dim(egret_JS) #757  45
-egret_JS <- egret_JS[1:757,1:45]
 length(unique(egret_JS$datasetID)) #9
 
 egret1 <- rbind(egret_TA, egret_BW, egret_CRD, egret_MN, egret_HHN, egret_DK,
