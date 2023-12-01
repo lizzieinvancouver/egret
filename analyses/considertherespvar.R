@@ -102,6 +102,14 @@ dsubset$respclean[which(dsubset$respclean == "days of first observation of seedl
 dsubset$respclean[which(dsubset$respclean == "days to 1st seed germinated")] <- "days to first germination"
 dsubset$respclean[which(dsubset$respclean == "days taken until first seed germination")] <- "days to first germination"
 
+temp <- subset(dsubset, respclean == "per.germ")
+unique(temp$datasetID)
+
+temp <- subset(dsubset, respclean == "germ.rate")
+unique(temp$datasetID)
+
+temp <- subset(dsubset, respclean == "mgt")
+unique(temp$datasetID)
 
 lookUp <- c("days to final germination", 
             "AUGPC", "germination (arcsin)", 

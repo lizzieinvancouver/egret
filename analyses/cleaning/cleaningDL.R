@@ -395,7 +395,9 @@ noDurations <- aggregate(curved["count"], curved[c("datasetID", "sp.name")], FUN
 
 temp <- subset(noDurations, count >5)
 
-curvedStudy <- unique(temp$datasetID)
+curvedStudy <- unique(temp$datasetID) #77 studies
 
 curvy <- egret[egret$datasetID %in% curvedStudy, ]
 unique(curvy$respvar)
+
+# 61 unique resp var
