@@ -22,7 +22,7 @@ library(viridis)
 #}
 
 # Grab de data!
-d <- read.csv("analyses/output/egretData.csv")
+d <- read.csv("..//analyses/output/egretData.csv")
 
 noStudy <- length(unique(d$datasetID))
 noSpp <- length(unique(d$sp.name))
