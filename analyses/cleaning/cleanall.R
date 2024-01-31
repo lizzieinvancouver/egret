@@ -23,8 +23,26 @@ source("cleaning/source/cleandatasetID.R")
 # 3. Clean species names
 source("cleaning/source/cleanspecies.R")
 
+# 4. Clean chill duration and temperature
+source("cleaning/source/clean_chill_temp_duration.R")
 
+# 5. Clean germination temperature
+source("cleaning/source/clean_germination_temp_duration.R")
 
+# 6. Clean germination scarification
+source("cleaning/source/clean_scarification.R")
+
+# 7. Clean Clean chemical---yes/no column---clean chemcial name col
+source("cleaning/source/clean_chemical.R")
+
+# 8. Clean storage type
+source("cleaning/source/clean_storage.R")
+
+# 9. Clean response variables and response
+source("cleaning/source/clean_response_var.R")
+
+# 10. Clean coordinates seed provinance
+source("cleaning/source/clean_coordinates.R")
 
 # XX. Clean year of germination (some)
 source("cleaning/source/clean_yeargermination.R")

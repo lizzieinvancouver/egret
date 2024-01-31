@@ -3,12 +3,19 @@
 
 # Needs to be sourced in cleanall.R
 
-# TO DO! We need to fix some of the multiple nameyr IDs to nameyra and nameyrb
-egret$datasetID <- tolower(egret$datasetID)
-egret$datasetID[which(egret$datasetID == "acosta12")] <- "acosta13"
-egret$datasetID[which(egret$datasetID == "brandel2005")] <- "brandel05"
-egret$datasetID[which(egret$datasetID == "airi2009")] <- "airi09"
-egret$datasetID[which(egret$datasetID == "alptekin2002")] <- "alptekin02"
-egret$datasetID[which(egret$datasetID == "amini2018")] <- "amini18"
-egret$datasetID[which(egret$datasetID == "pipinus12")] <- "pipinis12"
-egret$datasetID[which(egret$datasetID == "picciau18")] <- "picciau19"
+# TO DO! We need to fix some of the multiple name-year IDs to nameyra and nameyrb
+
+# Create new column
+dat$datasetIDCor <- tolower(dat$datasetID)
+
+# Fix ones with incorrect years
+dat$datasetIDCor[which(dat$datasetIDCor == "acosta12")] <- "acosta13"
+dat$datasetIDCor[which(dat$datasetIDCor == "brandel2005")] <- "brandel05"
+dat$datasetIDCor[which(dat$datasetIDCor == "airi2009")] <- "airi09"
+dat$datasetIDCor[which(dat$datasetIDCor == "alptekin2002")] <- "alptekin02"
+dat$datasetIDCor[which(dat$datasetIDCor == "amini2018")] <- "amini18"
+dat$datasetIDCor[which(dat$datasetIDCor == "pipinus12")] <- "pipinis12"
+dat$datasetIDCor[which(dat$datasetIDCor == "picciau18")] <- "picciau19"
+
+# Find datasetID's that are duplicated---ie a author published 2 papers in the same year: change to authorYeara and authorYearb
+
