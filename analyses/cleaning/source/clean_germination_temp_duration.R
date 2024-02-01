@@ -8,6 +8,7 @@
 unique(dat$germ.temp)
 
 #dat <- within(dat, forcetemp[datasetID== 'falusi96' & study == 'exp3'] <- 24)
+# ALERT: these changes should be in a NEW column, not overwritting the current column. 
 dat$germ.temp[which(dat$germ.temp == "unknown")] <- "NA"
 dat$germ.temp[which(dat$germ.temp == "didn't mention")] <- "NA"
 
@@ -17,6 +18,8 @@ dat$germ.temp[which(dat$germ.temp == "didn't mention")] <- "NA"
 # Values that are transformed ie averaged or rounded:
 dat$germ.tempCor <- dat$germ.temp
 
+# Now make new column with heavy duty cleaning
+dat$germTemp  <- dat$germ.temp
 
 # 2. germ.duration
 unique(dat$germ.duration)
