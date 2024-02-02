@@ -79,6 +79,6 @@ colnames(dat1)[colnames(dat1) == "germ.tim.zero"] <- "germ.time.zero"
 dat2 <- rbind(egret_DL, egret_SC, dat1)
 
 colnames(dat2)[colnames(dat2) == "chemcial.concent"] <- "chemical.concent"
-dat <- rbind(egret_JN, dat2)
+d <- rbind(egret_JN, dat2)
 
 #write.csv(dat, "analyses/output/egretData.csv", row.names = F)

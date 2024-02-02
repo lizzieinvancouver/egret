@@ -6,62 +6,62 @@
 # General chekcs:
 #1. fix typos and minor issues:
 ### Clean Species ##############################
-dat$species <- tolower(dat$species)
-dat_species <- unique(paste(dat$genus, dat$species))
+d$species <- tolower(d$species)
+d_species <- unique(paste(d$genus, d$species))
 
 # Use taxize package to inspect whether names are correct
-ref <- gnr_datasources() # Full list of databases available
-fix_names <- gnr_resolve(sci = dat_species, with_canonical_ranks = T)
-dat_species_fix <- unique(fix_names$matched_name2)
-names_changed <- setdiff(dat_species, dat_species_fix)
+ref <- gnr_dasources() # Full list of dabases available
+fix_names <- gnr_resolve(sci = d_species, with_canonical_ranks = T)
+d_species_fix <- unique(fix_names$matched_name2)
+names_changed <- setdiff(d_species, d_species_fix)
 names_changed
 
-sort(dat_species)
+sort(d_species)
 
 # Remove trailing spaces:
-dat$genus <- str_trim(dat$genus)
-dat$species <- str_trim(dat$species)
+d$genus <- str_trim(d$genus)
+d$species <- str_trim(d$species)
 
 # Fix#########################################
-dat$species[which(dat$genus == "Colutea" & dat$species == "bohsei")] <- "buhsei"
-dat$species[which(dat$genus == "Abies" & dat$species == "amabils")] <- "amabilis"
-dat$species[which(dat$genus == "Lathyrus" & dat$species == "sativa")] <- "sativus"
-dat$species[which(dat$genus == "Carex" & dat$species == "crytolepis")] <- "cryptolepis"
-dat$species[which(dat$genus == "Vicia" & dat$species == "bythinica")] <- "bithynica"
-dat$species[which(dat$genus == "Penstemon" & dat$species == "commarhenus")] <- "comarrhenus"
-dat$species[which(dat$genus == "Asparagus" & dat$species == "acutifolius l.")] <- "acutifolius"
-dat$species[which(dat$genus == "Pinus" & dat$species == "sylvestris l.")] <- "sylvestris"
-dat$species[which(dat$genus == "Polygonum" & dat$species == "aviculare l.")] <- "aviculare"
-dat$species[which(dat$genus == "Dorema" & dat$species == "ammoniacum d.")] <- "ammoniacum"
-dat$species[which(dat$genus == "Tradescantia" & dat$species == "ohioensis")] <- "ohiensis"
-dat$species[which(dat$genus == "Betula" & dat$species == "albo-sinensis")] <- "albosinensis"
+d$species[which(d$genus == "Colutea" & d$species == "bohsei")] <- "buhsei"
+d$species[which(d$genus == "Abies" & d$species == "amabils")] <- "amabilis"
+d$species[which(d$genus == "Lathyrus" & d$species == "sativa")] <- "sativus"
+d$species[which(d$genus == "Carex" & d$species == "crytolepis")] <- "cryptolepis"
+d$species[which(d$genus == "Vicia" & d$species == "bythinica")] <- "bithynica"
+d$species[which(d$genus == "Penstemon" & d$species == "commarhenus")] <- "comarrhenus"
+d$species[which(d$genus == "Asparagus" & d$species == "acutifolius l.")] <- "acutifolius"
+d$species[which(d$genus == "Pinus" & d$species == "sylvestris l.")] <- "sylvestris"
+d$species[which(d$genus == "Polygonum" & d$species == "aviculare l.")] <- "aviculare"
+d$species[which(d$genus == "Dorema" & d$species == "ammoniacum d.")] <- "ammoniacum"
+d$species[which(d$genus == "Tradescantia" & d$species == "ohioensis")] <- "ohiensis"
+d$species[which(d$genus == "Betula" & d$species == "albo-sinensis")] <- "albosinensis"
 
-dat$genus[which(dat$genus == "Pterocaryafra" & dat$species == "fraxinifolia")] <- "Pterocarya"
-dat$genus[which(dat$genus == "Leontice\r\n" & dat$species == "incerta")] <- "Leontice"
-dat$genus[which(dat$genus == "Aanigozanthos" & dat$species == "flavidus")] <- "Anigozanthos"
-dat$genus[which(dat$genus == "Deginia" & dat$species == "velebitica")] <- "Degenia"
-dat$genus[which(dat$genus == "Lingularia" & dat$species == "sibirica")] <- "Ligularia"
-dat$genus[which(dat$genus == "Eucalytpus" & dat$species == "delegatensis")] <- "Eucalyptus"
+d$genus[which(d$genus == "Pterocaryafra" & d$species == "fraxinifolia")] <- "Pterocarya"
+d$genus[which(d$genus == "Leontice\r\n" & d$species == "incerta")] <- "Leontice"
+d$genus[which(d$genus == "Aanigozanthos" & d$species == "flavidus")] <- "Anigozanthos"
+d$genus[which(d$genus == "Deginia" & d$species == "velebitica")] <- "Degenia"
+d$genus[which(d$genus == "Lingularia" & d$species == "sibirica")] <- "Ligularia"
+d$genus[which(d$genus == "Eucalytpus" & d$species == "delegatensis")] <- "Eucalyptus"
 
-dat$genus[which(dat$genus == "Jasminus" & dat$species == "fruiticans")] <- "Jasminum"
-dat$species[which(dat$genus == "Jasminum" & dat$species == "fruiticans")] <- "fruticans"
+d$genus[which(d$genus == "Jasminus" & d$species == "fruiticans")] <- "Jasminum"
+d$species[which(d$genus == "Jasminum" & d$species == "fruiticans")] <- "fruticans"
 
-dat$variety[which(dat$genus == "Pedicularis" & dat$species == "longiflora var.\r\ntubiformis")] <- "tubiformis"
-dat$species[which(dat$genus == "Pedicularis" & dat$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
-dat$species[which(dat$genus == "Ferula" & dat$species == "assa foetida")] <- "assa-foetida"
-dat$species[which(dat$genus == "Astrgalus" & dat$species == "cyclophyllon")] <- "cyclophyllus"
-dat$species[which(dat$genus == "Astrgalus" & dat$species == "cyclophyllu")] <- "cyclophyllus"
-dat$species[which(dat$species == "Amurensis")] <- "amurensis"
-dat$species[which(dat$species == "aviculare L.")] <- "aviculare"
-dat$species[which(dat$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
-dat$species[which(dat$species == "Pagoda")] <- "pagoda"
-dat$species[which(dat$species == "Sylvestris L.")] <- "sylvestris"
+d$variety[which(d$genus == "Pedicularis" & d$species == "longiflora var.\r\ntubiformis")] <- "tubiformis"
+d$species[which(d$genus == "Pedicularis" & d$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
+d$species[which(d$genus == "Ferula" & d$species == "assa foetida")] <- "assa-foetida"
+d$species[which(d$genus == "Astrgalus" & d$species == "cyclophyllon")] <- "cyclophyllus"
+d$species[which(d$genus == "Astrgalus" & d$species == "cyclophyllu")] <- "cyclophyllus"
+d$species[which(d$species == "Amurensis")] <- "amurensis"
+d$species[which(d$species == "aviculare L.")] <- "aviculare"
+d$species[which(d$species == "longiflora var.\r\ntubiformis")] <- "longiflora"
+d$species[which(d$species == "Pagoda")] <- "pagoda"
+d$species[which(d$species == "Sylvestris L.")] <- "sylvestris"
 
 # Confirm ####################################
-dat_species <- unique(paste(dat$genus, dat$species))
-fix_names <- gnr_resolve(sci = dat_species, with_canonical_ranks = T)
-dat_species_fix <- unique(fix_names$matched_name2)
-names_changed <- setdiff(dat_species, dat_species_fix) # Confirm this is of length 0
+d_species <- unique(paste(d$genus, d$species))
+fix_names <- gnr_resolve(sci = d_species, with_canonical_ranks = T)
+d_species_fix <- unique(fix_names$matched_name2)
+names_changed <- setdiff(d_species, d_species_fix) # Confirm this is of length 0
 names_changed
 
 ### TO CHECK: look though the species names or there any that seem strange? If so---flag for discussion. For example:

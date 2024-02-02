@@ -1,14 +1,14 @@
-## Updated 30 January 2024 ##
+## Upded 30 January 2024 ##
 ## By Deirdre ##
 
 ## This contains code to clean chill duration and temperature ##
 ## Original code taken from file called cleaningDL.R ##
 
 #1. chill.duration
-unique(dat$chill.duration)
+unique(d$chill.duration)
 
-#dat <- within(dat, forcetemp[datasetID== 'falusi96' & study == 'exp3'] <- 24)
-dat$chill.duration[which(dat$chill.duration == "unknown")] <- "NA"
+#d <- within(d, forcetemp[dasetID== 'falusi96' & study == 'exp3'] <- 24)
+d$chill.duration[which(d$chill.duration == "unknown")] <- "NA"
 
 #Check unusual values:
 # what does "90/30/90" mean
@@ -16,15 +16,15 @@ dat$chill.duration[which(dat$chill.duration == "unknown")] <- "NA"
 # is 0 a true zero? 
 
 # Values that are transformed ie averaged or rounded:
-dat$chill.durationCor <- dat$chill.duration
+d$chill.durationCor <- d$chill.duration
 
 
 # 2. chill.temp
-unique(dat$chill.duration)
+unique(d$chill.duration)
 
-#dat <- within(dat, forcetemp[datasetID== 'falusi96' & study == 'exp3'] <- 24)
-dat$chill.temp[which(dat$chill.temp == "n/a")] <- "NA"
-dat$chill.temp[which(dat$chill.temp == "N/A")] <- "NA"
+#d <- within(d, forcetemp[dasetID== 'falusi96' & study == 'exp3'] <- 24)
+d$chill.temp[which(d$chill.temp == "n/a")] <- "NA"
+d$chill.temp[which(d$chill.temp == "N/A")] <- "NA"
 
 #Check unusual values:
 # what does "90/30/90" mean
@@ -32,7 +32,7 @@ dat$chill.temp[which(dat$chill.temp == "N/A")] <- "NA"
 # is 0 a true zero? 
 
 # Values that are transformed ie averaged or rounded:
-dat$chill.tempCor <- dat$chill.temp
+d$chill.tempCor <- d$chill.temp
 
 
 

@@ -1,28 +1,28 @@
-## Updated 30 January 2024 ##
+## Upded 30 January 2024 ##
 ## By Deirdre ##
 
 ## This contains cleaning of germination temperature ##
 ## Original code taken from file called cleaningDL.R ##
 
 #1. germination tempearture
-unique(dat$germ.temp)
+unique(d$germ.temp)
 
-#dat <- within(dat, forcetemp[datasetID== 'falusi96' & study == 'exp3'] <- 24)
+#d <- within(d, forcetemp[dasetID== 'falusi96' & study == 'exp3'] <- 24)
 # ALERT: these changes should be in a NEW column, not overwritting the current column. 
-dat$germ.temp[which(dat$germ.temp == "unknown")] <- "NA"
-dat$germ.temp[which(dat$germ.temp == "didn't mention")] <- "NA"
+d$germ.temp[which(d$germ.temp == "unknown")] <- "NA"
+d$germ.temp[which(d$germ.temp == "didn't mention")] <- "NA"
 
 #Check unusual values:
 # open field---does this qualify for this study ie controlled environment?
 
 # Values that are transformed ie averaged or rounded:
-dat$germ.tempCor <- dat$germ.temp
+d$germ.tempCor <- d$germ.temp
 
 # Now make new column with heavy duty cleaning
-dat$germTemp  <- dat$germ.temp
+d$germTemp  <- d$germ.temp
 
 # 2. germ.duration
-unique(dat$germ.duration)
+unique(d$germ.duration)
 
 #This variable is important---if NA or unknown or negative please double check the paper
 
