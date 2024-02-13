@@ -23,10 +23,16 @@ d$scarifTypeB <- d$scarif.type
 # mechanical 
 d$scarifTypeB[which(d$scarifTypeB == "Mechanical")] <- "mechanical"
 d$scarifTypeB[which(d$scarifTypeB == "sandpaper")] <- "mechanical"
+d$scarifTypeB[which(d$scarifTypeB == "sand paper")] <- "mechanical"
 d$scarifTypeB[which(d$scarifTypeB == "sand paper (Np. 150)")] <- "mechanical"
+d$scarifTypeB[which(d$scarifTypeB == "mechanical - sandpaper")] <- "mechanical"
+d$scarifTypeB[which(d$scarifTypeB == "mechanical with sandpaper")] <- "mechanical"
+d$scarifTypeB[which(d$scarifTypeB == "mechanical - razor")] <- "mechanical"
 d$scarifTypeB[which(d$scarifTypeB == "mechanical with razor")] <- "mechanical"
 d$scarifTypeB[which(d$scarifTypeB == "coat removal")] <- "mechanical"
+d$scarifTypeB[which(d$scarifTypeB == "coat removal ")] <- "mechanical"
 d$scarifTypeB[which(d$scarifTypeB == "pericarp removal")] <- "mechanical"
+d$scarifTypeB[which(d$scarifTypeB == "tegument cutting")] <- "mechanical"
 d$scarifTypeB[which(d$scarifTypeB == "seed polishing")] <- "mechanical"
 d$scarifTypeB[which(d$scarifTypeB == "trimmed pappus")] <- "mechanical"
 d$scarifTypeB[which(d$scarifTypeB == "pelleted")] <- "mechanical"
@@ -47,8 +53,10 @@ d$scarifTypeB[which(d$scarifTypeB == "H2SO4.98per.30min")] <- "chemical"
 d$scarifTypeB[which(d$scarifTypeB == "acid scarification")] <- "chemical"
 d$scarifTypeB[which(d$scarifTypeB == "acid")] <- "chemical"
 d$scarifTypeB[which(d$scarifTypeB == "NaClO")] <- "chemical"
+d$scarifTypeB[which(d$scarifTypeB == "3% H2O2 (2 hrs)")] <- "chemical"
+d$scarifTypeB[which(d$scarifTypeB == "chemical, H2O2")] <- "chemical"
 
-
+unique(d$scarifTypeB)
 ### Check unusual entries--- 
 ### Y, cold, seed coat, partly scarified, use temerpature to permeate seedcoat,
 ### partial scarification of seed coat, soaking in water
