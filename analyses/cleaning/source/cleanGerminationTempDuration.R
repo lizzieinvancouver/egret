@@ -1,4 +1,4 @@
-## Updated February 10 2024 ##
+## Updated 12 February 2024 ##
 ## By Justin ##
 
 ## This contains cleaning of germination temperature ##
