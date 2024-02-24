@@ -14,6 +14,8 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
+} else if(length(grep("Buni", getwd()) > 0)) {
+  setwd("~/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
 }
 
 # 1. Get the data (reads in a dataframe called `egret')
@@ -32,7 +34,7 @@ source("cleaning/source/clean_chill_temp_duration.R")
 source("cleaning/source/clean_germination_temp_duration.R")
 
 # 6. Clean germination scarification
-source("cleaning/source/clean_scarification.R")
+source("cleaning/source/cleanScarification.R")
 
 # 7. Clean Clean chemical---yes/no column---clean chemcial name col
 source("cleaning/source/clean_chemical.R")
