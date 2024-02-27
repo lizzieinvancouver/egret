@@ -25,7 +25,7 @@ sort(d_species)
 # Remove trailing spaces:
 d$genus <- str_trim(d$genus)
 d$species <- str_trim(d$species)
-# Go back and run line 10-17 again
+# Go back and run line 13-20 again
 
 # Fix#########################################
 
@@ -65,6 +65,7 @@ d$species[which(d$genus == "Ferula" & d$species == "assa foetida")] <- "assa-foe
 d$genus[which(d$genus == "Alstromeria" & d$species == "ligtu")] <- "Alstroemeria"
 d$species[which(d$genus == "Vitis" & d$species == "vinifera x amurensis")] <- "amurensis"
 d$species[which(d$genus == "Astragalus" & d$species == "cyclophyllu")] <- "cyclophyllos"
+d$species[which(d$genus == "Echinacea" & d$species == "angustifolia, purpurea, pallida")] <- "spp."
 # Confirm ####################################
 d_species <- unique(paste(d$genus, d$species))
 fix_names <- gnr_resolve(sci = d_species, with_canonical_ranks = T)
@@ -73,6 +74,4 @@ names_changed <- setdiff(d_species, d_species_fix) # Confirm this is of length 0
 names_changed
 
 ### TO CHECK: look though the species names or there any that seem strange? If so---flag for discussion. For example:
-#Echinacea angustifolia, purpurea, pallida -- 3 species in 1 study
-#For this particular experiment, they mixed seeds of 3 species together.
 #Rows of NAs found in the dataset.
