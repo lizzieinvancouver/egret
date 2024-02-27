@@ -14,7 +14,7 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
-} else if(length(grep("Buni", getwd()) > 0)) {
+} else if(length(grep("britanywuuu", getwd()) > 0)) {
   setwd("~/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
 }
 
