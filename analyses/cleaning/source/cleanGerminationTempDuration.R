@@ -1,4 +1,4 @@
-## Updated 12 February 2024 ##
+## Updated 3 March 2024 ##
 ## By Justin ##
 
 ## This contains cleaning of germination temperature ##
@@ -6,7 +6,6 @@
 
 # Trying to figure out how the code from cleanall.R transfers over without using the setwd? Or we do the setwd() anyway?
 
-setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
 source("cleaning/source/mergedata.R")
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -31,8 +30,10 @@ options(max.print=1000000)
 
 
 # Bizarre cases
-d %>% filter(germ.temp == 45219) #it's tang10b
-d %>% filter(datasetID == "tang10b") #instead of 45219 it should be 20/10
+# d %>% filter(germ.temp == 45219) #it's tang10b
+# d %>% filter(datasetID == "tang10b") #instead of 45219 it should be 20/10
+# d %>% filter(germ.temp == 100) #basbag09
+# Upon confirmation with the paper, they really did expose the seeds to 100 degC, so no amendments necessary
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -45,7 +46,6 @@ unique(d$germ.temp)
 # d$germ.temp[which(d$germ.temp == "unknown")] <- "NA"
 # d$germ.temp[which(d$germ.temp == "didn't mention")] <- "NA"
 
-
 #Check unusual values:
 # open field---does this qualify for this study ie controlled environment?
 d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
@@ -54,7 +54,7 @@ d$germTemp[which(d$germTemp == "open air")] <- "ambient"
 d$germTemp[which(d$germTemp == "open field")] <- "ambient"
 d$germTemp[which(d$germTemp == "greenhouse")] <- "ambient"
 
-# Values that are transformed ie averaged or rounded:
+# Values that are transformed i.e. averaged or rounded:
 d$germ.tempCor <- d$germ.temp
 
 # Now make new column with heavy duty cleaning
@@ -80,7 +80,7 @@ d$germTemp[which(d$germTemp == "15, 20, 25")] <- "15/20/25"
 d$germTemp[which(d$germTemp == "20,15,20, 25")] <- "20/15/20/25"
 d$germTemp[which(is.na(d$germTemp))] <- "NA"
 
-unique(d$germTemp)
+# unique(d$germTemp)
 
 # 2. germ.duration
 unique(d$germ.duration)
