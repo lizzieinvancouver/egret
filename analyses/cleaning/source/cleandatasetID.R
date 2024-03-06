@@ -30,6 +30,7 @@ d$datasetID[which(d$datasetID == "tang10b")] <- "tang10_2"
 
 d$datasetID[which(d$datasetID == "li11 ")] <- "li11"
 
+# Checked, these are correct: Kolodziejek18,19, Meyer94,95; Olmez07-09; Rouhi12,13; Tilki06,07; tylkowski09-10
 d$datasetID[which(d$datasetID == "Aldridge1993")] <- "Aldridge1992"
 d$datasetID[which(d$datasetID == "Aldridge1994")] <- "Aldridge1992"
 d$datasetID[which(d$datasetID == "Aldridge1995")] <- "Aldridge1992"
@@ -41,11 +42,11 @@ d$datasetID[which(d$datasetID == "irvani14")] <- "irvani12"
 
 d$datasetID[which(d$datasetID == "Sacande05")] <- "Sacande04"
 
-View(unique(d$datasetID))
+# Some studies are duplicated:
+#al-absi10, chen06	chen15	chichizola18		han10	2 lee21	moeini21	tilki07		wytsalucy21 	yusefi-tanha19	
 
-Chen06
-Chen15
-chichizola18
+temp <- unique(d[,c("datasetID", "entered.by")])
+temp$count <-1
+temp$datasetID <- tolower(temp$datasetID)
+tempy <- aggregate(temp["count"], temp[c("datasetID")], FUN = sum)
 
-
-# Checked, these are correct: Kolodziejek18,19, Meyer94,95; Olmez07-09; Rouhi12,13; Tilki06,07; tylkowski09-10
