@@ -13,6 +13,8 @@ egret_TA <- read.csv("input/egret_TA.csv", na.strings=c("NA","NaN", " ","","n/a"
 #colnames(egret_TA)[colnames(egret_TA) == "germ.tim.zero"] <- "germ.time.zero"
 colnames(egret_TA)[colnames(egret_TA) == "notes"] <- "Notes"
 length(unique(egret_TA$datasetID)) #38
+# egret_TA <- subset(egret_TA, datasetID !="Al-Absi10")
+
 dim(egret_TA) # 2879   45
 
 # Sophia C

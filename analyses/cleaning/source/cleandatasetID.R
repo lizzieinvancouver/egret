@@ -43,10 +43,22 @@ d$datasetID[which(d$datasetID == "irvani14")] <- "irvani12"
 d$datasetID[which(d$datasetID == "Sacande05")] <- "Sacande04"
 
 # Some studies are duplicated:
-#al-absi10, chen06	chen15	chichizola18		han10	2 lee21	moeini21	tilki07		wytsalucy21 	yusefi-tanha19	
+#al-absi10, chen06	chen15	chichizola18		han10	 lee21	moeini21	tilki07		wytsalucy21 	yusefi-tanha19	
 
 temp <- unique(d[,c("datasetID", "entered.by")])
 temp$count <-1
 temp$datasetID <- tolower(temp$datasetID)
 tempy <- aggregate(temp["count"], temp[c("datasetID")], FUN = sum)
+
+d <- subset(d, datasetID !="al-absi10" | entered.by != "TA")
+d <- subset(d, datasetID !="chen06" | entered.by != "AZ")
+d <- subset(d, datasetID !="chen15" | entered.by != "TA")
+
+d <- subset(d, datasetID !="chichizola18" | entered.by != "TA") #entered by two people---but different figures/tables
+d <- subset(d, datasetID !="han10" | entered.by != "CRD")
+d <- subset(d, datasetID !="lee21" | entered.by != "AZ") #entered by two people---but different figures/tables
+d <- subset(d, datasetID !="moeini21" | entered.by != "MN")
+d <- subset(d, datasetID !="tilki07" | entered.by != "MN") #entered by two people---but different figures/tables
+d <- subset(d, datasetID !="wytsalucy21" | entered.by != "DK")
+d <- subset(d, datasetID !="yusefi-tanha19" | entered.by != "JS")
 
