@@ -1,12 +1,12 @@
-## Updated 3 March 2024 ##
+## Updated 8 March 2024 ##
 ## By Justin ##
+
+# !!! Don't forget to run cleanall up to line 22 to get the data file "d" !!!
 
 ## This contains cleaning of germination temperature ##
 ## Original code taken from file called cleaningDL.R ##
 
-# Trying to figure out how the code from cleanall.R transfers over without using the setwd? Or we do the setwd() anyway?
 
-source("cleaning/source/mergedata.R")
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # my first look through with tidyverse() for now:
@@ -35,6 +35,16 @@ options(max.print=1000000)
 # d %>% filter(germ.temp == 100) #basbag09
 # Upon confirmation with the paper, they really did expose the seeds to 100 degC, so no amendments necessary
 
+# Some overview for the git issue
+# Figuring out how many papers have alternating temperature regimes
+unique(d$germ.temp)
+d.alt <- d %>%
+  filter(grepl(",|/|alternating|night|-",germTemp)) %>%
+  filter(!grepl("+/-",germTemp)) %>%
+  select(datasetID,study,germTemp)
+n_distinct(d_alt$datasetID) 
+# There are 122 papers in which alternating temperatures occur
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 #1. germination temperature
@@ -46,13 +56,8 @@ unique(d$germ.temp)
 # d$germ.temp[which(d$germ.temp == "unknown")] <- "NA"
 # d$germ.temp[which(d$germ.temp == "didn't mention")] <- "NA"
 
-#Check unusual values:
-# open field---does this qualify for this study ie controlled environment?
-d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
-d$germTemp[which(d$germTemp == "controlled greenhouse")] <- "ambient"
-d$germTemp[which(d$germTemp == "open air")] <- "ambient"
-d$germTemp[which(d$germTemp == "open field")] <- "ambient"
-d$germTemp[which(d$germTemp == "greenhouse")] <- "ambient"
+
+
 
 # Values that are transformed i.e. averaged or rounded:
 d$germ.tempCor <- d$germ.temp
@@ -80,7 +85,50 @@ d$germTemp[which(d$germTemp == "15, 20, 25")] <- "15/20/25"
 d$germTemp[which(d$germTemp == "20,15,20, 25")] <- "20/15/20/25"
 d$germTemp[which(is.na(d$germTemp))] <- "NA"
 
-# unique(d$germTemp)
+
+#Check unusual values:
+# open field---does this qualify for this study ie controlled environment?
+# ____________________________________
+# d.open <- d %>% 
+#   filter(grepl("unregulated: 6-27|open air|open field|greenhouse",germ.temp))
+# xd %>% filter(grepl("greenhouse",germTemp))
+# unique(d_open$datasetID)
+# # parmenter96, deb17, parvin15, and olmez08
+# # parvin15 is controlled greenhouse, so it's fine
+# # upon checking parmenter98, it seems there are indeed estimates for temperature; checking parmenter96
+# d.parm <- d %>% 
+#   filter(datasetID == "parmenter96")
+# # it's either 10-30 (ok) or unregulated (6-27)
+# # deb17 is open air, so disqualify
+# d.olmez <- d %>%
+#   filter(datasetID == "olmez08")
+# ____________________________________
+# Some of the plants here are open field, so we'll keep the other ones that are listed as "greenhouse"
+
+d$germTemp[which(d$germTemp == "greenhouse")] <- "ambient"
+d$germTemp[which(d$germTemp == "controlled greenhouse")] <- "ambient"
+# d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
+# d$germTemp[which(d$germTemp == "open air")] <- "ambient"
+# d$germTemp[which(d$germTemp == "open field")] <- "ambient"
+
+# We should disqualify deb17 and some of olmez08 based on their open field status
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+# Making new columns for temperature regime class (constant or alternating), temperature 1, and temperature 2
+# To make things easier turn the +/- temperature regimes into just their median value in germTemp column
+unique(d$germTemp)
+d.pom <- d %>%
+  filter(grepl("+/-",germTemp)) %>%
+  select(datasetID,study,germTemp)
+d.pom <- sub("\\+.*","\\+",d.pom$germTemp)
+d.pom <- as.data.frame(d.pom)
+
+# sandbox dataframe to mess around with three new columns to get a feel
+d.calcomanie <- d %>%
+  mutate(tempClass = ifelse(grepl(",|/|alternating|night|-",germTemp) & !grepl("+/-",germTemp),"alternating","constant"))
+
+d.calcomanie$temp1 <- 
 
 # 2. germ.duration
 unique(d$germ.duration)
