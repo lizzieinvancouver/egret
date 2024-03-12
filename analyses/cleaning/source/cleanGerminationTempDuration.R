@@ -37,12 +37,12 @@ options(max.print=1000000)
 
 # Some overview for the git issue
 # Figuring out how many papers have alternating temperature regimes
-unique(d$germ.temp)
-d.alt <- d %>%
-  filter(grepl(",|/|alternating|night|-",germTemp)) %>%
-  filter(!grepl("+/-",germTemp)) %>%
-  select(datasetID,study,germTemp)
-n_distinct(d_alt$datasetID) 
+# unique(d$germ.temp)
+# d.alt <- d %>%
+#   filter(grepl(",|/|alternating|night|-",germTemp)) %>%
+#   filter(!grepl("+/-",germTemp)) %>%
+#   select(datasetID,study,germTemp)
+# n_distinct(d_alt$datasetID) 
 # There are 122 papers in which alternating temperatures occur
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -83,6 +83,7 @@ d$germTemp[which(d$germTemp == "5,15")] <- "5/15"
 d$germTemp[which(d$germTemp == "25, 20, 15")] <- "25/20/15"
 d$germTemp[which(d$germTemp == "15, 20, 25")] <- "15/20/25"
 d$germTemp[which(d$germTemp == "20,15,20, 25")] <- "20/15/20/25"
+d$germTemp[which(d$germTemp == "22.2//20/29.4")] <- "22.2/20/29.4"
 d$germTemp[which(is.na(d$germTemp))] <- "NA"
 
 
@@ -117,18 +118,48 @@ d$germTemp[which(d$germTemp == "controlled greenhouse")] <- "ambient"
 
 # Making new columns for temperature regime class (constant or alternating), temperature 1, and temperature 2
 # To make things easier turn the +/- temperature regimes into just their median value in germTemp column
-unique(d$germTemp)
-d.pom <- d %>%
-  filter(grepl("+/-",germTemp)) %>%
-  select(datasetID,study,germTemp)
-d.pom <- sub("\\+.*","\\+",d.pom$germTemp)
-d.pom <- as.data.frame(d.pom)
+# unique(d$germTemp)
+# d.pom <- d %>%
+#   filter(grepl("+/-",germTemp)) %>%
+#   select(datasetID,study,germTemp)
+# d.pom <- sub("\\+.*","\\+",d.pom$germTemp)
+# d.pom <- as.data.frame(d.pom)
 
 # sandbox dataframe to mess around with three new columns to get a feel
-d.calcomanie <- d %>%
-  mutate(tempClass = ifelse(grepl(",|/|alternating|night|-",germTemp) & !grepl("+/-",germTemp),"alternating","constant"))
+# d.calcomanie <- d %>%
+#   mutate(tempClass = ifelse(grepl(",|/|alternating|night|-",germTemp) & !grepl("+/-",germTemp),"alternating","constant"))
 
-d.calcomanie$temp1 <- 
+# In base R
+d.calcomania <- d
+d.calcomania$germTemp <- sub("\\+.*","",d.calcomania$germTemp)
+d.calcomania$tempClass <- ifelse(grepl(",|/|alternating|night|-",d.calcomania$germTemp) & !grepl("+/-",d.calcomania$germTemp),"alternating","constant")
+unique(d.calcomania$germTemp)
+
+d.calcomania$temp1 <- d.calcomania$germTemp
+d.calcomania$temp1 <- sub("\\/.*","",d.calcomania$temp1) #removing forslash
+d.calcomania$temp1 <- sub("\\-.*","",d.calcomania$temp1) #removing dash
+d.calcomania$temp1 <- sub("alternating temperature ","", d.calcomania$temp1)
+d.calcomania$temp1 <- sub("alternating ","", d.calcomania$temp1)
+d.calcomania$temp1 <- sub("\\s.*","",d.calcomania$temp1) #removing to (order of this matters; if you remove the space first, it messes up the two lines above)
+
+d.calcomania$temp2 <- d.calcomania$germTemp
+d.calcomania$temp2 <- sub("alternating temperature ","", d.calcomania$temp2)
+d.calcomania$temp2 <- sub("alternating ","", d.calcomania$temp2)
+d.calcomania$temp2 <- gsub(".*/","",d.calcomania$temp2) #removing backslash
+d.calcomania$temp2 <- gsub(".*-","",d.calcomania$temp2) #removing backslash
+
+
+unique(d.calcomania$temp1)
+unique(d.calcomania$temp2)
+unique(d$germTemp)
+
+# FLAG all of the triple/quadruple temperature regimes as OTHER and then give them a separate column 
+# try out strip split and sub split ()
+
+
+
+gsub(".*:","",foo)
+
 
 # 2. germ.duration
 unique(d$germ.duration)
