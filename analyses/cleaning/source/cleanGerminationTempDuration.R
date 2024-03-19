@@ -27,8 +27,6 @@ options(max.print=1000000)
 # Take out rows containing "open field". DONT TAKE THEM OUT, JUST CONVERT TO "AMBIENT" put in issue, and find frequency of its occurrence
 # What to do with unregulated? Probably do NA, since "unknown/didn't mention" are also changed to NA.
 
-
-
 # Bizarre cases
 # d %>% filter(germ.temp == 45219) #it's tang10b
 # d %>% filter(datasetID == "tang10b") #instead of 45219 it should be 20/10
@@ -55,8 +53,6 @@ unique(d$germ.temp)
 
 # d$germ.temp[which(d$germ.temp == "unknown")] <- "NA"
 # d$germ.temp[which(d$germ.temp == "didn't mention")] <- "NA"
-
-
 
 
 # Values that are transformed i.e. averaged or rounded:
@@ -130,40 +126,85 @@ d$germTemp[which(d$germTemp == "controlled greenhouse")] <- "ambient"
 #   mutate(tempClass = ifelse(grepl(",|/|alternating|night|-",germTemp) & !grepl("+/-",germTemp),"alternating","constant"))
 
 # In base R
-d.calcomania <- d
-d.calcomania$germTemp <- sub("\\+.*","",d.calcomania$germTemp)
-d.calcomania$tempClass <- ifelse(grepl(",|/|alternating|night|-",d.calcomania$germTemp) & !grepl("+/-",d.calcomania$germTemp),"alternating","constant")
-unique(d.calcomania$germTemp)
+# d.calcomania <- d
+# d.calcomania$germTemp <- sub("\\+.*","",d.calcomania$germTemp)
+# d.calcomania$tempClass <- ifelse(grepl(",|/|alternating|night|-",d.calcomania$germTemp) & !grepl("+/-",d.calcomania$germTemp),"alternating","constant")
+# unique(d.calcomania$germTemp)
+# 
+# d.calcomania$temp1 <- d.calcomania$germTemp
+# d.calcomania$temp1 <- sub("\\/.*","",d.calcomania$temp1) #removing forslash
+# d.calcomania$temp1 <- sub("\\-.*","",d.calcomania$temp1) #removing dash
+# d.calcomania$temp1 <- sub("alternating temperature ","", d.calcomania$temp1)
+# d.calcomania$temp1 <- sub("alternating ","", d.calcomania$temp1)
+# d.calcomania$temp1 <- sub("\\s.*","",d.calcomania$temp1) #removing to (order of this matters; if you remove the space first, it messes up the two lines above)
+# 
+# d.calcomania$temp2 <- d.calcomania$germTemp
+# d.calcomania$temp2 <- sub("alternating temperature ","", d.calcomania$temp2)
+# d.calcomania$temp2 <- sub("alternating ","", d.calcomania$temp2)
+# d.calcomania$temp2 <- gsub(".*/","",d.calcomania$temp2) #removing backslash
+# d.calcomania$temp2 <- gsub(".*-","",d.calcomania$temp2) #removing backslash
 
-d.calcomania$temp1 <- d.calcomania$germTemp
-d.calcomania$temp1 <- sub("\\/.*","",d.calcomania$temp1) #removing forslash
-d.calcomania$temp1 <- sub("\\-.*","",d.calcomania$temp1) #removing dash
-d.calcomania$temp1 <- sub("alternating temperature ","", d.calcomania$temp1)
-d.calcomania$temp1 <- sub("alternating ","", d.calcomania$temp1)
-d.calcomania$temp1 <- sub("\\s.*","",d.calcomania$temp1) #removing to (order of this matters; if you remove the space first, it messes up the two lines above)
 
-d.calcomania$temp2 <- d.calcomania$germTemp
-d.calcomania$temp2 <- sub("alternating temperature ","", d.calcomania$temp2)
-d.calcomania$temp2 <- sub("alternating ","", d.calcomania$temp2)
-d.calcomania$temp2 <- gsub(".*/","",d.calcomania$temp2) #removing backslash
-d.calcomania$temp2 <- gsub(".*-","",d.calcomania$temp2) #removing backslash
+d$germTemp <- sub("\\+.*","",d$germTemp)
+d$tempClass <- ifelse(grepl(",|/|alternating|night|-",d.calcomania$germTemp) & !grepl("+/-",d.calcomania$germTemp),"alternating","constant")
 
+d$germTemp[which(d$germTemp == "10-20")] <- "10/20"
+d$germTemp[which(d$germTemp == "11-17")] <- "11/17"
+d$germTemp[which(d$germTemp == "11-20")] <- "11/20"
+d$germTemp[which(d$germTemp == "18-20")] <- "18/20"
+d$germTemp[which(d$germTemp == "15-10")] <- "15/10"
+d$germTemp[which(d$germTemp == "15-5")] <- "15/5"
+d$germTemp[which(d$germTemp == "20-10")] <- "20/10"
+d$germTemp[which(d$germTemp == "20-22")] <- "20/22"
+d$germTemp[which(d$germTemp == "3-15")] <- "3/15"
+d$germTemp[which(d$germTemp == "3-20")] <- "3/20"
+d$germTemp[which(d$germTemp == "3-25")] <- "3/25"
+d$germTemp[which(d$germTemp == "20-30")] <- "20/30"
+d$germTemp[which(d$germTemp == "16-22")] <- "16/22"
+d$germTemp[which(d$germTemp == "10-20")] <- "10/20"
+d$germTemp[which(d$germTemp == "5-10")] <- "5/10"
+d$germTemp[which(d$germTemp == "20-23")] <- "20/23"
+d$germTemp[which(d$germTemp == "15-25")] <- "15/25"
+d$germTemp[which(d$germTemp == "18.5-21.5")] <- "18.5/21.5"
+d$germTemp[which(d$germTemp == "5 to 15")] <- "5/15"
+d$germTemp[which(d$germTemp == "10 to 15")] <- "10/15"
+d$germTemp[which(d$germTemp == "25 to 15")] <- "25/15"
+d$germTemp[which(d$germTemp == "21/18 day/night")] <- "21/18"
+d$germTemp[which(d$germTemp == "20°C (6h dark) ")] <- "20/25"
+d$germTemp[which(d$germTemp == "15 - 25")] <- "15/25"
+d$germTemp[which(d$germTemp == "24/30 (varying)")] <- "24/30"
 
-unique(d.calcomania$temp1)
-unique(d.calcomania$temp2)
+d$germTemp <- sub("alternating temperature ","", d$germTemp)
+d$germTemp <- sub("alternating ","", d$germTemp)
+
 unique(d$germTemp)
+d$tempClass[which(d$germTemp == "25/20/15")] <- "other"
+d$tempClass[which(d$germTemp == "22.2/20/29.4")] <- "other"
+d$tempClass[which(d$germTemp == "15/20/25")] <- "other"
+d$tempClass[which(d$germTemp == "20/15/20/25")] <- "other"
 
-# FLAG all of the triple/quadruple temperature regimes as OTHER and then give them a separate column 
-# try out strip split and sub split ()
+breakbyslash <- strsplit(as.character(d$germTemp), "/", fixed=TRUE)
+d$temp1 <- unlist(lapply(breakbyslash, function(x) x[1]))
+d$temp2 <- unlist(lapply(breakbyslash, function(x) x[2]))
+# There's a weird one where the temp is 27-29/6-18
 
+#those with triple or quadruple temp regimes are not going to have their temp1/temp2 columns populated
+d$temp1[which(d$tempClass == "other")] <- "" 
+d$temp2[which(d$tempClass == "other")] <- ""
 
-
-gsub(".*:","",foo)
-
+d %>% filter(germTemp == "27-29/6-18") #Dehgan84
+# This paper says it's 27-29 in the day and 16-18 at night; which value should we take for each part of photoperiod?
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # 2. germ.duration
+#This variable is important---if NA or unknown or negative please double check the paper
 unique(d$germ.duration)
 
-#This variable is important---if NA or unknown or negative please double check the paper
+dneg <- d %>% filter(grepl("-",germ.duration))
+unique(dneg$datasetID)
+# jensen97, schutz02, gremer20, ren15 have NEGATIVE germ.duration
+dna <- d %>% filter(grepl("unknown|NA",germ.duration))
+unique(dna$datasetID)
+# kato11 and marcello15 have UNKNOWN or NA germ.duration
 
 
