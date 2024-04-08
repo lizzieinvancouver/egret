@@ -1,4 +1,4 @@
-## Updated 8 March 2024 ##
+## Updated 7 April 2024 ##
 ## By Justin ##
 
 # !!! Don't forget to run cleanall up to line 22 to get the data file "d" !!!
@@ -63,6 +63,8 @@ d$germTemp  <- d$germ.temp
 
 d$germTemp[which(d$germTemp == "45219")] <- "20/10"
 d$germTemp[which(d$germTemp == "unknown")] <- "NA"
+d$germTemp[which(d$germTemp == "unknown ")] <- "NA"
+d$germTemp[which(d$germTemp == "didn't mention")] <- "NA"
 d$germTemp[which(d$germTemp == "NA (germ during strat)")] <- "NA"
 d$germTemp[which(d$germTemp == "15-May")] <- "15/5"
 d$germTemp[which(d$germTemp == "20-Oct")] <- "20/10"
@@ -104,11 +106,15 @@ d$germTemp[which(is.na(d$germTemp))] <- "NA"
 
 d$germTemp[which(d$germTemp == "greenhouse")] <- "ambient"
 d$germTemp[which(d$germTemp == "controlled greenhouse")] <- "ambient"
-# d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
-# d$germTemp[which(d$germTemp == "open air")] <- "ambient"
-# d$germTemp[which(d$germTemp == "open field")] <- "ambient"
+d$germTemp[which(d$germTemp == "open air")] <- "ambient"
+d$germTemp[which(d$germTemp == "open field")] <- "ambient"
+# d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient" THis is the Parmenter96 paper
 
 # We should disqualify deb17 and some of olmez08 based on their open field status
+# SCRUM: olmez08 stratified their seeds indoors in a controlled environment, so keep as ambient; deb17 also has controlled environment in treatment so keep it as ambient too
+# d %>% filter(datasetID == "Deb17")
+# d %>% filter(datasetID == "olmez08")
+# d %>% filter(germTemp == "unregulated: 6-27")
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -146,7 +152,7 @@ d$germTemp[which(d$germTemp == "controlled greenhouse")] <- "ambient"
 
 
 d$germTemp <- sub("\\+.*","",d$germTemp)
-d$tempClass <- ifelse(grepl(",|/|alternating|night|-",d.calcomania$germTemp) & !grepl("+/-",d.calcomania$germTemp),"alternating","constant")
+d$tempClass <- ifelse(grepl(",|/|alternating|night|-",d$germTemp) & !grepl("+/-",d$germTemp),"alternating","constant")
 
 d$germTemp[which(d$germTemp == "10-20")] <- "10/20"
 d$germTemp[which(d$germTemp == "11-17")] <- "11/17"
@@ -177,7 +183,7 @@ d$germTemp[which(d$germTemp == "24/30 (varying)")] <- "24/30"
 d$germTemp <- sub("alternating temperature ","", d$germTemp)
 d$germTemp <- sub("alternating ","", d$germTemp)
 
-unique(d$germTemp)
+
 d$tempClass[which(d$germTemp == "25/20/15")] <- "other"
 d$tempClass[which(d$germTemp == "22.2/20/29.4")] <- "other"
 d$tempClass[which(d$germTemp == "15/20/25")] <- "other"
@@ -192,19 +198,42 @@ d$temp2 <- unlist(lapply(breakbyslash, function(x) x[2]))
 d$temp1[which(d$tempClass == "other")] <- "" 
 d$temp2[which(d$tempClass == "other")] <- ""
 
-d %>% filter(germTemp == "27-29/6-18") #Dehgan84
+# d %>% filter(germTemp == "27-29/6-18") #Dehgan84
 # This paper says it's 27-29 in the day and 16-18 at night; which value should we take for each part of photoperiod?
+# SCRUM: take the mean of each period as our alternating; 28 for day and 17 at night
+d$temp1[which(d$datasetID == "Dehgan84" & d$temp1 == "27-29")] <- "28"
+d$temp2[which(d$datasetID == "Dehgan84" & d$temp2 == "16-18")] <- "17"
+d$temp2[which(d$datasetID == "Dehgan84" & d$temp2 == "6-18")] <- "17" 
+d$temp2[which(d$datasetID == "Scocco98" & d$temp2 == "30 (varying)")] <- "30" 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # 2. germ.duration
 #This variable is important---if NA or unknown or negative please double check the paper
 unique(d$germ.duration)
+d$germDuration <- d$germ.duration
 
-dneg <- d %>% filter(grepl("-",germ.duration))
-unique(dneg$datasetID)
-# jensen97, schutz02, gremer20, ren15 have NEGATIVE germ.duration
-dna <- d %>% filter(grepl("unknown|NA",germ.duration))
-unique(dna$datasetID)
-# kato11 and marcello15 have UNKNOWN or NA germ.duration
+# dneg <- d %>% filter(grepl("-",germ.duration))
+# unique(dneg$datasetID)
+# # jensen97, schutz02, gremer20, ren15 have NEGATIVE or a RANGE in germ duration
+# dna <- d %>% filter(grepl("unknown|NA",germ.duration))
+# unique(dna$datasetID)
+# # kato11 and marcello15 have UNKNOWN or NA germ.duration
+
+d$germDuration[which(d$datasetID == "jensen97" & d$germ.time.zero == "when incubation begins")] <- "30"
+d$germDuration[which(d$datasetID == "gremer20" & d$germ.duration == "30-31")] <- "7"
+d$germDuration[which(d$datasetID == "ren15" & d$germ.duration == "30-31")] <- "30"
+d$germDuration[which(d$datasetID == "Marcello15" & d$germ.duration == "NA (<35)")] <- "35"
+d$germDuration[which(d$germDuration == "~30")] <- "30"
+
+# Schutz02: 30-50, it's a range, Can't yet access due to sciencedirect being weird
+# Kato11: cant yet access due to sciencedirect being weird
+
+d$germDuration[which(d$germDuration == "14(7)")] <- "14"
+d$germDuration[which(d$germDuration == "21(7)")] <- "21"
+d$germDuration[which(d$germDuration == "28(7)")] <- "28"
+
+
+
+
 
 
