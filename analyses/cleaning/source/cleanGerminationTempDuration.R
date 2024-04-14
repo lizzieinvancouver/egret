@@ -108,7 +108,7 @@ d$germTemp[which(d$germTemp == "greenhouse")] <- "ambient"
 d$germTemp[which(d$germTemp == "controlled greenhouse")] <- "ambient"
 d$germTemp[which(d$germTemp == "open air")] <- "ambient"
 d$germTemp[which(d$germTemp == "open field")] <- "ambient"
-# d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient" THis is the Parmenter96 paper
+d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
 
 # We should disqualify deb17 and some of olmez08 based on their open field status
 # SCRUM: olmez08 stratified their seeds indoors in a controlled environment, so keep as ambient; deb17 also has controlled environment in treatment so keep it as ambient too
@@ -227,6 +227,9 @@ d$germDuration[which(d$germDuration == "~30")] <- "30"
 
 # Schutz02: 30-50, it's a range, Can't yet access due to sciencedirect being weird
 # Kato11: cant yet access due to sciencedirect being weird
+
+# d %>% filter(datasetID == "Schutz02")
+# d %>% filter(datasetID == "kato11")
 
 d$germDuration[which(d$germDuration == "14(7)")] <- "14"
 d$germDuration[which(d$germDuration == "21(7)")] <- "21"
