@@ -67,7 +67,7 @@ d$chemicalCor[which(d$checmicalCor == "GA + K")] <- "GA+kinetin"
 d$chemicalCor[which(d$checmicalCor == "GA + E")] <- "GA+ethephon(growth_regulator)"
 d$chemicalCor[which(d$checmicalCor == "K + E")] <- "kinetin+ethephon(growth_regulator)"
 d$chemicalCor[which(d$checmicalCor == "GA + E + K")] <- "GA+ethephon(growth_regulator)+kinetin"
-d$chemicalCor[which(d$checmicalCor == "N")] <- "No"
+d$chemicalCor[which(d$checmicalCor == "N")] <- "NA"
 d$chemicalCor[which(d$checmicalCor == "captan + GA3")] <- "captan(fungicide)+GA3"
 d$chemicalCor[which(d$checmicalCor == "Captan fungicide")] <- "captan(fungicide)"
 d$chemicalCor[which(d$checmicalCor == "KT")] <- "kinetin"
@@ -77,7 +77,6 @@ d$chemicalCor[which(d$checmicalCor == "Ethephon")] <- "ethephon(growth_regulator
 d$chemicalCor[which(d$checmicalCor == "H20")] <- "H2O"
 d$chemicalCor[which(d$checmicalCor == "H21")] <- "H2O"
 d$chemicalCor[which(d$checmicalCor == "H22")] <- "H2O"
-d$chemicalCor[which(d$checmicalCor == "NA ")] <- "No"
 d$chemicalCor[which(d$checmicalCor == "polyethylene glycol")] <- "PEG"
 d$chemicalCor[which(d$checmicalCor == "plant preservation solution")] <- "plant.preservation.solution"
 d$chemicalCor[which(d$checmicalCor == "sulphuric acid (H2SO4)")] <- "H2SO4"
@@ -85,7 +84,6 @@ d$chemicalCor[which(d$checmicalCor == "Potassium Nitrate (KNO3)")] <- "KNO3"
 d$chemicalCor[which(d$checmicalCor == "ddH2O")] <- "H2O"
 d$chemicalCor[which(d$checmicalCor == "NACL")] <- "NaCl"
 
-#What should we use for no chemical?: NA? No?
 
 #Check unusual values:
 # log2(red/far.red)--this is not chemical
