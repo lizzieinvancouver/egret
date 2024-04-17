@@ -179,6 +179,9 @@ d$germTemp[which(d$germTemp == "21/18 day/night")] <- "21/18"
 d$germTemp[which(d$germTemp == "20°C (6h dark) ")] <- "20/25"
 d$germTemp[which(d$germTemp == "15 - 25")] <- "15/25"
 d$germTemp[which(d$germTemp == "24/30 (varying)")] <- "24/30"
+d$germDuration[which(d$germDuration == "14(7)")] <- "14"
+d$germDuration[which(d$germDuration == "21(7)")] <- "21"
+d$germDuration[which(d$germDuration == "28(7)")] <- "28"
 
 d$germTemp <- sub("alternating temperature ","", d$germTemp)
 d$germTemp <- sub("alternating ","", d$germTemp)
@@ -209,13 +212,15 @@ d$temp2[which(d$datasetID == "Scocco98" & d$temp2 == "30 (varying)")] <- "30"
 
 # 2. germ.duration
 #This variable is important---if NA or unknown or negative please double check the paper
-unique(d$germ.duration)
+# unique(d$germ.duration)
 d$germDuration <- d$germ.duration
 
 # dneg <- d %>% filter(grepl("-",germ.duration))
 # unique(dneg$datasetID)
 # # jensen97, schutz02, gremer20, ren15 have NEGATIVE or a RANGE in germ duration
-# dna <- d %>% filter(grepl("unknown|NA",germ.duration))
+# duno <- d %>% filter(grepl("unknown",germ.duration))
+# dna <- d %>% filter(grepl("NA",germ.duration))
+# dnatrue <- d %>% filter(germ.duration = NA)
 # unique(dna$datasetID)
 # # kato11 and marcello15 have UNKNOWN or NA germ.duration
 
@@ -224,16 +229,16 @@ d$germDuration[which(d$datasetID == "gremer20" & d$germ.duration == "30-31")] <-
 d$germDuration[which(d$datasetID == "ren15" & d$germ.duration == "30-31")] <- "30"
 d$germDuration[which(d$datasetID == "Marcello15" & d$germ.duration == "NA (<35)")] <- "35"
 d$germDuration[which(d$germDuration == "~30")] <- "30"
+d$germDuration[which(d$datasetID == "Schutz02" & d$germ.duration == "30-50")] <- "50"
 
-# Schutz02: 30-50, it's a range, Can't yet access due to sciencedirect being weird
-# Kato11: cant yet access due to sciencedirect being weird
+d[, 'germDurComment'] = NA
+d$germDurComment[which(d$datasetID == "Schutz02" & d$germDuration == "50")] <- "Paper says 30-50 as germDuration due to end of germination = 1 week since last observed germinant"
+d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- "Looked into the paper and found nothing except for germination counted every 3 days"
 
-# d %>% filter(datasetID == "Schutz02")
-# d %>% filter(datasetID == "kato11")
+# unique(d$germDuration)
+# dna2 <- d %>% select(germDuration)
+# It says there's an NA when I do unique() but it doesn't actually exist in the dataset
 
-d$germDuration[which(d$germDuration == "14(7)")] <- "14"
-d$germDuration[which(d$germDuration == "21(7)")] <- "21"
-d$germDuration[which(d$germDuration == "28(7)")] <- "28"
 
 
 
