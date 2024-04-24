@@ -3,19 +3,6 @@
 
 # Needs to be sourced in cleanall.R
 
-# TO DO! We need to fix some of the multiple name-year IDs to nameyra and nameyrb
-info <- read.csv("..//data/sourceCSV/egret_source.csv")
-subby <- info[,c("Article.Title", "Publication.Year","studyID")]
-subby2 <- unique(subby)
-
-subby$dup <- duplicated(subby[,c("Article.Title", "Publication.Year")])
-temp <- subset(subby, dup != "FALSE") 
-# three detected this way: brandel04, hamala17,	voyiatzis95
-
-subby$dup <- duplicated(subby[,c("studyID")])
-temp <- subset(subby, dup != "FALSE") 
-# Most of these were not actually scraped!
-
 # Fix ones with incorrect years
 d$datasetID[which(d$datasetID == "acosta12")] <- "acosta13"
 d$datasetID[which(d$datasetID == "brandel2005")] <- "brandel05"
