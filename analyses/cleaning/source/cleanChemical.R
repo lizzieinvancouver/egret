@@ -83,8 +83,11 @@ d$chemicalCor[which(d$checmicalCor == "sulphuric acid (H2SO4)")] <- "H2SO4"
 d$chemicalCor[which(d$checmicalCor == "Potassium Nitrate (KNO3)")] <- "KNO3"
 d$chemicalCor[which(d$checmicalCor == "ddH2O")] <- "H2O"
 d$chemicalCor[which(d$checmicalCor == "NACL")] <- "NaCl"
-
-
-#Check unusual values:
-# log2(red/far.red)--this is not chemical
-# control---is it water?
+d$chemicalCor[which(d$checmicalCor == "log2(red/far.red)")] <- "NA"
+d$chemicalCor[which(d$checmicalCor == "NA ClO - 5min")] <- "NaClO"
+d$chemicalCor[which(d$checmicalCor == "NA ClO - 10min")] <- "NaClO"
+d$chemicalCor[which(d$checmicalCor == "NA ClO - 30min")] <- "NaClO"
+d$chemicalCor[which(d$checmicalCor == "NA ClO - 60min")] <- "NaClO"
+d$chemicalCor[which(d$checmicalCor == "NA ClO - 90min")] <- "NaClO"
+d$chemicalCor[which(d$checmicalCor == "NA ClO - 120min")] <- "NaClO"
+d$chemicalCor[which(d$checmicalCor == "NA ClO - 180min")] <- "NaClO"
