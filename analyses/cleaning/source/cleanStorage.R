@@ -177,6 +177,11 @@ d$storageType[which(d$storageType == "moisutre controlled")] <- "moisture-contro
 # washitani85 Geranium carolinianum
 # ALL seeds were in DRY ROOM storage
 # ALL Seeds EXCEPT destined for stratification were then placed into DRY COLD
+# washitani <- d %>% filter(datasetID == "Washitani85")
+
+d$storageType[which(d$storageType == "dry + cold/dry" & d$treatment == "dry-chilling pretreatment")] <- "dry"
+d$storageType[which(d$storageType == "dry + cold/dry" & d$treatment == "moist-chilling pretreatment")] <- "dry"
+d$storageType[which(d$storageType == "dry + cold/dry")] <- "dry + dry/cold"
 
 # d %>% filter(storageType == "cold start")
 # li17 Distylium chinense
@@ -294,4 +299,7 @@ d$storageDetails[which(d$storageDetails == "air-flow")] <- "NA"
 d$storageDetails[which(d$storageDetails == "no storage")] <- "NA"
 d$storageDetails[which(d$storageDetails == "NA (unstored)")] <- "NA"
 d$storageDetails[which(d$storageDetails == "NA (control)")] <- "NA"
+
+# Washitani85
+d$storageDetails[which(d$storageDetails == "dry + cold/dry")] <- "dry first then dry/cold later"
 
