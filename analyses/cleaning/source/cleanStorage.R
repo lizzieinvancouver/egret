@@ -163,6 +163,7 @@ d$storageType[which(d$storageType == "air-flow")] <- "airflow"
 d$storageType[which(d$storageType == "no storage")] <- "NA"
 d$storageType[which(d$storageType == "NA (unstored)")] <- "NA"
 d$storageType[which(d$storageType == "NA (control)")] <- "NA"
+d$storageType[which(d$storageType == "NA")] <- NA
 
 # Weird ones
 # library(tidyverse)
@@ -177,7 +178,7 @@ d$storageType[which(d$storageType == "moisutre controlled")] <- "moisture-contro
 # washitani85 Geranium carolinianum
 # ALL seeds were in DRY ROOM storage
 # ALL Seeds EXCEPT destined for stratification were then placed into DRY COLD
-# washitani <- d %>% filter(datasetID == "Washitani85")
+washitani <- d %>% filter(datasetID == "Washitani85")
 
 d$storageType[which(d$storageType == "dry + cold/dry" & d$treatment == "dry-chilling pretreatment")] <- "dry"
 d$storageType[which(d$storageType == "dry + cold/dry" & d$treatment == "moist-chilling pretreatment")] <- "dry"
@@ -299,7 +300,11 @@ d$storageDetails[which(d$storageDetails == "air-flow")] <- "NA"
 d$storageDetails[which(d$storageDetails == "no storage")] <- "NA"
 d$storageDetails[which(d$storageDetails == "NA (unstored)")] <- "NA"
 d$storageDetails[which(d$storageDetails == "NA (control)")] <- "NA"
+d$storageDetails[which(d$storageDetails == "NA")] <- NA
 
 # Washitani85
 d$storageDetails[which(d$storageDetails == "dry + cold/dry")] <- "dry first then dry/cold later"
+d$storageDetails[which(d$storageDetails == "dry first then dry/cold later" & d$datasetID == "Washitani85" & d$storageType == "dry")] <- "NA"
+
+d %>% filter(datasetID == "Washitani85")
 
