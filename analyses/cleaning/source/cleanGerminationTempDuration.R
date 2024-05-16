@@ -10,8 +10,8 @@
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # my first look through with tidyverse() for now:
-library(tidyverse)
-options(max.print=1000000)
+# library(tidyverse)
+# options(max.print=1000000)
 
 # Some Qs MAKE A NEW ISSUE AND PUT IN EXAMPLES OF THESE ISSUES
 # Some of them say +/-, should we just take the central value? 
@@ -179,6 +179,8 @@ d$germTemp[which(d$germTemp == "21/18 day/night")] <- "21/18"
 d$germTemp[which(d$germTemp == "20°C (6h dark) ")] <- "20/25"
 d$germTemp[which(d$germTemp == "15 - 25")] <- "15/25"
 d$germTemp[which(d$germTemp == "24/30 (varying)")] <- "24/30"
+
+d$germDuration <- d$germ.duration
 d$germDuration[which(d$germDuration == "14(7)")] <- "14"
 d$germDuration[which(d$germDuration == "21(7)")] <- "21"
 d$germDuration[which(d$germDuration == "28(7)")] <- "28"
