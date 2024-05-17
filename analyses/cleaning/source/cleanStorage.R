@@ -93,13 +93,13 @@ d$storageType[which(d$storageType == "room temperature")] <- "room"
 d$storageType[which(d$storageType == "coin envelope (room temperature)")] <- "room"
 d$storageType[which(d$storageType == "room temp sand")] <- "room"
 
-# Ambient, any
-d$storageType[which(d$storageType == "laboratory")] <- "ambient"
-d$storageType[which(d$storageType == "controlled environment")] <- "ambient"
-d$storageType[which(d$storageType == "ground at 3mm")] <- "ambient"
-d$storageType[which(d$storageType == "natural environment")] <- "ambient"
-d$storageType[which(d$storageType == "ambient")] <- "ambient"
-d$storageType[which(d$storageType == "naked storage")] <- "ambient"
+# # Ambient, any
+# d$storageType[which(d$storageType == "laboratory")] <- "ambient"
+# d$storageType[which(d$storageType == "controlled environment")] <- "ambient"
+# d$storageType[which(d$storageType == "ground at 3mm")] <- "ambient"
+# d$storageType[which(d$storageType == "natural environment")] <- "ambient"
+# d$storageType[which(d$storageType == "ambient")] <- "ambient"
+# d$storageType[which(d$storageType == "naked storage")] <- "ambient"
 
 # Just moist
 d$storageType[which(d$storageType == "moist")] <- "moist"
@@ -199,36 +199,32 @@ d$storageDetails[which(d$storageType == "cold start")] <- "cold"
 unique(d$storageDetails)
 
 # Just dry
-d$storageDetails[which(d$storageDetails == "dry")] <- "NA"
-d$storageDetails[which(d$storageDetails == "air dried at 25+/-2C for 7 days, then brown paper bags")] <- "air-dry/paperbag"
 d$storageDetails[which(d$storageDetails == "air dry")] <- "air-dry"
 d$storageDetails[which(d$storageDetails == "sun dry")] <- "sun-dry"
 d$storageDetails[which(d$storageDetails == "dry, airy")] <- "air-dry"
-d$storageDetails[which(d$storageDetails == "dry, in paper bags")] <- "paperbag"
-d$storageDetails[which(d$storageDetails == "dry ")] <- "NA"
+d$storageDetails[which(d$storageDetails == "dry, in paper bags")] <- "dry paper bag"
 
 # Dry cold
 d$storageDetails[which(d$storageDetails == "freeze/dry")] <- "dry frozen"
-d$storageDetails[which(d$storageDetails == "dry/cold")] <- "NA"
-d$storageDetails[which(d$storageDetails == "cold, dry")] <- "NA"
-d$storageDetails[which(d$storageDetails == "dry/refrigerated")] <- "refrigerated"
-d$storageDetails[which(d$storageDetails == "dry refrigeration")] <- "refrigerated"
-d$storageDetails[which(d$storageDetails == "dry refrigerator")] <- "refrigerated"
-d$storageDetails[which(d$storageDetails == "dry, refrigeration")] <- "refrigerated"
-d$storageDetails[which(d$storageDetails == "cold/dry")] <- "NA"
-d$storageDetails[which(d$storageDetails == "cold dry")] <- "NA"
+d$storageDetails[which(d$storageDetails == "dry/cold")] <- "dry cold"
+d$storageDetails[which(d$storageDetails == "cold, dry")] <- "dry cold"
+d$storageDetails[which(d$storageDetails == "dry/refrigerated")] <- "dry refrigerated"
+d$storageDetails[which(d$storageDetails == "dry refrigeration")] <- "dry refrigerated"
+d$storageDetails[which(d$storageDetails == "dry refrigerator")] <- "dry refrigerated"
+d$storageDetails[which(d$storageDetails == "dry, refrigeration")] <- "dry refrigerated"
+d$storageDetails[which(d$storageDetails == "cold/dry")] <- "dry cold"
+d$storageDetails[which(d$storageDetails == "cold dry")] <- "dry cold"
 
 # Dry room temp
-d$storageDetails[which(d$storageDetails == "dry, room temp")] <- "NA"
-d$storageDetails[which(d$storageDetails == "dry room temp")] <- "NA"
-d$storageDetails[which(d$storageDetails == "room temp dry")] <- "NA"
+d$storageDetails[which(d$storageDetails == "dry, room temp")] <- "dry room temp"
+d$storageDetails[which(d$storageDetails == "room temp dry")] <- "dry room temp"
 
 # Just room temp
-d$storageDetails[which(d$storageDetails == "room conditions")] <- "NA"
-d$storageDetails[which(d$storageDetails == "room temp")] <- "NA"
-d$storageDetails[which(d$storageDetails == "room temperature")] <- "NA"
-d$storageDetails[which(d$storageDetails == "coin envelope (room temperature)")] <- "envelope"
-d$storageDetails[which(d$storageDetails == "room temp sand")] <- "in sand"
+d$storageDetails[which(d$storageDetails == "room conditions")] <- "room temp"
+d$storageDetails[which(d$storageDetails == "room temp")] <- "room temp"
+d$storageDetails[which(d$storageDetails == "room temperature")] <- "room temp"
+d$storageDetails[which(d$storageDetails == "coin envelope (room temperature)")] <- "room temp envelope"
+d$storageDetails[which(d$storageDetails == "room temp sand")] <- "room temp sand"
 
 # Ambient, any
 # d$storageDetails[which(d$storageDetails == "laboratory")] <- "ambient"
@@ -239,47 +235,41 @@ d$storageDetails[which(d$storageDetails == "room temp sand")] <- "in sand"
 # d$storageDetails[which(d$storageDetails == "naked storage")] <- "ambient"
 
 # Just moist
-d$storageDetails[which(d$storageDetails == "moist")] <- "NA"
-d$storageDetails[which(d$storageDetails == "undried")] <- "NA"
+d$storageDetails[which(d$storageDetails == "undried")] <- "moist"
 d$storageDetails[which(d$storageDetails == "in tap water")] <- "water"
-d$storageDetails[which(d$storageDetails == "partly dry")] <- "NA"
-d$storageDetails[which(d$storageDetails == "wet")] <- "NA"
+d$storageDetails[which(d$storageDetails == "partly dry")] <- "moist"
 d$storageDetails[which(d$storageDetails == "wet; water")] <- "water"
-d$storageDetails[which(d$storageDetails == "damp")] <- "NA"
+d$storageDetails[which(d$storageDetails == "damp")] <- "moist"
 
 # Just cold
-d$storageDetails[which(d$storageDetails == "cold")] <- "NA"
 d$storageDetails[which(d$storageDetails == "vapor of liquid nitrogen")] <- "liquid nitrogen vapour"
-d$storageDetails[which(d$storageDetails == "cold sand")] <- "in sand"
 d$storageDetails[which(d$storageDetails == "in liquid nitrogen")] <- "liquid nitrogen submerged"
 
 # Moist cold NA
-d$storageDetails[which(d$storageDetails == "cold/wet")] <- "NA"
+d$storageDetails[which(d$storageDetails == "cold/wet")] <- "moist cold"
 
 # Just warm
 d$storageDetails[which(d$storageDetails == "oven")] <- "oven"
 
 # Just dark
-d$storageDetails[which(d$storageDetails == "dark")] <- "NA"
-d$storageDetails[which(d$storageDetails == "paper bags in dark")] <- "paperbag"
-d$storageDetails[which(d$storageDetails == "darkness")] <- "NA"
-d$storageDetails[which(d$storageDetails == "in darkness")] <- "NA"
+d$storageDetails[which(d$storageDetails == "paper bags in dark")] <- "dark paper bag"
+d$storageDetails[which(d$storageDetails == "darkness")] <- "dark"
+d$storageDetails[which(d$storageDetails == "in darkness")] <- "dark"
 
 # Photoperiod
-d$storageDetails[which(d$storageDetails == "cool-white alternating 12/12")] <- "cool white light"
+d$storageDetails[which(d$storageDetails == "cool-white alternating 12/12")] <- "cool-white light 12-12 photoperiod"
 d$storageDetails[which(d$storageDetails == "moist, in light/dark at 12/12h")] <- "moist 12-12 photoperiod"
 
 # dry NA dark
-d$storageDetails[which(d$storageDetails == "silica gel, dark")] <- "in silica gel"
-d$storageDetails[which(d$storageDetails == "dry, in dark")] <- "NA"
-d$storageDetails[which(d$storageDetails == "dry shade")] <- "shade"
+d$storageDetails[which(d$storageDetails == "silica gel, dark")] <- "dark in silica gel"
+d$storageDetails[which(d$storageDetails == "dry, in dark")] <- "dry dark"
+d$storageDetails[which(d$storageDetails == "dry shade")] <- "dry shade"
 
 # NA cold dark
-d$storageDetails[which(d$storageDetails == "dark refrigeration")] <- "refrigerated"
+d$storageDetails[which(d$storageDetails == "dark refrigeration")] <- "dark refrigerated"
 
 # NA room dark
-d$storageDetails[which(d$storageDetails == "dark room temp")] <- "NA"
-d$storageDetails[which(d$storageDetails == "room temp dark")] <- "NA"
+d$storageDetails[which(d$storageDetails == "room temp dark")] <- "dark room temp"
 
 # airtight
 d$storageDetails[which(d$storageDetails == "sealed glass bottle")] <- "glass container"
@@ -291,10 +281,9 @@ d$storageDetails[which(d$storageDetails == "airtight plastic bags ")] <- "plasti
 d$storageDetails[which(d$storageDetails == "glass bottles, laboratory conditions")] <- "glass container"
 d$storageDetails[which(d$storageDetails == "air-tight containers")] <- "container"
 d$storageDetails[which(d$storageDetails == "airtight polyethylene bags")] <- "plastic bag"
-d$storageDetails[which(d$storageDetails == "air-tight")] <- "NA"
 
 # airflow
-d$storageDetails[which(d$storageDetails == "air-flow")] <- "NA"
+d$storageDetails[which(d$storageDetails == "air-flow")] <- "air-flow"
 
 # NA
 d$storageDetails[which(d$storageDetails == "no storage")] <- "NA"
@@ -305,6 +294,4 @@ d$storageDetails[which(d$storageDetails == "NA")] <- NA
 # Washitani85
 d$storageDetails[which(d$storageDetails == "dry + cold/dry")] <- "dry first then dry/cold later"
 d$storageDetails[which(d$storageDetails == "dry first then dry/cold later" & d$datasetID == "Washitani85" & d$storageType == "dry")] <- "NA"
-
-# d %>% filter(datasetID == "Washitani85")
 
