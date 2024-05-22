@@ -15,39 +15,69 @@ unique(d$scarification)
 unique(d$scarif.type)
 
 # clean 
-# move hot to soaking and cold to cold trt
 
+# fix typos and re-organizing 
+d$scarifType <- d$scarif.type
+d$scarifType[which(d$datasetID == "rizwan18" & d$scarif.type == "Y")] <- NA
+d$scarifType[which(d$scarifType == "partial scarification of seed coat")] <- "partially scarified"
+d$scarifType[which(d$scarifType == "seed coat")] <- "seed coat removal"
+d$scarifType[which(d$scarifType == "coat removal ")] <- "seed coat removal"
+d$scarifType[which(d$scarifType == "seed coat removed")] <- "seed coat removal"
+d$scarifType[which(d$scarifType == "mechanical with sandpaper")] <- "mechanical - sandpaper"
+d$scarifType[which(d$scarifType == "mechanical with razor")] <- "mechanical - razor"
+d$scarifType[which(d$scarifType == "use temerpature to permeate seedcoat")] <- NA
+d$scarifType[which(d$datasetID == "lee06")] <- NA
+d$scarifType[which(d$datasetID == "grose57")] <- NA
+d$scarifType[which(d$datasetID == "maithani90")] <- NA
+d$scarifType[which(d$datasetID == "rafiq21")] <- NA
+d$scarifType[which(d$scarifType == "H2SO4.98per.0min")] <- NA
+d$scarifType[which(d$scarifType == "hot.water.0min")] <- NA
+d$scarifType[which(d$scarifType == "soaking in water")] <- NA #included in scarification because they did both soaking and water scarification (now moved to other treatments)
+d$scarifType[which(d$scarifType == "hot water scarification")] <- NA
+d$scarifType[which(d$scarifType == "hot water 70C")] <- NA
+d$scarifType[which(d$scarifType == "hot water")] <- NA
+d$scarifType[which(d$scarifType == "hot.water.10min")] <- NA
+d$scarifType[which(d$scarifType == "hot.water.20min")] <- NA #check their scarification column
+d$scarifType[which(d$scarifType == "hot.water.30min")] <- NA
+d$scarifType[which(d$datasetID == "rahnama-ghahfarokhi07" & d$treatment == "Hot water 70°C for 10 min")] <- "mechanical - 70°C hot water"
+d$scarifType[which(d$datasetID == "rahnama-ghahfarokhi07" & d$treatment == "Hot water 90°C for 10 min")] <- "mechanical - 90°C hot water"
+d$scarifType[which(d$datasetID == "rahnama-ghahfarokhi07" & d$treatment == "H2SO4 (80%), 10 min")] <- "chemical - H2SO4 (80%)"
+d$scarifType[which(d$datasetID == "rahnama-ghahfarokhi07" & d$treatment == "H2SO4 (80%), 5 min")] <- "chemical - H2SO4 (80%)"
+d$scarifType[which(d$datasetID == "rahnama-ghahfarokhi07" & d$treatment == "Thiourea (3%), 72h")] <- "chemical - Thiourea (3%)"
+d$scarifType[which(d$datasetID == "rahnama-ghahfarokhi07" & d$treatment == "KNO3 (0.3%), 72h")] <- "chemical - KNO3 (0.3%)"
+d$scarifType[which(d$datasetID == "jacquemart21" & d$chemical == "H2SO4")] <- "chemical - H2SO4"
+d$scarifType[which(d$datasetID == "tilki07" & d$chemical == "H2SO4")] <- "chemical - H2SO4"
+d$scarifType[which(d$datasetID == "tilki07" & d$chemical == "hydrogen.peroxide")] <- "chemical - hydrogen peroxide"
+d$scarifType[which(d$datasetID == "tilki07" & d$chemical == "citric.acid")] <- "chemical - citric acid"
+d$scarifType[which(d$datasetID == "tilki07" & d$chemical == "citric.acid/GA3")] <- "chemical - citric acid"
+
+unique(d$scarifType)
 # group more generally --- chemical vs mechanical
-d$scarifTypeGen <- d$scarif.type
+d$scarifTypeGen <- d$scarif.Type
 # mechanical 
 d$scarifTypeGen[which(d$scarifTypeGen == "Mechanical")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "sandpaper")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "sand paper")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "sand paper (Np. 150)")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "mechanical - sandpaper")] <- "mechanical"
-d$scarifTypeGen[which(d$scarifTypeGen == "mechanical with sandpaper")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "mechanical - razor")] <- "mechanical"
-d$scarifTypeGen[which(d$scarifTypeGen == "mechanical with razor")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "coat removal")] <- "mechanical"
-d$scarifTypeGen[which(d$scarifTypeGen == "coat removal ")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "pericarp removal")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "tegument cutting")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "seed polishing")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "trimmed pappus")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "pelleted")] <- "mechanical"
-d$scarifTypeGen[which(d$scarifTypeGen == "seed coat removed")] <- "mechanical"
-d$scarifTypeGen[which(d$scarifTypeGen == "Seed coat removed")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "burned")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "scapel")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "scalpel on lenticular side")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "manual with needle at the cotyledon end.")] <- "mechanical"
-d$scarifTypeGen[which(d$scarifTypeGen == "seed coat")] <- "mechanical" #seed coat removed
 d$scarifTypeGen[which(d$scarifTypeGen == "partly scarified")] <- "mechanical" #seed coat was partly removed 
+d$scarifTypeGen[which(d$scarifTypeGen == "mechanical - 70°C hot water")] <- "mechanical"
+d$scarifTypeGen[which(d$scarifTypeGen == "mechanical - 90°C hot water")] <- "mechanical"
 
 # chemical
 d$scarifTypeGen[which(d$scarifTypeGen == "Chemical")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "H2SO4")] <- "chemical"
-d$scarifTypeGen[which(d$scarifTypeGen == "H2SO4.98per.0min")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "H2SO4.98per.10min")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "H2SO4.98per.20min")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "H2SO4.98per.30min")] <- "chemical"
@@ -57,21 +87,15 @@ d$scarifTypeGen[which(d$scarifTypeGen == "NaClO")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "3% H2O2 (2 hrs)")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "chemical, H2O2")] <- "chemical"
 
-
-# temperature
-d$scarifTypeGen[which(d$scarifTypeGen == "use  temerpature to permeate seedcoat")] <- "temperature"
-d$scarifTypeGen[which(d$scarifTypeGen == "cold")] <- "temperature" #used both cold treatment and 
-
-
 # move moisture to other treatment (Al-Absi10, prknova15, rouhi13, Wickens01)
 d$scarifTypeGen[which(d$scarifTypeGen == "soaking in water")] <- "moisture" #included in scarification because they did both soaking and water scarification
 d$scarifTypeGen[which(d$scarifTypeGen == "hot water scarification")] <- "moisture"
 d$scarifTypeGen[which(d$scarifTypeGen == "hot water 70C")] <- "moisture"
 d$scarifTypeGen[which(d$scarifTypeGen == "hot water")] <- "moisture"
-d$scarifTypeGen[which(d$scarifTypeGen == "hot.water.0min")] <- "NA"
 d$scarifTypeGen[which(d$scarifTypeGen == "hot.water.10min")] <- "moisture"
 d$scarifTypeGen[which(d$scarifTypeGen == "hot.water.20min")] <- "moisture"
 d$scarifTypeGen[which(d$scarifTypeGen == "hot.water.30min")] <- "moisture"
+
 # Al-Absi10
 # they see GA3 as scarifcation too but in our cleaning we put GA3 in a separate column, hence NA for GA3 scarifications
 d$other.treatment[which((d$datasetID == "Al-Absi10" | 
@@ -93,40 +117,39 @@ d$other.treatment[which((d$datasetID == "rouhi13") &
 unique(d$scarifTypeGen)
 
 #look at each general categories 
-d.temp <- subset(d,d$scarifTypeGen == "temperature")
-d.moisture <- subset(d,d$scarifTypeGen == "moisture") 
 d.mechanical <- subset(d,d$scarifTypeGen == "mechanical")
 d.chemical <- subset(d,d$scarifTypeGen == "chemical")
 unique(d.temp$datasetID)
-unique(d.moisture$datasetID)
 unique(d.mechanical$datasetID)
 unique(d.chemical$datasetID)
 
 # group specifically 
 d$scarifTypeSpe <- d$scarif.type
 unique(d$scarifTypeSpe)
-d$scarifTypeSpe[which(d$scarifTypeSpe == "sandpaper")] <- "Mechanical - sandpaper"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "sand paper (Np. 150)")] <- "Mechanical - sandpaper"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "sandpaper")] <- "mechanical - sandpaper"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "sand paper (Np. 150)")] <- "mechanical - sandpaper"
 #d$scarifTypeGen[which(d$scarifTypeGen == "Mechanical")] <- "mechanical"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "sand paper")] <- "Mechanical - sandpaper"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical with sandpaper")] <- "Mechanical - sandpaper"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical with razor")] <- "Mechanical - razor"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "coat removal")] <- "Mechanical - seed coat removal"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "coat removal ")] <- "Mechanical - seed coat removal"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "pericarp removal")] <- "Mechanical - pericarp removal"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "tegument cutting")] <- "Mechanical - tegument cutting"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "seed polishing")] <- "Mechanical - seed polishing"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "trimmed pappus")] <- "Mechanical - trimmed pappus"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "pelleted")] <- "Mechanical - pelleted"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "seed coat removed")] <- "Mechanical - seed coat removal"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "Seed coat removed")] <- "Mechanical - seed coat removal"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "burned")] <- "Mechanical - burned"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "scapel")] <- "Mechanical - scapel"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "sand paper")] <- "mechanical - sandpaper"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical with sandpaper")] <- "mechanical - sandpaper"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical with razor")] <- "mechanical - razor"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "coat removal")] <- "mechanical - seed coat removal"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "coat removal ")] <- "mechanical - seed coat removal"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "pericarp removal")] <- "mechanical - pericarp removal"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "tegument cutting")] <- "mechanical - tegument cutting"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "seed polishing")] <- "mechanical - seed polishing"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "trimmed pappus")] <- "mechanical - trimmed pappus"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "pelleted")] <- "mechanical - pelleted"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "seed coat removed")] <- "mechanical - seed coat removal"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "Seed coat removed")] <- "mechanical - seed coat removal"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "burned")] <- "mechanical - burned"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "scapel")] <- "mechanical - scapel"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "scalpel on lenticular side")] <- "mechanical - scalpel"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "manual with needle at the cotyledon end.")] <- "mechanical - needle"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 70°C hot water")] <- "mechanical - hot water"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 90°C hot water")] <- "mechanical - hot water"
 
 # chemical
-d$scarifTypeSpe[which(d$scarifTypeSpe == "Chemical")] <- "Chemical"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "Chemical")] <- "chemical"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "H2SO4")] <- "chemical - H2SO4"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "H2SO4.98per.0min")] <- "chemical - H2SO4"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "H2SO4.98per.10min")] <- "chemical - H2SO4"
@@ -137,6 +160,10 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "acid")] <- "chemical - acid"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "NaClO")] <- "chemical - NaClO"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "3% H2O2 (2 hrs)")] <- "chemical - H2O2"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "chemical, H2O2")] <- "chemical - H2O2"
+d$scarifTypeSpe[which(d$datasetID == "Arslan11" & d$scarifTypeSpe == "chemical")] <- "chemical - H2SO4"
+d$scarifTypeSpe[which(d$datasetID == "moradi12" & d$scarifTypeSpe == "acid")] <- "chemical - H2SO4"
+d$scarifTypeSpe[which(d$datasetID == "irvani12" & d$scarifTypeSpe == "acid")] <- "chemical - H2SO4"
+d$scarifTypeSpe[which(d$datasetID == "Al-Absi10" & d$scarifTypeSpe == "acid scarification")] <- "chemical - H2SO4"
 
 #temperature
 d$scarifTypeSpe[which(d$scarifTypeSpe == "use temerpature to permeate seedcoat")] <- "temperature"
