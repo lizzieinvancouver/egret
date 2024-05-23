@@ -1,0 +1,14 @@
+Description:
+Data Scraping of the USDA Woody Seed Manual Via Amazon Textract
+Feb. 10, 2024
+
+By Sandy Zhang:
+
+I found this aws tool as it claims to "Extract text and structured data such as tables and forms from documents using artificial intelligence". I tried playing with it using a pdf consisting of (Table 2 for Fagus on pg 520; Table 3 on pg 945, Table 5 for Fagus on pg 523; Table 3 for Aronia on pg 273), and the result is much better than chatGPT. Textract will parse all the tables and return each table as a separate CSV file along with the confidence score.
+advantages:
+a. In cases when the confidence score is too low, AWS will send the info to human review and return the result to Amazon S3 (the "Google Drive").
+b. The process can be done manually or through an endpoint so the process can be made more automatically.
+c. Free tier account can have the first 1000 pages for free and $1.5 per 1000 pages, much cheaper than chatGPT
+disadvantages:
+a. the parse CSV files will contain some confidence scores and format but can be cleaned by R
+b. some fields/values may be missed or wrong, as AI can be error-prone. some manual effort is required to quickly scan through as validation.
