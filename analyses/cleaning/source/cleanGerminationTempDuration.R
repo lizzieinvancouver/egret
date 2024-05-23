@@ -215,8 +215,8 @@ d$temp2[which(d$datasetID == "Scocco98" & d$temp2 == "30 (varying)")] <- "30"
 # 2. germ.duration
 #This variable is important---if NA or unknown or negative please double check the paper
 # unique(d$germ.duration)
-d$germDuration <- d$germ.duration
-
+# d$germDuration <- d$germ.duration
+# 
 # dneg <- d %>% filter(grepl("-",germ.duration))
 # unique(dneg$datasetID)
 # # jensen97, schutz02, gremer20, ren15 have NEGATIVE or a RANGE in germ duration
@@ -241,9 +241,54 @@ d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <
 # dna2 <- d %>% select(germDuration)
 # It says there's an NA when I do unique() but it doesn't actually exist in the dataset
 
-
-
-
-
-
-
+# library(tidyverse)
+# # unique(d$germ.temp)
+# #
+# dtempchange <- d
+# pattern <- c("alternating","day","dark","+/-")
+# pattern2 <- c("-","to","/")
+# 
+# dtempchange <- d %>%
+#   filter(!grepl(paste(pattern,collapse="|"),germ.temp))
+# unique(dtempchange$germ.temp)
+# #
+# dtempchange2 <- dtempchange %>%
+#   filter(grepl(paste(pattern2,collapse = "|"),germ.temp))
+# unique(dtempchange2$germ.temp)
+# n_distinct(dtempchange2$datasetID)
+# print(unique(dtempchange2$datasetID))
+# #
+# # getwd()
+# # setwd("C:/Users/sapph/Documents/ubc things/work/egret/data")
+# #
+# # egretmaster <- read_csv("egret.csv")
+# #
+# # setwd("C:/Users/sapph/Documents/ubc things/work/egret/analyses")
+# #
+# # ids <- as.list(unique(dtempchange2$datasetID))
+# # dflagged <- egretmaster %>%
+# #   filter(studyID %in% ids)
+# # runif(6,min = 1, max = 77)
+# 
+# d %>% filter(datasetID == "zhang21") %>%
+#   select(germ.temp,species)
+# 
+# missingpdf <- read_csv("cleaning/missingPdf.csv")
+# missing <- missingpdf %>%
+#   filter(assigned.to == "Justin")
+# write.csv(missing,file="missing.csv")
+# 
+# missingpdf$pdf.in.folder[which(missingpdf$assigned.to == "Justin")] <- "Y" 
+# missingpdf$ILL.needed[which(missingpdf$assigned.to == "Justin")] <- "N" 
+# 
+# missingpdf$pdf.in.folder[which(missingpdf$datasetID == "chien10")] <- "N"
+# missingpdf$ILL.needed[which(missingpdf$datasetID == "chien10")] <- "Y" 
+# 
+# missingpdf$pdf.in.folder[which(missingpdf$datasetID == "cousins10")] <- "N"
+# missingpdf$ILL.needed[which(missingpdf$datasetID == "cousins10")] <- "Y" 
+# 
+# missingpdf$pdf.in.folder[which(missingpdf$datasetID == "crank92")] <- "N"
+# missingpdf$ILL.needed[which(missingpdf$datasetID == "crank92")] <- "Y" 
+# 
+# missingpdf$pdf.in.folder[which(missingpdf$datasetID == "geszprych02")] <- "N"
+# missingpdf$ILL.needed[which(missingpdf$datasetID == "geszprych02")] <- "Y" 
