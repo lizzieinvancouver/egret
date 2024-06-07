@@ -6,9 +6,11 @@
 ## 24 Feb subset each gen group, can start specific grouping ## 
 ## 9 Apr figure out unusual entry and moisture ##
 ## 17 May clarify questions from git issues ##
+## hot water scarification clarification
+
 
 ## to do:
-## rahnama-ghahfarokhi07 specify the scarification column 
+## find partly scarified column in woodward
 ## 
 #1. Scarification
 unique(d$scarification)
@@ -16,6 +18,9 @@ unique(d$scarif.type)
 
 # clean 
 
+# fix typos and re-organizing 
+d$scarifType <- d$scarif.type
+unique(d$scarifType)
 # fix typos and re-organizing 
 d$scarifType <- d$scarif.type
 d$scarifType[which(d$datasetID == "rizwan18" & d$scarif.type == "Y")] <- NA
@@ -34,7 +39,6 @@ d$scarifType[which(d$scarifType == "H2SO4.98per.0min")] <- NA
 d$scarifType[which(d$scarifType == "hot.water.0min")] <- NA
 d$scarifType[which(d$scarifType == "soaking in water")] <- NA #included in scarification because they did both soaking and water scarification (now moved to other treatments)
 d$scarifType[which(d$scarifType == "hot water scarification")] <- NA
-d$scarifType[which(d$scarifType == "hot water 70C")] <- NA
 d$scarifType[which(d$scarifType == "hot water")] <- NA
 d$scarifType[which(d$scarifType == "hot.water.10min")] <- NA
 d$scarifType[which(d$scarifType == "hot.water.20min")] <- NA #check their scarification column
@@ -50,10 +54,10 @@ d$scarifType[which(d$datasetID == "tilki07" & d$chemical == "H2SO4")] <- "chemic
 d$scarifType[which(d$datasetID == "tilki07" & d$chemical == "hydrogen.peroxide")] <- "chemical - hydrogen peroxide"
 d$scarifType[which(d$datasetID == "tilki07" & d$chemical == "citric.acid")] <- "chemical - citric acid"
 d$scarifType[which(d$datasetID == "tilki07" & d$chemical == "citric.acid/GA3")] <- "chemical - citric acid"
-
+d$scarifType[which(d$datasetID == "olmez08" & d$chemical == "Y")] <- "chemical - H2SO4"
 unique(d$scarifType)
 # group more generally --- chemical vs mechanical
-d$scarifTypeGen <- d$scarif.Type
+d$scarifTypeGen <- d$scarifType
 # mechanical 
 d$scarifTypeGen[which(d$scarifTypeGen == "Mechanical")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "sandpaper")] <- "mechanical"
@@ -74,6 +78,8 @@ d$scarifTypeGen[which(d$scarifTypeGen == "manual with needle at the cotyledon en
 d$scarifTypeGen[which(d$scarifTypeGen == "partly scarified")] <- "mechanical" #seed coat was partly removed 
 d$scarifTypeGen[which(d$scarifTypeGen == "mechanical - 70°C hot water")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "mechanical - 90°C hot water")] <- "mechanical"
+d$scarifTypeGen[which(d$scarifTypeGen == "seed coat removal")] <- "mechanical"
+d$scarifTypeGen[which(d$scarifTypeGen == "Seed coat removed")] <- "mechanical"
 
 # chemical
 d$scarifTypeGen[which(d$scarifTypeGen == "Chemical")] <- "chemical"
@@ -86,6 +92,16 @@ d$scarifTypeGen[which(d$scarifTypeGen == "acid")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "NaClO")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "3% H2O2 (2 hrs)")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "chemical, H2O2")] <- "chemical"
+d$scarifTypeGen[which(d$scarifTypeGen == "chemical - H2SO4")] <- "chemical"
+d$scarifTypeGen[which(d$scarifTypeGen == "chemical - hydrogen peroxide")] <- "chemical"
+d$scarifTypeGen[which(d$scarifTypeGen == "chemical - citric acid")] <- "chemical"
+d$scarifTypeGen[which(d$scarifTypeGen == "chemical - H2SO4 (80%)")] <- "chemical"
+d$scarifTypeGen[which(d$scarifTypeGen == "chemical - Thiourea (3%)")] <- "chemical"
+d$scarifTypeGen[which(d$scarifTypeGen == "chemical - KNO3 (0.3%)")] <- "chemical"
+
+
+
+
 
 # move moisture to other treatment (Al-Absi10, prknova15, rouhi13, Wickens01)
 d$scarifTypeGen[which(d$scarifTypeGen == "soaking in water")] <- "moisture" #included in scarification because they did both soaking and water scarification
@@ -119,13 +135,12 @@ unique(d$scarifTypeGen)
 #look at each general categories 
 d.mechanical <- subset(d,d$scarifTypeGen == "mechanical")
 d.chemical <- subset(d,d$scarifTypeGen == "chemical")
-unique(d.temp$datasetID)
 unique(d.mechanical$datasetID)
 unique(d.chemical$datasetID)
 
 # group specifically 
-d$scarifTypeSpe <- d$scarif.type
-unique(d$scarifTypeSpe)
+d$scarifTypeSpe <- d$scarifType
+
 d$scarifTypeSpe[which(d$scarifTypeSpe == "sandpaper")] <- "mechanical - sandpaper"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "sand paper (Np. 150)")] <- "mechanical - sandpaper"
 #d$scarifTypeGen[which(d$scarifTypeGen == "Mechanical")] <- "mechanical"
@@ -145,8 +160,9 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "burned")] <- "mechanical - burned"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "scapel")] <- "mechanical - scapel"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "scalpel on lenticular side")] <- "mechanical - scalpel"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "manual with needle at the cotyledon end.")] <- "mechanical - needle"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 70°C hot water")] <- "mechanical - hot water"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 90°C hot water")] <- "mechanical - hot water"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "seed coat removal")] <- "mechanical - seed coat removal"
+
+unique(d$scarifTypeSpe)
 
 # chemical
 d$scarifTypeSpe[which(d$scarifTypeSpe == "Chemical")] <- "chemical"
@@ -164,22 +180,5 @@ d$scarifTypeSpe[which(d$datasetID == "Arslan11" & d$scarifTypeSpe == "chemical")
 d$scarifTypeSpe[which(d$datasetID == "moradi12" & d$scarifTypeSpe == "acid")] <- "chemical - H2SO4"
 d$scarifTypeSpe[which(d$datasetID == "irvani12" & d$scarifTypeSpe == "acid")] <- "chemical - H2SO4"
 d$scarifTypeSpe[which(d$datasetID == "Al-Absi10" & d$scarifTypeSpe == "acid scarification")] <- "chemical - H2SO4"
+unique(d$scarifTypeSpe)
 
-#temperature
-d$scarifTypeSpe[which(d$scarifTypeSpe == "use temerpature to permeate seedcoat")] <- "temperature"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "cold")] <- "temperature - cold" #used both cold treatment and chilling
-
-# moisture move to other treatments 
-d$scarifTypeSpe[which(d$scarifTypeSpe == "soaking in water")] <- "moisture - water" #included in scarification because they did both soaking and water scarification
-d$scarifTypeSpe[which(d$scarifTypeSpe == "hot water scarification")] <- "moisture - hot water" #check if there's anything in other treatment 
-d$scarifTypeSpe[which(d$scarifTypeSpe == "hot water 70C")] <- "moisture - hot water" #check soaking column
-d$scarifTypeSpe[which(d$scarifTypeSpe == "hot water")] <- "moisture - hot water"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "hot.water.10min")] <- "moisture - hot water"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "hot.water.20min")] <- "moisture - hot water"
-d$scarifTypeSpe[which(d$scarifTypeSpe == "hot.water.30min")] <- "moisture - hot water"
-
-### Check unusual entries--- 
-### Y, cold, seed coat, partly scarified, use temperature to permeate seedcoat,
-### partial scarification of seed coat, soaking in water
-# soaking---wrong column? is this da in the soaking column?
-# remove soaking, check if data for the whole paper is good, if not take it to lab meeting
