@@ -5,15 +5,21 @@
 # and does some other cleaning and mapping ##
 ## Original file called coordinate_cleaning_TA.R ##
 
+# To convert lat/long from Degree minute seconds to decimals degrees:
+# https://www.fcc.gov/media/radio/dms-decimal
 
-
+#To find the lat/long of a region, please use google earth:
+#https://earth.google.com/web/
+# once you search a region, use the "add placemark" tool to drop a pin in the regions centre and record the lat long that is shown in the popup box. Note: the unit of the coordinates can be changed to decimal degress by going to "Tools"-->"Settings"--> scroll down to "Formats and Units" and select "decimal" from the drop down menu for the "Latitude Longitude formatting"
 ## load packages ##
 library(leaflet)
 library(sp)
 library(sf)
 
 # grab the data 
-d <- read.csv("input/dData.csv")
+#d <- read.csv("input/dData.csv")
+
+# Read in the data by running cleanall.R 1-3
 
 # Work by Tolu Amuwo where she looked up locations and manually added lat/lon
 na.coords <- d[which(is.na(d$provenance.lat)),]
