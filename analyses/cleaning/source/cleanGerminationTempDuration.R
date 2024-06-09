@@ -273,24 +273,3 @@ d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <
 # d %>% filter(datasetID == "zhang21") %>%
 #   select(germ.temp,species)
 #
-library(tidyverse)
-
-missingpdf <- read_csv("cleaning/missingPdf.csv")
-missing <- missingpdf %>%
-  filter(assigned.to == "Justin")
-write.csv(missing,file="missing.csv")
-
-missingpdf$pdf.in.folder[which(missingpdf$assigned.to == "Justin")] <- "Y"
-missingpdf$ILL.needed[which(missingpdf$assigned.to == "Justin")] <- "N"
-
-missingpdf$pdf.in.folder[which(missingpdf$datasetID == "chien10")] <- "N"
-missingpdf$ILL.needed[which(missingpdf$datasetID == "chien10")] <- "Y"
-
-missingpdf$pdf.in.folder[which(missingpdf$datasetID == "cousins10")] <- "N"
-missingpdf$ILL.needed[which(missingpdf$datasetID == "cousins10")] <- "Y"
-
-missingpdf$pdf.in.folder[which(missingpdf$datasetID == "crank92")] <- "N"
-missingpdf$ILL.needed[which(missingpdf$datasetID == "crank92")] <- "Y"
-
-missingpdf$pdf.in.folder[which(missingpdf$datasetID == "geszprych02")] <- "N"
-missingpdf$ILL.needed[which(missingpdf$datasetID == "geszprych02")] <- "Y"
