@@ -213,6 +213,8 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "picciau17")] 
 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "parvin15")] <- "35.844"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "parvin15")] <- "50.972"
+
+unique(na.coords$datasetID)
 ############################################################################
 
 ## fixing continent points ... this needs to BE CHECKED!
