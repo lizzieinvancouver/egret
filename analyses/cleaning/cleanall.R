@@ -16,6 +16,8 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
 } else if(length(grep("britanywuuu", getwd()) > 0)) {
   setwd("~/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
+} else if(length(grep("Ken", getwd())) > 0){
+  setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
 }
 
 # 1. Get the data (reads in a dataframe called `egret')
