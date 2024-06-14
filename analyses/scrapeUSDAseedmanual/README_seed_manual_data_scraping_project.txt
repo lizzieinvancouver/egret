@@ -38,3 +38,17 @@ a page for phenology data, a page for germination data, and a page for seedcrop 
 3) cleaning: the scripts used to clean the data.
 4) scraping: the scripts/documentation of how the data was scraped.
 
+
+UPDATES June 13, 2024
+_______________________
+
+- 2 scripts have been completed: 'rename_relevant_data_tables_script.R' goes through every single CSV file in all of the input folders and checks if they are a phenology, germination, or seed data table (and renames them if they are). The second script, 'count_data_table_types_script.R' was run after to count the number of data tables per each type (phenology, germination, or seed).
+
+- The counts are as follows:
+1) Phenology tables: 50
+2) Germination tables: 60
+3) Seed tables: 17
+
+A new spreadsheet will be created to contain all of the finalized germination data, as this dataset is needed sooner. This will take a lot of manual work as I will need to cross-reference the missing data with the original data from the PDF, ex. the missing genus names that were not parsed.
+
+
