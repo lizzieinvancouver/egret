@@ -254,9 +254,17 @@ d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <
 # #
 # dtempchange2 <- dtempchange %>%
 #   filter(grepl(paste(pattern2,collapse = "|"),germ.temp))
+# 
+# dtempchange3 <- dtempchange2 %>%
+#   group_by(datasetID,genus,species,study)%>%
+#   summarize()
 # unique(dtempchange2$germ.temp)
 # n_distinct(dtempchange2$datasetID)
 # print(unique(dtempchange2$datasetID))
+# 
+# dlist <- as.data.frame(unique(dtempchange2$datasetID))
+# # write.csv(dlist,"108list.csv")
+# # write.csv(dtempchange3,"108genspeclist.csv")
 # #
 # # getwd()
 # # setwd("C:/Users/sapph/Documents/ubc things/work/egret/data")
@@ -272,4 +280,4 @@ d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <
 # 
 # d %>% filter(datasetID == "zhang21") %>%
 #   select(germ.temp,species)
-#
+# # #
