@@ -23,6 +23,8 @@ library(sf)
 
 # Work by Tolu Amuwo where she looked up locations and manually added lat/lon
 na.coords <- d[which(is.na(d$provenance.lat)),]
+d$lat.long.coarse[which(is.na(d$provenance.lat))] <- "Y"
+d$lat.long.coarse[which(is.na(d$lat.long.coarse))] <- "N"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Chuanren04")] <- "56.13"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Chuanren04")] <- "-106.347"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Albrecht20")] <- "37.838"
@@ -214,7 +216,24 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "picciau17")] 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "parvin15")] <- "35.844"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "parvin15")] <- "50.972"
 
-unique(na.coords$datasetID)
+unique(d$datasetID[which(d$lat.long.coarse == "Y" & is.na(d$provenance.lat))])
+
+## June 15th 2024 trying to finish the missing lat/long by Britany
+
+#sundaramoorthy93 didn't provide any location
+# d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "sundaramoorthy93")] <- "35.844"
+# d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "sundaramoorthy93")] <- "50.972"
+
+#Gotemba city should be in Shizuoka prefecture not Kanagawa prefecture... 
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "momonoki79" & d$source.population == "National Institute of Hygienic Science, Kasukabe City, Saitama Prefecture, Japan
+")] <- "35.98"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "momonoki79" & d$source.population == "National Institute of Hygienic Science, Kasukabe City, Saitama Prefecture, Japan
+")] <- "139.75"
+
+#seed grown in Umbumbulu but original seed source is from Eastern Cape... for now I will enter Eastern Cape
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "ochuodho08")] <- "32.29"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "ochuodho08")] <- "26.41"
+
 ############################################################################
 
 ## fixing continent points ... this needs to BE CHECKED!
