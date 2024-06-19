@@ -1,19 +1,11 @@
-"'Table 4-Chapter 7, Nursery with mycorrhizal fungi because","'Practices: nurseries and seedling their objectives determine the species","'customers must consider of fungus and the type","'their reasons for inoculating and timing of inoculation",
-"'Type of mycorrhizal","'Timing in the nursery","'Objectives","'of inoculation *",
-"'inoculation","'crop cycle","'Nursery","'Outplanting",
-"'Coating seeds with spores","'Before sowing","'I) Increased growth 2) Disease prevention","'None",
-"'Incorporating mycelia into the growing medium","'Before sowing","'I) Increased growth 2) Disease prevention","'None",
-"'Liquid drench with spores","'Establishment or rapid growth phases","'I) Increased growth 2) Disease prevention","'None",
-"'Liquid drench with spores","'Hardening phase","'I) Disease prevention 2) Increased growth","'I) Increased survival",
-"'Root dip with spores","'During packing or before outplanting","'None","'I) Increased survival 2) Increased growth",
-,,,
-
-'Confidence Scores % (Table Cell)
-""'95.50781250","'95.50781250","'95.50781250","'95.50781250",
-"'95.99609375","'96.28906250","'85.98632813","'85.98632813",
-"'95.99609375","'96.28906250","'84.42382813","'84.61914063",
-"'38.94042969","'39.59960938","'38.57421875","'38.69628906",
-"'37.50000000","'38.13476563","'37.15820313","'37.25585938",
-"'38.13476563","'38.76953125","'37.76855469","'37.86621094",
-"'42.96875000","'43.67675781","'42.57812500","'42.67578125",
-"'44.16503906","'44.89746094","'43.75000000","'43.87207031",
+X1,X2,X3,X4,X5,X6,X7,pdf_table_number,genus_name
+"Table 4-Chapter 7, Nursery with mycorrhizal fungi because",Practices: nurseries and seedling their objectives determine the species,customers must consider of fungus and the type,their reasons for inoculating and timing of inoculation,...5,pdf_table_number,genus_name,4,Chapter 7
+Type of mycorrhizal,Timing in the nursery,Objectives,of inoculation *,NA,NA,NA,4,Chapter 7
+inoculation,crop cycle,Nursery,Outplanting,NA,NA,NA,4,Chapter 7
+Coating seeds with spores,Before sowing,I) Increased growth 2) Disease prevention,None,NA,NA,NA,4,Chapter 7
+Incorporating mycelia into the growing medium,Before sowing,I) Increased growth 2) Disease prevention,None,NA,NA,NA,4,Chapter 7
+Liquid drench with spores,Establishment or rapid growth phases,I) Increased growth 2) Disease prevention,None,NA,NA,NA,4,Chapter 7
+Liquid drench with spores,Hardening phase,I) Disease prevention 2) Increased growth,I) Increased survival,NA,NA,NA,4,Chapter 7
+Root dip with spores,During packing or before outplanting,None,I) Increased survival 2) Increased growth,NA,NA,NA,4,Chapter 7
+NA,NA,NA,NA,NA,NA,NA,4,Chapter 7
+Confidence Scores % (Table Cell),NA,NA,NA,NA,NA,NA,4,Chapter 7

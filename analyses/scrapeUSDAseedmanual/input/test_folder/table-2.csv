@@ -1,17 +1,10 @@
-"'Table 3-Chapter 7,","'Nursery Practices: careful observation of disease","'development can aid in diagnosis",
-"'Characteristics","'Abiotic disease","'Biotic disease",
-"'HOSTS","'Often affects several species, or ages of seedlings","'Usually restricted to one species or age class",
-"'SYMPTOMS Patterns","'Regular: spatially related to some environmental factor","'Random locations at first",
-"'Rate of development","'Rapid & uniform","'Relatively slow & uneven",
-"'Signs","'No evidence of a pest","'Pests or indirect evidence present",
-"'Spread","'Related to one incident, with no secondary spread","'May spread over time under favorable conditions",
-,,
-
-'Confidence Scores % (Table Cell)
-""'87.74414063","'87.74414063","'87.74414063",
-"'81.93359375","'88.18359375","'88.47656250",
-"'69.82421875","'75.14648438","'75.39062500",
-"'47.65625000","'51.26953125","'51.46484375",
-"'57.17773438","'61.52343750","'61.71875000",
-"'56.10351563","'60.40039063","'60.59570313",
-"'62.15820313","'66.94335938","'67.13867188",
+X1,X2,X3,X4,X5,X6,pdf_table_number,genus_name
+"Table 3-Chapter 7,",Nursery Practices: careful observation of disease,development can aid in diagnosis,...4,pdf_table_number,genus_name,3,Chapter 7
+Characteristics,Abiotic disease,Biotic disease,NA,NA,NA,3,Chapter 7
+HOSTS,"Often affects several species, or ages of seedlings",Usually restricted to one species or age class,NA,NA,NA,3,Chapter 7
+SYMPTOMS Patterns,Regular: spatially related to some environmental factor,Random locations at first,NA,NA,NA,3,Chapter 7
+Rate of development,Rapid & uniform,Relatively slow & uneven,NA,NA,NA,3,Chapter 7
+Signs,No evidence of a pest,Pests or indirect evidence present,NA,NA,NA,3,Chapter 7
+Spread,"Related to one incident, with no secondary spread",May spread over time under favorable conditions,NA,NA,NA,3,Chapter 7
+NA,NA,NA,NA,NA,NA,3,Chapter 7
+Confidence Scores % (Table Cell),NA,NA,NA,NA,NA,3,Chapter 7

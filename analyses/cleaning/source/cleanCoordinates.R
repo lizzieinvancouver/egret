@@ -35,7 +35,7 @@ d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Boscagli01")] <
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Boscagli01")] <- "12.99"
 
 # The below only run assuming Aldridge199X gets fixed elsewhere
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1992")] <- "46.73"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1992")] <- "46.73" #Britany: this doens't look right
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1992")] <- "94.69"
 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Amini2018")] <- "36.812"
@@ -216,10 +216,10 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "picciau17")] 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "parvin15")] <- "35.844"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "parvin15")] <- "50.972"
 
-unique(d$datasetID[which(d$lat.long.coarse == "Y" & is.na(d$provenance.lat))])
 
 ## June 15th 2024 trying to finish the missing lat/long by Britany
 
+na.coords.id <- unique(d$datasetID[which(is.na(d$provenance.lat))])
 #sundaramoorthy93 didn't provide any location
 # d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "sundaramoorthy93")] <- "35.844"
 # d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "sundaramoorthy93")] <- "50.972"
@@ -227,13 +227,137 @@ unique(d$datasetID[which(d$lat.long.coarse == "Y" & is.na(d$provenance.lat))])
 #Gotemba city should be in Shizuoka prefecture not Kanagawa prefecture... 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "momonoki79" & d$source.population == "National Institute of Hygienic Science, Kasukabe City, Saitama Prefecture, Japan
 ")] <- "35.98"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "momonoki79" & d$source.population == "National Institute of Hygienic Science, Kasukabe City, Saitama Prefecture, Japan
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "momonoki79" & d$source.population == "National Institute of Hygienic Science, Kasukabe City, Saitama Prefecture, Japan
 ")] <- "139.75"
 
 #seed grown in Umbumbulu but original seed source is from Eastern Cape... for now I will enter Eastern Cape
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "ochuodho08")] <- "32.29"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "ochuodho08")] <- "26.41"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "ochuodho08")] <- "26.41"
 
+#winstead71 provided latitude only, the longitude of the location found on google earth is used
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
+                         d$source.population == "Burlington County, New Jersey, USA")] <- "40"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
+                          d$source.population == "Burlington County, New Jersey, USA")] <- "-74.69"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
+                         d$source.population == "Union County, Illinois, USA")] <- "37.5"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
+                          d$source.population == "Union County, Illinois, USA")] <- "-89.28"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
+                         d$source.population == "Harris County, Texas, USA")] <- "29.06"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
+                          d$source.population == "Harris County, Texas, USA")] <- "-95.31"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
+                         d$source.population == "Alachua County, Florida, USA")] <- "29.5"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
+                          d$source.population == "Alachua County, Florida, USA")] <- "-82.30"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
+                         d$source.population == "State of San Luis Potosi, Mexico")] <- "22.5"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
+                          d$source.population == "State of San Luis Potosi, Mexico")] <- "-100.99"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
+                         d$source.population == "State of Hidalgo, Mexico")] <- "21.33"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
+                          d$source.population == "State of Hidalgo, Mexico")] <- "-98.76"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "chakraborty92")] <- "30.56"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "chakraborty92")] <- "77.30"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "al-absi10")] <- "30.83"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "al-absi10")] <- "35.62"
+
+#kalimuthu95 population source should be just Coimbatore
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kalimuthu95")] <- "11.02"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kalimuthu95")] <- "76.96"
+
+#liu13 figure 4 data is across 5 seed lots (each has different provenance, thus NA for lat long)
+# should add "-" to the longitude *confirm with Deirdre first
+#edwards96 seeds were mixed
+
+#morozowska02 also mixed up the seeds (has separated data as well)
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "markovic20")] <- "44.81"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "markovic20")] <- "20.46"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "morozowska02" &
+                         d$source.population == "Gniezno, Poland")] <- "52.53"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "morozowska02" &
+                          d$source.population == "Gniezno, Poland")] <- "17.58"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "morozowska02" &
+                         d$source.population == "Poznań, Poland")] <- "52.31"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "morozowska02" &
+                          d$source.population == "Poznań, Poland")] <- "16.92"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "morozowska02" &
+                         d$source.population == "Konin, Poland")] <- "52.22"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "morozowska02" &
+                          d$source.population == "Konin, Poland")] <- "18.25"
+
+#javanmard14 didn't provide any info regarding location
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1993")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1993")] <- "94.69"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1994")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1994")] <- "-94.69"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1995")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1995")] <- "-94.69"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1996")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1996")] <- "-94.69"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1997")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1997")] <- "-94.69"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1998")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1998")] <- "-94.69"
+
+#nasri14 no location given 
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "lee06")] <- "37.90"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "lee06")] <- "126.75"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "rizwan18")] <- "30.19"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "rizwan18")] <- "71.49"
+
+#grose57 no location
+#maithani90 no location
+#castro95 no location
+#millaku12 albanian alp is located in Albania in Google Earth (the range of mountain extends to Kosovo)
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "millaku12")] <- "42.45"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "millaku12")] <- "19.80"
+
+#moradi12 no location 
+#nkomo09 no location
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "okay11")] <- "39.80"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "okay11")] <- "32.81"
+
+#olmez17 Sarikum-Sinop are two nearby towns, I suspect the seeds were collected in the mountains around the area (location entered is Sarikum)
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "olmez17")] <- "42.02"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "olmez17")] <- "34.92"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "pritchard93")] <- "51.07"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "pritchard93")] <- "-0.09"
+
+#prknova15 actually has a location Kostelec nad Černými lesy 
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "prknova15")] <- "49.99"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "prknova15")] <- "14.86"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "rahnama-ghahfarokhi07")] <- "32.33"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "rahnama-ghahfarokhi07")] <- "50.86"
+
+#raisi13 no location, probably Iran 
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "ranil15")] <- "39.48"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "ranil15")] <- "-0.34"
+
+
+unique(d$datasetID[which(d$lat.long.coarse == "Y" & is.na(d$provenance.lat))])
+no.location <- c("javanmard14", "nasri14", "edwards96", "sundaramoorthy93", "grose57", 
+                 "maithani90", "castro95", "moradi12", "nkomo09", "raisi13", )
 ############################################################################
 
 ## fixing continent points ... this needs to BE CHECKED!
