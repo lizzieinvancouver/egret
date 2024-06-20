@@ -578,12 +578,34 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kolodziejek19
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kulkarni06")] <- "29.61" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kulkarni06")] <- "30.35"
 
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "lee21")] <- "35.62" 
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "lee21")] <- "129.00"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "lai03")] <- "33.31" #the paper is in Mandarin, and instead of Qinling China, the seeds were collected from Ninshan County (near Qinling)
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "lai03")] <- "108.31"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "langlois17")] <- "45.56" 
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "langlois17")] <- "-73.56"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Amooaghaie09")] <- "32.65" 
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Amooaghaie09")] <- "51.67"
+
+#ahmad07 no location
+#ahola99 no location
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Harrington09")] <- "47.75" 
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Harrington09")] <- "-120.74"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "herron01")] <- "40.39" 
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "herron01")] <- "175.61"
+
+#irvani12,13,14 couldn't find Fozveh research station in Google Earth, coordinates were in a weird form in the paper: Lat: 361 270 N; Lon: 591 630 E
 
 unique(d$datasetID[which(d$lat.long.coarse == "Y" & is.na(d$provenance.lat))])
 na.coords.id <- c("javanmard14", "nasri14", "edwards96", "sundaramoorthy93", "grose57", 
                  "maithani90", "castro95", "moradi12", "nkomo09", "raisi13", "romero05",
                  "surya17", "yaqoob17", "yurteri21", "Shahi-gharahlar12", "yang16", 
-                 "vleeshouwers98", "kolodziejek18")
+                 "vleeshouwers98", "kolodziejek18", "ahmad07")
 ############################################################################
 
 ## fixing continent points ... this needs to BE CHECKED!
