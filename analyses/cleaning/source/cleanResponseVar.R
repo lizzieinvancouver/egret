@@ -7,18 +7,20 @@ unique(d$responseVar) # 166 unique resp vars
 
 # germination rate
 d$responseVar <- d$respvar
-d$responseVar[which(d$responseVar == "germ.speed")] <- "germ.rate"
-d$responseVar[which(d$responseVar == "rates.germ")] <- "germ.rate"
-d$responseVar[which(d$responseVar == "germ.rate (days)")] <- "germ.rate"
-d$responseVar[which(d$responseVar == "germ.rate.total")] <- "germ.rate"
-d$responseVar[which(d$responseVar == "germ.rt")] <- "germ.rate"
-d$responseVar[which(d$responseVar == "germination rate")] <- "germ.rate"
-d$responseVar[which(d$responseVar == "rate of seed germ")] <- "germ.rate"
-d$responseVar[which(d$responseVar == "speed.emerge")] <- "germ.rate"
+d$responseVar[which(d$responseVar == "germ.speed")] <- "germ rate"
+d$responseVar[which(d$responseVar == "rates.germ")] <- "germ rate"
+d$responseVar[which(d$responseVar == "germ.rate (days)")] <- "germ rate"
+d$responseVar[which(d$responseVar == "germ.rate.total")] <- "germ rate"
+d$responseVar[which(d$responseVar == "germ.rt")] <- "germ rate"
+d$responseVar[which(d$responseVar == "germination rate")] <- "germ rate"
+d$responseVar[which(d$responseVar == "rate of seed germ")] <- "germ rate"
+d$responseVar[which(d$responseVar == "speed.emerge")] <- "germ rate"
+d$responseVar[which(d$responseVar == "germ.rate")] <- "germ rate"
+
 
 # Proporation germination
-d$responseVar[which(d$responseVar == "germ.proportion")] <- "prop.germ"
-d$responseVar[which(d$responseVar == "proportion of viable seeds germinated")] <- "prop.germ"
+d$responseVar[which(d$responseVar == "germ.proportion")] <- "prop germ"
+d$responseVar[which(d$responseVar == "proportion of viable seeds germinated")] <- "prop germ"
 
 #mean germination time
 d$responseVar[which(d$responseVar == "mtg")] <- "mgt"
@@ -48,7 +50,9 @@ d$responseVar[which(d$responseVar == "germ.time (50%)")] <- "50% germ"
 d$responseVar[which(d$responseVar == "germ.rate ((l/t50)")] <- "50% germ"
 d$responseVar[which(d$responseVar == "half time (days)")] <- "50% germ"
 
-d$responseVar[which(d$responseVar == "embryo/seed ratio")] <- "embryo:seed.ratio"
+d$responseVar[which(d$responseVar == "embryo/seed ratio")] <- "embryo:seed ratio"
+d$responseVar[which(d$responseVar == "embryo:seed.ratio")] <- "embryo:seed ratio"
+
 
 d$responseVar[which(d$responseVar == "germ time (days)")] <- "germ time"
 d$responseVar[which(d$responseVar == "germ.time")] <- "germ time"
@@ -78,17 +82,50 @@ d$responseVar[which(d$responseVar == "per.germ.cumulative")] <- "percent germ"
 d$responseVar[which(d$responseVar == "per.germ.cumulative.cumulative")] <- "percent germ"
 
 d$responseVar[which(d$responseVar == "meandailygerm")] <- "mean daily germ"
+# Checking odd entries
+d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "a")] <- "source of variation mean square" # maximum cumulative germination percentage equivalent to germination capacity
+# b, a mathematical parameter controlling the shape and steepness of the curve
+# c the time required to achieve 50% germination = R50
+# TMGR, the time of maximum germination rate; 
+# lag, the time of germination onset; 
+# Dlag-50, the duration between lag and c; 
+# DI, dormancy index, the area between the germination curves of control and any pre-treatment.
+# data of % germ from table 1 missing
 
-# TO CHECK
-# is germ.rt germ rate?
-# what is germ.prob
-# D50 same as T50 and half time (days)
-#days to germ.
-# germ rate (days)---actually rate or germ days?
-#germ value
+#	zhang21 not in englidh
+# Boscagli01 coefficient rate of germination: (sum(days since sowing*no. of seeds germinated on day since sowing)/sum(no. of seeds germinated on day since sowing))*100
+# germination progress curve AGUPC
+
+#ahola99 --- germ.prob germ.rate.index, germ.speed(%/day); germination.energy= germ.energy; GSI Werner13; imbi.period Fetouh14; IVG santos19; lag LAG liu13 Naseri18 Nin17; peak.value = edwards96 tilki97; proportion of viable seeds = prop.germ harrison14; NA  = liu13, edwards96, tan10_2; castro95; huang14; downie91;strazisar13
+
+d$responseVar[which(d$datasetID == "zlesak07" & d$responseVar == "AGUPC")] <- "germination progress curve" 
+d$responseVar[which(d$datasetID == "Conversa09" & d$responseVar == "cumulative.germ")] <- "percent germ" 
+d$responseVar[which(d$datasetID == "ranil15" & d$responseVar == "early per.germ")] <- "early per germ day 4" 
+
+d$responseVar[which(d$datasetID == "grose57" & d$responseVar == "G.E.I")] <- "germinitive energy" 
+
+d$responseVar[which(d$datasetID == "ranil15" & d$responseVar == "early per.germ")] <- "early per germ day 4" 
+d$responseVar[which(d$datasetID == "ranil15" & d$responseVar == "early per.germ")] <- "early per germ day 4" 
+d$responseVar[which(d$datasetID == "ranil15" & d$responseVar == "early per.germ")] <- "early per germ day 4" 
+
+# cleaning values
 d$responseValue <- (d$response)
+d$responseValueNum <- round(as.numeric(d$responseValue),2)
+View(sort(unique(d$responseValueNum)))
 
-View(sort(unique(d$responseValue)))
+temp <- subset(d, responseVar == "percent germ")
+# yan18 -ve value Fig 6; tabatabaeian18, Acosta12, Washitani85, battaglia93 > 100
+#"1/5" 
+temp <- subset(d, responseVar == "prop germ") # values look reasonable
+temp <- subset(d, responseVar == "germ rate") 
+#raisi13 - entered with backslashes, table 6
+temp <- subset(d, responseVar == "mgt") 
+# brenchley98 >100
+temp <- subset(d, responseVar == "50% germ") 
+#Necajeva13 pritchard93 bytnerowicz14 pritchard93 50% germ 332?
+temp <- subset(d, responseVar == "germ time") # values look reasonable
+#wytsalucy21 table 2 no resp data winstead 71 table 1
+
 # what do the -ve values mean?
 #battaglia93
 #ren 15
@@ -100,6 +137,8 @@ d$response[which(d$response == "NA*")] <- "NA"
 #TO CHECK what is "NA*"
 d$errorType <- d$error.type
 sort(unique(d$errorType))
+
+# wat is SEM, max standard
 d$errorType[which(d$errorType == "mean+/-SE")] <- "SE"
 d$errorType[which(d$errorType == "standard error")] <- "SE"
 d$errorType[which(d$errorType == "mean standard error")] <- "SE"
@@ -116,6 +155,10 @@ d$errorType[which(d$errorType == "unknown")] <- "not.specified"
 
 # what is xz--- Cho18 Fig 5
 temp <- subset(d, !is.na(resp.error))
+
+temp <- subset(d, errorType == "SEM")  #"bungard97"
+temp <- subset(d, errorType == "max standard") #"Washitani89"
+
 
 noError <- c("not specified", "not.specified", "unknown")
 
@@ -138,3 +181,5 @@ sort(unique(temp$reps))
 temp <- d[,c("datasetID", "responseVar"#, "responseValue", "errorType"
              )]
 temp <- unique(temp)
+
+
