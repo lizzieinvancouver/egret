@@ -266,6 +266,10 @@ d$pretreatmentScarifTypeGen[which(grepl("Mechanical|Abrasion|Nicking", d$pretrea
 d$pretreatmentScarifTypeGen[which(grepl("Heat", d$pretreatmentScarifType))] <- "Thermal"
 
 # Rubus spectabilis has general scarification, will find
+d$pretreatmentScarifType[which(d$pretreatmentScarifType == "Scarification & 2 month stratification")] <- "Acid scarification"
+d$pretreatmentScarifType[which(d$pretreatmentScarifType == "Scarification & 4 month stratification")] <- "Acid scarification"
+d$pretreatmentScarifType[which(d$pretreatmentScarifType == "Scarification & 6 month stratification")] <- "Acid scarification"
+d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifType == "Acid scarification")] <- "Chemical"
 
 # unique(d$warm_stratification_days)
 
