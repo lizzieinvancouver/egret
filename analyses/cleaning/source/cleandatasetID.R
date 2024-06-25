@@ -17,6 +17,10 @@ d$datasetID[which(d$datasetID == "tang10b")] <- "tang10_2"
 
 d$datasetID[which(d$datasetID == "li11 ")] <- "li11"
 
+d$datasetID[which(d$datasetID == "yang18" & d$species == "taiwanensis")] <- "yang18_1"
+d$datasetID[which(d$datasetID == "yang18" & d$species == "glabra")] <- "yang18_2"
+d$datasetID[which(d$datasetID == "yang18" & d$species == "taccada")] <- "yang18_3"
+
 # Checked, these are correct: Kolodziejek18,19, Meyer94,95; Olmez07-09; Rouhi12,13; Tilki06,07; tylkowski09-10
 d$datasetID[which(d$datasetID == "Aldridge1993")] <- "Aldridge1992"
 d$datasetID[which(d$datasetID == "Aldridge1994")] <- "Aldridge1992"
