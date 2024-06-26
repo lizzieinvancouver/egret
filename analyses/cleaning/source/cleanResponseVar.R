@@ -21,6 +21,7 @@ d$responseVar[which(d$responseVar == "germ.rate")] <- "germ rate"
 # Proporation germination
 d$responseVar[which(d$responseVar == "germ.proportion")] <- "prop germ"
 d$responseVar[which(d$responseVar == "proportion of viable seeds germinated")] <- "prop germ"
+d$responseVar[which(d$responseVar == "prop.germ")] <- "prop germ"
 
 #mean germination time
 d$responseVar[which(d$responseVar == "mtg")] <- "mgt"
@@ -39,6 +40,11 @@ d$responseVar[which(d$responseVar == "days of first observation of seedling emer
 d$responseVar[which(d$responseVar == "days taken until first seed germination")] <- "day first emergence"
 d$responseVar[which(d$responseVar == "days to 1st germination")] <- "day first emergence"
 d$responseVar[which(d$responseVar == "days to 1st seed germinated")] <- "day first emergence"
+d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "lag")] <- "day first emergence"
+d$responseVar[which(d$responseVar == "lag")] <- "day first emergence"
+d$responseVar[which(d$responseVar == "LAG")] <- "day first emergence"
+
+
 
 d$responseVar[which(d$responseVar == "days to 50% emergence")] <- "50% germ"
 d$responseVar[which(d$responseVar == "D50")] <- "50% germ"
@@ -53,16 +59,15 @@ d$responseVar[which(d$responseVar == "half time (days)")] <- "50% germ"
 d$responseVar[which(d$responseVar == "embryo/seed ratio")] <- "embryo:seed ratio"
 d$responseVar[which(d$responseVar == "embryo:seed.ratio")] <- "embryo:seed ratio"
 
-
 d$responseVar[which(d$responseVar == "germ time (days)")] <- "germ time"
 d$responseVar[which(d$responseVar == "germ.time")] <- "germ time"
 d$responseVar[which(d$responseVar == "germ.time (mean)")] <- "germ time"
 d$responseVar[which(d$responseVar == "mean germ.time")] <- "germ time"
 
-d$responseVar[which(d$responseVar == "germ value (D)")] <- "germ time"
-d$responseVar[which(d$responseVar == "germ value")] <- "germ time"
-d$responseVar[which(d$responseVar == "germ.value")] <- "germ time"
-d$responseVar[which(d$responseVar == "germ.val")] <- "germ time"
+d$responseVar[which(d$responseVar == "germ value (D)")] <- "germ value"
+d$responseVar[which(d$responseVar == "germ.value")] <- "germ value"
+d$responseVar[which(d$responseVar == "germ.val")] <- "germ value"
+
 d$responseVar[which(d$responseVar == "germ rate")] <- "germ time"
 d$responseVar[which(d$responseVar == "germ rate (days)")] <- "germ time"
 d$responseVar[which(d$responseVar == "germ.days")] <- "germ time"
@@ -82,27 +87,59 @@ d$responseVar[which(d$responseVar == "per.germ.cumulative")] <- "percent germ"
 d$responseVar[which(d$responseVar == "per.germ.cumulative.cumulative")] <- "percent germ"
 
 d$responseVar[which(d$responseVar == "meandailygerm")] <- "mean daily germ"
-# Checking odd entries
-d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "a")] <- "source of variation mean square" # maximum cumulative germination percentage equivalent to germination capacity
-# b, a mathematical parameter controlling the shape and steepness of the curve
-# c the time required to achieve 50% germination = R50
-# TMGR, the time of maximum germination rate; 
-# lag, the time of germination onset; 
-# Dlag-50, the duration between lag and c; 
-# DI, dormancy index, the area between the germination curves of control and any pre-treatment.
-# data of % germ from table 1 missing
 
-#	zhang21 not in englidh
+# Checking odd entries---specific papers
+d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "a")] <- "a:variation MS max germ percent" #source variation mean square maximum cumulative germination percentage equivalent to germination capacity
+d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "b")] <- "b:variation MS germ percent" # maximum cumulative germination percentage equivalent to germination capacity
+d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "c")] <- "c:variation MS T50" # c the time required to achieve 50% germination = R50
+d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "TMGR")] <- "time of max germ rate"
+d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "lag")] <- "time of germination onset"
+d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "D_lag-50")] <- "duration between lag and c"
+d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "DI")] <- "dormancy index"# area between the germination 
+# liu13 data of % germ from table 1 missing
+
+#	zhang21 one is not in english
 # Boscagli01 coefficient rate of germination: (sum(days since sowing*no. of seeds germinated on day since sowing)/sum(no. of seeds germinated on day since sowing))*100
 # germination progress curve AGUPC
 
-#ahola99 --- germ.prob germ.rate.index, germ.speed(%/day); germination.energy= germ.energy; GSI Werner13; imbi.period Fetouh14; IVG santos19; lag LAG liu13 Naseri18 Nin17; peak.value = edwards96 tilki97; proportion of viable seeds = prop.germ harrison14; NA  = liu13, edwards96, tan10_2; castro95; huang14; downie91;strazisar13
+# what is germination index?
+d$responseVar[which(d$responseVar == "germ.index")] <- "germ index"
+d$responseVar[which(d$responseVar == "germ.rate.index")] <- "germ index"
 
-d$responseVar[which(d$datasetID == "zlesak07" & d$responseVar == "AGUPC")] <- "germination progress curve" 
+# Does germ.time = germ.period = germ
+#ahola99 --- germ.prob germ.rate.index, germ.speed(%/day); germination.energy= germ.energy; 
+
+#Edwards96: 
+#germination capacity (GC) = % seeds germinated normally by the end of the test; 
+#germination rate = R50; 
+#peak value = daily accumulated germinates/corresponding day number
+# germination value = value combining germ speed and completeness
+
+#Werner13;
+# germination speed index
+d$responseVar[which(d$datasetID == "werner13" & d$responseVar == "GSI")] <- "germination speed index"# sum of seeds germinated in a day over number of days since start experiment
+
+#imbi.period Fetouh14; no pdf
+
+#santos19; 
+# IVG = index of germination speed
+d$responseVar[which(d$datasetID == "santos19" & d$responseVar == "IVG")] <- "index germination speed"# area between the germination 
+
+#Naseri18 & Nin17
+#lag = interval between start exper and first germ
+
+
+#tilki97;
+#peak value = % germination/number of elapsed days
+
+#proportion of viable seeds = prop.germ harrison14; 
+#NA  = tan10_2; castro95; huang14; downie91;strazisar13
+
+d$responseVar[which(d$datasetID == "zlesak07" & d$responseVar == "AUGPC")] <- "area under germination progress curve" 
 d$responseVar[which(d$datasetID == "Conversa09" & d$responseVar == "cumulative.germ")] <- "percent germ" 
 d$responseVar[which(d$datasetID == "ranil15" & d$responseVar == "early per.germ")] <- "early per germ day 4" 
 
-d$responseVar[which(d$datasetID == "grose57" & d$responseVar == "G.E.I")] <- "germinitive energy" 
+d$responseVar[which(d$datasetID == "grose57" & d$responseVar == "G.E.I")] <- "germination energy" 
 
 d$responseVar[which(d$datasetID == "ranil15" & d$responseVar == "early per.germ")] <- "early per germ day 4" 
 d$responseVar[which(d$datasetID == "ranil15" & d$responseVar == "early per.germ")] <- "early per germ day 4" 
@@ -111,7 +148,7 @@ d$responseVar[which(d$datasetID == "ranil15" & d$responseVar == "early per.germ"
 # cleaning values
 d$responseValue <- (d$response)
 d$responseValueNum <- round(as.numeric(d$responseValue),2)
-View(sort(unique(d$responseValueNum)))
+#View(sort(unique(d$responseValueNum)))
 
 temp <- subset(d, responseVar == "percent germ")
 # yan18 -ve value Fig 6; tabatabaeian18, Acosta12, Washitani85, battaglia93 > 100
@@ -151,14 +188,13 @@ d$errorType[which(d$errorType == "95 % confidence interval")] <- "95% CI"
 d$errorType[which(d$errorType == "95CI")] <- "95% CI"
 
 d$errorType[which(d$errorType == "not.specified")] <- "not specified"
-d$errorType[which(d$errorType == "unknown")] <- "not.specified"
+d$errorType[which(d$errorType == "unknown")] <- "not specified"
 
 # what is xz--- Cho18 Fig 5
 temp <- subset(d, !is.na(resp.error))
 
 temp <- subset(d, errorType == "SEM")  #"bungard97"
 temp <- subset(d, errorType == "max standard") #"Washitani89"
-
 
 noError <- c("not specified", "not.specified", "unknown")
 

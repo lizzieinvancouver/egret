@@ -52,7 +52,7 @@ prep_phen_data <- function(directory, output_directory) {
     data <- data %>% mutate(across(everything(), ~ str_replace_all(.x, "^\\-", "")))
     data <- data %>% mutate(across(everything(), ~ replace_na(.x, "")))
     # Find rows with all empty cells
-    empty_rows <- which(apply(data, 1, function(row) all(row == "")))
+    empty_rows <- which(apply(data[-1, ], 1, function(row) all(row == ""))) + 1
     # If there are empty rows, truncate the dataset to keep only rows before the first empty row
     if (length(empty_rows) > 0) {
       data <- data[seq_len(empty_rows[1] - 1), ]
@@ -122,16 +122,18 @@ prep_phen_data <- function(directory, output_directory) {
   cat("All CSV files processed successfully!\n")
 }
 
-# Run Tests
+# Run code on entire phenology dataset
 prep_phen_data("scrapeUSDAseedmanual/input/phenology_data_test_folder", 
                "scrapeUSDAseedmanual/output/phenology_test_output")
 
-# Run code on entire phenology dataset
-prep_phen_data("scrapeUSDAseedmanual/input/copy_of_phenology_data_only",
-               "scrapeUSDAseedmanual/output/phenology_copy_output")
+# Run code on entire seed dataset
+prep_phen_data("scrapeUSDAseedmanual/input/copy_of_all_seed_data_only",
+               "scrapeUSDAseedmanual/output/seed_copy_output")
+
+
 
 ###########testing
-file_path <- "scrapeUSDAseedmanual/input/phenology_data_test_folder/phenology_phenology_table-2 (2).csv"
+file_path <- "scrapeUSDAseedmanual/input/copy_of_all_seed_data_only/seed_table-3 (3).csv"
 data <- read_csv(file_path, col_names = FALSE)
 
 # Convert all columns to character type to handle mixed data types
@@ -143,7 +145,7 @@ data <- data %>% mutate(across(everything(), ~ str_replace_all(.x, "'", "")))
 data <- data %>% mutate(across(everything(), ~ str_replace_all(.x, "^\\-", "")))
 data <- data %>% mutate(across(everything(), ~ replace_na(.x, "")))
 # Find rows with all empty cells
-empty_rows <- which(apply(data, 1, function(row) all(row == "")))
+empty_rows <- which(apply(data[-1, ], 1, function(row) all(row == ""))) + 1
 # If there are empty rows, truncate the dataset to keep only rows before the first empty row
 if (length(empty_rows) > 0) {
   data <- data[seq_len(empty_rows[1] - 1), ]
