@@ -195,21 +195,21 @@ d$tempClass[which(d$germTemp == "15/20/25")] <- "other"
 d$tempClass[which(d$germTemp == "20/15/20/25")] <- "other"
 
 breakbyslash <- strsplit(as.character(d$germTemp), "/", fixed=TRUE)
-d$temp1 <- unlist(lapply(breakbyslash, function(x) x[1]))
-d$temp2 <- unlist(lapply(breakbyslash, function(x) x[2]))
+d$tempDay <- unlist(lapply(breakbyslash, function(x) x[1]))
+d$tempNight <- unlist(lapply(breakbyslash, function(x) x[2]))
 # There's a weird one where the temp is 27-29/6-18
 
 #those with triple or quadruple temp regimes are not going to have their temp1/temp2 columns populated
-d$temp1[which(d$tempClass == "other")] <- "" 
-d$temp2[which(d$tempClass == "other")] <- ""
+d$tempDay[which(d$tempClass == "other")] <- "" 
+d$tempNight[which(d$tempClass == "other")] <- ""
 
 # d %>% filter(germTemp == "27-29/6-18") #Dehgan84
 # This paper says it's 27-29 in the day and 16-18 at night; which value should we take for each part of photoperiod?
 # SCRUM: take the mean of each period as our alternating; 28 for day and 17 at night
-d$temp1[which(d$datasetID == "Dehgan84" & d$temp1 == "27-29")] <- "28"
-d$temp2[which(d$datasetID == "Dehgan84" & d$temp2 == "16-18")] <- "17"
-d$temp2[which(d$datasetID == "Dehgan84" & d$temp2 == "6-18")] <- "17" 
-d$temp2[which(d$datasetID == "Scocco98" & d$temp2 == "30 (varying)")] <- "30" 
+d$tempDay[which(d$datasetID == "Dehgan84" & d$tempDay == "27-29")] <- "28"
+d$tempNight[which(d$datasetID == "Dehgan84" & d$tempNight == "16-18")] <- "17"
+d$tempNight[which(d$datasetID == "Dehgan84" & d$tempNight == "6-18")] <- "17" 
+d$tempNight[which(d$datasetID == "Scocco98" & d$tempNight == "30 (varying)")] <- "30" 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # 2. germ.duration
@@ -236,6 +236,80 @@ d$germDuration[which(d$datasetID == "Schutz02" & d$germ.duration == "30-50")] <-
 d[, 'germDurComment'] = NA
 d$germDurComment[which(d$datasetID == "Schutz02" & d$germDuration == "50")] <- "Paper says 30-50 as germDuration due to end of germination = 1 week since last observed germinant"
 d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- "Looked into the paper and found nothing except for germination counted every 3 days"
+
+# Fixing the day/night conundrum
+d[ , 'photoperiodNote'] = NA
+d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp1" & d$photoperiod == "12")] <- "constant light" # change photoperiod to 24
+d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp1" & d$photoperiod == "0")] <- "constant darkness"
+d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp3" & d$photoperiod == "0")] <- "constant darkness"
+
+d$photoperiodNote[which(d$datasetID == "cicek08" & d$species == "fraxinifolia ")] <- "just alternating temperature no photoperiod" # Change photoperiod to NA
+
+d$photoperiodNote[which(d$datasetID == "han10" & d$species == "ingrata" & d$photoperiod == "12")] <- "assumed day is warmer temperature"
+
+d$photoperiodNote[which(d$datasetID == "li11" & d$species == "centralasiatica" & d$photoperiod == "24")] <- "constant light"
+
+d$photoperiodNote[which(d$datasetID == "meyer95" & d$genus == "Penstemon" & d$photoperiod == "24")] <- "constant light"
+
+d$germTemp[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "20" # it's not 18.5-21.5, that was a range
+d$tempClass[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "constant"
+d$tempDay[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "20"
+d$tempNight[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "NA"
+
+d$germTemp[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient" # it's not 18.5-21.5, that was a range
+d$tempClass[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "constant"
+d$tempDay[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient"
+d$tempNight[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "NA"
+
+d$photoperiodNote[which(d$datasetID == "ochuodho08" & d$species == "capense")] <- "just alternating temperature no photoperiod"
+
+d$photoperiodNote[which(d$datasetID == "povoa09" & d$species == "euaptoria" & d$photoperiod == "0")] <- "constant darkness"
+d$photoperiodNote[which(d$datasetID == "povoa09" & d$species == "euaptoria" & d$photoperiod == "12")] <- "assumed day is warmer temperature"
+
+d$photoperiodNote[which(d$datasetID == "roh08" & d$genus == "Corylopsis")] <- "just alternating temperature no photoperiod"
+
+d$photoperiodNote[which(d$datasetID == "tylkowski07" & d$species == "catharticus")] <- "assumed day is warmer temperature"
+d$photoperiodNote[which(d$datasetID == "tylkowski09" & d$species == "communis")] <- "assumed day is warmer temperature"
+d$photoperiodNote[which(d$datasetID == "tylkowski10" & d$species == "rhamnoides")] <- "assumed day is warmer temperature"
+d$photoperiodNote[which(d$datasetID == "tylkowski91" & d$species == "mas")] <- "assumed day is warmer temperature"
+
+d$photoperiodNote[which(d$datasetID == "zhang21" & d$species == "koraiensis" & d$other.treatment == "200 μmol/m^2/s light")] <- "constant light"
+d$photoperiodNote[which(d$datasetID == "zhang21" & d$species == "koraiensis" & d$other.treatment == "20 μmol/m^2/s light")] <- "constant light"
+d$photoperiodNote[which(d$datasetID == "zhang21" & d$species == "koraiensis" & d$other.treatment == "0 μmol/m^2/s light")] <- "constant darkness"
+
+d$photoperiodNote[which(d$datasetID == "Chien10" & d$species == "glaucescens")] <- "assumed day is warmer temperature"
+
+d$photoperiodNote[which(d$datasetID == "brenchley98" & d$species == "capricorni")] <- "two stage temperature regime no photoperiod"
+
+d$germTemp[which(d$datasetID == "markovic20" & d$genus == "Liriodendron")] <- "21.5" 
+d$tempClass[which(d$datasetID == "markovic20" & d$genus == "Liriodendron")] <- "constant"
+d$tempDay[which(d$datasetID == "markovic20" & d$genus == "Liriodendron")] <- "21.5"
+d$tempNight[which(d$datasetID == "markovic20" & d$genus == "Liriodendron")] <- "NA"
+
+d$germTemp[which(d$datasetID == "momonoki79" & d$genus == "Bupleurum" & germTemp == "15/25")] <- "25" 
+d$tempClass[which(d$datasetID == "momonoki79" & d$genus == "Bupleurum" & germTemp == "15/25")] <- "constant"
+d$tempDay[which(d$datasetID == "momonoki79" & d$genus == "Bupleurum" & germTemp == "15/25")] <- "25"
+d$tempNight[which(d$datasetID == "momonoki79" & d$genus == "Bupleurum" & germTemp == "15/25")] <- "NA"
+
+d$germTemp[which(d$datasetID == "panayotova15" & d$genus == "Betonica" & germTemp == "18/20")] <- "19" 
+d$tempClass[which(d$datasetID == "panayotova15" & d$genus == "Betonica" & germTemp == "18/20")] <- "constant"
+d$tempDay[which(d$datasetID == "panayotova15" & d$genus == "Betonica" & germTemp == "18/20")] <- "19"
+d$tempNight[which(d$datasetID == "panayotova15" & d$genus == "Betonica" & germTemp == "18/20")] <- "NA"
+
+d$germTemp[which(d$datasetID == "prknova15" & d$genus == "Sorbus")] <- "21" 
+d$tempClass[which(d$datasetID == "prknova15" & d$genus == "Sorbus")] <- "constant"
+d$tempDay[which(d$datasetID == "prknova15" & d$genus == "Sorbus")] <- "21"
+d$tempNight[which(d$datasetID == "prknova15" & d$genus == "Sorbus")] <- "NA"
+
+d$germTemp[which(d$datasetID == "yaqoob17" & d$genus == "Ferula")] <- "ambient"
+d$tempClass[which(d$datasetID == "yaqoob17" & d$genus == "Ferula")] <- "constant"
+d$tempDay[which(d$datasetID == "yaqoob17" & d$genus == "Ferula")] <- "ambient"
+d$tempNight[which(d$datasetID == "yaqoob17" & d$genus == "Ferula")] <- "NA"
+
+d$photoperiodNote[which(d$datasetID == "geszprych02" & d$genus == "Rhaponticum")] <- "just alternating temperature no photoperiod"
+
+d$photoperiodNote[which(d$datasetID == "winstead71" & d$genus == "Liquidambar")] <- "photoperiod 15 but alternating temperature at 12 hr interval"
+
 
 # unique(d$germDuration)
 # dna2 <- d %>% select(germDuration)

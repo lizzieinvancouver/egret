@@ -317,3 +317,5 @@ d <- d %>%
 # install.packages("xlsx")
 write.xlsx(d, "germinationCleaned.xlsx")
 
+unique(d$)
+
