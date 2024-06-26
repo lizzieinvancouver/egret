@@ -11,10 +11,6 @@ d$datasetID[which(d$datasetID == "alptekin2002")] <- "alptekin02"
 d$datasetID[which(d$datasetID == "amini2018")] <- "amini18" 
 d$datasetID[which(d$datasetID == "pipinus12")] <- "pipinis12"
 d$datasetID[which(d$datasetID == "picciau18")] <- "picciau19"
-
-d$datasetID[which(d$datasetID == "tang10a")] <- "tang10_1"
-d$datasetID[which(d$datasetID == "tang10b")] <- "tang10_2"
-
 d$datasetID[which(d$datasetID == "li11 ")] <- "li11"
 
 # Checked, these are correct: Kolodziejek18,19, Meyer94,95; Olmez07-09; Rouhi12,13; Tilki06,07; tylkowski09-10
@@ -29,8 +25,13 @@ d$datasetID[which(d$datasetID == "irvani14")] <- "irvani12"
 
 d$datasetID[which(d$datasetID == "Sacande05")] <- "Sacande04"
 
-# Some studies are duplicated:
-#al-absi10, chen06	chen15	chichizola18		han10	 lee21	moeini21	tilki07		wytsalucy21 	yusefi-tanha19	
+# three yang18
+d$datasetID[which(d$datasetID == "yang18" & d$genus == "Maackia")] <- "yang18_1"
+d$datasetID[which(d$datasetID == "yang18" & d$genus == "Pasania")] <- "yang18_2"
+d$datasetID[which(d$datasetID == "yang18" & d$genus == "Scaevola")] <- "yang18_3"
+
+d$datasetID[which(d$datasetID == "tang10a")] <- "tang10_1"
+d$datasetID[which(d$datasetID == "tang10b")] <- "tang10_2"
 
 temp <- unique(d[,c("datasetID", "entered.by")])
 temp$count <-1
@@ -48,4 +49,10 @@ d <- subset(d, datasetID !="moeini21" | entered.by != "MN")
 d <- subset(d, datasetID !="tilki07" | entered.by != "MN") #entered by two people---but different figures/tables
 d <- subset(d, datasetID !="wytsalucy21" | entered.by != "DK")
 d <- subset(d, datasetID !="yusefi-tanha19" | entered.by != "JS")
+
+ident <- read.csv("..//data/datasetID.csv")
+ident$dup <- duplicated(ident$studyID)
+
+#I have double checked all the papers that have duplicates
+# many have not been entered for various reasons, others the duplicated is in another language and therefore have not be entered
 
