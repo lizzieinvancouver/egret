@@ -30,25 +30,25 @@ source("cleaning/source/cleandatasetID.R")
 source("cleaning/source/cleanspecies.R")
 
 # 4. Clean chill duration and temperature
-source("cleaning/source/clean_chill_temp_duration.R")
+source("cleaning/source/cleanChillTempDuration.R")
 
 # 5. Clean germination temperature
-source("cleaning/source/clean_germination_temp_duration.R")
+source("cleaning/source/cleanGerminationTempDuration.R")
 
 # 6. Clean germination scarification
 source("cleaning/source/cleanScarification.R")
 
 # 7. Clean Clean chemical---yes/no column---clean chemcial name col
-source("cleaning/source/clean_chemical.R")
+source("cleaning/source/cleanChemical.R")
 
 # 8. Clean storage type
-source("cleaning/source/clean_storage.R")
+source("cleaning/source/cleanStorage.R")
 
 # 9. Clean response variables and response
-source("cleaning/source/clean_response_var.R")
+source("cleaning/source/cleanResponseVar.R")
 
 # 10. Clean coordinates seed provinance
-source("cleaning/source/clean_coordinates.R")
+source("cleaning/source/cleanCoordinates.R")
 
 # XX. Clean year of germination (some)
-source("cleaning/source/clean_yeargermination.R")
+source("cleaning/source/cleanYearGermination.R")

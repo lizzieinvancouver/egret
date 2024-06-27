@@ -37,20 +37,18 @@ data_points_with_altern <- nrow(d[d$chill.temp %in% temp_vals[altern],])
 data_points_with_comb <- nrow(d[d$chill.temp %in% temp_vals[comb],])
 
 #find data points
-idx <- which(d$datasetID == check$datasetID[1])
-unique(check$chill.temp)
-idx <- which(d$chill.tempCor == unique(d$chill.tempCor)[85])
+idx <- which(d$chill.durationCor == unique(d$chill.durationCor)[88])
 check <- d[idx,]
 check_short <- subset(check, select = c("datasetID", "study", "entered.by",
                                         "treatment", "chill.temp", "chill.duration",
-                                        "germ.temp", "other.treatment", "photoperiod",
-                                        "respvar", "response"))
-idx <- which(d$datasetID == "Naseri18")
+                                        "germ.temp", "germ.duration", "other.treatment",
+                                        "photoperiod", "respvar", "response"))
+idx <- which(d$datasetID == "nkomo09")
 check <- d[idx,]
 check_short <- subset(check, select = c("datasetID", "study", "species", "entered.by",
                                         "treatment", "chill.temp", "chill.duration",
-                                        "germ.temp", "other.treatment", "photoperiod",
-                                        "respvar", "response"))
+                                        "germ.temp", "germ.duration", "other.treatment",
+                                        "photoperiod", "respvar", "response", "figure"))
 
 #d <- within(d, forcetemp[dasetID== 'falusi96' & study == 'exp3'] <- 24)
 d$chill.duration[which(d$chill.duration == "unknown ")] <- "NA"
@@ -68,6 +66,10 @@ d$chill.lightCycle <- NA
 
 
 ##clean remaining chill duration
+
+#nkomo09
+
+d$chill.durationCor[which(d$datasetID == "nkomo09" & d$chill.duration == 3.5)] <- 4
 
 #sundaramoorthy93
 d$chill.durationCor[which(d$datasetID == "sundaramoorthy93" & d$chill.temp == 4)] <-
@@ -98,7 +100,9 @@ d$chill.durationCor[which(d$datasetID == "mattana16" & is.na(d$chill.temp))] <- 
 #chill durations seems to be germ duration
 
 #Nin17 - 15;30;60;90
-#seems to be the average among treatments
+d$chill.tempCor[which(d$datasetID == "Nin17" & d$treatment == "non stratified")] <- 4
+d$chill.durationCor[which(d$datasetID == "Nin17" & d$treatment == "non stratified")] <- 0
+d$chill.durationCor[which(d$chill.duration == "15;30;60;90")] <- "ave"
 
 #nurse08 - 1 month, 2 months, 3 months
 d$chill.durationCor[which(d$datasetID == "nurse08" & d$chill.duration == "1 month")] <- 30
@@ -106,10 +110,14 @@ d$chill.durationCor[which(d$datasetID == "nurse08" & d$chill.duration == " 2 mon
 d$chill.durationCor[which(d$datasetID == "nurse08" & d$chill.duration == "3 months")] <- 91
 
 #okay11 - 90, 120, 150
+d$chill.tempCor[which(d$datasetID == "okay11" & d$treatment == "Control")] <- 0
+d$chill.durationCor[which(d$datasetID == "okay11" & d$treatment == "Control")] <- 0
+d$chill.durationCor[which(d$chill.duration == "90, 120, 150")] <- "ave"
 #seems to be the average among treatments
 
 #tang21 - 0, 15, 30, 60
 d$chill.tempUnc[which(d$datasetID == "okay11" & !is.na(d$chill.temp))] <- 1
+d$chill.durationCor[which(d$chill.duration == "0, 15, 30, 60")] <- "ave"
 #seems to be the average among treatments
 #stratification not indicated, possibly not differentiated
 
@@ -136,9 +144,9 @@ d$chill.durationCor[which(d$datasetID == "tilki07")] <- temp
 d$chill.tempCor[which(d$datasetID == "ochuodho08" & d$chill.temp == "5-10")] <- 7.5
 d$chill.tempUnc[which(d$datasetID == "ochuodho08" & d$chill.temp == "5-10")] <- 2.5
 
-#morozowska02 - 5-10 paper pending
-#d$chill.tempCor[which(d$datasetID == "morozowska02" & d$chill.temp == "5-10")] <- 7.5
-#d$chill.tempUnc[which(d$datasetID == "morozowska02" & d$chill.temp == "5-10")] <- 2.5
+#morozowska02 - 5-10
+d$chill.tempCor[which(d$datasetID == "morozowska02" & d$chill.temp == "5-10")] <- 7.5
+d$chill.tempUnc[which(d$datasetID == "morozowska02" & d$chill.temp == "5-10")] <- 2.5
 
 #al-absi10 or Al-Absi10 - 4-5
 d$chill.tempCor[which(d$datasetID == "al-absi10" & d$chill.temp == "4-5")] <- 4.5
@@ -243,6 +251,7 @@ d$chill.tempCor[which(d$chill.temp == "4.5-5.4")] <- 4.95
 d$chill.tempUnc[which(d$chill.temp == "4.5-5.4")] <- 0.45
 d$chill.tempCor[which(d$chill.temp == "22-23.2")] <- 22.6
 d$chill.tempUnc[which(d$chill.temp == "22-23.2")] <- 0.6
+d$chill.durationCor[which(d$datasetID == "karlsson08" & d$chill.duration == 17.5)] <- 18
 
 #kettenring07 - 5/1
 d$chill.tempCor[which(d$datasetID == "kettenring07" & d$chill.temp == "5/1")] <- "5 and 1"
@@ -256,13 +265,53 @@ d$chill.tempCor[which(d$datasetID == "Hawkins19" & d$chill.temp == "5/1")] <- "5
 #meyer94
 #meyer95
 #yang20
-#yang16
+d$chill.tempCor[which(d$datasetID == "yang20" & d$treatment == "control")] <- 1
+d$chill.durationCor[which(d$datasetID == "yang20" & d$treatment == "control")] <- 0
+d$chill.lightCycle[which(d$datasetID == "yang20" & d$treatment == "control")] <- 24
+#table 1 data seem to be missing
 
-#yang18 taccada
-d$chill.durationCor[which(d$datasetID == "yang18" & d$species == "taccada" & d$figure == "Figure 3")] <-
-  round(as.numeric(d$chill.durationCor[which(d$datasetID == "yang18" & d$species == "taccada" & d$figure == "Figure 3")]))
-d$chill.durationCor[which(d$datasetID == "yang18" & d$species == "taccada" & d$figure == "Figure 3" & d$chill.duration == 0.864)] <-
+#yang16
+d$chill.tempCor[which(d$datasetID == "yang16" & d$treatment == "none")] <- 1
+d$chill.durationCor[which(d$datasetID == "yang16" & d$treatment == "none")] <- 0
+
+#yang18_1 - taiwanensis
+d$chill.tempCor[which(d$datasetID == "yang16" & d$treatment == "control" & d$figure == "Figure 3")] <- 4
+d$chill.durationCor[which(d$datasetID == "yang16" & d$treatment == "control" & d$figure == "Figure 3")] <- 0
+
+d$chill.tempCor[which(d$datasetID == "yang16" & is.na(d$chill.duration) & d$figure == "Figure 4")] <- 4
+d$chill.durationCor[which(d$datasetID == "yang16" & is.na(d$chill.duration) & d$figure == "Figure 4")] <- 0
+temp <- which(d$datasetID == "yang18_1" & !is.na(d$chill.duration) & d$figure == "Figure 4")
+for(i in temp){
+  if(d$chill.duration[i] >= d$germ.duration[i]){
+    d$chill.tempCor[i] <- NA
+    d$chill.durationCor[i] <- NA
+  }
+}
+#editing the germ temp and duration from here will be easier I think than separately
+
+d$chill.tempCor[which(d$datasetID == "yang16" & is.na(d$chill.duration) & d$figure == "Figure 5")] <- 4
+d$chill.durationCor[which(d$datasetID == "yang16" & is.na(d$chill.duration) & d$figure == "Figure 5")] <- 0
+#data from figure 4 and 5 seems have germination during strat
+temp <- which(d$datasetID == "yang18_1" & !is.na(d$chill.duration) & d$figure == "Figure 5")
+for(i in temp){
+  if(d$chill.duration[i] >= d$germ.duration[i]){
+    d$chill.tempCor[i] <- NA
+    d$chill.durationCor[i] <- NA
+  }
+}
+#editing the germ temp and duration from here will be easier I think than separately
+
+#yang18_2 - glabra
+#figure numbers seem to be mismatched, will clean later once fixed
+
+#yang18_3 - taccada
+d$chill.durationCor[which(d$datasetID == "yang18_3" & d$figure == "Figure 3")] <-
+  round(as.numeric(d$chill.durationCor[which(d$datasetID == "yang18_3" & d$figure == "Figure 3")]))
+d$chill.durationCor[which(d$datasetID == "yang18_3" & d$figure == "Figure 3" & d$chill.duration == 0.864)] <-
   0
+
+d$chill.tempCor[which(d$datasetID == "yang18_3" & d$figure != "Figure 3")] <- NA
+d$chill.durationCor[which(d$datasetID == "yang18_3" & d$figure != "Figure 3")] <- NA
 
 #muller03 - 3
 d$chill.durationCor[which(d$datasetID == "muller03" & is.na(d$chill.temp))] <- 0
@@ -316,12 +365,14 @@ d$chill.tempCor[which(d$chill.temp == "(25/10)/5/0")] <- "25 and 10 then 5 then 
 d$chill.durationCor[which(d$chill.temp == "(25/10)/5/0")] <- "90 then 30 then 90"
 d$chill.lightCycle[which(d$chill.temp == "(25/10)/5/0")] <- "12 then 12 then 0"
 
-#cousins10 - paper pending
-
-#yang18 taccada
-#most data seem to be for storage temperature rather than chilling
+#cousins10 - 5, 10, 15
+d$chill.tempCor[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(5, 10, 15, rep("ave", 3))
+d$chill.durationCor[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(rep("ave", 3), 28, 56, 84)
+#one data point from Figure 3 seems to be mislabeled as from Table 5
 
 #yang10
+d$chill.tempCor[which(d$datasetID == "yang10")]  <- NA
+d$chill.durationCor[which(d$datasetID == "yang10")]  <- NA
 #storage conditions seem be stratification
 
 #zadeh15 - 5
@@ -490,6 +541,7 @@ for(i in 1:length(temp)){
 }
 d$chill.durationCor[which(d$datasetID == "wytsalucy21" & d$chill.duration == 56 & d$chill.temp != 20)] <- "28 then 14 then 28"
 d$chill.durationCor[which(d$datasetID == "wytsalucy21" & d$chill.duration == 56 & d$chill.temp == 20)] <- 70
+d$chill.tempCor[which(d$datasetID == "wytsalucy21" & d$chill.temp == "4, 7, 10")] <- "ave"
 #some data from exp4 is for exp3
 #per germ values not differentiated by both hormone and temperature because their interaction is not deemed significant
 
@@ -565,7 +617,7 @@ d$chill.durationCor[which(d$datasetID == "zhou08" & d$treatment == "water stress
 
 #yang08 - 30/20 warm, cold strat
 d$chill.tempCor[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 and 20 then 4"
-d$chill.tempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "12 and 12 then NA"
+d$chill.tempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "NA then NA"
 d$chill.lightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
 temp <- c("60 then 60", "60 then 90", "60 then 120", "60 then 150", "60 then 180",
          "90 then 60", "90 then 90", "90 then 120", "90 then 150", "90 then 180",
@@ -578,6 +630,12 @@ temp <- c("60 then 60", "60 then 90", "60 then 120", "60 then 150", "60 then 180
          "150 then 60", "150 then 90", "150 then 120", "150 then 150", "150 then 180",
          "180 then 60", "180 then 90", "180 then 120", "180 then 150", "180 then 180")
 d$chill.durationCor[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- temp
+d$chill.tempCor[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
+d$chill.tempCor[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
+d$chill.tempCor[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
+d$chill.durationCor[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
+d$chill.durationCor[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
+d$chill.durationCor[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
 #chilling seems to be warm + cold
 #should I change the treatment and photoperiod, since they don't seem to correspond with the results
 
