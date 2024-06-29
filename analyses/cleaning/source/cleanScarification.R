@@ -103,7 +103,7 @@ d$scarifTypeGen[which(d$scarifTypeGen == "chemical - KNO3 (0.3%)")] <- "chemical
 
 
 
-# move moisture to other treatment (Al-Absi10, prknova15, rouhi13, Wickens01)
+#moisture (Al-Absi10, prknova15, rouhi13, Wickens01)
 d$scarifTypeGen[which(d$scarifTypeGen == "soaking in water")] <- "moisture" #included in scarification because they did both soaking and water scarification
 d$scarifTypeGen[which(d$scarifTypeGen == "hot water scarification")] <- "moisture"
 d$scarifTypeGen[which(d$scarifTypeGen == "hot water 70C")] <- "moisture"
@@ -128,7 +128,10 @@ d$other.treatment[which((d$datasetID == "rouhi13") &
                           d$scarifTypeGen == "moisture")] <- d$scarifType[which((d$datasetID == "rouhi13") & 
                                                                                   d$scarifTypeGen == "moisture")]
 # Wickens01
-
+d$treatment[which((d$datasetID == "Wickens01") & 
+                    d$scarif.type == "hot water 70C")] <- "hot water"
+d$treatment[which((d$datasetID == "Wickens01") & 
+                    d$other.treatment == "soaking")] <- "soaking"
 # other
 unique(d$scarifTypeGen)
 
@@ -139,11 +142,12 @@ unique(d.mechanical$datasetID)
 unique(d.chemical$datasetID)
 
 # group specifically 
+# papers that only have "mechanical" were checked, they didn't specify how they scarified the seeds
+#       "chakraborty92" "basaran12"     "javanmard14"   "keshtkar08"    "rostamipoor20"(not in English) "Marcello15"   
 d$scarifTypeSpe <- d$scarifType
 
 d$scarifTypeSpe[which(d$scarifTypeSpe == "sandpaper")] <- "mechanical - sandpaper"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "sand paper (Np. 150)")] <- "mechanical - sandpaper"
-#d$scarifTypeGen[which(d$scarifTypeGen == "Mechanical")] <- "mechanical"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "sand paper")] <- "mechanical - sandpaper"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical with sandpaper")] <- "mechanical - sandpaper"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical with razor")] <- "mechanical - razor"
@@ -161,11 +165,12 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "scapel")] <- "mechanical - scapel"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "scalpel on lenticular side")] <- "mechanical - scalpel"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "manual with needle at the cotyledon end.")] <- "mechanical - needle"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "seed coat removal")] <- "mechanical - seed coat removal"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "partially scarified")] <- "mechanical - seed coat partially removed with scalpel"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "partly scarified")] <- "mechanical - pericarp partially removed"
 
 unique(d$scarifTypeSpe)
 
 # chemical
-d$scarifTypeSpe[which(d$scarifTypeSpe == "Chemical")] <- "chemical"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "H2SO4")] <- "chemical - H2SO4"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "H2SO4.98per.0min")] <- "chemical - H2SO4"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "H2SO4.98per.10min")] <- "chemical - H2SO4"
@@ -182,3 +187,4 @@ d$scarifTypeSpe[which(d$datasetID == "irvani12" & d$scarifTypeSpe == "acid")] <-
 d$scarifTypeSpe[which(d$datasetID == "Al-Absi10" & d$scarifTypeSpe == "acid scarification")] <- "chemical - H2SO4"
 unique(d$scarifTypeSpe)
 
+#tilki07 NEED CLEANING
