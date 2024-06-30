@@ -41,3 +41,8 @@ seed_directory <- "output/seed_copy_output"
 c_pheno <- append_csv_files(pheno_directory)
 c_seed <- append_csv_files(seed_directory)
 raw_colnames <- unique(colnames(combined_data))
+# Should I fix the column names?
+
+# Write files
+write.csv(c_pheno, "output/phenologyCombined.csv")
+write.csv(c_seed, "output/seedCombined.csv")

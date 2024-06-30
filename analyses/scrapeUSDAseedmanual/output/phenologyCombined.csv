@@ -1,0 +1,587 @@
+"","Species","Flowering","Fruit.ripening","Seed.dispersal","pdf_table_number","genus_name","Color.of.ripe.fruit","Height.of.mature.trees..m.","Year.first.cultivated","Location","Color.of.ripe.fruits","Fruit.drop","Location....altitude.","Location....elevation.","Height.at.maturity..m.","Growth.habit...maximum.height","Flower.color","Flowering.habit","Dispersal","Cone.ripening","Seed.ripening...dispersal","Origin","Color.of.ripe.fruit.","Seed.size..mm.","Diam.of.ripe.fruit..mm.","Cleaned..kg","seeds.wt..lb","Fruit...seed.ripening","Location...elevation..m.","Tree.ht..m.","Age..yrs..","Interval..yrs."
+"1","A. circinatum","Mar-June","Sept-Oct","Oct-Nov","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"2","A. ginnala","Apr-June","Aug-Sept","Sept-Jan","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"3","A. glabrum var. glabrum","Apr-June","Aug-Oct","Sept-Feb","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"4","A. macrophyllum","Apr-May","Sept-Oct","Oct-Mar","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"5","A. negundo","Mar-May","Aug-Oct","Sept-Mar","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"6","A. palmatum","May-June","Aug-Sept","Sept-Oct","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"7","A. pensylvanicum","May-June","Sept-Oct","Oct-Feb","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"8","A. platanoides","Apr-June","Sept-Oct","Oct-Nov","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"9","A. pseudoplatanus","Apr-June","Aug-Oct","Sept-Nov","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"10","A. rubrum","Mar-May","Apr-June","Apr-July","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"11","A. saccharinum","Feb-May","Apr-June","Apr-June","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"12","A. saccharum","Mar-May","Sept-Oct","Oct-Dec","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"13","A. spicatum","May-June","Sept-Oct","Oct-Dec","3","Acer",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"14","S. nigra","","","","2","Sambucus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"15","spp. canadensis","June-July","July-Sept","Aug-Oct","2","Sambucus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"16","spp. cerulea","May-July","Aug-Sept","Aug-Oct","2","Sambucus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"17","S. racemosa var. racemosa","Apr-July","June-Aug","June-Nov","2","Sambucus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"18","M. baccata","May","Aug-Oct",NA,"2","Malus","Red or yellow","12.2","1784",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"19","M. coronaria","Mar-May","Sept-Nov",NA,"2","Malus","Yellow-green","9.2","1724",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"20","M. floribunda","May","",NA,"2","Malus","Red or yellow","3.6-10.0","1862",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"21","M. fusca","","Oct-Nov",NA,"2","Malus","Green-yellow to yellow & red","8-12.2","1836",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"22","M. ioensis","May-June","Sept-Oct",NA,"2","Malus","Greenish waxy","","1885",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"23","M. pumila","May","Aug-Oct",NA,"2","Malus","Yellow to red","15.4","Ancient times",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"24","M. X robusta","Apr-May","",NA,"2","Malus","Red or yellow-green","","1815",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"25","M. sargentii","","",NA,"2","Malus","Red","1.8-2.5","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"26","R. allegheniensis","May-July","Aug-Sept","Aug-Sept","3","Rubus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"27","R. canadensis","June-July","July-Sept","July-Sept","3","Rubus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"28","R. laciniatus","June-Aug","July-Oct","Sept-Oct","3","Rubus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"29","R. hispidus","June-early Sept","Mid-Aug-Oct","Aug-Oct","3","Rubus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"30","R. procerus","June-Aug","Aug-Sept","","3","Rubus",NA,NA,NA,"Washington",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"31","R. ursinus","June-July","Aug-Sept","Oct-Nov","3","Rubus",NA,NA,NA,"Pacific Coast",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"32","R. idaeus","Late May-July","Late June-Oct","July-Oct","3","Rubus",NA,NA,NA,"Rangewide",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"33","R. occidentalis","Apr-June","June-Aug","June-Aug","3","Rubus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"34","R. spectabilis","May-June","June-Aug","June-Aug","3","Rubus",NA,NA,NA,"Alaska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"35","","Apr-May","May-July","June-July","3","Rubus",NA,NA,NA,"Oregon-Washington",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"36","R. chamaemorus","June-July","July-Aug","Aug-Sept","3","Rubus",NA,NA,NA,"Boreal North America",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"37","R. odoratus","June-Sept","July-Sept","July-Sept","3","Rubus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"38","R. parviflorus","May-June","June-July","July-Aug","3","Rubus",NA,NA,NA,"Pacific Northwest",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"39","M. alba","May","July-Aug",NA,"2","Morus",NA,NA,NA,"E US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"40","","May","June-Aug",NA,"2","Morus",NA,NA,NA,"Nebraska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"41","","Apr","Late May-June",NA,"2","Morus",NA,NA,NA,"Oklahoma",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"42","M. microphylla","Apr-May","June-Aug",NA,"2","Morus",NA,NA,NA,"SW US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"43","M. rubra","Apr-May","June-Aug",NA,"2","Morus",NA,NA,NA,"E US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"44","N. aquatica","Mar-Apr","Sept-Oct",NA,"2","Nyssa",NA,NA,NA,NA,"Dark purple","Oct-Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"45","N. biflora","Apr-June","Aug-Oct",NA,"2","Nyssa",NA,NA,NA,NA,"Blue-black","Sept-Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"46","N. ogeche","Mar-May","July-Aug",NA,"2","Nyssa",NA,NA,NA,NA,"Red","Nov-Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"47","N. sylvatica","Apr-June","Sept-Oct",NA,"2","Nyssa",NA,NA,NA,NA,"Blue-black","Sept-Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"48","P. quinquefolia P. tricuspidata","June-Aug June-July","July-Oct Sept-Oct",NA,"2","Parthenocissus",NA,NA,NA,NA,NA,"Aug-Feb",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"49","P. alleghaniensis","Late Apr-May","Aug-Sept","","2","Prunus",NA,NA,NA,"Scattered",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"50","P. americana","Mar-May","June-Oct.","June-Oct","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"51","P. angustifolia","Mar-Apr","May-July","May-July","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"52","P. armeniaca","Feb-Mar","May-June","","2","Prunus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"53","","Mar-Apr","July","July-Aug*","2","Prunus",NA,NA,NA,"USSR",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"54","P. avium","Apr-May","June-July","","2","Prunus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"55","P. caroliniana","Mar-Apr","Sept-Oct","","2","Prunus",NA,NA,NA,"SE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"56","P. cerasifera","May 12t","July 15-Aug 10","","2","Prunus",NA,NA,NA,"Geneva, New York",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"57","","Apr-May","Aug","","2","Prunus",NA,NA,NA,"USSR",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"58","P. cerasus","Apr-May","June-July","","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"59","","May 8-18+","June-July","","2","Prunus",NA,NA,NA,"Geneva, New York",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"60","P. domestica","May 12-21+","July 15-Oct I","","2","Prunus",NA,NA,NA,"Geneva, New York",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"61","","May","Aug","","2","Prunus",NA,NA,NA,"USSR",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"62","P. d. var. insititia","Late Apr-May","Aug-Sept","","2","Prunus",NA,NA,NA,"US & Canada",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"63","","May 16-21+","Aug 20-Oct I","","2","Prunus",NA,NA,NA,"Geneva, New York",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"64","P. dulcis","Mid Feb-Mar","Late Aug-Oct*","","2","Prunus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"65","P. emarginata","Apr-June","July-Sept","Aug-Sept*","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"66","P. hortulana","Mar-May","Aug-Oct","","2","Prunus",NA,NA,NA,"SE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"67","P. ilicifolia","Mar-May","Sept-Oct*","Oct-Dec","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"68","P. laurocerasus","Apr-May","July-Aug","","2","Prunus",NA,NA,NA,"SE Europe & Asia Minor",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"69","P. mahaleb","Apr-May","July","","2","Prunus",NA,NA,NA,"NE US & SE Canada",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"70","P. maritima","Apr-June","Sept-Oct","","2","Prunus",NA,NA,NA,"Maine to Delaware",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"71","P. munsoniana","Mar-May","July-Sept*","","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"72","","May 20-24-","July 15-Sept 10","","2","Prunus",NA,NA,NA,"Geneva, New York",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"73","P. padus","End Apr-early May","Late June-July","","2","Prunus",NA,NA,NA,"Philadelphia & vicinity",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"74","","May-early June","June-Aug","Aug*","2","Prunus",NA,NA,NA,"USSR",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"75","P. pensylvanica","Late Mar-early July","July-Sept","","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"76","","May I-15","Late July-early","","2","Prunus",NA,NA,NA,"Warren Co., Pennsylvania",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"77","P. persica","Apr-May","July-Sept","","2","Prunus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"78","","Feb-Apr","May-Aug","","2","Prunus",NA,NA,NA,"SE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"79","P. pumila","May-July","July-Sept","","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"80","P. pumila. var. besseyi","Apr-May","July-Sept","July-Sept","2","Prunus",NA,NA,NA,"Nebraska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"81","P. serotina","Early Apr","June-July","July","2","Prunus",NA,NA,NA,"Central Mississippi",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"82","","Late May-early June","Late Aug-Sept","Aug 20-Sept; rarely Nov","2","Prunus",NA,NA,NA,"N Pennsylvania",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"83","","Late Apr-June 10","June-Sept.","July I-Sept","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"84","P. spinosa","Apr-May","Aug-Sept","Sept","2","Prunus",NA,NA,NA,"USSR",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"85","P. subcordata","Mar-May","Aug-Sept","","2","Prunus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"86","P. tomentosa","Early May","Late July","Early Aug","2","Prunus",NA,NA,NA,"Cheyenne, Wyoming",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"87","","May 10-15","July 10-15","July 15-Sept I","2","Prunus",NA,NA,NA,"Bismarck, N Dakota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"88","P. umbellata","Mar-Apr","Aug-Sept","","2","Prunus",NA,NA,NA,"SE United States",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"89","P. virginiana","Late Apr-early June","July-Oct","","2","Prunus",NA,NA,NA,"E US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"90","","May 10-20","Early Aug","","2","Prunus",NA,NA,NA,"Warren Co., Pennsylvania",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"91","","","Aug-Sept*","","2","Prunus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"92","M. aquifolium","Late Apr-early May","Late July-early Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mineral Co., Montana (975 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"93","","Mar-May","Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Jackson Co., Oregon (685 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"94","M. fremontii","May-June","Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Texas, NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"95","","May-June","July -Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Utah & California",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"96","M. haematocarpa","Spring","June-Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Texas & SW US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"97","M. nervosa","Early Apr","Mid-Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Clackamas Co., Oregon (90 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"98","","Mid-May","Late Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Jackson Co., Oregon (990 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"99","","Apr-June","July-Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"100","M. nevinii","Mar-May","June",NA,NA,NA,NA,NA,NA,NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"101","M. repens","May -June","June-July",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Black Hills, South Dakota (1,830 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"102","","Apr- May","Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"103","S. albus","","",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"104","var. albus","June I-July 31","Sept I-Oct 31",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"Michigan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"105","","May I-Sept 30","Aug I-Oct 31",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"Michigan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"106","","","",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"Idaho",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"107","","June 5-Aug 5","Aug - Sept 5",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"700 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"108","var. laevigatus","","",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"Missoula Co., Montana",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"109","","June 20-Aug 15","Aug 15-Sept 30",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"1,000 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"110","","July I-July 30","Aug 25-Sept 20",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"1,300 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"111","","July 15-Aug 30","Sept 10-Oct 5",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"1,650 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"112","","July 25-Sept 5","Sept 25-Oct 25",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"2,000 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"113","S. occidentalis","","",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"Pennington Co., South Dakota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"114","","June I-July 31","Sept I-Oct 31",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"750 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"115","S. orbiculatus","July I-Aug 31","Sept I-heavy frost",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"116","S. oreophilus","","",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"Wasatch Plateau, Utah",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"117","","June 17-June 26","Aug 20-Sept 18",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"2,230 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"118","","June 22-June 30","Aug 17-Sept 12",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"2,576 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"119","","July 2-July 8","Aug 21-Sept 26",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"2,698 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"120","","","",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"Northern Utah",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"121","","June 5-June 10","July 15-Aug 3",NA,"2","Symphoricarpos",NA,NA,NA,NA,NA,NA,NA,"2,080 m",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"122","T. canadensis","Apr-early June","Sept-Oct","Sept-winter","4","Tsuga",NA,NA,NA,"Southern range to northern range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"123","T. caroliniana","Mar-Apr","Aug-Sept","","4","Tsuga",NA,NA,NA,"North Carolina to South Carolina",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"124","T. heterophylla","Apr-May","Sept-Oct","Oct-May","4","Tsuga",NA,NA,NA,"Oregon to Washington",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"125","","","Sept 15","Oct-June","4","Tsuga",NA,NA,NA,"S British Columbia",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"126","","Late May-June","Sept-Oct","Oct","4","Tsuga",NA,NA,NA,"SE Alaska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"127","","Mid to late Apr","","Sept-May","4","Tsuga",NA,NA,NA,"W central Oregon",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"128","","May 27-June 5","Aug","Sept 17-winter","4","Tsuga",NA,NA,NA,"Idaho",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"129","T. mertensiana","June","Late Sept-Oct","","4","Tsuga",NA,NA,NA,"Oregon",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"130","","June-mid-July","Late Sept-Nov","","4","Tsuga",NA,NA,NA,"British Columbia, Alaska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"131","","Aug","","","4","Tsuga",NA,NA,NA,"Bitterroot Mtns, Idaho",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"132","S. americana","May-July","Aug-Oct","Aug-Mar","2","Sorbus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"133","S. aucuparia","May-July","Aug-Oct","Aug- winter","2","Sorbus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"134","S. decora","May-July","Aug-Nov","Aug-Mar","2","Sorbus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"135","S. scopulina","May-July","July","July-Dec","2","Sorbus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"136","S. sitchensis","June-Aug","Aug-Oct","Aug-late winter","2","Sorbus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"137","P. occidentalis","Mar-May","Sept-Nov","Jan-Apr","2","Platanus",NA,NA,NA,"E US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"138","P. orientalis","May","Sept-Oct","","2","Platanus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"139","P. racemosa","","June-Aug","June-Dec","2","Platanus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"140","R. hispida","May-June","July-Sept","","2","Robinia",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"141","R. hispida var. fertilis","Early June","Sept","Oct-Nov","2","Robinia",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"142","R. neomexicana","","Sept","Sept-Oct","2","Robinia",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"143","R. pseudoacacia","","Sept-Oct","Sept-Apr","2","Robinia",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"144","S. alaxensis","May-June","June-July","July-Aug","3","Salix",NA,NA,NA,"Alaska-Brooks Range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"145","","Apr-May","May","May-June","3","Salix",NA,NA,NA,"Alaska-Tanana River",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"146","","May-June","June-July","July-Aug","3","Salix",NA,NA,NA,"Alaska-central Interior*",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"147","S. amygdaloides","May-June","","","3","Salix",NA,NA,NA,"NE Minnesota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"148","S. arctica","","","","3","Salix",NA,NA,NA,"Canadian high Arctic-",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"149","","July","Aug-Sept","","3","Salix",NA,NA,NA,"Ellesmere Island",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"150","","June-July","July-Aug","Aug-Sept","3","Salix",NA,NA,NA,"Interior Alaska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"151","S. bebbiana","Apr-June","May-June","May-June","3","Salix",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"152","S. caroliniana","Mar-April","Mar-Apr","","3","Salix",NA,NA,NA,"North & South Carolina",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"153","S. discolor","May","","","3","Salix",NA,NA,NA,"N Ontario & British Columbia",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"154","","Mar-April","Apr-May","Apr-May","3","Salix",NA,NA,NA,"Rocky Mtns, USA",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"155","S. eriocephala (as S. rigida)","Apr-June","June","June-July","3","Salix",NA,NA,NA,"NE Minnesota & N Ontario",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"156","S. exigua","May-July","June-July","June-July","3","Salix",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"157","S. fragilis","Apr-May","May-June","May-June","3","Salix",NA,NA,NA,"US & Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"158","S. glauca","June-July","July-Aug","Sept-Nov","3","Salix",NA,NA,NA,"Alaska-Brooks Range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"159","","May-June","July-Aug","Sept-Nov","3","Salix",NA,NA,NA,"Alaska-mid-boreal forest",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"160","","June-July","July-Aug","Sept-Nov","3","Salix",NA,NA,NA,"Alaska-Denali National Park",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"161","S. interior","","Aug 13","","3","Salix",NA,NA,NA,"N Ontario",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"162","S. lucidat","Apr-May","June-Aug","June-Aug","3","Salix",NA,NA,NA,"Idaho",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"163","S. nigra","Feb-April","Apr-May","Apr-May","3","Salix",NA,NA,NA,"In north",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"164","","May-June","June-July","June-July","3","Salix",NA,NA,NA,"In south",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"165","S. petiolaris","May-June","June-July","June-July","3","Salix",NA,NA,NA,"General",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"166","S. scouleriana","Apr-June","May-July","May-July","3","Salix",NA,NA,NA,"General",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"167","R. alpinum","July-Aug","Apr-May",NA,NA,NA,NA,NA,NA,"Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"168","R. americanum","June-Sept","Apr-June",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"169","R. aureum","June-July","Apr-May",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"170","R. aureum var.villosum","Late Aug","Late May",NA,NA,NA,NA,NA,NA,"Wyoming",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"171","","June","Mid-Apr",NA,NA,NA,NA,NA,NA,"Kansas",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"172","","June-Aug","Apr-June",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"173","R. cereum","Aug","Apr-June",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"174","R. cynosbati","Late July-Sept","Apr-early June",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"175","R. hudsonianum","","May-July",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"176","R. inerme","","May-June",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"177","R. lacustre","Aug","Apr-July",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"178","R. missouriense","June-Sept","Apr-May",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"179","R. montigenum","Aug-Sept","Late June-July",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"180","R. nevadense","","May-July",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"181","R. oxyacanthoides ssp. irriguum","","Apr-June",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"182","R. roezlii","","May-June",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"183","R. rotundifolium","July-Sept","Apr-May",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"184","R. sanguineum","July-Aug","Apr-May",NA,NA,NA,NA,NA,NA,"Oregon",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"185","","","Mar-June",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"186","R. viscosissimum","Aug-Sept","May-June",NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"187","S. X persica","May-June","Late Mar-Apr",NA,"2","Syringa",NA,NA,NA,"NE US, Kansas",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"188","S. reticulata var. amurensis","Early June","",NA,"2","Syringa",NA,NA,NA,"North Dakota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"189","","June-July","Sept-Oct",NA,"2","Syringa",NA,NA,NA,"Manitoba",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"190","S. vulgaris","Apr-June","Aug-Oct",NA,"2","Syringa",NA,NA,NA,"NE US & Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"191","","Late Mar-early May","",NA,"2","Syringa",NA,NA,NA,"Kansas",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"192","","Late Mar-mid-May*","",NA,"2","Syringa",NA,NA,NA,"W US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"193","C. columbiana","May-June","July-Aug",NA,"2","Clematis",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"194","C. drummondii","Mar-Sept","Aug-Oct",NA,"2","Clematis",NA,NA,NA,"SW US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"195","C. flammula","Aug-Oct","Aug-Oct",NA,"2","Clematis",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"196","C. ligusticifolia","Mar-Apr","May-Aug",NA,"2","Clematis",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"197","","Mar-Sept","Aug-Nov",NA,"2","Clematis",NA,NA,NA,"Texas",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"198","","May-Aug","Oct-Dec",NA,"2","Clematis",NA,NA,NA,"Colorado & Utah",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"199","C. pauciflora","Mar-Apr","May-July",NA,"2","Clematis",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"200","C. virginiana","July-Sept","July-Sept",NA,"2","Clematis",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"201","","June-July","Aug-Sept",NA,"2","Clematis",NA,NA,NA,"Minnesota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"202","C. vitalba","July-Sept","July-Sept",NA,"2","Clematis",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"203","","June-July","Sept-Oct",NA,"2","Clematis",NA,NA,NA,"France",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"204","C. viticella","June-Aug","June-Aug",NA,"2","Clematis",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"205","E. camaldulensis","Feb-Apr","July-Oct","Begins 8-9 months after flowering","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"18-36",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"206","E. citriodora","Nov-Jan","May-Aug","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"24-39",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"207","E. dalrympleana","June-Aug","Aug-Oct","Oct-Nov","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"18-36",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"208","E. delegatensis","Apr-June","Apr-July","May-July","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"30-83",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"209","E. fastigata","Apr-May","July-Aug","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"18-60",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"210","E. glaucescens","July-Aug","May-Sept","Nov-Feb","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"4-12",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"211","E. globulus","Nov-Apr","Oct-Mar","Oct-Mar","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"45-54",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"212","E. grandis","Sept-Nov","","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"42-54",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"213","E. microcorys","Dec-Feb","",".","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"30-45",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"214","E. nitens","Apr-July","May-June","May-June","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"30-90",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"215","E. obliqua","Apr-July","May-Aug","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"15-75",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"216","E. paniculata","Feb-May","","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"24-42",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"217","E. pilularis","Dec-Mar","Jan-April","All year","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"36-60",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"218","E. regnans","Apr-July","June-Sept","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"52-105",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"219","E. robusta","Jan-Mar","","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"24-27",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"220","E. rudis","Jan-Mar","","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"9-15",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"221","E. saligna","Apr-June","Oct-Dec","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"15-45",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"222","E. sideroxylon","June-Sept","","","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"12-30",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"223","E. viminalis","All year","12 months after flowering","20-22 months after flowering","2","Eucalyptus",NA,NA,NA,NA,NA,NA,NA,NA,"15-45",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"224","EVERGREEN","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"RHODODENDRONS","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"225","R. carolinianum","May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Compact shrub; to 1.8 m","Pink, mauve, white",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"226","R. catawbiense","May-June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Spreading, rounded in the open; generally wider than tall to 3 m, sometimes small tree to 6 m","Magenta, pink, white, red",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"227","R. chapmanii","May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Shrub to 1.8 m","Rose",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"228","R. macrophyllum","May-June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Open tree-like shrub; often erect to 3-9 m","Purplish rose, white",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"229","R. maximum","June-July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Shrub in cultivation; to 4.6 m (sometimes to 12 m in the wild)","White, pink, purplish red",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"230","R. minus","June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"2.8 m","Rose, white",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"231","DECIDUOUS","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"RHODODENDRONS","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"232","R. alabamense","Apr-May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Low stoloniferous shrub; to 0.6-2.4 m","White",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"233","R. albiflorum","June-July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Erect shrub; from 0.9-2.1 m","Creamy white, yellow",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"234","R. arborescens","June-July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"From low spreading bushes in open to tall and leggy in shade; up to 6 m","White",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"235","R. atlanticum","May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Stoloniferous shrub, forms branching sprays when well established; 0.3-1.5 m","White, pink",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"236","R. austrinum","Apr",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Stiff and upright; from 3.0-3.6 m","Yellow-orange",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"237","R. calendulaceum","May-June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Stiff and upright; to 3.6 m","Yellow, orange, scarlet, pink",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"238","R. camtschaticum","May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Very small shrub; to 0.2 m","Reddish purple",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"239","R. canadense","Apr",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Much branched shrub; to 0.9 m","Rose-purple, white",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"240","R. canescens","Apr-May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sparingly branched shrub; to 4.6 m","Pink, white",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"241","R. cumberlandense","June-July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Low and twiggy, often stoloniferous shrub; to 2.4 m but rarely over 1.8 m","Yellow, orange, scarlet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"242","R. flammeum","May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mounding form; to 2.5 m","Scarlet, orange, yellow",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"243","R. lapponicum","Apr",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Dwarf, procumbent shrub; to 0.3 m","Purple",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"244","R. oblongifolium","June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Upright, somewhat stoloniferous shrub; to 1.8 m","White, pink",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"245","R. occidentale","Apr-Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Rounded, occasionally upright or low shrub; to 1.0-4.6 m","White, pink, pale yellow",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"246","R. periclymenoides","May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Usually tall, vigorous and much- branched shrub; to 2.7 m & up to 4.5 m in wild","Pale pink, rose, reddish, white",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"247","R. prinophyllum","May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Upright, well branched shrub; to 2.5 m","Pink, white, rosy red",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"248","R. prunifolium","July-Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Tall, rounded-topped; up to 3.6 or 5.5 m in wild","Yellow, orange, scarlet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"249","R. vaseyi","Apr-May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Upright shrub to 3.6 m","White, pink, crimson",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"250","R. viscosum","July-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Form various: large & upright to dwarf, small tree; from 3-6 m, rounded or straggly shrub, stoloniferous form to 4.6 m","White, pink",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"251","A. alnifolia","May-June","July-Aug",NA,"2","Amelanchier",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"252","var. semiintegrifolia","Apr","Aug",NA,"2","Amelanchier",NA,NA,NA,"Oregon (520 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"253","","May","",NA,"2","Amelanchier",NA,NA,NA,"Oregon (1,310 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"254","","May","Aug",NA,"2","Amelanchier",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"255","A. arborea","Mar-June","June-Aug",NA,"2","Amelanchier",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"256","A. canadensis","Mar-April","May-June",NA,"2","Amelanchier",NA,NA,NA,"Carolinas",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"257","","May","June",NA,"2","Amelanchier",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"258","A. laevis","Mar-June","June-Aug",NA,"2","Amelanchier",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"259","A. sanguinea","May-June","July-Sept",NA,"2","Amelanchier",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"260","C. americana","Mar-May","July-Sept",NA,"2","Corylus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"261","C. avellana","Feb-Apr","Sept-Oct",NA,"2","Corylus",NA,NA,NA,"Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"262","C. cornuta","Jan-Feb","Aug-Sept",NA,"2","Corylus",NA,NA,NA,"Tennessee",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"263","var. california","Jan-Feb","Sept-Oct",NA,"2","Corylus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"264","B. alleghaniensis","Apr-May","Aug-Oct","Sept-Spring",NA,NA,NA,NA,NA,"Mid-range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"265","B. davurica","May","Oct","",NA,NA,NA,NA,NA,"Japan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"266","B. lenta","Apr-May","Aug-Sept","Sept-Nov",NA,NA,NA,NA,NA,"Mid-range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"267","B. nana","June-Aug","Aug-Oct","Sept-Mar",NA,NA,NA,NA,NA,"Mid-range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"268","B. nigra","Apr-May","May-June","May-June",NA,NA,NA,NA,NA,"N part of range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"269","B. papyrifera","Apr-June","Aug-Sept","Aug-Spring",NA,NA,NA,NA,NA,"Mid-range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"270","B. pendula","Apr-June","July-Aug","July-Sept",NA,NA,NA,NA,NA,"Russia & Finland",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"271","B. populifolia","Apr-May","Sept-Oct","Oct to mid-winter",NA,NA,NA,NA,NA,"Mid-range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"272","B. pubescens","May-June","Aug-Sept","Fall-Winter",NA,NA,NA,NA,NA,"Germany & Finland",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"273","B. pumlia","May-June","Sept-Oct","Oct-Mar",NA,NA,NA,NA,NA,"Mid-range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"274","E. alata","May-June","Sept-Oct",NA,"3","Euonymus",NA,NA,NA,"New England & Japan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"275","E. americana","May-June","Sept-Oct",NA,"3","Euonymus",NA,NA,NA,"Carolinas",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"276","E. atropurpurea","May-June","Sept-Oct",NA,"3","Euonymus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"277","E. bungeana","June","Sept-Oct",NA,"3","Euonymus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"278","E. europaea","May-June","Aug-Nov",NA,"3","Euonymus",NA,NA,NA,"NE US & Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"279","E. hamiltoniana ssp. maackii","June","Oct",NA,"3","Euonymus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"280","E. obovata","April-June","Aug-Oct",NA,"3","Euonymus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"281","E. verrucosa","May-June","Aug-Oct",NA,"3","Euonymus",NA,NA,NA,"NE US & Germany",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"282","A. californica","Apr-Sept","Sept-Oct","Nov & Dec","2","Aesculus",NA,NA,NA,"S California",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"283","A. flava","Apr-June","Sept","Sept","2","Aesculus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"284","A. glabra","Mar-May","Sept-mid-Oct","Early Sept-late Oct","2","Aesculus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"285","var. arguta","Mar-Apr","May-June","","2","Aesculus",NA,NA,NA,"Texas",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"286","","May","Sept-Oct","Sept-Oct","2","Aesculus",NA,NA,NA,"Minnesota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"287","A. hippocastanum","Late Apr-early June","Mid-Sept-early Oct","Mid-Sept-mid-Oct","2","Aesculus",NA,NA,NA,"Europe & NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"288","A. parviflora","July-Aug","Oct-Nov","Oct-Nov","2","Aesculus",NA,NA,NA,"SW Georgia, Alabama",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"289","A. pavia","Mar-Apr","Sept-Oct","Sept-Nov","2","Aesculus",NA,NA,NA,"South part of range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"290","","May-June","Sept-Oct","Sept-Nov","2","Aesculus",NA,NA,NA,"North part of range",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"291","A. sylvatica","Apr-May","July-Aug","July-Aug","2","Aesculus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"292","","May","Sept-Oct","Sept-Oct","2","Aesculus",NA,NA,NA,"Minnesota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"293","C. betulus C. caroliniana","Apr-May Mar-June","Aug-Nov Aug-Oct","Nov-spring Nov-spring","2","Carpinus",NA,NA,NA,"Europe & NE US NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"294","C. laevigata","Apr-May","Sept-Oct","Oct-Dec","2","Celtis",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"295","C. laevigata var. reticulata","Mar-Apr","Late fall","Fall-winter","2","Celtis",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"296","C. occidentalis","Apr-May","Sept-Oct","Oct-winter","2","Celtis",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"297","F. americana","Apr-May","Oct-Nov","Sept-Dec","2","Fraxinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,"Dioecious",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"298","F. caroliniana","Feb-Mar","Aug-Oct","","2","Fraxinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,"Dioecious",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"299","F. dipetala","Apr-May","July-Sept","","2","Fraxinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,"Perfect",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"300","F. excelsion","Apr-May","Aug-Sept","Winter-early spring","2","Fraxinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,"Polygamous",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"301","F. latifolia","Apr-May","Aug-Sept","Sept-Oct","2","Fraxinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,"Dioecious",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"302","F. nigra","May-June","June-Sept","July-Oct","2","Fraxinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,"Polygamous",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"303","F. ornus","May-June","","","2","Fraxinus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,"Polygamous",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"304","F. pennsylvanica","Mar-May","Sept-Oct","Oct-spring","2","Fraxinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,"Dioecious",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"305","F. profunda","Apr-May","Sept-Oct","Oct-Dec","2","Fraxinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,"Dioecious",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"306","F. quadrangulata","Mar-Apr","June-Oct","","2","Fraxinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,"Perfect",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"307","F. uhdei","Mar-May","July-Sept","July-Sept","2","Fraxinus",NA,NA,NA,"Hawaii",NA,NA,NA,NA,NA,NA,NA,"Dioecious",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"308","","Nov-Jan","Aug","","2","Fraxinus",NA,NA,NA,"Puerto Rico",NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"309","F. velutina","Mar-Apr","Sept","","2","Fraxinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,"Dioecious",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"310","A. auriculiformis","Mar-Apr","Jun-Jul",NA,NA,NA,NA,NA,NA,"Florida",NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"311","A. decurrens","Feb-Mar","",NA,NA,NA,NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"312","A. farnesiana","Nov-Feb","Mar-Sep",NA,NA,NA,NA,NA,NA,"Puerto Rico",NA,NA,NA,NA,NA,NA,NA,NA,"Mar-Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"313","A. koa","Jan-Jul","Jun-Jul",NA,NA,NA,NA,NA,NA,"Hawaii",NA,NA,NA,NA,NA,NA,NA,NA,"Feb; ;Jun-Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"314","A. mangium","Mar-Apr","",NA,NA,NA,NA,NA,NA,"Puerto Rico",NA,NA,NA,NA,NA,NA,NA,NA,"May-Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"315","A. mearnsii","Jun & later","Jun-Oct",NA,NA,NA,NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,"Jun-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"316","A. melanoxylon","Feb-Jun May-Jun","Jul-Nov",NA,NA,NA,NA,NA,NA,"California Hawaii",NA,NA,NA,NA,NA,NA,NA,NA,"Jul-Dec or later",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"317","A. nilotica","Almost continuously","All year",NA,NA,NA,NA,NA,NA,"Puerto Rico",NA,NA,NA,NA,NA,NA,NA,NA,"All year",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"318","A. julibrissin","June-Aug","Sept-Nov","Sept-Nov","2","Albizia",NA,NA,NA,"S US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"319","A. lebbeck","Apr-Sept","year","All year","2","Albizia",NA,NA,NA,"Puerto Rico",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"320","A. procera","Aug-Sept","Jan-June","All year","2","Albizia",NA,NA,NA,"Puerto Rico",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"321","A. saman","Spring-fall","Fall-spring","All year","2","Albizia",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"322","P. albicaulis","July",NA,"Not shed","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"323","P. aristata","July-Aug",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"Arizona",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"324","P. arizonica","May",NA,"Oct","3","Pinus",NA,NA,NA,"Arizona",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"325","P. armandii","Apr-May",NA,"Aug-Sept","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"326","P. attenuata","Apr",NA,"Closed cone","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Jan-Feb",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"327","P. balfouriana","July-Aug",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"328","P. banksiana","May-June",NA,"Sept§","3","Pinus",NA,NA,NA,"Great Lakes",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"329","P. brutia","Mar-May",NA,"Closed conet","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Jan-Mar",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"330","P. canariensis","Apr-May",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"331","P. caribaea","Jan-Feb",NA,"Sept","3","Pinus",NA,NA,NA,"Cuba",NA,NA,NA,NA,NA,NA,NA,NA,NA,"July-Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"332","P. cembra","May",NA,"Not shedt","3","Pinus",NA,NA,NA,"Germany",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"333","P. cembroides","May-June",NA,"Nov-Dec","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Nov-Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"334","P. clausa","Sept-Dec",NA,"Sept§","3","Pinus",NA,NA,NA,"Florida",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"335","P. contorta","",NA,"","3","Pinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"336","var. contorta","May-June",NA,"Fall§","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"337","var. latifolia","June-July",NA,"Sept-Oct §","3","Pinus",NA,NA,NA,"Rocky Mtns",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"338","var. murrayana","May-June",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"339","P. coulteri","May-June",NA,"Octê","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"340","P. densiflora","Apr",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"341","P. echinata","Mar-Apr",NA,"Oct-Nov","3","Pinus",NA,NA,NA,"South Carolina",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Oct-Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"342","P. edulis","June",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"Arizona",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"343","P. elliottii","",NA,"","3","Pinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"344","var. densa","Jan-Apr",NA,"Sept-Nov","3","Pinus",NA,NA,NA,"Florida",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"345","var. elliottii","Jan-Feb",NA,"Oct","3","Pinus",NA,NA,NA,"Florida",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"346","P. engelmannii","May",NA,"Nov-Feb","3","Pinus",NA,NA,NA,"Arizona",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Nov-Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"347","P. flexilis","June-July",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"California, Montana",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"348","P. gerardiana","May-June",NA,"Nov","3","Pinus",NA,NA,NA,"India, California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"349","P. glabra","Feb-Mar",NA,"Oct-Nov","3","Pinus",NA,NA,NA,"Mississippi",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"350","P. halepensis","May-June",NA,"Fall §","3","Pinus",NA,NA,NA,"France",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"351","P. heldreichii","May-July",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"Italy, California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"352","P. jeffreyi","June-July",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"353","P. kesiya","Jan-Mar",NA,"Feb-Mar","3","Pinus",NA,NA,NA,"Philippines",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Oct-Jan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"354","P. koraiensis","May-June",NA,"Oct","3","Pinus",NA,NA,NA,"Japan",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"355","P. lambertiana","June-July",NA,"Aug-Oct","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"356","P. leiophylla var. chihuahuana","May-June",NA,"Dec-Jan","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Nov*",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"357","P. merkusii","Jan",NA,"May-Jul","3","Pinus",NA,NA,NA,"Thailand",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Apr-Jun",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"358","P. monophylla","May",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"California, Nevada",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"359","P. monticola","June-July",NA,"Aug-Sept","3","Pinus",NA,NA,NA,"Idaho",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"360","P. mugo","May-June",NA,"Nov-Dec","3","Pinus",NA,NA,NA,"Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"361","P. muricata","Apr-June",NA,"Midwinter §","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"362","P. nigra","May-June",NA,"Oct-Nov","3","Pinus",NA,NA,NA,"Ontario, Canada",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"363","P. palustris","Feb-Mar",NA,"Oct-Nov","3","Pinus",NA,NA,NA,"SE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"364","P. parviflora","May-June",NA,"Nov","3","Pinus",NA,NA,NA,"Japan",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"365","P. patula","Feb-Apr",NA,"Midwinter §","3","Pinus",NA,NA,NA,"Mexico, California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"366","P. peuce","May",NA,"Fall","3","Pinus",NA,NA,NA,"Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Fall",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"367","P. pinaster","Apr",NA,"Dec-Jan §","3","Pinus",NA,NA,NA,"Europe, California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Nov-Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"368","P. pinea","May-June",NA,"Late summer","3","Pinus",NA,NA,NA,"Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Late summer*",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"369","P. ponderosa","",NA,"","3","Pinus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"370","var. ponderosa","Apr-June",NA,"Aug-Sept","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"371","var. scopulorum","May-June",NA,"Sept-Jan","3","Pinus",NA,NA,NA,"South Dakota, Colorado",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"372","P. pumila","July",NA,"Fall or not shed t","3","Pinus",NA,NA,NA,"Russia",NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"373","P. pungens","Mar-Apr",NA,"Fall §","3","Pinus",NA,NA,NA,"West Virginia, California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Fall",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"374","P. quadrifolia","June",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"375","P. radiata","Jan-Feb",NA,"Midwinter §","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"376","P. X acuminata","May",NA,NA,"3","Populus",NA,NA,NA,"Nebraska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"377","P. alba","Apr-May",NA,NA,"3","Populus",NA,NA,NA,"Nebraska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Early June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"378","","Apr-May",NA,NA,"3","Populus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"May-June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"379","","Mar-Apr",NA,NA,"3","Populus",NA,NA,NA,"S Michigan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"May-June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"380","P. balsamifera","Late Apr",NA,NA,"3","Populus",NA,NA,NA,"Alberta",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Early June-early July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"381","","Apr-May",NA,NA,"3","Populus",NA,NA,NA,"Lake States",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"May-June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"382","","May-June",NA,NA,"3","Populus",NA,NA,NA,"Interior Alaska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"383","P. balsamifera spp. trichocarpa","Apr-June",NA,NA,"3","Populus",NA,NA,NA,"Vancouver Island, British Columbia",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Late May-mid-July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"384","P. X canescens","Late Apr",NA,NA,"3","Populus",NA,NA,NA,"Great Lakes region",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Late May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"385","P. deltoides","Early Mar-early Apr",NA,NA,"3","Populus",NA,NA,NA,"Lower Mississippi Valley",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mid-May-late Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"386","","Apr-early May",NA,NA,"3","Populus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"May-mid-June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"387","spp. monilifera","",NA,NA,"3","Populus",NA,NA,NA,"Alberta",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"late June-early Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"388","","Apr-May",NA,NA,"3","Populus",NA,NA,NA,"Lincoln, Nebraska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"389","spp. wislizeni","Apr-May",NA,NA,"3","Populus",NA,NA,NA,"Albuquerque, New Mexico",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"June-July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"390","P. fremontii","mid-Feb-mid-Mar",NA,NA,"3","Populus",NA,NA,NA,"Central Arizona",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mar-Apr",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"391","P. grandidentata","Mid-Mar-mid-Apr",NA,NA,"3","Populus",NA,NA,NA,"Syracuse, New York",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mid-May-late May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"392","","Late Mar-min-May",NA,NA,"3","Populus",NA,NA,NA,"S Michigan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"early May-late June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"393","","Mid-Mar-Apr",NA,NA,"3","Populus",NA,NA,NA,"New England",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"May-early June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"394","","Late Apr-early May",NA,NA,"3","Populus",NA,NA,NA,"N Great Lakes region",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Late May-early June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"395","P. heterophylla","Mar-May",NA,NA,"3","Populus",NA,NA,NA,"Mississippi",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Apr-July",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"396","P. maximowiczii","Late Apr",NA,NA,"3","Populus",NA,NA,NA,"Rochester, New York",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"397","P. nigra","Apr",NA,NA,"3","Populus",NA,NA,NA,"Rochester. New York",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Late May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"398","P. tremula","Mid-Apr",NA,NA,"3","Populus",NA,NA,NA,"N Great Lakes region",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mid-May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"399","P. tremuloides","Late Mar-early May",NA,NA,"3","Populus",NA,NA,NA,"Great Lakes region",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mid-May-mid-June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"400","","Early Apr-early May",NA,NA,"3","Populus",NA,NA,NA,"Alberta, Canada",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mid-May-mid-June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"401","","Mid-Mar-Apr",NA,NA,"3","Populus",NA,NA,NA,"New England",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"May-early June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"402","","Apr-May",NA,NA,"3","Populus",NA,NA,NA,"Interior Alaska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Late May-early June",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"403","P. tremula","Mid-Apr",NA,NA,"3","Populus",NA,NA,NA,"N Great Lakes region",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mid-May",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"404","NOT_SELECTED C. alba","May-June","Aug-Sept","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"405","NOT_SELECTED C. alternifolia","May-July","July-Sept","July-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"406","NOT_SELECTED C. amomum","May-July","Aug-Sept","Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"407","NOT_SELECTED C. canadensis","May-July","Aug","Aug-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"408","NOT_SELECTED C. controversa","May-June","Aug-Sept","Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"409","NOT_SELECTED C. drummondii","May-June","Aug-Oct","Aug-winter",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"410","NOT_SELECTED C. florida","Mar & Apr (S US)-May (N US)","Sept (N US)-Oct (S US)","Sept-Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"411","NOT_SELECTED C. kousa","May-June","Aug-Oct","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"412","NOT_SELECTED C. macrophylla","July-Aug","","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"413","NOT_SELECTED C. mas","Feb-March","Aug-Sept","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"414","NOT_SELECTED C. nuttallii","April-May","Sept-Oct","Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"415","NOT_SELECTED C. officinalis","Feb-Mar","Sept","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"416","NOT_SELECTED C. racemosa","late May-July","July-Oct","Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"417","NOT_SELECTED C. rugosa","May-July","Aug-Sept","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"418","NOT_SELECTED C. sanguinea","May-June","Aug-Sept","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"419","NOT_SELECTED C. sericea","May-July, June-Aug (N US)","July-Oct","Oct-winter",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"420","C. sericea ssp. occidentalis","Apr-Aug","July-Nov","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"421","P. resinosa","Apr-June",NA,"Oct-Nov","3","Pinus",NA,NA,NA,"Great Lakes, California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"422","P. rigida","May",NA,"Fall §","3","Pinus",NA,NA,NA,"New Jersey",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"423","P. roxburghii","Feb-Apr",NA,"Apr-May","3","Pinus",NA,NA,NA,"India",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Winter",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"424","P. sabiniana","Mar-Apr",NA,"Oct Il","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"425","P. serotina","Mar-Apr",NA,"Spring §","3","Pinus",NA,NA,NA,"SE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"426","P. sibirica","May",NA,"Not shed","3","Pinus",NA,NA,NA,"Russia",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"427","P. strobiformis","June",NA,"Sept-Oct","3","Pinus",NA,NA,NA,"Arizona",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sep",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"428","P. strobus","May-June",NA,"Aug-Sept","3","Pinus",NA,NA,NA,"NE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"429","P. sylvestris","May-June",NA,"Dec-Mar","3","Pinus",NA,NA,NA,"Great Britain, California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"430","P. taeda","Feb-Apr",NA,"Oct-Dec","3","Pinus",NA,NA,NA,"SE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"431","P. thunbergiana","Apr-May",NA,"Nov-Dec","3","Pinus",NA,NA,NA,"Japan, Long Island",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Oct-Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"432","P. torreyana","Feb-Mar",NA,"Sept II","3","Pinus",NA,NA,NA,"California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Jun-Jul*",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"433","P. virginiana","Mar-May",NA,"Oct-Nov §","3","Pinus",NA,NA,NA,"E US",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"434","P. wallichiana","Apr-June",NA,"Sept-Nov","3","Pinus",NA,NA,NA,"India",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"435","P. washoensis","July",NA,"Sept","3","Pinus",NA,NA,NA,"Nevada, California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"436","B. koreana","May-early June","Sept-Oct",NA,"2","Berberis",NA,NA,NA,"NE US & Carver Co., Minnesota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Korea",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"437","B. thunbergii","Apr-June","Oct",NA,"2","Berberis",NA,NA,NA,"Japan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Japan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"438","","Mar-Apr","May-Sept",NA,"2","Berberis",NA,NA,NA,"SE US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"439","","May-June","Sept-Nov",NA,"2","Berberis",NA,NA,NA,"NE US & Germany",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"440","B. vulgaris","Apr-June","Sept-Oct",NA,"2","Berberis",NA,NA,NA,"NE US & W Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Europe t",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"441","NOT_SELECTED C. gestivalis","Mar","May-June",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Lustrous, scarlet",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"442","NOT_SELECTED C. X anomala","May","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright crimson",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"443","NOT_SELECTED C. berberifolia","Mar-Apr","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Orange with red face",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"444","NOT_SELECTED C. brachyacantha","Apr-May","Aug",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright blue with white wax",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"445","NOT_SELECTED C. brainerdii","May-June","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"446","NOT_SELECTED C. calpodendron","May-June","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Orange-red to red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"447","NOT_SELECTED C. chrysocarpa","May-June","Aug-Sept",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Yellow to orange to crimson",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"448","NOT_SELECTED C. coccinoides","May","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Glossy, dark crimson",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"449","NOT_SELECTED C. crus-galli","June","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Dull red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"450","NOT_SELECTED C. dilatata","May","Sept",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Scarlet with dark spots",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"451","NOT_SELECTED C. douglasii","May","Aug-Sept",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Lustrous, black to chestnut-brown",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"452","NOT_SELECTED C. erythropoda","Apr-May","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Red to wine purple, brown, or black",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"453","NOT_SELECTED C. flabellata","May","Sept",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Crimson",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"454","NOT_SELECTED C. flava","Apr","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Dark orange-brown or yellow",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"455","NOT_SELECTED C. greggiana","Apr","Oct-Nov",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"456","NOT_SELECTED C. harbisonii","May","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright red or orange-red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"457","C. intricata","May-June","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Greenish or reddish brown",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"458","NOT_SELECTED C. lacrimata","Apr","Aug",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Dull yellow or orange or red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"459","C. laevigata","Apr-May","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Deep red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"460","C. marshallii","Apr-May","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright scarlet",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"461","NOT_SELECTED C. mollis","May","Aug-Sept",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Scarlet with large dark dots",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"462","C. monogyna","May","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"463","C. nitida","May","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Dull red covered with white wax",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"464","NOT_SELECTED C. opaca","Feb-Mar","May",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Lustrous scarlet with pale dots",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"465","C. pedicellata","May","Sept",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Glossy, scarlet",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"466","NOT_SELECTED C. persimilis","May-June","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"467","C. phaenopyrum","May","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Lustrous scarlet",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"468","NOT_SELECTED C. piperi","May-June","Aug-Sept",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Salmon-orange to scarlet",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"469","C. pruinosa","May-June","Oct-Nov",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Dark purple-red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"470","C. pulcherrima","Apr-May","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"471","NOT_SELECTED C. punctata","May-June","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Dull red or bright yellow",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"472","C. reverchonii","May","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Shiny or dull red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"473","C. rufula","Mar-Apr","June-July",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"474","C. saligna","May","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Red to blue-black",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"475","C. sanguineat","May","Aug-Sept",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"476","C. spathulata","Apr-May","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"477","C. succulenta","May-June","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"478","C. tracyi","Apr-May","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Orange-red",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"479","C. triflora","May","Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Red, hairy",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"480","C. uniflora","Apr-May","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Yellow to dull red to brown",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"481","C. viridis","Apr-May","Sept-Oct",NA,"2","Crataegus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Bright red, orange-red, yellow",NA,NA,NA,NA,NA,NA,NA,NA,NA
+"482","E. angustifolia","June","Aug-Oct","All winter","2","Elaeagnus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"12-13",NA,NA,NA,NA,NA,NA,NA,NA
+"483","E. commutata","June-July","Aug-Sep","Sep-Nov","2","Elaeagnus",NA,NA,NA,"Black Hills, South Dakota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"8-9",NA,NA,NA,NA,NA,NA,NA,NA
+"484","E. umbellata","May-June","Aug-Oct","Sep-Nov","2","Elaeagnus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"6-8",NA,NA,NA,NA,NA,NA,NA,NA
+"485","A. arbutifolia","Mar-Apr","Oct-Nov",NA,"2","Aronia",NA,NA,NA,"Texas",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"486","","Mar-May","Sept-Oct",NA,"2","Aronia",NA,NA,NA,"West Virginia",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"487","","Apr-July","Sept-Nov",NA,"2","Aronia",NA,NA,NA,"North",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"488","A. melanocarpa","Mar-June","Aug",NA,"2","Aronia",NA,NA,NA,"South",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"489","","Apr-July","Aug-Oct",NA,"2","Aronia",NA,NA,NA,"North",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"490","","June","Sept-Oct",NA,"2","Aronia",NA,NA,NA,"West Virginia",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"491","A. X prunifolia","Apr-July","Aug-Oct",NA,"2","Aronia",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"492","Morella californica","May-June","Sept",NA,"2","Morella","Brownish purple with grayish white wax",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"6","48,000","22,000",NA,NA,NA,NA,NA
+"493","Morella cerifera","Mar-June","Aug-Oct",NA,"2","Morella","Light green with pale blue wax",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"3","185,000","84,000",NA,NA,NA,NA,NA
+"494","Morella faya","Variable","Aug-Nov",NA,"2","Morella","Red to purple",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"5","","",NA,NA,NA,NA,NA
+"495","Myrica pensylvanica","Apr-July","Sept-Oct",NA,"2","Morella","Covered with grayish white wax",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"4","121,000","55,000",NA,NA,NA,NA,NA
+"496","Myrica gale","Mar-Apr","Oct",NA,"2","Morella","Lustrous & dotted with resin",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"3","","",NA,NA,NA,NA,NA
+"497","T. baccata","Mar-May",NA,"Aug-Oct","2","Taxus",NA,NA,NA,"W Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Oct",NA,NA,NA,NA
+"498","T. brevifolia","Mar-May",NA,"July-Oct","2","Taxus",NA,NA,NA,"Washington & Oregon",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"July-Oct",NA,NA,NA,NA
+"499","T. canadensis","Apr",NA,"Aug-Sept","2","Taxus",NA,NA,NA,"Minnesota & Wisconsin",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Sept",NA,NA,NA,NA
+"500","T. cuspidata","Apr-June",NA,"Oct","2","Taxus",NA,NA,NA,"Japan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sept-Oct",NA,NA,NA,NA
+"501","T. floridana","Jan-Mar",NA,"Aug-Oct","2","Taxus",NA,NA,NA,"NW Florida",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug-Oct",NA,NA,NA,NA
+"502","P. macrocarpa","February-mid-Apr",NA,"Late Aug-late Oct","2","Pseudotsuga",NA,NA,NA,"S California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Early Aug-early Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"503","P. menziesii var. glauca","Mid-Apr-early May",NA,"","2","Pseudotsuga",NA,NA,NA,"Central Colorado (elev. 2,060-2,880 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"504","","Late May-early June",NA,"Late Aug-mid-Sept*","2","Pseudotsuga",NA,NA,NA,"Montana (elev. 700-1,700 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Late July-early Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"505","","Early May-late June",NA,"Early Sept*","2","Pseudotsuga",NA,NA,NA,"Northern Idaho (elev. 820-1,000 m)",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mid-Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"506","","Mid-May-mid-June",NA,"Mid-Aug-mid-Sept*","2","Pseudotsuga",NA,NA,NA,"Central Oregon",NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"507","P. menziesii var. menziesii","Late Mar-mid-May",NA,"Sept-late Mar","2","Pseudotsuga",NA,NA,NA,"Coastal British Columbia",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"508","","Mid-Mar-early Junet",NA,"Late Aug-late Mart","2","Pseudotsuga",NA,NA,NA,"W-central Oregon & W Washington",NA,NA,NA,NA,NA,NA,NA,NA,NA,"Aug",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"509","","Early Apr-early May",NA,"Mid-Aug*","2","Pseudotsuga",NA,NA,NA,"S Oregon",NA,NA,NA,NA,NA,NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"510","","",NA,"Sept-early winter","2","Pseudotsuga",NA,NA,NA,"N California",NA,NA,NA,NA,NA,NA,NA,NA,NA,"August",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"511","A. californica","May-July","July-Sept","Aug-Sept","3","Amorpha",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"512","A. canescens","June-late July","Aug-Sept","Sept-Oct","3","Amorpha",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"513","A. fruticosa","May-June","Aug","Sept-Oct","3","Amorpha",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"514","A. nana","May-July","July","July","3","Amorpha",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"515","C. acutifolius","May-June","Sept-Oct","Sept-winter","2","Cotoneaster",NA,NA,NA,"N Great Plains",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"516","C. apiculatus","May-June","Aug-Sept","Fall-winter","2","Cotoneaster",NA,NA,NA,"S Michigan",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"517","C. horizontalis","June","Sept-Nov","Sept-winter","2","Cotoneaster",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"518","C. integerrimus","May-June","Aug-Sept","","2","Cotoneaster",NA,NA,NA,"Great Plains",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"519","C. lucidus","May-June","Sept","","2","Cotoneaster",NA,NA,NA,"North Dakota",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"520","C. niger","May-June","","","2","Cotoneaster",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"521","F. grandifolia","March-May","Sept-Nov","Sept-Nov (after frost)","2","Fagus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"522","F. sylvatica*","Apr-May","Sept-Oct","Oct-Nov (after frost)","2","Fagus",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"523","A. glutinosa","Mar-May","Sept","Sept or Oct-early spring","2","Alnus",NA,NA,NA,"E US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"524","","(can start Jan)","Feb-April","","2","Alnus",NA,NA,NA,"S US & England",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"525","A. incana","Mar-May","Sept-Nov","Sept-Dec","2","Alnus",NA,NA,NA,"Europe",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"526","ssp. rugosa","Mar-May","","","2","Alnus",NA,NA,NA,"Canada, US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"527","ssp. tenuifolia","Mar-Apr","Aug-Sept","","2","Alnus",NA,NA,NA,"Idaho, Montana, Oregon",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"528","A. nepalensis","","Oct-Feb","Oct-Apr","2","Alnus",NA,NA,NA,"Hawaii",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"529","A. rhombifolia","Mar","Late Sept-early Oct","","2","Alnus",NA,NA,NA,"Oregon",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"530","A. rubra","Late winter-","Aug-Oct","Sept-Dec","2","Alnus",NA,NA,NA,"Washington, Oregon",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"531","","early spring","","","2","Alnus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"532","A. serrulata","Feb-May","Late Sept-early Oct","","2","Alnus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"533","A. viridis ssp. crispa","Spring","Late Aug-mid-Oct","Soon after ripening","2","Alnus",NA,NA,NA,"E US, Alaska",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"534","","Apr-June","Mid Sept-early Oct","Sept-early spring","2","Alnus",NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"535","ssp. sinuata","Apr-June","Sept-Dec","","2","Alnus",NA,NA,NA,"Alaska, W Canada, & NW US",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"536","C. alba","Apr-May","Sept-Oct","Sept-Oct","2","Carya",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"537","C. aquatica","Mar-May","Sept-Nov","Oct-Dec","2","Carya",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"538","C. cordiformis","Apr-May","Sept-Oct","Sept-Dec","2","Carya",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"539","C. glabra","Apr-May","Sept-Oct","Sept-Oct","2","Carya",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"540","C. illinoensis","Mar-May","Sept-Oct","Sept-Oct","2","Carya",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"541","C. laciniosa","Apr-June","Sept-Nov","Sept-Oct","2","Carya",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"542","C. myristiciformis","Apr-May","Sept-Oct","Sept-Oct","2","Carya",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"543","C. ovata","Apr-June","Sept-Oct","Sept-Oct","2","Carya",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"544","C. pallida","Mar-Apr","Sept-Oct","Sept-Oct","2","Carya",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"545","A. alba","May-mid-June","Mid-Sept-mid-Oct","Mid-Sept-mid-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Europe","25-45","25-30","2-3-"
+"546","A. amabilis","Late Apr-May","Late Aug","Late Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"W Washington & Oregon (150-400)","35-65","30","3-6"
+"547","","Mid-May-June","Mid-Sept","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Vancouver Is., British Columbia (500)","","",""
+"548","","June","","Mid-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Lewis Co., Washington (1,600)","","",""
+"549","A. balsamea","Mid-late-May","Late Aug-early Sept","Mid-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"","10-20","20-30","2-4"
+"550","","Late Apr-early June","","Early Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Minnesota","","",""
+"551","A. bracteata","Late Apr-early May","Late Aug","Mid-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Sta. Lucia Mtns, Monterey Co., California","10-35","","3-5"
+"552","A. concolor","May-June","Sept-Oct","Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"","25-60","40","3-9"
+"553","var. lowiana","Late May","","Late Sept-late Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Stanislaus NF, California (2,000)","","",""
+"554","","Mid-May-early June","NOT_SELECTED -","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Fremont NF, Oregon (1,600)","","",""
+"555","A. firma","Late Apr-mid-May","Mid-late Oct","Late Oct-early Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Japan","30-45","","4-6"
+"556","A. fraseri","Mid-May-early June","Sept-mid-Oct","Sept-early Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Roan Mtn, North Carolina","10-25","15","3"
+"557","A. grandis","Mid-June","Aug","Early Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Northern Idaho (750-1,100)","35-65","20","2-3"
+"558","","Mid-April-mid-May","","Late Aug-mid-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"W Washington & Oregon (100-400)","","",""
+"559","","Early-mid-June","NOT_SELECTED -","Early Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Linn Co., Oregon (1,600)","","",""
+"560","","Late March-early Apr","NOT_SELECTED -","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Mendocino Co., California (65)","","",""
+"561","A. guatemalensis","","Oct-mid-Dec","Nov-mid-Dec",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Guatemala, S Mexico, Honduras, & El Salvador","20-30","","2-3"
+"562","A. homolepis","Mid-May-mid-June","Mid-late Sept","Mid-late Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Japan","20-30","","5-7"
+"563","A. lasiocarpa","Late June","Mid-Sept-early Oct","Late Sept-early Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"San Francisco Peaks, Coconino Co., Arizona","10-35","50","2-3"
+"564","","Late June-early July","Mid-Aug","Mid-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Northern Idaho (950)","10-35","20","2-4"
+"565","","Early-mid-July","Late Aug","Early Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Eastern Montana (2,100)","","",""
+"566","","Late May-early July","","Early Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Linn County, Oregon (1,750)","","",""
+"567","A. magnifica","Late May-early June","Aug","Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"","30-55","35-45","2-3"
+"568","A. mariesii","Mid-late June","Mid-late Sept","Late Sept-early Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Japan","10-25","","5-7"
+"569","A. nordmanniana","","May","Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"","40-60","30-40","2-3"
+"570","","","After Oct I","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Russian Georgia","","",""
+"571","A. pindrow §","Late Apr-mid-May","Sept-early Oct","Oct-Nov",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Himalayas","","30-40","2-4"
+"572","A. pinsapo","","","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Czech Republic & Soslovakia","","50",""
+"573","A. procera","June","Mid-late Sept","Early Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Benton & Linn Cos., Oregon (1,350-1,550)","45-80","12-15","3-6"
+"574","","June-early July","Late Sept","Early Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Lewis Co., Washington (1,600)","","",""
+"575","A sachalinensis","May-June","Sept-Oct","Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Hokkaido, Japan","","","2-4"
+"576","A. X shastensis","Mid-late June","Late Sept","Late Sept-mid-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"SW Oregon (1,850-2,000)","30-55","30-40","2-3"
+"577","","","Late Sept","Early-mid-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"N. California coast ranges (2,000)","","",""
+"578","","","","Mid-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Shasta Co., California (1,700-2,000)","","",""
+"579","A. sibirica","","","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"W Siberia","","","2-8"
+"580","A. veitchii","June","Sept-early Oct","Sept-Oct",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Japan","20-25","30","5-6"
+"581","B. angustifolia","Sept-Oct","Sept-Oct","Oct","2","Baccharis",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"582","B. pilularis","July-Oct","Sept-Dec","Fall","2","Baccharis",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"583","B. salicifolia","May-July","May-July","May-July","2","Baccharis",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"584","C. canadensis","Mar-May","July-early autumn",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Magenta-purplish pink",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"585","C. canadensis var. texensis","Mar-Apr","Aug-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Magenta pink",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"586","C. orbiculata","Feb-May","July-Sept",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Magenta pink-reddish purple",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
