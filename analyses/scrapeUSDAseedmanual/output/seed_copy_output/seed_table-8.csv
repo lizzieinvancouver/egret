@@ -1,4 +1,4 @@
-Species,maturity (m),cultivated,age (yrs),Time,Location,pdf_table_number,genus_name
+ Species,Height at maturity (m),Year first cultivated,Minimum seed-bearing age (yrs),Years large Time,between seedcrops Location,pdf_table_number,genus_name
 F. grandifolia,21-37,1800,40,2-3,,3,Fagus
 ,,,,4-5,Wisconsin,3,Fagus
 F. sylvatica,20-30,Long ago,40-80*,5-8,Mtn areas,3,Fagus

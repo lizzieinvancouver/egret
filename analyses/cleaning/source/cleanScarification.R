@@ -1,4 +1,4 @@
-## Updated 24 February 2024 ##
+## Updated 28 June 2024 ##
 ## By Britany ##
 
 ## This contains code to clean scarification and scarif type ##

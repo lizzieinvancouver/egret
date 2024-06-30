@@ -1,1 +1,18 @@
-X1,X2,X3,X4,pdf_table_number,genus_name
+Species,Flowering,Fruit ripening,Seed dispersal,pdf_table_number,genus_name
+NOT_SELECTED C. alba,May-June,Aug-Sept,,NA,NA
+NOT_SELECTED C. alternifolia,May-July,July-Sept,July-Sept,NA,NA
+NOT_SELECTED C. amomum,May-July,Aug-Sept,Sept,NA,NA
+NOT_SELECTED C. canadensis,May-July,Aug,Aug-Oct,NA,NA
+NOT_SELECTED C. controversa,May-June,Aug-Sept,Oct,NA,NA
+NOT_SELECTED C. drummondii,May-June,Aug-Oct,Aug-winter,NA,NA
+NOT_SELECTED C. florida,Mar & Apr (S US)-May (N US),Sept (N US)-Oct (S US),Sept-Nov,NA,NA
+NOT_SELECTED C. kousa,May-June,Aug-Oct,,NA,NA
+NOT_SELECTED C. macrophylla,July-Aug,,,NA,NA
+NOT_SELECTED C. mas,Feb-March,Aug-Sept,,NA,NA
+NOT_SELECTED C. nuttallii,April-May,Sept-Oct,Sept-Oct,NA,NA
+NOT_SELECTED C. officinalis,Feb-Mar,Sept,,NA,NA
+NOT_SELECTED C. racemosa,late May-July,July-Oct,Sept-Oct,NA,NA
+NOT_SELECTED C. rugosa,May-July,Aug-Sept,,NA,NA
+NOT_SELECTED C. sanguinea,May-June,Aug-Sept,,NA,NA
+NOT_SELECTED C. sericea,"May-July, June-Aug (N US)",July-Oct,Oct-winter,NA,NA
+C. sericea ssp. occidentalis,Apr-Aug,July-Nov,,NA,NA

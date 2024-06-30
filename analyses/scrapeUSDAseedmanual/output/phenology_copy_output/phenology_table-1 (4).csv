@@ -1,1 +1,28 @@
-X1,X2,X3,X4,pdf_table_number,genus_name
+Species,Growth habit & maximum height,Flowering,Flower color,pdf_table_number,genus_name
+EVERGREEN,RHODODENDRONS,,,NA,NA
+R. carolinianum,Compact shrub; to 1.8 m,May,"Pink, mauve, white",NA,NA
+R. catawbiense,"Spreading, rounded in the open; generally wider than tall to 3 m, sometimes small tree to 6 m",May-June,"Magenta, pink, white, red",NA,NA
+R. chapmanii,Shrub to 1.8 m,May,Rose,NA,NA
+R. macrophyllum,Open tree-like shrub; often erect to 3-9 m,May-June,"Purplish rose, white",NA,NA
+R. maximum,Shrub in cultivation; to 4.6 m (sometimes to 12 m in the wild),June-July,"White, pink, purplish red",NA,NA
+R. minus,2.8 m,June,"Rose, white",NA,NA
+DECIDUOUS,RHODODENDRONS,,,NA,NA
+R. alabamense,Low stoloniferous shrub; to 0.6-2.4 m,Apr-May,White,NA,NA
+R. albiflorum,Erect shrub; from 0.9-2.1 m,June-July,"Creamy white, yellow",NA,NA
+R. arborescens,From low spreading bushes in open to tall and leggy in shade; up to 6 m,June-July,White,NA,NA
+R. atlanticum,"Stoloniferous shrub, forms branching sprays when well established; 0.3-1.5 m",May,"White, pink",NA,NA
+R. austrinum,Stiff and upright; from 3.0-3.6 m,Apr,Yellow-orange,NA,NA
+R. calendulaceum,Stiff and upright; to 3.6 m,May-June,"Yellow, orange, scarlet, pink",NA,NA
+R. camtschaticum,Very small shrub; to 0.2 m,May,Reddish purple,NA,NA
+R. canadense,Much branched shrub; to 0.9 m,Apr,"Rose-purple, white",NA,NA
+R. canescens,Sparingly branched shrub; to 4.6 m,Apr-May,"Pink, white",NA,NA
+R. cumberlandense,"Low and twiggy, often stoloniferous shrub; to 2.4 m but rarely over 1.8 m",June-July,"Yellow, orange, scarlet",NA,NA
+R. flammeum,Mounding form; to 2.5 m,May,"Scarlet, orange, yellow",NA,NA
+R. lapponicum,"Dwarf, procumbent shrub; to 0.3 m",Apr,Purple,NA,NA
+R. oblongifolium,"Upright, somewhat stoloniferous shrub; to 1.8 m",June,"White, pink",NA,NA
+R. occidentale,"Rounded, occasionally upright or low shrub; to 1.0-4.6 m",Apr-Aug,"White, pink, pale yellow",NA,NA
+R. periclymenoides,"Usually tall, vigorous and much- branched shrub; to 2.7 m & up to 4.5 m in wild",May,"Pale pink, rose, reddish, white",NA,NA
+R. prinophyllum,"Upright, well branched shrub; to 2.5 m",May,"Pink, white, rosy red",NA,NA
+R. prunifolium,"Tall, rounded-topped; up to 3.6 or 5.5 m in wild",July-Aug,"Yellow, orange, scarlet",NA,NA
+R. vaseyi,Upright shrub to 3.6 m,Apr-May,"White, pink, crimson",NA,NA
+R. viscosum,"Form various: large & upright to dwarf, small tree; from 3-6 m, rounded or straggly shrub, stoloniferous form to 4.6 m",July-Oct,"White, pink",NA,NA

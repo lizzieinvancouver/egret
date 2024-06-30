@@ -1,4 +1,4 @@
-Species,maturity (m),cultivated,age (yrs),Preripe,Ripe,pdf_table_number,genus_name
+ Species,Height at maturity (m),Year first cultivated,Minimum seed-bearing age (yrs),Fruit Preripe,color Ripe,pdf_table_number,genus_name
 C. laevigata,18-24,1811,15,Green,Dark orange to red,3,Celtis
 C. laevigata var. reticulata,9-14,1890,,,Orange-red or yellow,3,Celtis
 C. occidentalis,9-40,1656,,Orange-red,Dark reddish purple,3,Celtis

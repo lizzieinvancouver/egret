@@ -1,1 +1,21 @@
-X1,X2,X3,X4,pdf_table_number,genus_name
+Species,Location,Fruit ripening,Flowering,pdf_table_number,genus_name
+R. alpinum,Europe,Apr-May,July-Aug,NA,NA
+R. americanum,,Apr-June,June-Sept,NA,NA
+R. aureum,,Apr-May,June-July,NA,NA
+R. aureum var.villosum,Wyoming,Late May,Late Aug,NA,NA
+,Kansas,Mid-Apr,June,NA,NA
+,,Apr-June,June-Aug,NA,NA
+R. cereum,,Apr-June,Aug,NA,NA
+R. cynosbati,,Apr-early June,Late July-Sept,NA,NA
+R. hudsonianum,,May-July,,NA,NA
+R. inerme,,May-June,,NA,NA
+R. lacustre,,Apr-July,Aug,NA,NA
+R. missouriense,,Apr-May,June-Sept,NA,NA
+R. montigenum,,Late June-July,Aug-Sept,NA,NA
+R. nevadense,,May-July,,NA,NA
+R. oxyacanthoides ssp. irriguum,,Apr-June,,NA,NA
+R. roezlii,,May-June,,NA,NA
+R. rotundifolium,,Apr-May,July-Sept,NA,NA
+R. sanguineum,Oregon,Apr-May,July-Aug,NA,NA
+,,Mar-June,,NA,NA
+R. viscosissimum,,May-June,Aug-Sept,NA,NA
