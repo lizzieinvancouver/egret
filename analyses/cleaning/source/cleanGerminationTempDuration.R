@@ -310,48 +310,47 @@ d$photoperiodNote[which(d$datasetID == "geszprych02" & d$genus == "Rhaponticum")
 
 d$photoperiodNote[which(d$datasetID == "winstead71" & d$genus == "Liquidambar")] <- "photoperiod 15 but alternating temperature at 12 hr interval"
 
+# Swapping night and day for papers in which night came first when stating their photoperiod
+# We don't want to overwrite the original columns, so making copy template columns
+d$tempDayCopy <- d$tempDay
+d$tempNightCopy <- d$tempNight
 
-# unique(d$germDuration)
-# dna2 <- d %>% select(germDuration)
-# It says there's an NA when I do unique() but it doesn't actually exist in the dataset
+d$tempNight[which(d$datasetID == "jiro10" & d$species == "ermanii")] <- d$tempDayCopy[which(d$datasetID == "jiro10" & d$species == "ermanii")]
+d$tempDay[which(d$datasetID == "jiro10" & d$species == "ermanii")] <- d$tempNightCopy[which(d$datasetID == "jiro10" & d$species == "ermanii")]
 
-# library(tidyverse)
-# # unique(d$germ.temp)
-# #
-# dtempchange <- d
-# pattern <- c("alternating","day","dark","+/-")
-# pattern2 <- c("-","to","/")
-# 
-# dtempchange <- d %>%
-#   filter(!grepl(paste(pattern,collapse="|"),germ.temp))
-# unique(dtempchange$germ.temp)
-# #
-# dtempchange2 <- dtempchange %>%
-#   filter(grepl(paste(pattern2,collapse = "|"),germ.temp))
-# 
-# dtempchange3 <- dtempchange2 %>%
-#   group_by(datasetID,genus,species,study)%>%
-#   summarize()
-# unique(dtempchange2$germ.temp)
-# n_distinct(dtempchange2$datasetID)
-# print(unique(dtempchange2$datasetID))
-# 
-# dlist <- as.data.frame(unique(dtempchange2$datasetID))
-# # write.csv(dlist,"108list.csv")
-# # write.csv(dtempchange3,"108genspeclist.csv")
-# #
-# # getwd()
-# # setwd("C:/Users/sapph/Documents/ubc things/work/egret/data")
-# #
-# # egretmaster <- read_csv("egret.csv")
-# #
-# # setwd("C:/Users/sapph/Documents/ubc things/work/egret/analyses")
-# #
-# # ids <- as.list(unique(dtempchange2$datasetID))
-# # dflagged <- egretmaster %>%
-# #   filter(studyID %in% ids)
-# # runif(6,min = 1, max = 77)
-# 
-# d %>% filter(datasetID == "zhang21") %>%
-#   select(germ.temp,species)
-# # #
+d$tempNight[which(d$datasetID == "jiro10" & d$species == "platyphylla")] <- d$tempDayCopy[which(d$datasetID == "jiro10" & d$species == "platyphylla")]
+d$tempDay[which(d$datasetID == "jiro10" & d$species == "platyphylla")] <- d$tempNightCopy[which(d$datasetID == "jiro10" & d$species == "platyphylla")]
+
+d$tempNight[which(d$datasetID == "kato11" & d$species == "sinensis")] <- d$tempDayCopy[which(d$datasetID == "kato11" & d$species == "sinensis")]
+d$tempDay[which(d$datasetID == "kato11" & d$species == "sinensis")] <- d$tempNightCopy[which(d$datasetID == "kato11" & d$species == "sinensis")]
+
+d$tempNight[which(d$datasetID == "lee06" & d$species == "sinicus ")] <- d$tempDayCopy[which(d$datasetID == "lee06" & d$species == "sinicus ")]
+d$tempDay[which(d$datasetID == "lee06" & d$species == "sinicus ")] <- d$tempNightCopy[which(d$datasetID == "lee06" & d$species == "sinicus ")]
+
+d$tempNight[which(d$datasetID == "liu13" & d$species == "glauca")] <- d$tempDayCopy[which(d$datasetID == "liu13" & d$species == "glauca")]
+d$tempDay[which(d$datasetID == "liu13" & d$species == "glauca")] <- d$tempNightCopy[which(d$datasetID == "liu13" & d$species == "glauca")]
+
+d$tempNight[which(d$datasetID == "meyer94" & d$genus == "Penstemon")] <- d$tempDayCopy[which(d$datasetID == "meyer94" & d$genus == "Penstemon")]
+d$tempDay[which(d$datasetID == "meyer94" & d$genus == "Penstemon")] <- d$tempNightCopy[which(d$datasetID == "meyer94" & d$genus == "Penstemon")]
+
+d$tempNight[which(d$datasetID == "parmenter96" & d$species == "angustifolia")] <- d$tempDayCopy[which(d$datasetID == "parmenter96" & d$species == "angustifolia")]
+d$tempDay[which(d$datasetID == "parmenter96" & d$species == "angustifolia")] <- d$tempNightCopy[which(d$datasetID == "parmenter96" & d$species == "angustifolia")]
+
+d$tempNight[which(d$datasetID == "parmenter96" & d$species == "purpurea")] <- d$tempDayCopy[which(d$datasetID == "parmenter96" & d$species == "purpurea")]
+d$tempDay[which(d$datasetID == "parmenter96" & d$species == "purpurea")] <- d$tempNightCopy[which(d$datasetID == "parmenter96" & d$species == "purpurea")]
+
+d$tempNight[which(d$datasetID == "pipinis09" & d$species == "fruiticans")] <- d$tempDayCopy[which(d$datasetID == "pipinis09" & d$species == "fruiticans")]
+d$tempDay[which(d$datasetID == "pipinis09" & d$species == "fruiticans")] <- d$tempNightCopy[which(d$datasetID == "pipinis09" & d$species == "fruiticans")]
+
+d$tempNight[which(d$datasetID == "pipinis20" & d$species == "avellana")] <- d$tempDayCopy[which(d$datasetID == "pipinis20" & d$species == "avellana")]
+d$tempDay[which(d$datasetID == "pipinis20" & d$species == "avellana")] <- d$tempNightCopy[which(d$datasetID == "pipinis20" & d$species == "avellana")]
+
+d$tempNight[which(d$datasetID == "ren08" & d$genus == "Pedicularis")] <- d$tempDayCopy[which(d$datasetID == "ren08" & d$genus == "Pedicularis")]
+d$tempDay[which(d$datasetID == "ren08" & d$genus == "Pedicularis")] <- d$tempNightCopy[which(d$datasetID == "ren08" & d$genus == "Pedicularis")]
+
+d$tempNight[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")] <- d$tempDayCopy[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")]
+d$tempDay[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")] <- d$tempNightCopy[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")]
+
+# Deleting the template columns
+d$tempDayCopy <- NULL
+d$tempNightCopy <- NULL
