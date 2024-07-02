@@ -37,12 +37,39 @@ append_csv_files <- function(directory) {
 # Specify the directory containing the CSV files
 pheno_directory <- "output/phenology_copy_output"
 seed_directory <- "output/seed_copy_output"
+
 # Call the function to read and append all CSV files in the directory
 c_pheno <- append_csv_files(pheno_directory)
 c_seed <- append_csv_files(seed_directory)
-raw_colnames <- unique(colnames(combined_data))
-# Should I fix the column names?
+
+# Fix column names
+p_colnames <- colnames(c_pheno)
+p_colnames <- gsub("\\.", " ", p_colnames)
+p_colnames <- gsub("  ", " ", p_colnames)
+p_colnames <- gsub("_", " ", p_colnames)
+p_colnames <- gsub(" m ", " (m)", p_colnames)
+p_colnames <- gsub(" kg |kg", " (kg)", p_colnames)
+p_colnames <- gsub(" mm ", " (mm)", p_colnames)
+p_colnames <- gsub(" lb |lb", " (lb)", p_colnames)
+p_colnames <- gsub(" yrs ", " (yrs)", p_colnames)
+p_colnames <- gsub(" $", "", p_colnames)
+p_colnames
+
+s_colnames <- colnames(c_seed)
+s_colnames <- gsub("\\.", " ", s_colnames)
+s_colnames <- gsub("  ", " ", s_colnames)
+s_colnames <- gsub("_", " ", s_colnames)
+s_colnames <- gsub(" m ", " (m)", s_colnames)
+s_colnames <- gsub(" kg |kg", " (kg)", s_colnames)
+s_colnames <- gsub(" mm ", " (mm)", s_colnames)
+s_colnames <- gsub(" lb ", " (lb)", s_colnames)
+s_colnames <- gsub(" yrs ", " (yrs)", s_colnames)
+s_colnames <- gsub(" $", "", s_colnames)
+s_colnames <- gsub("yr", "(yr)", s_colnames)
+s_colnames <- gsub("cm", "(cm)", s_colnames)
+s_colnames
 
 # Write files
 write.csv(c_pheno, "output/phenologyCombined.csv")
 write.csv(c_seed, "output/seedCombined.csv")
+
