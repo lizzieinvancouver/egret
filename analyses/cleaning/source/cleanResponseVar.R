@@ -20,7 +20,6 @@ d$responseVar[which(d$responseVar == "germ rate")] <- "germ.rate"
 d$responseVar[which(d$responseVar == "average germination speed")] <- "germ.rate"
 d$responseVar[which(d$responseVar == "mean.germ.rate")] <- "germ.rate"
 
-
 # Proporation germination
 d$responseVar[which(d$responseVar == "germ.proportion")] <- "prop.germ"
 d$responseVar[which(d$responseVar == "proportion of viable seeds germinated")] <- "prop.germ"
@@ -116,6 +115,9 @@ d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "DI")] <- "dormanc
 #peak value = daily accumulated germinates/corresponding day number---equivalent to Werner13 germ speed index?
 # germination value = value combining germ speed and completeness
 
+#Farhadi13
+#germination capacity = (sum(number seeds germ each day)/total number seeds sown)*100 (% units)
+
 #Werner13;
 # germination speed index
 d$responseVar[which(d$datasetID == "werner13" & d$responseVar == "GSI")] <- "germination.speed.index"# sum of seeds germinated in a day over number of days since start experiment
@@ -136,6 +138,9 @@ d$responseVar[which(d$datasetID == "santos19" & d$responseVar == "IVG")] <- "ger
 #tilki97;
 #peak value = % germination/number of elapsed days
 
+#tilki06;
+# survival: appears to be for seedling data (table 3), I think we just want data from table 2 on germination
+
 #proportion of viable seeds = prop.germ harrison14; 
 
 #NA  = tan10_2; castro95; huang14; downie91;strazisar13
@@ -147,22 +152,35 @@ d$responseVar[which(d$datasetID == "grose57" & d$responseVar == "G.E.I")] <- "ge
 
 sort(unique(d$responseVar))
 
-# cleaning values
+temp <- subset(d, responseVar == "survival"); unique(temp$datasetID)
+
+# response var tangential to germination:
+other <- c("a:variation MS max germ percent","a.max","a.min","ABA_embryo (μg/g)","ABA_endosperm (μg/g)","adventitious.root.diameter","adventitious.root.length", "amylase.concentration","amylase.specific.activity", "amylase.unit.activity", "area.under.germination.progress.curve", "b:variation MS germ percent", "b.max", "b.min","base temperature","c:variation MS T50","c.max","c.min","CO2.evolution", "coeff.rate.germ", "cotyledon.area","cotyledon.length", "cotyledon.width","embryo:seed.ratio", "ethanol.formation", "GA/ABA_embryo", "GA/ABA_endosperm","GA3_embryo (μg/g)","GA3_endosperm (μg/g)", "growth.collar.diameter.cm", "growth.height.cm","growth.rate (cm days^-1)","growth.rate %", "hypocotyl.ave.diameter","hypocotyl.length", "moisture", "moisture content","normal seedling percentage","num.shoot","number per.seedlings","O2.uptake","oxygen.absorbance", "per.increase.seedmass","per.survive","per.ungerminated.fresh", "per.weight.gain", "primary.root.diameter","primary.root.length", "respiratory.rate","RNA.content","root.dryweight(g)","seed.moisture.content.fresh.weight", "shoot.diam(mm)","shoot.dryweight(g)","shoot.height(cm)","shootroot.ratio", "survival", "thermal time","vigour index (days)", "water.absorption","weight.gram") # 61 
+# cleaning values :  "L.sativa.per.germ",
 d$responseValue <- (d$response)
 d$responseValueNum <- round(as.numeric(d$responseValue),2)
 #View(sort(unique(d$responseValueNum)))
 
 temp <- subset(d, responseVar == "percent.germ")
+(nrow(temp)/nrow(d))*100 #77% data
+
 # yan18 -ve value Fig 6; tabatabaeian18, Acosta12, Washitani85, battaglia93 > 100
 #"1/5" 
 temp <- subset(d, responseVar == "prop.germ") # values look reasonable
+(nrow(temp)/nrow(d))*100 #0.3% data
+
 temp <- subset(d, responseVar == "germ.rate") 
+(nrow(temp)/nrow(d))*100 #3% data
 #raisi13 - entered with backslashes, table 6
+
 temp <- subset(d, responseVar == "mgt") 
+(nrow(temp)/nrow(d))*100 #5% data
 # brenchley98 >100
 temp <- subset(d, responseVar == "50%.germ") 
+(nrow(temp)/nrow(d))*100 #1.8% data
 #Necajeva13 pritchard93 bytnerowicz14 pritchard93 50% germ 332?
 temp <- subset(d, responseVar == "germ.time") # values look reasonable
+(nrow(temp)/nrow(d))*100 #2% data
 #wytsalucy21 table 2 no resp data winstead 71 table 1
 
 # what do the -ve values mean?
