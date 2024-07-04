@@ -17,6 +17,7 @@
 #   setwd("boomdittyboom") # for midge
 # }
 setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+list.files()
 # housekeeping
 rm(list = ls()) # Clear whatever is already in R's memory
 options(stringsAsFactors=FALSE)# Make sure words are read in as characters rather than factors
@@ -259,6 +260,7 @@ nonavalues <-egret[complete.cases(egret["provenance.lat"]),]
 occurence <- egret %>%
   group_by(continent) %>%
   summarize(continent = first(continent), count = n())
+
 # map
 egretlocations <- plot_geo(occurence) %>%
   layout(

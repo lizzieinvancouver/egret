@@ -5,6 +5,10 @@
 # and does some other cleaning and mapping ##
 ## Original file called coordinate_cleaning_TA.R ##
 
+
+# Christophe wd
+setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+list.files()
 # To convert lat/long from Degree minute seconds to decimals degrees:
 # https://www.fcc.gov/media/radio/dms-decimal
 
@@ -17,8 +21,8 @@ library(sp)
 library(sf)
 
 # grab the data 
-#d <- read.csv("input/dData.csv")
-
+d <- read.csv("input/egretData.csv")
+head(d)
 # Read in the data by running cleanall.R 1-3
 # Adding a new column to fix/add location if they were not originally scraped 
 d$source.population.edit <- d$source.population
@@ -601,8 +605,7 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "walck12")] <-
 
 #kolodziejek18 no location 
 
-
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kolodziejek19") &
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kolodziejek19") &# warning message checked by CRD on 2024-07-03: kolodziejek19 locations are ok
                    d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)"] <- "50.57" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kolodziejek19" &
                           d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)")] <- "19.48"
@@ -689,6 +692,17 @@ na.coords <- d[which(is.na(d$provenance.lat)),]
 
 unique(d$provenance.lat)
 unique(d$provenance.long)
+
+
+# tests with a smaller df"
+dred <- d[!duplicated(d$datasetID), ]
+str(dred)
+# Many entries are still problematic. Some have lat and long in the lat column, some have a letter (e.g. 39N). So I'll separate those:
+# below is a pattern that takes entries that are between 0-9 and have 2 digits, followed by a "." followed by decimals that have between 2 and 16 values. I chose these because some have up to 16 decimals (weird) and 2 because otherwise there is no precise provenance 
+pattern <- "^[0-9]{2}\\.\\d{2,16}$|^[0-9]{3}\\.\\d{2,16}$"
+#
+filtered_values <- dred[!grepl(pattern, dred$provenance.lat), ]
+filtered_values$provenance.lat
 
 d_filtered <- d[which(d$provenance.lat != "38.967 and 37.9" | 
                               d$provenance.lat != "~34-34.666667" |
