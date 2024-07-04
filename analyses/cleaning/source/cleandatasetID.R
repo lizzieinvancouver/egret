@@ -4,6 +4,7 @@
 # Needs to be sourced in cleanall.R
 
 # Fix ones with incorrect years
+d$datasetID[which(d$entered.by == "DMB")] <- "veiga-barbosa14"
 d$datasetID[which(d$datasetID == "acosta12")] <- "acosta13"
 d$datasetID[which(d$datasetID == "brandel2005")] <- "brandel05"
 d$datasetID[which(d$datasetID == "airi2009")] <- "airi09"
@@ -20,16 +21,16 @@ d$datasetID[which(d$datasetID == "yang18" & d$species == "taccada")] <- "yang18_
 d$datasetID[which(d$datasetID == "yang16" & d$species == "taccada")] <- "yang18_3"
 
 # Checked, these are correct: Kolodziejek18,19, Meyer94,95; Olmez07-09; Rouhi12,13; Tilki06,07; tylkowski09-10
-d$datasetID[which(d$datasetID == "Aldridge1993")] <- "Aldridge1992"
-d$datasetID[which(d$datasetID == "Aldridge1994")] <- "Aldridge1992"
-d$datasetID[which(d$datasetID == "Aldridge1995")] <- "Aldridge1992"
-d$datasetID[which(d$datasetID == "Aldridge1996")] <- "Aldridge1992"
-d$datasetID[which(d$datasetID == "Aldridge1997")] <- "Aldridge1992"
+d$datasetID[which(d$datasetID == "Aldridge1993")] <- "aldridge1992"
+d$datasetID[which(d$datasetID == "Aldridge1994")] <- "aldridge1992"
+d$datasetID[which(d$datasetID == "Aldridge1995")] <- "aldridge1992"
+d$datasetID[which(d$datasetID == "Aldridge1996")] <- "aldridge1992"
+d$datasetID[which(d$datasetID == "Aldridge1997")] <- "aldridge1992"
 
 d$datasetID[which(d$datasetID == "irvani13")] <- "irvani12"
 d$datasetID[which(d$datasetID == "irvani14")] <- "irvani12"
 
-d$datasetID[which(d$datasetID == "Sacande05")] <- "Sacande04"
+d$datasetID[which(d$datasetID == "Sacande05")] <- "sacande04"
 
 # three yang18
 d$datasetID[which(d$datasetID == "yang18" & d$genus == "Maackia")] <- "yang18_1"
@@ -55,6 +56,9 @@ d <- subset(d, datasetID !="moeini21" | entered.by != "MN")
 d <- subset(d, datasetID !="tilki07" | entered.by != "MN") #entered by two people---but different figures/tables
 d <- subset(d, datasetID !="wytsalucy21" | entered.by != "DK")
 d <- subset(d, datasetID !="yusefi-tanha19" | entered.by != "JS")
+
+d$datasetID <- tolower(d$datasetID)
+
 
 ident <- read.csv("..//data/datasetID.csv")
 ident$dup <- duplicated(ident$studyID)
