@@ -43,7 +43,7 @@ check_short <- subset(check, select = c("datasetID", "study", "entered.by",
                                         "treatment", "chill.temp", "chill.duration",
                                         "germ.temp", "germ.duration", "other.treatment",
                                         "photoperiod", "respvar", "response"))
-idx <- which(d$datasetID == "nkomo09")
+idx <- which(d$datasetID == "tylkowski09")
 check <- d[idx,]
 check_short <- subset(check, select = c("datasetID", "study", "species", "entered.by",
                                         "treatment", "chill.temp", "chill.duration",
@@ -51,8 +51,8 @@ check_short <- subset(check, select = c("datasetID", "study", "species", "entere
                                         "photoperiod", "respvar", "response", "figure"))
 
 #d <- within(d, forcetemp[dasetID== 'falusi96' & study == 'exp3'] <- 24)
-d$chill.duration[which(d$chill.duration == "unknown ")] <- "NA"
-d$chill.duration[which(d$chill.duration == "NA")] <- "NA"
+d$chill.duration[which(d$chill.duration == "unknown ")] <- NA
+d$chill.duration[which(d$chill.duration == "NA")] <- NA
 
 #no values like "n/a" and "N/A" so far though
 d$chill.temp[which(d$chill.temp == "n/a")] <- "NA"
@@ -160,8 +160,8 @@ d$chill.tempCor[which(d$datasetID == "rizwan18" & d$chill.temp == "4-5")] <- 4.5
 d$chill.tempUnc[which(d$datasetID == "rizwan18" & d$chill.temp == "4-5")] <- 0.5
 
 #Shahi-gharahlar12 - 4-5
-d$chill.tempCor[which(d$datasetID == "Shahi-gharahlar12" & d$chill.temp == "4-5")] <- 4.5
-d$chill.tempUnc[which(d$datasetID == "Shahi-gharahlar12" & d$chill.temp == "4-5")] <- 0.5
+d$chill.tempCor[which(d$datasetID == "shahi-gharahlar12" & d$chill.temp == "4-5")] <- 4.5
+d$chill.tempUnc[which(d$datasetID == "shahi-gharahlar12" & d$chill.temp == "4-5")] <- 0.5
 
 #markovic20 - 3-5
 d$chill.tempCor[which(d$datasetID == "markovic20" & d$chill.temp == "3-5")] <- 4
@@ -199,25 +199,25 @@ d$chill.durationCor[which(d$datasetID == "pipinis12" & d$treatment == "chemical"
 #one data point potentially missing
 
 #Acosta12 - 25/15
-d$chill.tempCor[which(d$datasetID == "Acosta12")] <- NA
-d$chill.durationCor[which(d$datasetID == "Acosta12")] <- NA
+d$chill.tempCor[which(d$datasetID == "acosta12")] <- NA
+d$chill.durationCor[which(d$datasetID == "acosta12")] <- NA
 #possible need to distinguish temperature effects and germ temp
 
 #Brandel2005 - 5/25
 temp <- c(NA, NA, 5, 5, 11, 11, 13, 13, 15, 15)
-d$chill.tempCor[which(d$datasetID == "Brandel2005" & d$other.treatment == "primary dormant")] <- temp
+d$chill.tempCor[which(d$datasetID == "brandel2005" & d$other.treatment == "primary dormant")] <- temp
 temp <- c("", "", 5, 5, 11, 11, 13, 13, 15, 15)
-d$chill.tempCor[which(d$datasetID == "Brandel2005" & d$other.treatment == "secondary dormant")] <- paste0("5 then 25 then ",  temp)
-d$chill.tempCor[which(d$datasetID == "Brandel2005" & d$other.treatment == "secondary dormant")] <- "4 then 4 then 4"
+d$chill.tempCor[which(d$datasetID == "brandel2005" & d$other.treatment == "secondary dormant")] <- paste0("5 then 25 then ",  temp)
+d$chill.tempCor[which(d$datasetID == "brandel2005" & d$other.treatment == "secondary dormant")] <- "4 then 4 then 4"
 
 #Boscagli01 - 5-7
-d$chill.tempCor[which(d$datasetID == "Boscagli01" & d$chill.temp == "5-7")] <- 6
-d$chill.durationCor[which(d$datasetID == "Boscagli01" & d$chill.temp == "5-7")] <- 1
+d$chill.tempCor[which(d$datasetID == "boscagli01" & d$chill.temp == "5-7")] <- 6
+d$chill.durationCor[which(d$datasetID == "boscagli01" & d$chill.temp == "5-7")] <- 1
 
 #Borghetti86 - 2-3
-d$chill.tempCor[which(d$datasetID == "Borghetti86" & d$chill.temp == "2-3")] <- 2.5
-d$chill.tempUnc[which(d$datasetID == "Borghetti86" & d$chill.temp == "2-3")] <- 0.5
-d$chill.lightCycle[which(d$datasetID == "Borghetti86" & d$chill.temp == "2-3")] <- 0
+d$chill.tempCor[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 2.5
+d$chill.tempUnc[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 0.5
+d$chill.lightCycle[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 0
 
 #barros12 - 4, 20/4
 d$chill.tempCor[which(d$datasetID == "barros12" & d$chill.temp == "20/4")] <- "20 then 40"
@@ -260,7 +260,7 @@ d$chill.tempCor[which(d$datasetID == "kettenring07" & d$chill.temp == "5/1")] <-
 d$chill.tempCycle[which(d$datasetID == "kettenring07" & d$chill.temp == "5/1")] <- "12 and 12"
 
 #Hawkins19 - 5/1
-d$chill.tempCor[which(d$datasetID == "Hawkins19" & d$chill.temp == "5/1")] <- "5 and 1"
+d$chill.tempCor[which(d$datasetID == "hawkins19" & d$chill.temp == "5/1")] <- "5 and 1"
 
 #meyer94
 #meyer95
@@ -321,9 +321,10 @@ d$chill.tempCor[which(d$datasetID == "tylkowski07" & d$chill.duration == 0)] <- 
 
 #tylkowski09 - 3
 d$chill.durationCor[which(d$datasetID == "tylkowski09" & d$response == 0)] <- 98
-temp <- c("15 then NA then 15 then 3")
+temp <- c(rep("15 then NA then 15 then 3", 6), "15 then NA then 3")
 d$chill.tempCor[which(d$datasetID == "tylkowski09" & d$response != 0)] <- temp
-temp <- c("14 then 84", "28 then 70", "42 then 56", "56 then 42", "70 then 28", "84 then 14", 98)
+temp <- c("14 then NA then 84", "28 then NA then 70", "42 then NA then 56",
+          "56 then NA then 42", "70 then NA then 28", "84 then NA then 14", "98 then NA")
 d$chill.durationCor[which(d$datasetID == "tylkowski09" & d$response != 0)] <- paste0(temp, " then 84")
 
 #tylkowski07 - 3
@@ -386,9 +387,9 @@ d$chill.durationCor[which(d$datasetID == "king12" & d$treatment == "control, no 
 
 #naseri18 - 2-4
 #cold strat temp guessed from other treatments
-d$chill.tempCor[which(d$datasetID == "Naseri18")] <- 3
-d$chill.tempUnc[which(d$datasetID == "Naseri18")] <- 1
-d$chill.durationCor[which(d$datasetID == "Naseri18" & d$chill.duration == "Continuous cold stratification")] <- NA
+d$chill.tempCor[which(d$datasetID == "naseri18")] <- 3
+d$chill.tempUnc[which(d$datasetID == "naseri18")] <- 1
+d$chill.durationCor[which(d$datasetID == "naseri18" & d$chill.duration == "Continuous cold stratification")] <- NA
 
 #gimenez-benavides13 - 2-4
 d$chill.tempCor[which(d$datasetID == "gimenez-benavides13" & !is.na(d$chill.temp))] <- 3
@@ -435,12 +436,12 @@ d$chill.durationCor[which(d$other.treatment == "cold stratification for 6 months
 
 #schutz02 - 22/10
 #recommend to double check response variable and values and germ temp
-d$chill.tempCor[which(d$datasetID == "Schutz02")] <- 1.5
-d$chill.tempUnc[which(d$datasetID == "Schutz02")] <- 1.5
+d$chill.tempCor[which(d$datasetID == "schutz02")] <- 1.5
+d$chill.tempUnc[which(d$datasetID == "schutz02")] <- 1.5
 temp <- c(0, 0, 0, 0, 30, 30, 30, 30, 60, 60, 60, 60, 91, 91, 91, 91, 183, 183, 183, 183)
-d$chill.durationCor[which(d$datasetID == "Schutz02" & d$study == "exp1")] <- temp
+d$chill.durationCor[which(d$datasetID == "schutz02" & d$study == "exp1")] <- temp
 temp <- c(0, 0, 0, 0, 91, 91, 91, 91, 183, 183, 183, 183)
-d$chill.durationCor[which(d$datasetID == "Schutz02" & d$study == "exp3")] <- temp
+d$chill.durationCor[which(d$datasetID == "schutz02" & d$study == "exp3")] <- temp
 
 #omar21 - 3 and -4 
 d$chill.tempUnc[which(d$datasetID == "omar21" & !is.na(d$chill.temp))] <- 1
@@ -553,9 +554,9 @@ d$chill.tempCor[which(d$chill.temp == "1 - 4")] <- 2.5
 d$chill.tempUnc[which(d$chill.temp == "1 - 4")] <- 1.5
 
 #madeiras07 - 5 +/- 2 dark
-d$chill.tempCor[which(d$datasetID == "Madeiras07" & d$chill.temp == "5 +/- 2")] <- 5
-d$chill.tempUnc[which(d$datasetID == "Madeiras07" & d$chill.temp == "5 +/- 2")] <- 2
-d$chill.lightCycle[which(d$datasetID == "Madeiras07" & d$chill.temp == "5 +/- 2")] <- 0
+d$chill.tempCor[which(d$datasetID == "madeiras07" & d$chill.temp == "5 +/- 2")] <- 5
+d$chill.tempUnc[which(d$datasetID == "madeiras07" & d$chill.temp == "5 +/- 2")] <- 2
+d$chill.lightCycle[which(d$datasetID == "madeiras07" & d$chill.temp == "5 +/- 2")] <- 0
 
 #esmaeili09 - 15 - 25
 d$chill.tempCor[which(d$chill.temp == "15 - 25")] <- 20
@@ -583,8 +584,8 @@ d$chill.lightCycle[which(d$datasetID == "Wang09")] <- 0
 #watanabe02 - 25 -> 5 +/- 2 warm to cold strat
 d$chill.tempCor[which(d$chill.temp == "25 -> 5 +/- 2")] <- "25 then 5"
 d$chill.lightCycle[which(d$chill.temp == "25 -> 5 +/- 2")] <- "0 then NA"
-d$chill.tempCor[which(d$datasetID == "Watanabe02" & d$chill.temp == "5 +/- 2")] <- 5
-d$chill.tempUnc[which(d$datasetID == "Watanabe02" & !is.na(d$chill.temp))] <- 2
+d$chill.tempCor[which(d$datasetID == "watanabe02" & d$chill.temp == "5 +/- 2")] <- 5
+d$chill.tempUnc[which(d$datasetID == "watanabe02" & !is.na(d$chill.temp))] <- 2
 d$chill.durationCor[which(d$chill.temp == "25 -> 5 +/- 2")] <- "30 then 30"
 #photoperiod set at 12h but indicated in d are whether in dark or light
 
