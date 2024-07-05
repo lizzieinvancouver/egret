@@ -694,15 +694,194 @@ unique(d$provenance.lat)
 unique(d$provenance.long)
 
 
-# tests with a smaller df"
+# tests with a smaller df. Only take single entries
 dred <- d[!duplicated(d$datasetID), ]
 str(dred)
 # Many entries are still problematic. Some have lat and long in the lat column, some have a letter (e.g. 39N). So I'll separate those:
 # below is a pattern that takes entries that are between 0-9 and have 2 digits, followed by a "." followed by decimals that have between 2 and 16 values. I chose these because some have up to 16 decimals (weird) and 2 because otherwise there is no precise provenance 
-pattern <- "^[0-9]{2}\\.\\d{2,16}$|^[0-9]{3}\\.\\d{2,16}$"
-#
-filtered_values <- dred[!grepl(pattern, dred$provenance.lat), ]
-filtered_values$provenance.lat
+pattern <- "^-?[0-9]{1}\\.\\d{2,16}$|^-?[0-9]{2}\\.\\d{2,16}$|^-?[0-9]{3}\\.\\d{2,16}$"
+
+### COLUMN LATITUDE ###
+# Filter values that have the above pattern
+dred.lat <- dred[!grepl(pattern, dred$provenance.lat), ]
+# Check how many entries are still problematic
+dred.lat$provenance.lat # at this point, there are still 89 entries that either NAs or in a bad format
+# Filter out NAs
+dred.lat2 <- dred.lat[!is.na(dred.lat$provenance.lat), ]
+dred.lat2$provenance.lat # good! now only 29 entries are not in a good format!
+
+# Create provenance.lat vector entries that need to be changed
+provenance.lat.chg <- dred.lat2$provenance.lat
+
+### COLUMN LONGITUDE ###
+# Filter values that have the above pattern
+dred.long <- dred[!grepl(pattern, dred$provenance.long), ]
+# Check how many entries are still problematic
+dred.long$provenance.long # at this point, there are *** still  entries that either NAs or in a bad format
+# Filter out NAs
+dred.long2 <- dred.long[!is.na(dred.long$provenance.long), ]
+dred.long2$provenance.long # good! now only *** entries are not in a good format!
+# Create provenance.long vector entries that need to be changed
+provenance.long.chg <- dred.long2$provenance.long
+
+
+#SANDBOX
+dred3 <- subset(dred2, provenance.lat =="9.4167/9.3833")
+dred.lat2$provenance.lat  <- gsub("9.4167/9.3833", "9.4167", dred.lat2$provenance.lat)
+dred.lat2$provenance.long  <- gsub("9.4167/9.3833", "9.3833", dred.lat2$provenance.lat)
+dred.lat2$provenance.lat 
+dred.lat2$provenance.long
+dred.lat2$provenance.lat <- gsub("31.0333 N", "31.0333", dred.lat2$provenance.lat)
+
+
+#=== === === === === === === === === === === === === === === === === === === ===
+#### Second cleaning step ####
+#=== === === === === === === === === === === === === === === === === === === ===
+
+# Temporary data frame
+tmp<-d
+
+#=== === === === === === === === === === === === === === === === === === === ===
+# STEP 1. Replace N/A by NA
+#=== === === === === === === === === === === === === === === === === === === ===
+tmp$provenance.lat <- gsub("N/A", "NA", tmp$provenance.lat)
+tmp$provenance.long <- gsub("N/A", "NA", tmp$provenance.long)
+
+#=== === === === === === === === === === === === === === === === === === === ===
+# STEP 2. Select entries that have lat long in same entry
+#=== === === === === === === === === === === === === === === === === === === ===
+
+# STEP 2.1. in lat
+provenance.lat.chg
+# STEP 2.1.1. karlsson08 : 9.4167/9.3833 
+### the one below can't be done because provenance lat = 9.4167/9.3833 and provenance long= 42.0333/42.0167 so we will need to go look in the paper. 
+# tmp$provenance.lat <- gsub("9.4167/9.3833", "9.4167", tmp$provenance.lat)
+# tmp$provenance.long <- gsub("9.4167/9.3833", "9.3833", tmp$provenance.lat)
+
+# STEP 2.1.2. teimouri13 : 35.5 and 36.3
+# the one below, we will need to look into the paper for more info. There is a "and" but it's the same source population
+#subset(tmp, provenance.lat == "35.5 and 36.3")
+# STEP 2.1.3. zulfiqar15 : " 34.218611 N"
+subset(tmp, provenance.lat ==  "34.218611 N")  # R doesn't detect this entry, probably because of the space
+# Replacing the weird entry by regular format. We might have to go directly in the csv...
+dred.lat2$provenance.lat <- gsub("\\s*34.218611\\s*N\\s*", "34.218611", dred.lat2$provenance.lat) #Space remains
+# STEP 2.1.4.li17 : 31.0333 N
+subset(tmp, provenance.lat ==  "31.0333 N") 
+# Replacing
+tmp$provenance.lat <- gsub("31.0333 N", "31.0333", tmp$provenance.lat)
+# STEP 2.1.5. li21 : 44.316667 N
+subset(tmp, provenance.lat ==  "44.316667 N") 
+# Replacing
+tmp$provenance.lat <- gsub("44.316667 N", "44.316667", tmp$provenance.lat)
+# STEP 2.1.6. li21 : 42.0760 S
+subset(tmp, provenance.lat ==  "42.0760 S") 
+# Replacing
+tmp$provenance.lat <- gsub("42.0760 S", "-42.0760", tmp$provenance.lat)
+# STEP 2.1.7. yang14: 36.11139 N
+subset(tmp, provenance.lat ==  "36.11139 N")
+tmp$provenance.lat <- gsub("36.11139 N", "36.11139", tmp$provenance.lat)
+
+
+#=== === === === === === === === === === === === === === === === === === === ===
+# STEP 2.2. in long
+provenance.long.chg
+# STEP 2.2.1. karlsson08 :42.0333/42.0167
+# See step 1.1.1.
+# dum$provenance.lat <- gsub("42.0333/42.0167", "42.0333", dum$provenance.lat)
+# dum$provenance.long <- gsub("N/A", "NA", dum$provenance.long)
+
+# STEP 2.2.2. zulfiqar15: 71.625833 E
+subset(tmp, provenance.long ==  "71.625833 E")
+tmp$provenance.long <- gsub("71.625833 E", "71.625833", tmp$provenance.long)
+
+# STEP 2.2.3. zlesak07: 93.16667 W
+subset(tmp, provenance.long ==  "93.16667 W")
+tmp$provenance.long <- gsub("93.16667 W", "-93.16667", tmp$provenance.long)
+
+# STEP 2.2.4. li17: 112.26667 E
+subset(tmp, provenance.long ==  "112.26667 E")
+tmp$provenance.long <- gsub("112.26667 E", "112.26667", tmp$provenance.long)
+
+# STEP 2.2.5. li21: 86.95 E
+subset(tmp, provenance.long ==  "86.95 E")
+tmp$provenance.long <- gsub("86.95 E", "86.95", tmp$provenance.long)
+
+# STEP 2.2.6. li21 : 147.0275 E
+subset(tmp, provenance.long ==  "147.0275 E")
+tmp$provenance.long <- gsub("147.0275 E", "147.0275", tmp$provenance.long)
+
+# STEP 2.2.7. yang14 : 81.8125 W
+subset(tmp, provenance.long ==  "81.8125 W")
+tmp$provenance.long <- gsub("81.8125 W", "-81.8125", tmp$provenance.long)
+
+# STEP 2.2.8. gremer20 :  "–121.551"
+subset(tmp, provenance.long ==  "–121.551")
+tmp$provenance.long <- gsub("–121.551", "-121.551", tmp$provenance.long) # just a typo 
+
+
+
+#=== === === === === === === === === === === === === === === === === === === ===
+### check how many bad entries there are left
+#=== === === === === === === === === === === === === === === === === === === ===
+tmp2 <- tmp[!duplicated(d$datasetID), ]
+
+### COLUMN LATITUDE ###
+# Filter values that have the above pattern
+tmp3 <- tmp2[!grepl(pattern, tmp2$provenance.lat), ]
+# Check how many entries are still problematic
+tmp3$provenance.lat # at this point, there are still 89 entries that either NAs or in a bad format
+# Filter out NAs
+tmp3 <- tmp3[!is.na(tmp3$provenance.lat), ]
+# All the papers for which we need to change the provenance format 
+provenance.lat.chg <- tmp3[, c("datasetID", "provenance.lat")]
+
+### COLUMN LONGITUDE ###
+tmp3.long <- tmp2[!grepl(pattern, tmp2$provenance.long), ]
+# Check how many entries are still problematic
+tmp3.long$provenance.long # at this point, there are still 89 entries that either NAs or in a bad format
+# Filter out NAs
+tmp3.long <- tmp3.long[!is.na(tmp3.long$provenance.long), ]
+
+# All the papers for which we need to change the provenance format 
+provenance.long.chg <- tmp3.long[, c("datasetID", "provenance.lat")]
+
+
+#=== === === === === === === === === === === === === === === === === === === ===
+# STEP 3. Check in the articles for exact coordinates
+#=== === === === === === === === === === === === === === === === === === === ===
+
+# STEP 3.1 LATITUDES
+
+# STEP 3.1.1. winstead71: 40
+tmp$provenance.lat <- gsub("40", "40.00", tmp$provenance.lat) # provided in hour minute, converted to decimal. 
+# STEP 3.1.2. brandel05: 54 
+# to DOUBLE CHECK
+# STEP 3.1.3. borghetti86: 39.9
+tmp$provenance.lat <- gsub("39.9", "39.90", tmp$provenance.lat) 
+# STEP 3.1.4. karlsson08: 9.4167/9.3833
+# STEP 3.1.5. mulaudzi09: -29.3
+# STEP 3.1.10. nurse08: 42
+# STEP 3.1.11. tang21: 27.5
+# STEP 3.1.12. teimouri13: 35.5 and 36.3
+# STEP 3.1.13. tylkowski10: 54.2
+# STEP 3.1.14. tylkowski07: 52.3
+# STEP 3.1.15. yeom21: 39
+# STEP 3.1.16. zardari19: 35
+# STEP 3.1.17. zare11: 3147
+# STEP 3.1.18. downie91: 46.9
+# STEP 3.1.19. esmaeili09: 48
+# STEP 3.1.20. seng20: 103.3
+# STEP 3.1.21. zulfiqar15: 34.218611
+# STEP 3.1.22. zlesak07: 45 N
+# STEP 3.1.23. bibby53: 40.9
+# STEP 3.1.24. guo20: ~34-34.666667
+# STEP 3.1.25. ren15: 33.825278 - 34.136389
+# STEP 3.1.26. ren08: 27.9
+# STEP 3.1.27. skordilis95: 41.2
+# STEP 3.1.28. kolodziejek15: 52
+
+
+#=== === === === === === === === === === === === === === === === === === === ===
 
 d_filtered <- d[which(d$provenance.lat != "38.967 and 37.9" | 
                               d$provenance.lat != "~34-34.666667" |
