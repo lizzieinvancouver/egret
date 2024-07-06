@@ -26,13 +26,12 @@ for(i in with_chill){
   
   #loop over stratification combinations
   for(j in 1:length(temp_all)){
-    if(is.na(as.numeric(temp_all[j])) | is.na(as.numeric(dur_all[j]))) {next}
-    
     temp <- as.numeric(str_split_1(temp_all[j], " and "))
+    if(NA %in% temp | is.na(dur_all[j])) {next}
+    
     if(length(temp) > 1){
-      cyc <- str_split_1(cyc_all[j], " and ")
-      if("NA" %in% cyc) {next}
-      cyc <- as.numeric(cyc)
+      if(cyc_all[j] == "NA") {next}
+      cyc <- as.numeric(str_split_1(cyc_all[j], " and "))
       
       hourly_temp <- rep(c(rep(temp[1], cyc[1]), rep(temp[2], cyc[2])), dur_all[j] * 24 / sum(cyc))
     } else {
