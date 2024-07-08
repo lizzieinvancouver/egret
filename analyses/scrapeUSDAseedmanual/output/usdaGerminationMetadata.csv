@@ -1,1 +1,33 @@
-Column names,Definition,UnitsspeciesID,unique identifier number for each species,NAfilePath,where the table data is stored,NApdfPageNumber,pdf page number from which the table was taken,NAscrapedTableNumber,"table number as it appears in the pdf, according to chapter",NApdfTableNumber,"table number as a tally for all tables, regardless of chapter",NAgenus,plant genus,NAspecies,plant species,NAseedType,status of the seed used for experiments,NAseedSource,where the seed came from,NAmedium,planting material used for germination tests,NApretreatmentDuration,length of pretreatment,minutespretreatmentHotWater,temperature of hot water soaking,Celsiuspretreatment,any kind of pretreatment performed on seeds,NAstratification,temperatures used for cold or warm stratification,CelsiuswarmStratificationDuration,length of warm stratification treatment,dayscoldStratificationDuration,length of cold stratification treatment,daysphotoperiod,time seeds were exposed to light,hourstempDay,temperature during the daytime/light photoperiod,CelsiustempNight,temeprature during the night/dark photoperiod,CelsiustestDuration,how long the germination tests lasted,dayssamples,number of samples used in tests,countgenusID,unique identifier number for each genus,NApretreatmentFeces,type of fecal matter used for fecal matter treatments,NApretreatmentChill,Y/N if seeds were exposed to chilling,NApretreatmentChillDuration,length of time for seed chilling,minutespretreatmentScarifType,specific scarification method performed on seeds,NApretreatmentScarifTypeGen,general scarification method performed on seeds,NAresponseType,metric measured during germination tests,NAresponseValue,value of the metric measured,dependent on responseType[colname]Min,minimum value if a range was given,dependent on original column[colname]Max,maximum value if a range was given,dependent on original column[colname]Avg,mean average value calculated from minima and maxima,dependent on original column
+Column names,Definition,Units,Notes
+speciesID,unique identifier number for each species,NA,
+filePath,where the table data is stored,NA,
+pdfPageNumber,pdf page number from which the table was taken,NA,
+scrapedTableNumber,"table number as it appears in the pdf, according to chapter",NA,
+pdfTableNumber,"table number as a tally for all tables, regardless of chapter",NA,
+genus,plant genus,NA,
+species,plant species,NA,
+seedType,status of the seed used for experiments,NA,
+seedSource,where the seed came from,NA,
+medium,planting material used for germination tests,NA,
+pretreatmentDuration,length of pretreatment,minutes,
+pretreatmentHotWater,temperature of hot water soaking,Celsius,
+pretreatment,any kind of pretreatment performed on seeds,NA,
+stratification,temperatures used for cold or warm stratification,Celsius,
+warmStratificationDuration,length of warm stratification treatment,days,
+coldStratificationDuration,length of cold stratification treatment,days,Not the same as chilling?
+photoperiod,time seeds were exposed to light,hours,
+tempDay,temperature during the daytime/light photoperiod,Celsius,
+tempNight,temeprature during the night/dark photoperiod,Celsius,
+testDuration,how long the germination tests lasted,days,
+samples,number of samples used in tests,count,
+genusID,unique identifier number for each genus,NA,
+pretreatmentFeces,type of fecal matter used for fecal matter treatments,NA,
+pretreatmentChill,Y/N if seeds were exposed to chilling,NA,Not the same as cold stratification?
+pretreatmentChillDuration,length of time for seed chilling,minutes,Not the same as cold stratification?
+pretreatmentScarifType,specific scarification method performed on seeds,NA,
+pretreatmentScarifTypeGen,general scarification method performed on seeds,NA,
+responseType,metric measured during germination tests,NA,
+responseValue,value of the metric measured,dependent on responseType,
+[colname]Min,minimum value if a range was given,dependent on original column,
+[colname]Max,maximum value if a range was given,dependent on original column,
+[colname]Avg,mean average value calculated from minima and maxima,dependent on original column,
