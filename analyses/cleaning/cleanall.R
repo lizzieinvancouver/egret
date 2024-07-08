@@ -18,6 +18,10 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("~/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
 } else if(length(grep("Ken", getwd())) > 0){
   setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
+} else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
+  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+} else if(length(grep("frederik", getwd())) > 0){
+  setwd("/Users/frederik/github/egret/analyses")
 }
 
 # 1. Get the data (reads in a dataframe called `egret')
@@ -55,3 +59,4 @@ source("cleaning/source/cleanResponseVar.R")
 
 # 12. Write out data ...
 write.csv(d, "output/egretclean.csv")
+
