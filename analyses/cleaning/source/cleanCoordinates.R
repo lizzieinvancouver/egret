@@ -5,9 +5,6 @@
 # and does some other cleaning and mapping ##
 ## Original file called coordinate_cleaning_TA.R ##
 
-
-# Christophe wd
-setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
 list.files()
 # To convert lat/long from Degree minute seconds to decimals degrees:
 # https://www.fcc.gov/media/radio/dms-decimal
