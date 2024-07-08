@@ -60,8 +60,8 @@ d <- subset(d, datasetID !="yusefi-tanha19" | entered.by != "JS")
 d$datasetID <- tolower(d$datasetID)
 
 
-ident <- read.csv("..//data/datasetID.csv")
-ident$dup <- duplicated(ident$studyID)
+# ident <- read.csv("..//data/datasetID.csv")
+# ident$dup <- duplicated(ident$studyID)
 
 #I have double checked all the papers that have duplicates
 # many have not been entered for various reasons, others the duplicated is in another language and therefore have not be entered
