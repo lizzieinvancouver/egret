@@ -50,5 +50,8 @@ source("cleaning/source/cleanResponseVar.R")
 # 10. Clean coordinates seed provinance
 source("cleaning/source/cleanCoordinates.R")
 
-# XX. Clean year of germination (some)
+# 11. Clean year of germination (some)
 source("cleaning/source/cleanYearGermination.R")
+
+# 12. Write out data ...
+write.csv(d, "output/egretclean.csv")
