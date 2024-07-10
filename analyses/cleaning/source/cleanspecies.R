@@ -4,7 +4,7 @@
 
 # Needs to be sourced in cleanall.R
 
-library("taxize")
+#library("taxize")
 library("stringr")
 
 # General chekcs:
@@ -14,11 +14,11 @@ d$species <- tolower(d$species)
 d_species <- unique(paste(d$genus, d$species))
 
 # Use taxize package to inspect whether names are correct
-ref <- gnr_datasources() # Full list of dabases available
-fix_names <- gnr_resolve(sci = d_species, with_canonical_ranks = T)
-d_species_fix <- unique(fix_names$matched_name2)
-names_changed <- setdiff(d_species, d_species_fix)
-names_changed
+#ref <- gnr_datasources() # Full list of dabases available
+#fix_names <- gnr_resolve(sci = d_species, with_canonical_ranks = T)
+#d_species_fix <- unique(fix_names$matched_name2)
+#names_changed <- setdiff(d_species, d_species_fix)
+#names_changed
 
 sort(d_species)
 
@@ -67,11 +67,11 @@ d$species[which(d$genus == "Vitis" & d$species == "vinifera x amurensis")] <- "a
 d$species[which(d$genus == "Astragalus" & d$species == "cyclophyllu")] <- "cyclophyllos"
 d$species[which(d$genus == "Echinacea" & d$species == "angustifolia, purpurea, pallida")] <- "spp."
 # Confirm ####################################
-d_species <- unique(paste(d$genus, d$species))
-fix_names <- gnr_resolve(sci = d_species, with_canonical_ranks = T)
-d_species_fix <- unique(fix_names$matched_name2)
-names_changed <- setdiff(d_species, d_species_fix) # Confirm this is of length 0
-names_changed
+# d_species <- unique(paste(d$genus, d$species))
+# fix_names <- gnr_resolve(sci = d_species, with_canonical_ranks = T)
+# d_species_fix <- unique(fix_names$matched_name2)
+# names_changed <- setdiff(d_species, d_species_fix) # Confirm this is of length 0
+# names_changed
 
 ### TO CHECK: look though the species names or there any that seem strange? If so---flag for discussion. For example:
 #Rows of NAs found in the dataset.
