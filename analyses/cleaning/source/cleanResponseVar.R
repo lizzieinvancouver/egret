@@ -110,7 +110,7 @@ d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "DI")] <- "dormanc
 #ahola99 --- germ.prob germ.rate.index, germ.speed(%/day); germination.energy= germ.energy; 
 
 #Edwards96: 
-#germination capacity (GC) = % seeds germinated normally by the end of the test; 
+#germination   (GC) = % seeds germinated normally by the end of the test; 
 #germination rate = R50; 
 #peak value = daily accumulated germinates/corresponding day number---equivalent to Werner13 germ speed index?
 # germination value = value combining germ speed and completeness
@@ -161,6 +161,7 @@ d$responseValue <- (d$response)
 d$responseValueNum <- round(as.numeric(d$responseValue),2)
 #View(sort(unique(d$responseValueNum)))
 
+# rows of data, number study (experiments per paper), papers, species
 temp <- subset(d, responseVar == "percent.germ")
 (nrow(temp)/nrow(d))*100 #77% data
 
