@@ -59,10 +59,6 @@ d <- subset(d, datasetID !="yusefi-tanha19" | entered.by != "JS")
 
 d$datasetID <- tolower(d$datasetID)
 
-## Cleaning experiment number, if missing a value add "exp1"
-d$study[which(is.na(d$study))] <- "exp1"
-d$datasetIDstudy <- paste(d$datasetID,d$study, sep = "")
-
 # ident <- read.csv("..//data/datasetID.csv")
 # ident$dup <- duplicated(ident$studyID)
 

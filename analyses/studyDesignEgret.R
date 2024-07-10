@@ -26,32 +26,29 @@ warmstrat.names[!warmstrat.names %in% c("cold strat + soak in warm water")]
 d$warmstrat[which(d$treatment %in% warmstrat.names)] <- 1
 
 
-
-# create a unique datasetstudy id
-d$datasetstudyID <- paste(d$datasetID, sep="", d$study) # to delete once cause it will get out of the master file
 # create a vector of columns to check
 col2check <- c("germTemp", "germDuration", "chill.tempCor", "chill.durationCor", "germ.tempCor", "warmstrat", "scarifType", "chemicalCor", "storageType")
-# keep only one datasetstudyID
-d.unique <- d[!duplicated(d$datasetstudyID), ]
-# create a vector of datasetstudyID
-unique.studies <- d.unique$datasetstudyID
+# keep only one datasetIDstudy
+d.unique <- d[!duplicated(d$datasetIDstudy), ]
+# create a vector of datasetIDstudy
+unique.studies <- d.unique$datasetIDstudy
 
 
 # create an empty data frame
 
 # vector that will be the new df columns 
-colsforstudydesign <- c("datasetstudyID", col2check)
+colsforstudydesign <- c("datasetIDstudy", col2check)
 # fill the right ncol and nrow
 studydesign <- data.frame(matrix(ncol = length(colsforstudydesign), nrow=length(unique.studies)))
 # set colnames
 names(studydesign) <- colsforstudydesign
-# add datasetstudyID names in the first columns
-studydesign$datasetstudyID <- unique.studies
+# add datasetIDstudy names in the first columns
+studydesign$datasetIDstudy <- unique.studies
 
 # loop to count unique treatments in each column
 # currently treats NAs as a treatment (NAs are not deleted out)
 for (i in c(1:length(unique.studies))) { # i = 1
-  subby <- d[which(d$datasetstudyID == unique.studies[i]),]
+  subby <- d[which(d$datasetIDstudy == unique.studies[i]),]
   for(j in c(1:length(col2check))) { # j = 2
     unique.rows <- length(unique(subby[, c(col2check[j])]))
     studydesign[i, j +1 ] <- unique.rows
@@ -62,12 +59,12 @@ for (i in c(1:length(unique.studies))) { # i = 1
 # check work above for a random selection of studies
 studiestocheck <- c("ochuodho08exp3", "liu13exp2", "downie98exp1")
 for(studyhere in studiestocheck){
-  dfhere <- subset(d, datasetstudyID==studyhere)
+  dfhere <- subset(d, datasetIDstudy==studyhere)
   ### germ.temp
   print(length(unique(dfhere$germTemp)))
   # germ duration
   print(length(unique(dfhere$germDuration)))
   # chemicalCor
   print(length(unique(dfhere$chemicalCor)))
-  print(subset(studydesign, datasetstudyID == studyhere))
+  print(subset(studydesign, datasetIDstudy == studyhere))
 }

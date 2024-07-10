@@ -15,16 +15,14 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
-} else if(length(grep("britanywuuu", getwd()) > 0)) {
-  setwd("~/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
-} else if(length(grep("Ken", getwd())) > 0){
-  setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
-}
+} 
 
 d <- read.csv("output/egretclean.csv")
 
 # forcing a few things to be numberic:
 d$germDuration <- as.numeric(d$germDuration)
+d$spName <- paste(d$genus, d$species, sep = "_")
+d$trt <- paste(d$chill.durationCor, d$chill.tempCor, d$germTemp, d$chemicalCor, d$scarifType, sep = "_")
 
 chilled <- subset(d, !is.na(chill.tempCor)) # chilling temps for 17141 rows or 213 studies
 
@@ -46,9 +44,7 @@ length(unique(tempyyy$datasetID))
 ## Summarize response variable 
 # rows of data, number study (experiments per paper), papers, species
 # how many of these are time series, how many of the mgt species are also in the percent germ
-
-d$spName <- paste(d$genus, d$species, sep = "_")
-d$studyExp <- as.factor(paste(d$datasetID, d$study, sep = " "))
+#d$datasetIDstudy <- as.factor(paste(d$datasetID, d$study, sep = " "))
 
 responses <- c("percent.germ", "prop.germ", "germ.rate", "mgt", "50%.germ", "germ.time")
 
@@ -58,7 +54,7 @@ for(i in 1:length(responses)){
 temp <- subset(d, responseVar == responses[i])
 germResp[1,i] <- round((nrow(temp)/nrow(d))*100,0)
 germResp[2,i] <- length(unique(temp$datasetID)) # 19
-germResp[3,i]<- length(unique(temp$studyExp)) # 25
+germResp[3,i]<- length(unique(temp$datasetIDstudy)) # 25
 germResp[4,i]<- length(unique(temp$spName)) # 23
 }
 names(germResp) <-  c("percent.germ", "prop.germ", "germ.rate", "mgt", "50%.germ", "germ.time")
@@ -74,16 +70,16 @@ temp <- perGerm[perGerm$spName %in% mgtSp, ]; length(unique(temp$spName))
 
 # How much of the data in the percent germination is time series data?
 
-curved <- unique(perGerm[, c("datasetID", "spName", "germDuration")])
+curved <- unique(perGerm[, c("datasetID", "datasetIDstudy", "trt","spName", "germDuration","provenance.lat",      "provenance.long")])
 curved$count <- 1
-noDurations <- aggregate(curved["count"], curved[c("datasetID", "spName")], FUN = sum)
-curvey <- subset(noDurations, count > 2) 
-length(unique(curvey$datasetID)) #90
+noDurations <- aggregate(curved["count"], curved[c("datasetID","datasetIDstudy", "spName","trt","provenance.lat", "provenance.long" )], FUN = sum)
+curvey <- subset(noDurations, count > 1) 
+length(unique(curvey$datasetID)) #47
 
 curveStudy <- sort(unique(curvey$datasetID))
-dCurve <- d[d$datasetID %in% curveStudy, ]
+dCurve <- perGerm[perGerm$datasetID %in% curveStudy, ]
 
-length(unique(dCurve$spName)) #132
+length(unique(dCurve$spName)) #52
 
 for(i in 1:length(curveStudy)){
    pdf(paste("figures/timeSeriesCurves/", curveStudy[i], ".pdf"), width = 5, height = 5)
@@ -107,11 +103,7 @@ for(i in 1:length(curveStudy)){
 
 pgSub <- perGerm[,c("datasetID", "study", "spName","chill.tempCor", "chill.durationCor", "germDuration", "germTemp", "scarifType", "chemicalCor", "responseValueNum")]
 
-
 perGerm$study[which(is.na(perGerm$study))] <- "exp1"
-
-pgSub$dataExp <- paste(perGerm$datasetID, perGerm$study, perGerm$spName, sep = "_")
-pgSub$trt <- paste(perGerm$chill.durationCor, perGerm$chill.tempCor, perGerm$germTemp, perGerm$chemicalCor, perGerm$scarifType, sep = "_")
 
 #pgSub$germTrt <- paste(perGerm$germDuration, perGerm$germTemp, sep = "_")
 
@@ -135,5 +127,27 @@ for(i in 1:length(studyID)){
   }
 }
 
-#Each species within a paper, with each line being a treatment
+#Each study with a curve---species within a paper, with each line being a treatment
 
+
+pdf("figures/timeSeriesCurves_trt.pdf", width = 12, height = 12)
+par(mfrow = c(4,2))
+for(i in 1:length(curveStudy)){
+ # i <-1
+  temp <- subset(dCurve, datasetID == curveStudy[i])
+  
+  for(j in 1:length(unique(temp$spName))){
+   # j<- 1
+    sp <- unique(temp$spName)
+    tempSp <- subset(temp, spName == sp[j])
+    plot(tempSp$responseValueNum ~ tempSp$germDuration, type = 'n', main = paste(curveStudy[i], sp[j], sep = "_"), xlim = c(0,200), xlab = "time", ylab = "percent germ")
+    
+    for(t in 1:length(unique(tempSp$trt))){
+    #  t<-7
+    trtVar <- unique(tempSp$trt)
+    tempTrt <- subset(tempSp, trt == trtVar[t])
+    points(tempTrt$responseValueNum ~ tempTrt$germDuration, type = "l")
+    }
+  }
+}
+dev.off()

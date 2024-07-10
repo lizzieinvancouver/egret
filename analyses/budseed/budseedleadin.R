@@ -22,23 +22,47 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 library(rstan)
 library(dplyr)
 library(ggplot2)
+library(phytools)
+library(caper)
+library(pez)
 
 ###read in ospree
-bb.stan<-read.csv("input/bbstan_mainmodel.csv")
-###need to subset to only species in egret/usda
+d<-read.csv("input/ospreeforegret.csv")
 
-datalist.bb <- with(bb.stan, 
-                    list(y = resp, 
-                         chill = chill.z, 
-                         force = force.z, 
-                         photo = photo.z,
-                         sp = complex,
-                         N = nrow(bb.stan),
-                         n_sp = length(unique(bb.stan$complex))
-                    )
+
+phylo <- read.tree("input/ospreeforegret.tre")
+
+
+
+#plot(phylo, cex=0.7)
+VCVPHY <- vcv.phylo(phylo,corr=TRUE)
+nspecies <- max(d$sppnum)
+
+
+
+
+
+fit <- stan("stan/uber_threeslopeintercept_modified_cholesky_updatedpriors.stan",
+            data=list(N=nrow(d),
+                      n_sp=nspecies,
+                      sp=d$sppnum,
+                      x1=d$force.z,
+                      x2 = d$chill.z,
+                      x3=d$photo.z,
+                      y=d$resp,
+                      Vphy=vcv(phylo, corr = TRUE)),
+            iter = 4000,
+            warmup = 2000, # half the iter as warmp is default, but leaving in case we want to change
+            chains = 4,
+            seed = 117 
 )
 
-m2l.ni = stan('stan/nointer_2level.stan', data = datalist.bb,
-              iter = 2500, warmup=1500,control = list(adapt_delta = 0.99))
+##next steps
+###run phylogeny model on ospree and extract posteriors
+
+#####run phylogeny model on egret+ 
+
+
+
 
 

@@ -57,6 +57,9 @@ source("cleaning/source/cleanResponseVar.R")
 # 11. Clean year of germination (some)
 # source("cleaning/source/cleanYearGermination.R")
 
-# 12. Write out data ...
+# 12. Small final cleaning and write out data!
+# Cleaning experiment number, if missing a value add "exp1"
+d$study[which(is.na(d$study))] <- "exp1"
+d$datasetIDstudy <- paste(d$datasetID,d$study, sep = "")
 write.csv(d, "output/egretclean.csv")
 
