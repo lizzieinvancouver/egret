@@ -23,17 +23,16 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 
 # Get the datasets
 egret <- read.csv("output/egretclean.csv")
-egret$latbi <- paste(egret$genus, egret$species, sep = "_")
+egret$latbi <- paste(egret$genus, egret$species, sep = " ")
 
 ospree <- read.csv("input/ospree_clean_withchill.csv")
-ospree$latbi <- paste(ospree$genus, ospree$species, sep = "_")
+ospree$latbi <- paste(ospree$genus, ospree$species, sep = " ")
 
 USDA <- read.csv("scrapeUSDAseedmanual/output/usdaGerminationData.csv")
-USDA$latbi <- paste(USDA$genus, USDA$species, sep = "_")
+USDA$latbi <- paste(USDA$genus, USDA$species, sep = " ")
 
-bb <- read.csv("input/Baskin_Dormancy_Database.csv", skip=2) 
-bb$X1 <- NULL
-bb$latbi <- bb$Genus_species
+bb <- read.csv("output/baskinclean.csv", header =T) 
+bb$latbi <- bb$matched_name2
 
 egret$latbi <- str_trim(egret$latbi)
 ospree$latbi  <- str_trim(ospree$latbi)
@@ -54,11 +53,11 @@ length(intersect_eu)# 17 sp
 
 # Compare Baskin x EGRET
 intersect_be <- intersect(bb$latbi, egret$latbi)
-length(intersect_be)# 198 sp
+length(intersect_be)# 201 sp
 
 # Compare Baskin x USDA
 intersect_bu <- intersect(bb$latbi, USDA$latbi)
-length(intersect_bu)# 199 sp
+length(intersect_bu)# 202 sp
 
 # Combine egret and USDA
 egretusda <- data.frame(latbi = c(egret$latbi, USDA$latbi))
@@ -69,7 +68,7 @@ length(intersect_o_eu)# 71 sp
 
 # Compare Baskin x (EGRET + USDA)
 intersect_b_eu <- intersect(bb$latbi, egretusda$latbi)
-length(intersect_b_eu)# 381 sp
+length(intersect_b_eu)# 387 sp
 
 # Egret x Ospree x USDA x Baskin
 ospreeSp <- unique(ospree$latbi)
