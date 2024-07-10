@@ -56,7 +56,7 @@ unique(d$germ.temp)
 
 
 # Values that are transformed i.e. averaged or rounded:
-d$germ.tempCor <- d$germ.temp
+d$germTempGen <- d$germ.temp # This is currently doing nothing
 
 # Now make new column with heavy duty cleaning
 d$germTemp  <- d$germ.temp
@@ -354,3 +354,6 @@ d$tempDay[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")] <- d
 # Deleting the template columns
 d$tempDayCopy <- NULL
 d$tempNightCopy <- NULL
+
+# Checking that germTempGen never changes from germ.temp 
+identical(d$germTempGen, d$germ.temp)
