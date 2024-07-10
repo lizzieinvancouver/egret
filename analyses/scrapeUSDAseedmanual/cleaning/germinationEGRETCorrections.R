@@ -4,9 +4,10 @@
 # 7 JULY 2024
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
-library(tidyverse)
-d <- read_csv("output/usdaGerminationJINJJA.csv")
+#library(tidyverse)
+#d <- read_csv("output/usdaGerminationJINJJA.csv")
 
+if(FALSE){
 # Changing column names to better fit EGRET
 colnames(d) <- c("speciesID","filePath","pdfPageNumber","scrapedTableNumber",
 "pdfTableNumber","genus","species","seed.type","source.population","medium",
@@ -19,9 +20,10 @@ colnames(d) <- c("speciesID","filePath","pdfPageNumber","scrapedTableNumber",
 "tempNightMax","germ.dur.Min","germ.dur.Max","samplesMin","samplesMax","chill.dur.Min",
 "chill.dur.Max","responseValueMin","responseValueMax","responseValueAvg","pretreatmentAvg",
 "cold.strat.dur.Avg","photoperiodAvg","tempDayAvg","tempNightAvg","germ.dur.Avg",
-"samplesAvg","chill.dur.Avg")
+"samplesAvg","chill.dur.Avg")}
 
 # Changing the responseVar to better fit EGRET
+colnames(d)[23]<-"responseVar"
 unique(d$responseVar)
 d$responseVar[which(d$responseVar == "germTime")] <- "mgt"
 d$responseVar[which(d$responseVar == "germPercentTotal")] <- "percent.germ.total"
@@ -34,5 +36,5 @@ d$responseVar[which(d$responseVar == "germCapacity")] <- "germ.capacity"
 d$responseVar[which(d$responseVar == "germPercent15degIncubated")] <- "percent.germ.15degC.incubated"
 d$responseVar[which(d$responseVar == "germPercent20degIncubated")] <- "percent.germ.20degC.incubated"
 
-write.csv(d,"output/usdaGerminationData.csv")
+#write.csv(d,"output/usdaGerminationData.csv")
 

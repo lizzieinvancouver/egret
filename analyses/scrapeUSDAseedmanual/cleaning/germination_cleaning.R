@@ -4,9 +4,9 @@
 # 17 June 2024
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
  
-library(tidyverse)
-library(xlsx)
-d <- read_csv("cleaning/germination_master_spreadsheet.csv", na = c("", "NA"))
+#library(tidyverse)
+#library(xlsx)
+#d <- read_csv("cleaning/germination_master_spreadsheet.csv", na = c("", "NA"))
 
 # Removing apostrophe across all cells
 d[] <- lapply(d, gsub, pattern="'", replacement="")
@@ -192,5 +192,5 @@ d <- d %>%
 
 # Save as excel file since CSV to excel converts numbers to dates
 # install.packages("xlsx")
-write.xlsx(d, "germinationCleaned.xlsx")
+#write.xlsx(d, "germinationCleaned.xlsx")
 

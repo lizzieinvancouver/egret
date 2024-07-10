@@ -4,22 +4,28 @@
 # 27 June 2024
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
-library(tidyverse)
-library(reshape2)
+#library(tidyverse)
+#library(reshape2)
 
-d <- read.csv("output/germinationCleaned_official.csv")
+#d <- read.csv("..//output/earlyIterationDataSheets/germinationCleaned_official.csv")
 colnames(d)
 
 # Changing column names
-colnames(d) <- c("X","rowID","filePath","pdfPageNumber",
-                 "scrapedTableNumber","pdfTableNumber","genus","species",
-                 "seedType","seedSource","medium","pregermTreatment",
-                 "pregermTreatmentHotWater","pretreatment","stratification",
-                 "warmStratificationDuration","coldStratificationDuration",
-                 "photoperiod","tempDay","tempNight","darkRange",
-                 "testDuration","germTime","germPercentTotal","germPercentAvg",
-                 "samples","germRate","germEnergyPercentAvg","germEnergyPercent",
-                 "germCapacityAvg","germCapacity","germPercent15degIncubated",
+colnames(d) <- c("filePath","pdfPageNumber",
+                 "scrapedTableNumber","pdfTableNumber",
+                 "genus","species",
+                 "seedType","seedSource",
+                 "medium","pregermTreatment",
+                 "pregermTreatmentHotWater","pretreatment",
+                 "stratification","warmStratificationDuration",
+                 "coldStratificationDuration","photoperiod",
+                 "tempDay","tempNight",
+                 "darkRange","testDuration",
+                 "germTime","germPercentTotal",
+                 "germPercentAvg","samples",
+                 "germRate","germEnergyPercentAvg",
+                 "germEnergyPercent","germCapacityAvg",
+                 "germCapacity","germPercent15degIncubated",
                  "germPercent20degIncubated","genusID","pretreatmentFeces",
                  "pretreatmentChill","pretreatmentChillDuration","pretreatmentScarifType",
                  "pretreatmentScarifTypeGen")
@@ -43,4 +49,5 @@ dcopy <- d %>%
                names_to = "responseType",
                values_to = "responseValue")
 
-write.csv(dcopy,"output/USDAgerminationCleanedFinal.csv")
+
+#write.csv(dcopy,"output/USDAgerminationCleanedFinal.csv")
