@@ -30,29 +30,34 @@ d$warmstrat[which(d$treatment %in% warmstrat.names)] <- 1
 
 d$provLatLon<-paste(d$provenance.lat,d$provenance.long ,sep=" ")
 # create a vector of columns to check
-col2check <- c("germTemp", "germDuration", "chillTemp","chillDuration", "warmstrat", "scarifType", "chemicalCor", "storageType","provLatLon")
+col2check <- c("germTemp", "chillTemp","chillDuration", "warmstrat", "scarifType", "chemicalCor", "storageType","provLatLon")
 ##add provinence
 
 ##############Dan's (unnecessary) dplyr solution##########################################
-treters<-data.frame(datasetID=character(), study=character(),     latbi=character())
+
+treters<-dplyr::select(d,datasetID,study,latbi)
+treters<-distinct(treters)
 
 for (i in c(1:length(col2check))) {
   goo<-dplyr::select(d,datasetID,study,latbi,col2check[i])
   goo<-dplyr::distinct(goo)
-  goo<-goo %>% dplyr::group_by(datasetID,study,latbi) %>%dplyr::count()
+  goo<-dplyr::filter(goo,!is.na(goo[,4]))
+  
+goo<-goo %>% dplyr::group_by(datasetID,study,latbi) %>%dplyr::count()
 colnames(goo)[4]<-col2check[i]
-treters<-dplyr::left_join(goo,treters)
+treters<-dplyr::left_join(treters,goo)
 }
 
-treat<-tidyr::gather(treters,"treatment","n",4:12)
-#63 are forcing only
-#36 are forcing x chilling duration
-#71 are chilling only
 
 
 
+treat<-tidyr::gather(treters,"treatment","n",4:11)
 
-treat.manipulated<-dplyr::filter(treat,n>1)
+write.csv(treat,"output/treatments_manipulated.csv")
+
+
+treatapplied<-dplyr::filter(treat,!is.na(n))
+treat.manipulated<-dplyr::filter(treatapplied,n>1)
 
 manis<-treat.manipulated %>% dplyr::group_by(treatment) %>% dplyr::count() ## this tells us the number of species/exp/study that have multiple levels of treatments
 
