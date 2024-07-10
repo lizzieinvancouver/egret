@@ -63,7 +63,7 @@ d$chillTemp <- d$chill.temp
 d$chillDuration <- d$chill.duration
 d$chillTempUnc <- NA
 d$chillTempCycle <- NA
-d$chill.lightCycle <- NA
+d$chillLightCycle <- NA
 
 
 ##clean remaining chill duration
@@ -217,7 +217,7 @@ d$chillDuration[which(d$datasetID == "boscagli01" & d$chill.temp == "5-7")] <- 1
 #Borghetti86 - 2-3
 d$chillTemp[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 2.5
 d$chillTempUnc[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 0.5
-d$chill.lightCycle[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 0
+d$chillLightCycle[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 0
 
 #barros12 - 4, 20/4
 d$chillTemp[which(d$datasetID == "barros12" & d$chill.temp == "20/4")] <- "20 then 40"
@@ -230,7 +230,7 @@ d$chillTempUnc[which(d$datasetID == "jabarzare11" & d$chill.temp == "0-5")] <- 2
 #javanmard14 - 4+/-0.5
 d$chillTemp[which(d$datasetID == "javanmard14" & d$chill.temp == "4+/-0.5")] <- 4
 d$chillTempUnc[which(d$datasetID == "javanmard14" & d$chill.temp == "4+/-0.5")] <- 0.5
-d$chill.lightCycle[which(d$datasetID == "javanmard14" & d$chill.temp == "4+/-0.5")] <- 0
+d$chillLightCycle[which(d$datasetID == "javanmard14" & d$chill.temp == "4+/-0.5")] <- 0
 
 #jusung16 - 4+/-1
 d$chillTemp[which(d$datasetID == "jusung16" & d$chill.temp == "4+/-1")] <- 4
@@ -267,7 +267,7 @@ d$chillTemp[which(d$datasetID == "hawkins19" & d$chill.temp == "5/1")] <- "5 and
 #yang20
 d$chillTemp[which(d$datasetID == "yang20" & d$treatment == "control")] <- 1
 d$chillDuration[which(d$datasetID == "yang20" & d$treatment == "control")] <- 0
-d$chill.lightCycle[which(d$datasetID == "yang20" & d$treatment == "control")] <- 24
+d$chillLightCycle[which(d$datasetID == "yang20" & d$treatment == "control")] <- 24
 #table 1 data seem to be missing
 
 #yang16
@@ -335,7 +335,7 @@ d$chillDuration[which(d$datasetID == "ren04" & is.na(d$chill.temp))] <- 0
 
 #ahola99 - 3 
 d$chillDuration[which(d$datasetID == "ahola99" & is.na(d$chill.temp))] <- 0
-d$chill.lightCycle[which(d$datasetID == "ahola99" & !is.na(d$chill.temp))] <- 0
+d$chillLightCycle[which(d$datasetID == "ahola99" & !is.na(d$chill.temp))] <- 0
 
 #na11 - 5, 18, 18/5
 d$chillTemp[which(d$datasetID == "na11" & d$chill.temp == 5)] <- 2.5
@@ -367,7 +367,7 @@ d$chillTempCycle[which(d$chill.temp == "38/29")] <- "8 and 16"
 d$chillTemp[which(d$chill.temp == "(25/10)/5/0")] <- "25 and 10 then 5 then 0"
 d$chillDuration[which(d$chill.temp == "(25/10)/5/0")] <- "90 then 30 then 90"
 d$chillTempCycle[which(d$chill.temp == "(25/10)/5/0")] <- "NA then NA then NA"
-d$chill.lightCycle[which(d$chill.temp == "(25/10)/5/0")] <- "12 then 12 then 0"
+d$chillLightCycle[which(d$chill.temp == "(25/10)/5/0")] <- "12 then 12 then 0"
 
 #cousins10 - 5, 10, 15
 d$chillTemp[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(5, 10, 15, rep("ave", 3))
@@ -383,7 +383,7 @@ d$chillDuration[which(d$datasetID == "yang10")]  <- NA
 d$chillTemp[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- 5
 d$chillDuration[which(d$datasetID == "zadeh15" & is.na(d$chill.duration))] <- 0
 d$chillDuration[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- c(5, 10, 15)
-d$chill.lightCycle[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- 0
+d$chillLightCycle[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- 0
 
 #king12
 d$chillDuration[which(d$datasetID == "king12" & d$treatment == "control, no treatment")] <- 0
@@ -397,12 +397,12 @@ d$chillDuration[which(d$datasetID == "naseri18" & d$chill.duration == "Continuou
 #gimenez-benavides13 - 2-4
 d$chillTemp[which(d$datasetID == "gimenez-benavides13" & !is.na(d$chill.temp))] <- 3
 d$chillTempUnc[which(d$datasetID == "gimenez-benavides13" & !is.na(d$chill.temp))] <- 1
-d$chill.lightCycle[which(d$datasetID == "gimenez-benavides13" & !is.na(d$chill.temp))] <- 0
+d$chillLightCycle[which(d$datasetID == "gimenez-benavides13" & !is.na(d$chill.temp))] <- 0
 
 #skordilis95 - 2-4
 d$chillTemp[which(d$datasetID == "skordilis95" & !is.na(d$chill.temp))] <- 3
 d$chillTempUnc[which(d$datasetID == "skordilis95" & !is.na(d$chill.temp))] <- 1
-d$chill.lightCycle[which(d$datasetID == "skordilis95" & !is.na(d$chill.temp))] <- 0
+d$chillLightCycle[which(d$datasetID == "skordilis95" & !is.na(d$chill.temp))] <- 0
 
 #hatzilazarou21 - 2-4
 d$chillTemp[which(d$datasetID == "hatzilazarou21")] <- 3
@@ -413,7 +413,7 @@ d$chillTemp[which(d$datasetID == "maithani90" & d$chill.temp == "2-4")] <- 3
 d$chillTempUnc[which(d$datasetID == "maithani90" & d$chill.temp == "2-4")] <- 1
 
 #nawrot-chorabik21 - 7
-d$chill.lightCycle[which(d$datasetID == "Nawrot-chorabik21" & !is.na(d$chill.temp))] <- 0
+d$chillLightCycle[which(d$datasetID == "Nawrot-chorabik21" & !is.na(d$chill.temp))] <- 0
 
 #sacande04 - 5, 10, 15, 20, 25
 #the chill temp data seem to be for germ temp
@@ -456,23 +456,23 @@ d$chillTemp[which(d$chill.temp == 4.44 | d$chill.temp == "3.3-5")] <- 4.4
 #pipinis09 - 20/25
 d$chillTemp[which(d$chill.temp == "20/25")] <- "20 and 25"
 d$chillTempCycle[which(d$chill.temp == "20/25")] <- "16 and 8"
-d$chill.lightCycle[which(d$chill.temp == "20/25")] <- 8
+d$chillLightCycle[which(d$chill.temp == "20/25")] <- 8
 
 d$chillTemp[which(d$datasetID == "pipinis09" & d$chill.temp == "2-4")] <- 3
 d$chillTempUnc[which(d$datasetID == "pipinis09" & d$chill.temp == "2-4")] <- 1
-d$chill.lightCycle[which(d$datasetID == "pipinis09" & d$chill.temp == "2-4")] <- 0
+d$chillLightCycle[which(d$datasetID == "pipinis09" & d$chill.temp == "2-4")] <- 0
 
 d$chillTemp[which(d$chill.temp == "20/25 (warm); 4-6 (cold)")] <- "20 and 25 then 3"
 d$chillTempUnc[which(d$chill.temp == "20/25 (warm); 4-6 (cold)")] <- "NA and 1"
 d$chillTempCycle[which(d$chill.temp == "20/25 (warm); 4-6 (cold)")] <- "16 and 8 then NA"
-d$chill.lightCycle[which(d$chill.temp == "20/25 (warm); 4-6 (cold)")] <- "8 then 0"
+d$chillLightCycle[which(d$chill.temp == "20/25 (warm); 4-6 (cold)")] <- "8 then 0"
 
 temp <- c("30 then 30", "30 then 60", "60 then 30", "60 then 60")
 d$chillDuration[which(d$chill.temp == "20/25 (warm); 4-6 (cold)")] <- temp
 #changed chill temp for 20/25
 
 #pliszko18 - -18, 4, 25
-d$chill.lightCycle[which(d$datasetID == "pliszko18")] <- 0
+d$chillLightCycle[which(d$datasetID == "pliszko18")] <- 0
 
 #pritchard93 - 6/16
 #recommend to double check year and response variable values manually
@@ -493,7 +493,7 @@ temp <- c(84, "14 then 84", "21 then 84", "28 then 84", "42 then 84", "63 then 8
 d$chillDuration[grep("5°C", d$chill.duration)] <- temp
 d$chillTemp[which(d$datasetID == "pritchard93" & d$chillDuration == 84)] <- 5
 
-d$chill.lightCycle[which(d$datasetID == "pritchard93" & !is.na(d$chill.temp))] <- 0
+d$chillLightCycle[which(d$datasetID == "pritchard93" & !is.na(d$chill.temp))] <- 0
 
 #tylkowski91 - 3, 3-15, 3-20
 #exp1
@@ -551,7 +551,7 @@ d$chillTemp[which(d$datasetID == "wytsalucy21" & d$chill.temp == "4, 7, 10")] <-
 #per germ values not differentiated by both hormone and temperature because their interaction is not deemed significant
 
 #yusefi-tanha19 - 3, 6, 9, 12, 15
-d$chill.lightCycle[which(d$datasetID == "yusefi-tanha19")] <- 0
+d$chillLightCycle[which(d$datasetID == "yusefi-tanha19")] <- 0
 
 #edwards73 - 1 - 4
 d$chillTemp[which(d$chill.temp == "1 - 4")] <- 2.5
@@ -560,7 +560,7 @@ d$chillTempUnc[which(d$chill.temp == "1 - 4")] <- 1.5
 #madeiras07 - 5 +/- 2 dark
 d$chillTemp[which(d$datasetID == "madeiras07" & d$chill.temp == "5 +/- 2")] <- 5
 d$chillTempUnc[which(d$datasetID == "madeiras07" & d$chill.temp == "5 +/- 2")] <- 2
-d$chill.lightCycle[which(d$datasetID == "madeiras07" & d$chill.temp == "5 +/- 2")] <- 0
+d$chillLightCycle[which(d$datasetID == "madeiras07" & d$chill.temp == "5 +/- 2")] <- 0
 
 #esmaeili09 - 15 - 25
 d$chillTemp[which(d$chill.temp == "15 - 25")] <- 20
@@ -573,21 +573,21 @@ d$chillTempUnc[which(d$chill.temp == "3 - 5")] <- 1
 #mamut20 - alternating 5/2 and alternating 25/15
 d$chillTemp[which(d$chill.temp == "alternating 5/2")] <- "5 and 2"
 d$chillTemp[which(d$chill.temp == "alternating 25/15")] <- "25 and 15"
-d$chill.lightCycle[which(d$other.treatment == "cold strat during germ" & !d$photoperiod == 0)] <- 24
-d$chill.lightCycle[which(d$other.treatment == "cold strat during germ" & d$photoperiod == 0)] <- 0
-d$chill.lightCycle[22079:(22079+21)] <- 24
-d$chill.lightCycle[22101:(22101+21)] <- 0
+d$chillLightCycle[which(d$other.treatment == "cold strat during germ" & !d$photoperiod == 0)] <- 24
+d$chillLightCycle[which(d$other.treatment == "cold strat during germ" & d$photoperiod == 0)] <- 0
+d$chillLightCycle[22079:(22079+21)] <- 24
+d$chillLightCycle[22101:(22101+21)] <- 0
 d$chillDuration[which(d$chill.duration == "0 (control)")] <- 0
 #germination set at same time of stratification
 #what to do
 
 #wang09 - alternating 15/5 dark
 d$chillTemp[which(d$chill.temp == "alternating 15/5")] <- "15 and 5"
-d$chill.lightCycle[which(d$datasetID == "Wang09")] <- 0
+d$chillLightCycle[which(d$datasetID == "Wang09")] <- 0
 
 #watanabe02 - 25 -> 5 +/- 2 warm to cold strat
 d$chillTemp[which(d$chill.temp == "25 -> 5 +/- 2")] <- "25 then 5"
-d$chill.lightCycle[which(d$chill.temp == "25 -> 5 +/- 2")] <- "0 then NA"
+d$chillLightCycle[which(d$chill.temp == "25 -> 5 +/- 2")] <- "0 then NA"
 d$chillTemp[which(d$datasetID == "watanabe02" & d$chill.temp == "5 +/- 2")] <- 5
 d$chillTempUnc[which(d$datasetID == "watanabe02" & !is.na(d$chill.temp))] <- 2
 d$chillDuration[which(d$chill.temp == "25 -> 5 +/- 2")] <- "30 then 30"
@@ -608,13 +608,13 @@ d$chillDuration[which(d$datasetID == "zhou03")] <- 112
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- 5
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "stratification" & is.na(d$chill.temp))] <- 84
 d$chillTemp[which(d$chill.temp == "20,10")] <- "25 then 5"
-d$chill.lightCycle[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- c(24, 24, 0, 0, "24 then 24", "24 then 24")
+d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- c(24, 24, 0, 0, "24 then 24", "24 then 24")
 d$chillDuration[which(d$chill.temp == "20,10")] <- "28 then 56"
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "25 then 5"
-d$chill.lightCycle[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "24 then 24"
+d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "24 then 24"
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "28 then 56"
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "25 then 5"
-d$chill.lightCycle[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "24 then 24"
+d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "24 then 24"
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "28 then 56"
 #data seems to be for germination temp instead
 #warm + cold + incubation (but no duration)
@@ -623,7 +623,7 @@ d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "water stress")] 
 #yang08 - 30/20 warm, cold strat
 d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 and 20 then 4"
 d$chillTempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "NA then NA"
-d$chill.lightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
+d$chillLightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
 temp <- c("60 then 60", "60 then 90", "60 then 120", "60 then 150", "60 then 180",
          "90 then 60", "90 then 90", "90 then 120", "90 then 150", "90 then 180",
          "120 then 60", "120 then 90", "120 then 120", "120 then 150", "120 then 180",
@@ -658,7 +658,7 @@ d$chillDuration[which(d$chill.temp == "30/7")] <- "3 then 14"
 #gianni19 - 2+-0.1 dark
 d$chillTemp[which(d$chill.temp == "2+-0.1")] <- 2
 d$chillTempUnc[which(d$chill.temp == "2+-0.1")] <- 0.1
-d$chill.lightCycle[which(d$chill.temp == "2+-0.1")] <- "0 and 24"
+d$chillLightCycle[which(d$chill.temp == "2+-0.1")] <- "0 and 24"
 
 #rezvani14 - 5+-1
 d$chillTemp[which(d$chill.temp == "5+-1")] <- 5
@@ -667,7 +667,7 @@ d$chillTempUnc[which(d$chill.temp == "5+-1")] <- 1
 #kolodziejek18 - 4.5-5.1 dark
 d$chillTemp[which(d$chill.temp == "4.5-5.1")] <- 4.8
 d$chillTempUnc[which(d$chill.temp == "4.5-5.1")] <- 0.3
-d$chill.lightCycle[which(d$chill.temp == "4.5-5.1")] <- 0
+d$chillLightCycle[which(d$chill.temp == "4.5-5.1")] <- 0
 
 #Amooaghaie09 - 4-6
 d$chillTemp[which(d$chill.temp == "4-6")] <- 5
@@ -678,8 +678,8 @@ unique(d$chillTemp)
 unique(d$chillDuration)
 unique(d$chillTempUnc)
 unique(d$chillTempCycle)
-unique(d$chill.lightCycle)
+unique(d$chillLightCycle)
 
 length(which(!is.na(d$chillTempUnc)))
 length(which(!is.na(d$chillTempCycle)))
-length(which(!is.na(d$chill.lightCycle)))
+length(which(!is.na(d$chillLightCycle)))
