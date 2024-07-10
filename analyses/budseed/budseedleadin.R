@@ -57,6 +57,12 @@ fit <- stan("stan/uber_threeslopeintercept_modified_cholesky_updatedpriors.stan"
             seed = 117 
 )
 
+##next steps
+###run phylogeny model on ospree and extract posteriors
+
+#####run phylogeny model on egret+ 
+
+
 
 
 
