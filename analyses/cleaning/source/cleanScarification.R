@@ -1,5 +1,5 @@
 ## Updated 5 July 2024 ##
-## By Britany ##
+## By Britany Wu ##
 
 ## This contains code to clean scarification and scarif type ##
 ## Original code taken from file called cleaningDL.R ##

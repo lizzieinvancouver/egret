@@ -61,5 +61,6 @@ source("cleaning/source/cleanResponseVar.R")
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
 d$datasetIDstudy <- paste(d$datasetID,d$study, sep = "")
+d$latbi <- paste(d$genus, d$species, sep = "_")
 write.csv(d, "output/egretclean.csv")
 
