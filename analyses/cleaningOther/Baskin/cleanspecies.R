@@ -11,21 +11,47 @@ setwd("C:/PhD/Project/egret/analyses")
 ### Clean Species ##############################
 baskin <- read.csv("input/Baskin_Dormancy_Database.csv", skip=2) 
 baskin$X1 <- NULL
-# Substitude the underscore with space
+# Substitute the underscore with space
 baskin$Genus_species <- sub("_", " ", baskin$Genus_species)
-# Didn't work, try separate the Genus_species, and then using unique(paste())
-library("tidyr")
-baskin_sp <- separate(baskin, Genus_species, into = c("genus", "species"), sep = "_", remove = FALSE)
-baskinsp <- unique(paste(baskin_sp$genus,baskin_sp$species))
-# Still didn't work...
 # Use taxize package to inspect whether names are correct
-ref <- gnr_datasources() # Full list of dabases available
-fix_names <- gnr_resolve(sci = baskinsp, with_canonical_ranks = T)
+ref <- gnr_datasources() # Full list of databases available
+
+# Couldn't get it working if use the whole column. 1. There might be some problematic rows, 2. The dataframe is too big.
+# Find problematic rows
+# baskinnew <- baskin$Genus_species[1:10]
+# fix_names <- gnr_resolve(sci = baskinnew, with_canonical_ranks = T)
+# Repeat this until you run all the rows.
+# Get rid of problematic rows
+baskinnew <- baskin[baskin$Genus_species != c(""), ]
+
+baskinnew <- baskin[-c(12427,13481,13482,13988),]
+
+# Break down the big dataframe into smaller sections: 1:3000, 3001:6000, 6001:9000, 9001:12000, 12001:14250
+baskin3000<-baskinnew$Genus_species[12001:14250]
+fix_names <- gnr_resolve(sci = baskin3000, with_canonical_ranks = T)
 baskin_species_fix <- unique(fix_names$matched_name2)
-names_changed <- setdiff(baskin$Genus_species, baskin_species_fix)
-names_changed
+baskinnewsub <- baskinnew[c(12001:14250), ]
+unique_fix_names <- fix_names[!duplicated(fix_names$submitted_name), ]
+unique_baskin <- baskinnewsub[!duplicated(baskinnewsub$Genus_species), ]
 
+# Merge the fix_names with original dataframe
+baskin_3000 <- merge(x = unique_baskin, y = unique_fix_names[ , c("submitted_name", "matched_name2")], by.x = "Genus_species", by.y = "submitted_name", all.x=TRUE)
+baskin_6000 <- merge(x = unique_baskin, y = unique_fix_names[ , c("submitted_name", "matched_name2")], by.x = "Genus_species", by.y = "submitted_name", all.x=TRUE)
+baskin_9000 <- merge(x = unique_baskin, y = unique_fix_names[ , c("submitted_name", "matched_name2")], by.x = "Genus_species", by.y = "submitted_name", all.x=TRUE)
+baskin_12000 <- merge(x = unique_baskin, y = unique_fix_names[ , c("submitted_name", "matched_name2")], by.x = "Genus_species", by.y = "submitted_name", all.x=TRUE)
+baskin_14250 <- merge(x = unique_baskin, y = unique_fix_names[ , c("submitted_name", "matched_name2")], by.x = "Genus_species", by.y = "submitted_name", all.x=TRUE)
+# Bind them together
+baskin_fix <- rbind(baskin_3000, baskin_6000, baskin_9000, baskin_12000, baskin_14250)
 
-sort(baskinsp)
+# Merge with original baskin dataframe
+baskin_fix_final <- merge(x = baskin, y = baskin_fix[ , c("Genus_species", "matched_name2")], by= "Genus_species", all.x=TRUE)
 
+# Remove all duplicated rows based on sp and dormclass
+baskin_fix_final <- baskin_fix_final[!duplicated(baskin_fix_final[c("Genus_species","Dormancy.Class")]),]
+library(dplyr)
+baskin_clean <- baskin_fix_final %>% 
+  mutate(matched_name2 = coalesce(matched_name2, Genus_species))
+
+# Save the final dataframe with matched names
+write.csv(baskin_clean,"output/baskinclean.csv")
 
