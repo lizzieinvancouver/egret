@@ -5,22 +5,33 @@
 # and does some other cleaning and mapping ##
 ## Original file called coordinate_cleaning_TA.R ##
 
-list.files()
 # To convert lat/long from Degree minute seconds to decimals degrees:
 # https://www.fcc.gov/media/radio/dms-decimal
 
 #To find the lat/long of a region, please use google earth:
 #https://earth.google.com/web/
 # once you search a region, use the "add placemark" tool to drop a pin in the regions centre and record the lat long that is shown in the popup box. Note: the unit of the coordinates can be changed to decimal degress by going to "Tools"-->"Settings"--> scroll down to "Formats and Units" and select "decimal" from the drop down menu for the "Latitude Longitude formatting"
+
 ## load packages ##
-library(leaflet)
-library(sp)
-library(sf)
-library(plotly)
+# library(leaflet)
+# library(sp)
+# library(sf)
+# library(plotly)
+
+# housekeeping
+rm(list=ls())  
+options(stringsAsFactors=FALSE)
+
+
+if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+}
 
 # grab the data 
 d <- read.csv("input/egretData.csv")
-head(d)
+
 # Read in the data by running cleanall.R 1-3
 # Adding a new column to fix/add location if they were not originally scraped 
 d$source.population.edit <- d$source.population
@@ -684,42 +695,36 @@ d$provenance.long[which(d$continent == "Asia" & d$provenance.lat == "34.831")] <
 d$provenance.lat[which(d$continent == "Africa" & d$provenance.lat == "-39.983333")] <- "-33.988"
 ############################################################################
 
-## projecting coordinates onto a basemap this needs to BE CHECKED!
 
-na.coords <- d[which(is.na(d$provenance.lat)),]
-
-unique(d$provenance.lat)
-unique(d$provenance.long)
-
-
-# tests with a smaller df. Only take single entries
-dred <- d[!duplicated(d$datasetID), ]
-str(dred)
-# Many entries are still problematic. Some have lat and long in the lat column, some have a letter (e.g. 39N). So I'll separate those:
-# below is a pattern that takes entries that are between 0-9 and have 2 digits, followed by a "." followed by decimals that have between 2 and 16 values. I chose these because some have up to 16 decimals (weird) and 2 because otherwise there is no precise provenance 
-pattern <- "^-?[0-9]{1}\\.\\d{2,16}$|^-?[0-9]{2}\\.\\d{2,16}$|^-?[0-9]{3}\\.\\d{2,16}$"
+# 
+# # tests with a smaller df. Only take single entries
+# dred <- d[!duplicated(d$datasetID), ]
+# str(dred)
+# # Many entries are still problematic. Some have lat and long in the lat column, some have a letter (e.g. 39N). So I'll separate those:
+# # below is a pattern that takes entries that are between 0-9 and have 2 digits, followed by a "." followed by decimals that have between 2 and 16 values. I chose these because some have up to 16 decimals (weird) and 2 because otherwise there is no precise provenance 
+# pattern <- "^-?[0-9]{1}\\.\\d{2,16}$|^-?[0-9]{2}\\.\\d{2,16}$|^-?[0-9]{3}\\.\\d{2,16}$"
 
 ### COLUMN LATITUDE ###
-# Filter values that have the above pattern
-dred.lat <- dred[!grepl(pattern, dred$provenance.lat), ]
-# Check how many entries are still problematic
-dred.lat$provenance.lat # at this point, there are still 89 entries that either NAs or in a bad format
-# Filter out NAs
-dred.lat2 <- dred.lat[!is.na(dred.lat$provenance.lat), ]
-dred.lat2$provenance.lat # good! now only 29 entries are not in a good format!
-# Create provenance.lat vector entries that need to be changed
-provenance.lat.chg <- dred.lat2$provenance.lat
+# # Filter values that have the above pattern
+# dred.lat <- dred[!grepl(pattern, dred$provenance.lat), ]
+# # Check how many entries are still problematic
+# dred.lat$provenance.lat # at this point, there are still 89 entries that either NAs or in a bad format
+# # Filter out NAs
+# dred.lat2 <- dred.lat[!is.na(dred.lat$provenance.lat), ]
+# dred.lat2$provenance.lat # good! now only 29 entries are not in a good format!
+# # Create provenance.lat vector entries that need to be changed
+# provenance.lat.chg <- dred.lat2$provenance.lat
 
-### COLUMN LONGITUDE ###
-# Filter values that have the above pattern
-dred.long <- dred[!grepl(pattern, dred$provenance.long), ]
-# Check how many entries are still problematic
-dred.long$provenance.long # at this point, there are *** still  entries that either NAs or in a bad format
-# Filter out NAs
-dred.long2 <- dred.long[!is.na(dred.long$provenance.long), ]
-dred.long2$provenance.long # good! now only *** entries are not in a good format!
-# Create provenance.long vector entries that need to be changed
-provenance.long.chg <- dred.long2$provenance.long
+# ### COLUMN LONGITUDE ###
+# # Filter values that have the above pattern
+# dred.long <- dred[!grepl(pattern, dred$provenance.long), ]
+# # Check how many entries are still problematic
+# dred.long$provenance.long # at this point, there are *** still  entries that either NAs or in a bad format
+# # Filter out NAs
+# dred.long2 <- dred.long[!is.na(dred.long$provenance.long), ]
+# dred.long2$provenance.long # good! now only *** entries are not in a good format!
+# # Create provenance.long vector entries that need to be changed
+# provenance.long.chg <- dred.long2$provenance.long
 
 
 #=== === === === === === === === === === === === === === === === === === === ===
@@ -737,66 +742,47 @@ d$provenance.long <- gsub("N/A", "NA", d$provenance.long)
 #=== === === === === === === === === === === === === === === === === === === ===
 
 # STEP 2.1. in lat
-provenance.lat.chg
 # STEP 2.1.1. karlsson08 : 9.4167/9.3833 
-d$provenance.lat <- gsub("9.4167/9.3833", "9.4167", d$provenance.lat) # in the paper, they merged the two locations together, and since they are only 5km appart, I took the first latitude value
+d$provenance.lat[which(d$datasetID == "karlsson08" & d$provenance.lat == "9.4167/9.3833", "9.4167")] <- "9.4167"# in the paper, they merged the two locations together, and since they are only 5km appart, I took the first latitude value
 # STEP 2.1.2. teimouri13 : 35.5 and 36.3
 # the one below, we will need to look into the paper for more info. There is a "and" but it's the same source population
 #subset(d, provenance.lat == "35.5 and 36.3")
 # STEP 2.1.3. zulfiqar15 : "34.464444 N "
-d$provenance.lat <- gsub("34.464444 N", "34.46", d$provenance.lat)
+d$provenance.lat[which(d$datasetID == "zulfiqar15" & d$provenance.lat == "34.464444 N")] <- "34.46"
 # STEP 2.1.3.1. zulfiqar15 : "34.358333 N"
-d$provenance.lat <- gsub("34.358333 N", "34.36", d$provenance.lat)
+d$provenance.lat[which(d$datasetID == "zulfiqar15" & d$provenance.lat == "34.358333 N")] <- "34.36"
 # STEP 2.1.3.2. zulfiqar15 : " 34.218611 N"
 # R doesn't detect this entry, probably because of the space
 # function to force every entry that isn't the problematic one
-d$provenance.lat <- ifelse(d$datasetID == "zulfiqar15" & !d$provenance.lat %in% c("34.46", "34.36"), 
-                     "34.22", 
-                     d$provenance.lat)
+d$provenance.lat <- ifelse(d$datasetID == "zulfiqar15" & !d$provenance.lat %in% c("34.46", "34.36"), "34.22", d$provenance.lat)
 # STEP 2.1.4.li17 : 31.0333 N
-d$provenance.lat <- gsub("31.0333 N", "31.0333", d$provenance.lat)
+d$provenance.lat[which(d$datasetID == "2.1.4.li17" & d$provenance.lat == "31.0333 N")] <- "31.0333"
 # STEP 2.1.5. li21 : 44.316667 N
-d$provenance.lat <- gsub("44.316667 N", "44.316667", d$provenance.lat)
+d$provenance.lat[which(d$datasetID == "li21" & d$provenance.lat == "44.316667 N")] <- "44.316667"
 # STEP 2.1.6. li21 : 42.0760 S
-d$provenance.lat <- gsub("42.0760 S", "-42.0760", d$provenance.lat)
+d$provenance.lat[which(d$datasetID == "li21" & d$provenance.lat == "42.0760 S")] <- "-42.0760"
 # STEP 2.1.7. yang14: 36.11139 N
-d$provenance.lat <- gsub("36.11139 N", "36.11139", d$provenance.lat)
+d$provenance.lat[which(d$datasetID == "yang14" & d$provenance.lat == "36.11139 N")] <- "36.11139"
 
 
 #=== === === === === === === === === === === === === === === === === === === ===
 # STEP 2.2. in long
-provenance.long.chg
 # STEP 2.2.1. karlsson08 :42.0333/42.0167
-# See step 2.1.1.
-d$provenance.lat <- gsub("42.0333/42.0167", "42.0333", d$provenance.lat)
+d$provenance.lat[which(d$datasetID == "karlsson08" & d$provenance.lat == "42.0333/42.0167")] <- "42.0333"# See step 2.1.1.
 # STEP 2.2.2. zulfiqar15: 71.625833 E
-subset(d, provenance.long ==  "71.625833 E")
-d$provenance.long <- gsub("71.625833 E", "71.625833", d$provenance.long)
-
+d$provenance.long[which(d$datasetID == "zulfiqar15" & d$provenance.long == "71.625833 E")] <- "71.625833"
 # STEP 2.2.3. zlesak07: 93.16667 W
-subset(d, provenance.long ==  "93.16667 W")
-d$provenance.long <- gsub("93.16667 W", "-93.16667", d$provenance.long)
-
+d$provenance.long[which(d$datasetID == "zlesak07" & d$provenance.long == "93.16667 W")] <- "-93.16667"
 # STEP 2.2.4. li17: 112.26667 E
-subset(d, provenance.long ==  "112.26667 E")
-d$provenance.long <- gsub("112.26667 E", "112.26667", d$provenance.long)
-
+d$provenance.long[which(d$datasetID == "li17" & d$provenance.long == "112.26667 E")] <- "112.26667"
 # STEP 2.2.5. li21: 86.95 E
-subset(d, provenance.long ==  "86.95 E")
-d$provenance.long <- gsub("86.95 E", "86.95", d$provenance.long)
-
+d$provenance.long[which(d$datasetID == "li21" & d$provenance.long == "86.95 E")] <- "86.95"
 # STEP 2.2.6. li21 : 147.0275 E
-subset(d, provenance.long ==  "147.0275 E")
-d$provenance.long <- gsub("147.0275 E", "147.0275", d$provenance.long)
-
+d$provenance.long[which(d$datasetID == "li21" & d$provenance.long == "147.0275 E")] <- "147.0275"
 # STEP 2.2.7. yang14 : 81.8125 W
-subset(d, provenance.long ==  "81.8125 W")
-d$provenance.long <- gsub("81.8125 W", "-81.8125", d$provenance.long)
-
+d$provenance.long[which(d$datasetID == "yang14" & d$provenance.long == "81.8125 W")] <- "-81.8125"
 # STEP 2.2.8. gremer20 :  "–121.551"
-subset(d, provenance.long ==  "–121.551")
-d$provenance.long <- gsub("–121.551", "-121.551", d$provenance.long) # just a typo 
-
+d$provenance.long[which(d$datasetID == "gremer20" & d$provenance.long == "–121.551")] <- "–121.551"# just a typo 
 
 #=== === === === === === === === === === === === === === === === === === === ===
 ##### STEP 3. Check in the articles for exact coordinates #####
@@ -812,13 +798,14 @@ d$provenance.lat[which(d$datasetID == "zhou08" & d$provenance.lat == "103.42")] 
 # STEP 3.1.10. nurse08: 42
 # different environments were used within in Essex Ontario, not a precise location was given. I don't know if we should use this because essex is closer to 42.1 than 42.0
 # STEP 3.1.12. teimouri13: 35.47 and 36.3 
-d$provenance.lat <- gsub("35.5 and 36.3", "35.47", d$provenance.lat) #chose the first location given, they did merged the two locations together
+d$provenance.lat[which(d$datasetID == "teimouri13" & d$provenance.lat == "35.5 and 36.3")] <- "35.47"
+#chose the first location given, they did merged the two locations together
 # STEP 3.1.15. yeom21: 39
 # they give location that isn't precise and searching the institute does't give anything conclusive. It's in North Korea... It's not the source population also, it's a crop research institute. My opinion: exclude these locations from the coordinates.
 # STEP 3.1.16. zardari19: 35
 d$provenance.lat[which(d$datasetID == "zardari19" & d$provenance.lat == "35")] <- "35.58" #given location had no decimals. I took a central point in the town indicated in the article. 
 # STEP 3.1.17. zare11: 3147
-d$provenance.lat <- gsub("3147", "31.47", d$provenance.lat) #missing a .
+d$provenance.lat[which(d$datasetID == "zare11" & d$provenance.lat == "3147")] <- "31.47" #missing a .
 # STEP 3.1.18. downie91: 46.9
 d$provenance.lat[which(d$datasetID == "downie91" & d$provenance.lat == "46.9")] <- "46.92"#verified location and added the missing decimal
 # STEP 3.1.18.1. downie91: 46.6
@@ -826,21 +813,21 @@ d$provenance.lat[which(d$datasetID == "downie91" & d$provenance.lat == "46.6")] 
 # STEP 3.1.19. esmaeili09: 48
 # Location provided: Marais poitevin which is a 120 000ha wetland. Not sure what to do with this.  
 # STEP 3.1.20. seng20: 103.3
-d$provenance.lat <- gsub("103.3", "13.60", d$provenance.lat) # location scrapped doesn't make sens. I took in a central location of Forest Restoration and Development “Banteay Srei”Cambodia
+d$provenance.lat[which(d$datasetID == "seng20" & d$provenance.lat == "103.3")] <- "13.60" # location scrapped doesn't make sens. I took in a central location of Forest Restoration and Development “Banteay Srei”Cambodia
 # STEP 3.1.21. zulfiqar15: 34.218611
 # that's ok, but there is a space before the number which I don't know why
 # STEP 3.1.22. zlesak07: 45 N
-d$provenance.lat <- gsub("45 N", "45.00", d$provenance.lat) #double checked location and added the 0
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "45 N")] <- "45.00" #double checked location and added the 0
 # STEP 3.1.23. bibby53: 40.9
 #missing from the google drive
 # STEP 3.1.24. guo20: ~34-34.666667
-d$provenance.lat <- gsub("~34-34.666667", "34.33", d$provenance.lat)  # took the central latitude betweeen the two points provided in the article
+d$provenance.lat[which(d$datasetID == "guo20" & d$provenance.lat == "~34-34.666667")] <- "34.33" # took the central latitude betweeen the two points provided in the article
 # STEP 3.1.25. ren15: 33.825278 - 34.136389
-d$provenance.lat <- gsub("33.825278 - 34.136389", "33.98", d$provenance.lat)  # took the central latitude betweeen the two points provided in the article
+d$provenance.lat[which(d$datasetID == "ren15" & d$provenance.lat == "33.825278 - 34.136389")] <- "33.98" # took the central latitude betweeen the two points provided in the article
 
 # STEP 3.2. LONGITUDE
 # STEP 3.2.4. karlsson08 : 42.0333/42.0167
-d$provenance.long <- gsub("42.0333/42.0167", "42.02", d$provenance.long) # mean of the 2 longitudes given
+d$provenance.long[which(d$datasetID == "karlsson08" & d$provenance.long == "42.0333/42.0167")] <- "42.02" # mean of the 2 longitudes given
 # STEP 3.2.7. lee06 : NA
 # STEP 3.2.8. rizwan18 : NA
 # STEP 3.2.9. grose57 : NA
@@ -848,16 +835,15 @@ d$provenance.long <- gsub("42.0333/42.0167", "42.02", d$provenance.long) # mean 
 # STEP 3.2.12. nurse08 : -82
 # different environments were used within in Essex Ontario, not a precise location was given. I don't know if we should use this because essex is closer to 42.1 than 42.0
 # STEP 3.2.13. olmez07 :41.83, 41.87, 41.85
-subset(d, datasetID =="olmez07")
 # need to spend time redoing that whole scrapping. Very clearly were the locations given in the article with distinct provenance names and coordinates.
 # STEP 3.2.15. teimouri13 : 59.05 and 59.2
-d$provenance.long <- gsub("59.05 and 59.2", "59.05", d$provenance.long) #chose the first location given, they did merged the two locations together
+d$provenance.long[which(d$datasetID == "teimouri13" & d$provenance.long == "59.05 and 59.2")] <- "59.05" #chose the first location given, they did merged the two locations together
 # STEP 3.2.17. yeom21 : 129
 # they give location that isn't precise and searching the institute does't give anything conclusive. It's in North Korea... It's not the source population also, it's a crop research institute. My opinion: exclude these locations from the coordinates.
 # STEP 3.2.19. zardari19 :53
 d$provenance.long[which(d$datasetID == "zardari19" & d$provenance.long == "53")] <- "53.39" #given location had no decimals. I took a central point in the town indicated in the article.
 # STEP 3.2.20. zare11 : 5352
-d$provenance.long <- gsub("5352", "53.52", d$provenance.long)
+d$provenance.long[which(d$datasetID == "zare11" & d$provenance.long == "5352")] <- "53.52"
 # STEP 3.2.21. erken21 : 29.3
 d$provenance.long[which(d$datasetID == "erken21" & d$provenance.long == "29.3")] <- "29.26"
 # STEP 3.2.22. esmaeili09 :-4.5
@@ -867,9 +853,9 @@ d$provenance.long[which(d$datasetID == "zhou08" & d$provenance.long == "32")] <-
 # STEP 3.2.24. yang08 : 121.3
 d$provenance.long[which(d$datasetID == "yang08" & d$provenance.long == "121.3")] <- "121.50" # wrong conversion from hour minute to decimals
 # STEP 3.2.25. guo20 : ~105.5-106.5
-d$provenance.long <- gsub("~105.5-106.5", "106.00", d$provenance.long) # took the central latitude betweeen the two points provided in the article
+d$provenance.long[which(d$datasetID == "guo20" & d$provenance.long == "~105.5-106.5", "106.00")] <- "106.00" # took the central latitude betweeen the two points provided in the article
 # STEP 3.2.26. ren15 : 107.373333 - 107.861389
-d$provenance.long <- gsub("107.373333 - 107.861389", "107.62", d$provenance.long) # took the central latitude betweeen the two points provided in the article
+d$provenance.long[which(d$datasetID == "ren15" & d$provenance.long == "107.373333 - 107.861389")] <- "107.62" # took the central latitude betweeen the two points provided in the article
 
 
 
@@ -898,119 +884,25 @@ d$provenance.lat[which(d$datasetID == "skordilis95" & d$provenance.lat == "41.2"
 d$provenance.lat[which(d$datasetID == "kolodziejek15" & d$provenance.lat == "52")] <- "52.00"
 
 # STEP 4.2. LONGITUDE
-# STEP 3.2.1. zhang21 :124.9
+# STEP 4.2.1. zhang21 :124.9
 d$provenance.long[which(d$datasetID == "zhang21" & d$provenance.long == "124.9")] <- "124.90"
-# STEP 3.2.2. brandel05 :10
+# STEP 4.2.2. brandel05 :10
 # d$provenance.long[which(d$datasetID == "brandel05" & d$provenance.long == "10")] <- "10.00"
 # to DOUBLE CHECK
-# STEP 3.2.3. beikmohammadi12 :55.8
+# STEP 4.2.3. beikmohammadi12 :55.8
 d$provenance.long[which(d$datasetID == "beikmohammadi12" & d$provenance.long == "55.8")] <- "55.80"
-# STEP 3.2.5. alptekin02 : 39.5
+# STEP 4.2.5. alptekin02 : 39.5
 d$provenance.long[which(d$datasetID == "alptekin02" & d$provenance.long == "39.5")] <- "39.50"
-# STEP 3.2.6. mulaudzi09 : 27.5
+# STEP 4.2.6. mulaudzi09 : 27.5
 d$provenance.long[which(d$datasetID == "mulaudzi09" & d$provenance.long == "27.5")] <- "27.50"
-# STEP 3.2.11. middleton96 : 142.5
+# STEP 4.2.11. middleton96 : 142.5
 d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "142.5")] <- "142.50"
-# STEP 3.2.14. pliszko18 : 21
+# STEP 4.2.14. pliszko18 : 21
 d$provenance.long[which(d$datasetID == "pliszko18" & d$provenance.long == "21")] <- "21.00"
-# STEP 3.2.16. yang18 : 121.5
+# STEP 4.2.16. yang18 : 121.5
 d$provenance.long[which(d$datasetID == "yang18" & d$provenance.long == "121.5")] <- "121.50"
-# STEP 3.2.18. yin09 :117.4
+# STEP 4.2.18. yin09 :117.4
 d$provenance.long[which(d$datasetID == "yin09" & d$provenance.long == "117.4")] <- "117.40"
-
-
-#=== === === === === === === === === === === === === === === === === === === ===
-#### CHECKING BAD ENTRIES ####
-#=== === === === === === === === === === === === === === === === === === === ===
-d3 <- d[!duplicated(d$datasetID), ]
-### COLUMN LATITUDE ###
-# Filter out NAs
-d3 <- d3[!is.na(d3$provenance.lat), ]
-# Filter values that have the above pattern
-d4 <- d3[!grepl(pattern, d3$provenance.lat), ]
-# Check how many entries are still problematic
-provenance.lat.chg <- d4[, c("datasetID", "provenance.lat")]
-
-### COLUMN LONGITUDE ###
-d3.long <- d3[!grepl(pattern, d3$provenance.long), ]
-# Check how many entries are still problematic
-d3.long$provenance.long # 
-# Filter out NAs
-d3.long <- d3.long[!is.na(d3.long$provenance.long), ]
-
-# All the papers for which we need to change the provenance format 
-provenance.long.chg <- d3.long[, c("datasetID", "provenance.long")]
-
-#=== === === === === === === === === === === === === === === === === === === ===
-
-#### MAP ####
-# Start a quick map with given locations
-### Available locations
-no.na.values <-d[complete.cases(d["provenance.lat"]),]
-
-# Select only 1 entry per provenance
-df.4.map <- no.na.values[!duplicated(no.na.values$provenance.lat), ]
-# clen columns not necessary
-df.4.map <- df.4.map[, c("datasetID", "provenance.lat", "provenance.long", "continent")]
-head(df.4.map)
-# color coding
-# i need to find another way than using dplyr
-library(dplyr)
-occurence <- df.4.map %>%
-  group_by(continent) %>%
-  summarize(continent = first(continent), count = n())
-head(occurence)
-# map
-plot_geo(occurence) %>%
-  layout(
-    geo = list(
-      showframe = TRUE,
-      showcoastlines = TRUE,
-      showland = TRUE,
-      landcolor = toRGB("white"),
-      countrycolor = toRGB("darkgrey"),
-      coastlinecolor = toRGB("black"),
-      coastlinewidth = 0.5,
-      lataxis = list(
-        range = c(-55, 80),
-        showgrid = FALSE
-      ),
-      lonaxis = list(
-        range = c(-130, 160),
-        showgrid = FALSE
-      )
-    )
-  ) %>%
-  # # Color gradient set to the number of papers in each country
-  # add_trace(
-  #   z = ~count, color = ~count, colors = 'GnBu',
-  #   text = ~continent, locations = ~continent,
-  #   marker = list(
-  #     line = list(width = 0.5, color = "black")
-  #   ),
-  #   # Edit the colar bar position --> make the X value negative if I want to set it on the left
-  #   colorbar = list(title = "", x = 1, y = 1.1, len = 1.03)
-  # ) %>%
-add_trace(
-  type = "scattergeo",
-  lat = ~df.4.map$provenance.lat, 
-  lon = ~df.4.map$provenance.long,
-  text = ~paste("ID: ", df.4.map$datasetID),
-  mode = "markers",
-  marker = list(
-    size = 1,
-    symbol = "circle",
-    color = "lightgrey",
-    line = list(width = 1.5, color = "black")
-  )
-) %>% 
-  layout(title = "")
-
-# save figure
-save_image(egretlocations,
-           file="/Users/christophe_rouleau-desrochers/Documents/mapegret.html")
-
-
 
 ##### STEP 5 #####
 #Removing entries in the middle of the ocean
@@ -1024,57 +916,95 @@ d$provenance.lat[which(d$datasetID == "bibby53" & d$provenance.lat == "40.9")] <
 
 
 
-d_filtered <- d[which(d$provenance.lat != "38.967 and 37.9" | 
-                              d$provenance.lat != "~34-34.666667" |
-                              d$provenance.lat != "9.4167/9.3833" |
-                              d$provenance.long != "42.0333/42.0167" |
-                              d$provenance.long != "~105.5-106.5"),]
+# #=== === === === === === === === === === === === === === === === === === === ===
+# #### CHECKING BAD ENTRIES ####
+# #=== === === === === === === === === === === === === === === === === === === ===
+d3 <- d[!duplicated(d$datasetID), ]
+### COLUMN LATITUDE ###
+pattern <- "^-?[0-9]{1}\\.\\d{2,16}$|^-?[0-9]{2}\\.\\d{2,16}$|^-?[0-9]{3}\\.\\d{2,16}$"
+# # Filter out NAs
+d.latitude <- d[!is.na(d$provenance.lat), ]
+# # Filter values that have the above pattern
+d.latitude2 <- d.latitude[!grepl(pattern, d.latitude$provenance.lat), ]
+# # Check how many entries are still problematic
+provenance.lat.chg <- d.latitude2[, c("datasetID", "provenance.lat")]
+dlat<-unique(provenance.lat.chg)
 
-d_filtered <- d_filtered[which(!is.na(d_filtered$provenance.lat)),]
-unique(d_filtered$provenance.lat) # 9.4167/9.3833 still in the dataframe
+# ### COLUMN LONGITUDE ###
+d.longitude <- d[!is.na(d$provenance.long), ]
+d.longitude2 <- d.longitude[!grepl(pattern, d.longitude$provenance.long), ]
+# Check how many entries are still problematic
+d.longitude.chg <- d.longitude2[, c("datasetID", "provenance.long")]
+dlong <- unique(d.longitude.chg)
 
+#=== === === === === === === === === === === === === === === === === === === ===
+# 
+# #### MAP ####
+# # Start a quick map with given locations
+# ### Available locations
+# no.na.values <-d[complete.cases(d["provenance.lat"]),]
+# 
+# # Select only 1 entry per provenance
+# df.4.map <- no.na.values[!duplicated(no.na.values$provenance.lat), ]
+# # clen columns not necessary
+# df.4.map <- df.4.map[, c("datasetID", "provenance.lat", "provenance.long", "continent")]
+# head(df.4.map)
+# # color coding
+# # i need to find another way than using dplyr
+# library(dplyr)
+# occurence <- df.4.map %>%
+#   group_by(continent) %>%
+#   summarize(continent = first(continent), count = n())
+# head(occurence)
+# # map
+# plot_geo(occurence) %>%
+#   layout(
+#     geo = list(
+#       showframe = TRUE,
+#       showcoastlines = TRUE,
+#       showland = TRUE,
+#       landcolor = toRGB("white"),
+#       countrycolor = toRGB("darkgrey"),
+#       coastlinecolor = toRGB("black"),
+#       coastlinewidth = 0.5,
+#       lataxis = list(
+#         range = c(-55, 80),
+#         showgrid = FALSE
+#       ),
+#       lonaxis = list(
+#         range = c(-130, 160),
+#         showgrid = FALSE
+#       )
+#     )
+#   ) %>%
+#   # # Color gradient set to the number of papers in each country
+#   # add_trace(
+#   #   z = ~count, color = ~count, colors = 'GnBu',
+#   #   text = ~continent, locations = ~continent,
+#   #   marker = list(
+#   #     line = list(width = 0.5, color = "black")
+#   #   ),
+#   #   # Edit the colar bar position --> make the X value negative if I want to set it on the left
+#   #   colorbar = list(title = "", x = 1, y = 1.1, len = 1.03)
+#   # ) %>%
+# add_trace(
+#   type = "scattergeo",
+#   lat = ~df.4.map$provenance.lat, 
+#   lon = ~df.4.map$provenance.long,
+#   text = ~paste("ID: ", df.4.map$datasetID),
+#   mode = "markers",
+#   marker = list(
+#     size = 1,
+#     symbol = "circle",
+#     color = "lightgrey",
+#     line = list(width = 1.5, color = "black")
+#   )
+# ) %>% 
+#   layout(title = "")
+# 
+# # save figure
+# save_image(egretlocations,
+#            file="/Users/christophe_rouleau-desrochers/Documents/mapegret.html")
+# 
 
-coords <- d_filtered[, c("provenance.long", "provenance.lat", "continent")]
-unique(coords$continent)
-# lon <- d_filtered$provenance.long
-# lat <- d_filtered$provenance.lat
-# coords <- as.data.frame(cbind(lon,lat))
-coords$provenance.long <- as.numeric(as.character(coords$provenance.long))
-coords$provenance.lat <- as.numeric(as.character(coords$provenance.lat))
-
-coords$provenance.long <- round(coords$provenance.long, 3)
-coords$provenance.lat <- round(coords$provenance.lat, 3)
-coords <- coords[which(!is.na(coords$provenance.long)),] # NAs likely due to 9.4167/9.3833
-
-#state which columns are lon and lat
-coordinates(coords) <- ~provenance.long+provenance.lat
-
-#convert to sf object
-coords <- st_as_sf(coords)
-
-#set crs (WSG1984 seems to be used here)
-st_crs(coords) <- 4326
-
-#create leaflet
-leaflet(coords) %>% addMarkers() %>% addTiles()
-
-#### filtering continents
-
-North_America <- coords[which(coords$continent == "North America"),]
-leaflet(North_America) %>% addMarkers() %>% addTiles()
-
-Europe <- coords[which(coords$continent == "Europe"),]
-leaflet(Europe) %>% addMarkers() %>% addTiles()
-
-South_America <- coords[which(coords$continent == "South America"),]
-leaflet(South_America) %>% addMarkers() %>% addTiles()
-
-Asia <- coords[which(coords$continent == "Asia"),]
-leaflet(Asia) %>% addMarkers() %>% addTiles()
-
-Africa <- coords[which(coords$continent == "Africa"),]
-leaflet(Africa) %>% addMarkers() %>% addTiles()
-
-Australia <- coords[which(coords$continent == "Australia"),]
-leaflet(Australia) %>% addMarkers() %>% addTiles()
 
