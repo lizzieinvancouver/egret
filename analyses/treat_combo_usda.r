@@ -8,16 +8,6 @@ options(stringsAsFactors = FALSE)
 
 if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("~/Documents/github/egret/analyses")
-} else if(length(grep("lizzie", getwd()) > 0)) {
-  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
-} else if(length(grep("sapph", getwd()) > 0)) {
-  setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
-} else if(length(grep("Xiaomao", getwd()) > 0)) {
-  setwd("C:/PhD/Project/egret/analyses")
-} else if(length(grep("britanywuuu", getwd()) > 0)) {
-  setwd("~/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
-} else if(length(grep("Ken", getwd())) > 0){
-  setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
 } else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
   setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
 } else if(length(grep("frederik", getwd())) > 0){
@@ -41,15 +31,7 @@ egret$woody <- as.factor(egret$woody)
 egret$woody <- as.factor(egret$woody)
 
 #
-egret$latbi
-names
 names(egret)
-
-unique(egret$storageType)
-# make a new table from egret for each level of "storageType" and extract the length of "datasetIDstudy" and of "spec"
-# Assuming 'egret' is a dataframe that contains the columns 'storageType', 'datasetIDstudy', and 'spec'
-# We will create a new table for each unique value in 'storageType' and calculate the length of 'datasetIDstudy' and 'spec' for each
-
 
 #### explore storage types and how many spp per storage temp and duration
 sppwith_storagetime <- egret$latbi[which(!is.na(egret$storage.time))]
@@ -273,29 +255,7 @@ usda_new <- rbind(usda_new, df_max)
 length(usda_new$X) - (length(tmp_X))
 length(usda$X)
 
-
-
-
-
-#make new tables
-usda_min<-usda
-usda_min$chill.dur.Max <- NA
-usda_min$responseValueMax <- NA
-
-usda_max<-usda
-usda_max$chill.dur.Min <- NA
-usda_max$responseValueMin <- NA
-
-usda_new <- rbind(usda_min, usda_max)
-
-length(usda_new$spec)
-length(usda$spec)
-names(usda)
-
-
-#combine usda_min and usda_max to a new dataframe
-
-usda_min$chillDur <- NA
+#some more checks
 
 #extract species that have min/max values for chill duration and a corresponding min/max value in the response variable
 chilldurminnonNA <- usda$spec[which(!is.na(usda$chill.dur.Min))]
@@ -311,6 +271,7 @@ sppwithcillresp <- sppwithminmaxchill[which(sppwithminmaxchill %in% sppwithminma
 
 spp_split<-unique(sppwithcillresp) #20 species have this combination and we can split them up
 
+########## this option is no longer needed and limited but keep it for now
 #dublicate dataframe "usda" with rows containing a level in "spp_split" within usda$spec
 newmin <- usda[usda$spec %in% spp_split,]
 #assign "NA" to all rows of column "chill.dur.Max" and "responseValueMax"
@@ -341,20 +302,4 @@ unique(usda_new[usda_new$spec,"spec"])
 # Is the number of rows in the new dataframe "usda_new" larger by 20 to the number of rows in the old dataframe "usda"?
 nrow(usda_new) == nrow(usda) + 20
 
-#add the rows of the new dataframe "newmax" that contain a value in to the "usda" dataframe
-#create a dataframe that contain only 
-head(newmax)
-#select 
 
-tmp <- newmax$spec[which(!is.na(newmax$responseValueMax))]
-
-# 2. add the new dataframes "newmin" and "newmax" to the "usda" dataframe
-
-
-head(newmin)
-#
-
-
-# dublicate usda df,  delete minimum
-
-# dublicate usda df and delete maximum
