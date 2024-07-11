@@ -22,9 +22,7 @@ ref <- gnr_datasources() # Full list of databases available
 # fix_names <- gnr_resolve(sci = baskinnew, with_canonical_ranks = T)
 # Repeat this until you run all the rows.
 # Get rid of problematic rows
-baskinnew <- baskin[baskin$Genus_species != c(""), ]
-
-baskinnew <- baskin[-c(12427,13481,13482,13988),]
+baskinnew <- baskin[baskin$Genus_species != c("Crataegus x sinaica","Manilkara zapota","Ulmus minor"), ]
 
 # Break down the big dataframe into smaller sections: 1:3000, 3001:6000, 6001:9000, 9001:12000, 12001:14250
 baskin3000<-baskinnew$Genus_species[12001:14250]
