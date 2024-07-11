@@ -1,8 +1,12 @@
-library(chillR)
+#library(chillR)
+#library(stringr)
+###updated by Dan on July 11
+#changed chill.temp.Cor to chillTemp
+#chill.duration.Cor to chillDuration
 
-length(which(!is.na(d$chill.tempCor) & !is.na(d$chill.durationCor))) ##16410 to calculate chill
-with_chill <- which(!is.na(d$chill.tempCor) & !is.na(d$chill.durationCor) &
-                      d$chill.tempCor != "ave" & d$chill.durationCor != "ave")
+length(which(!is.na(d$chillTemp) & !is.na(d$chillDuration))) ##16410 to calculate chill
+with_chill <- which(!is.na(d$chillTemp) & !is.na(d$chillDuration) &
+                      d$chillTemp != "ave" & d$chillDuration != "ave")
 
 d$chillHours <- NA
 d$chillPortions <- NA
@@ -13,14 +17,14 @@ for(i in with_chill){
   print(i)
   data_point <- d[i,]
   
-  if(data_point$chill.durationCor == 0){
+  if(data_point$chillDuration == 0){
     d$chillHours[i] <- d$chillPortions[i] <- d$chillUnits[i] <- 0
     next
   }
   
-  temp_all <- str_split_1(toString(data_point$chill.tempCor), " then ")
-  dur_all <- as.numeric(str_split_1(toString(data_point$chill.durationCor), " then "))
-  cyc_all <- str_split_1(toString(data_point$chill.tempCycle), " then ")
+  temp_all <- str_split_1(toString(data_point$chillTemp), " then ")
+  dur_all <- as.numeric(str_split_1(toString(data_point$chillDuration), " then "))
+  cyc_all <- str_split_1(toString(data_point$chillTempCycle), " then ")
   
   chill <- matrix(NA, nrow = length(temp_all), ncol = 3)
   

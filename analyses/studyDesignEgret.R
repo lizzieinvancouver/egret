@@ -61,7 +61,29 @@ treat.manipulated<-dplyr::filter(treatapplied,n>1)
 
 manis<-treat.manipulated %>% dplyr::group_by(treatment) %>% dplyr::count() ## this tells us the number of species/exp/study that have multiple levels of treatments
 
-###what gets manipualted together
+###How many species are replicated across studies
+sps_rep<-d %>% dplyr::group_by(datasetID,latbi) %>% dplyr::count()
+sps_rep<-sps_rep %>% dplyr::group_by(latbi) %>% dplyr::count() #24 our of 333 species in more than 1 dataset
+
+length(unique(d$latbi))
+length(unique(d$datasetID))
+sum(sps_rep$n)
+
+###how much chilling information do we have
+table(!is.na(d$chillDuration))#17643 rows
+table(!is.na(d$chillTemp))#17141
+table(!is.na(d$chillDuration)& !is.na(d$chillTemp))#16462
+
+17643-16462 #1181 rows lost potentially assuming chilling is calculated
+
+d.germ<-dplyr::filter(d,responseVar=="percent.germ")
+goober<-d.germ %>% group_by(datasetIDstudy,latbi,tempDay) %>% count()
+goober<-goober %>% group_by(datasetIDstudy,latbi) %>% count()
+goober<-dplyr::filter(goober,n>1)
+d.germ<-dplyr::filter(d.germ, datasetIDstudy %in% goober$datasetIDstudy)
+library(ggplot2)
+ggplot(d.germ,aes(tempDay,response))+geom_point(aes(color=latbi))+facet_wrap(~datasetIDstudy)
+
 
 
 #####################################################################################
