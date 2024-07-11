@@ -7,20 +7,35 @@ options(stringsAsFactors = FALSE)
 library(ggplot2)
 # Get the datasets
 egret <- read.csv("output/egretclean.csv")
-egret$latbi <- paste(egret$genus, egret$species, sep = " ")
 
 ospree <- read.csv("input/ospree_clean_withchill.csv")
-ospree$latbi <- paste(ospree$genus, ospree$species, sep = " ")
+ospree$latbi <- paste(ospree$genus, ospree$species, sep = "_")
 
 USDA <- read.csv("scrapeUSDAseedmanual/output/usdaGerminationData.csv")
-USDA$latbi <- paste(USDA$genus, USDA$species, sep = " ")
+USDA$latbi <- paste(USDA$genus, USDA$species, sep = "_")
 
 bb <- read.csv("output/baskinclean.csv", header =T) 
 bb$latbi <- bb$matched_name2
-
+bb$latbi <- sub(" ", "_", bb$latbi)
+bb <- select(bb, c('latbi','Dormancy.Class'))
+bb <- unique(bb)
 # Combine egret and USDA
 egretusda <- data.frame(latbi = c(egret$latbi, USDA$latbi))
 egretusda <- unique(egretusda)
+# Adding dormancy class to egret + USDA
+eu_dorm <- merge(egretusda, bb, by.x = "latbi", by.y = "latbi", all.x = T)
+
+freq <- table(eu_dorm$Dormancy.Class)
+
+text(x = barplot(freq, 
+                 main = "Dormancy Class for Egret + USDA", 
+                 xlab = "Dormancy class", 
+                 ylab = "Frequency",
+                 col = "Black",  # Bar color
+                 ylim = c(0, max(freq) + 50)),
+     y = freq + 0.5,  
+     labels = freq,
+     pos = 3)
 
 # Overlapping between OSPREE (EGRET + USDA)
 intersect_o_eu <- intersect(ospree$latbi, egretusda$latbi)

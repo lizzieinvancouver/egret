@@ -52,6 +52,11 @@ library(dplyr)
 baskin_clean <- baskin_fix_final %>% 
   mutate(matched_name2 = coalesce(matched_name2, Genus_species))
 
+baskin <- select(baskin_clean, c('matched_name2','Original.Genus','Corrected.Genus','Family','Dormancy.Class'))
+colnames(baskin)<- c("latbi","Original.Genus","Corrected.Genus","Family","Dormancy.Class")
+baskin$latbi <- sub(" ", "_", baskin$latbi)
+
+baskin <- unique(baskin)
 # Save the final dataframe with matched names
-write.csv(baskin_clean,"output/baskinclean.csv")
+write.csv(baskin,"output/baskinclean.csv")
 
