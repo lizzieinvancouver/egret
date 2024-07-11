@@ -52,7 +52,7 @@ source("cleaning/source/cleanStorage.R")
 source("cleaning/source/cleanResponseVar.R")
 
 # 10. Clean coordinates seed provinance
-source("cleaning/source/cleanCoordinates.R")
+# source("cleaning/source/cleanCoordinates.R")
 
 # 11. Clean year of germination (some)
 # source("cleaning/source/cleanYearGermination.R")
@@ -72,5 +72,8 @@ d$latbi <- paste(d$genus, d$species, sep = "_")
 d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
 d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
 
-write.csv(d, "output/egretclean.csv")
+# checking sizing ..
+dim(d) # dim on 11 July 2024: 70 and 30202 
+
+write.csv(d, "output/egretclean.csv") 
 
