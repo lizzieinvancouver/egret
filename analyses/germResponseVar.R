@@ -25,7 +25,7 @@ d <- read.csv("output/egretclean.csv")
 d$germDuration <- as.numeric(d$germDuration)
 d$latbi <- paste(d$genus, d$species, sep = "_")
 d$trt <- paste(d$chillDuration, d$chillTemp, d$germTemp, d$chemicalCor, d$scarifType, sep = "_")
-d$keep <- paste(d$datasetIDstudy, d$latbi, d$trt, d$provenance.lat, d$provenance.long)
+d$keep <- paste(d$datasetIDstudy, d$latbi, d$trt, d$provenance.lat, d$provenance.long, d$photoperiod, d$figure)
 
 chilled <- subset(d, !is.na(chillTemp)) # chilling temps for 17141 rows or 213 studies
 
@@ -69,22 +69,31 @@ mgt <- subset(d, responseVar == "mgt")
 mgtSp <- unique(mgt$latbi)
 
 perGerm <- subset(d, responseVar == "percent.germ")
-temp <- perGerm[perGerm$latbi %in% mgtSp, ]; length(unique(temp$latbi))
 
 # How much of the data in the percent germination is time series data?
 #clean_bbperctodays.R---> do multiple loops 
 perGerm <- subset(perGerm, !is.na(germDuration))
-curved <- unique(perGerm[, c("datasetID", "datasetIDstudy", "trt","latbi", "germDuration","provenance.lat", "provenance.long", "keep")])
-noDurations <- aggregate(curved[c("germDuration")], curved[c("datasetID","datasetIDstudy", "latbi","trt","provenance.lat", "provenance.long","keep" )], FUN = length)
-curvey <- subset(noDurations, germDuration > 1) 
-curvey$keep <- paste(curvey$datasetIDstudy, curvey$latbi, curvey$trt, curvey$provenance.lat, curvey$provenance.long)
-length(unique(curvey$datasetID)) #46
+perGerm$keep <- paste(perGerm$datasetIDstudy, perGerm$latbi, perGerm$trt, perGerm$provenance.lat, perGerm$provenance.long, perGerm$other.treatment, perGerm$photoperiod, perGerm$figure)
 
-curveStudy <- sort(unique(curvey$keep))
-perGerm$keep <- paste(perGerm$datasetIDstudy, perGerm$latbi, perGerm$trt, perGerm$provenance.lat, perGerm$provenance.long)
+perGermSub <- unique(perGerm[, c("datasetID", "datasetIDstudy", "trt","latbi", "germDuration","provenance.lat", "provenance.long", "other.treatment", "photoperiod","figure")])
+noDurations <- aggregate(perGermSub[c("germDuration")], perGermSub[c("datasetID","datasetIDstudy", "latbi","trt","provenance.lat", "provenance.long", "other.treatment", "photoperiod","figure" )], FUN = length)
+
+curvey <- subset(noDurations, germDuration > 1) 
+curvey$keep <- paste(curvey$datasetIDstudy, curvey$latbi, curvey$trt, curvey$provenance.lat, curvey$provenance.long, curvey$other.treatment, curvey$photoperiod, curvey$figure)
+
+length(unique(curvey$datasetID)) #44
+length(unique(curvey$keep)) #435
+
+curveStudy <- sort(unique(curvey$keep)); head(curveStudy)
+
+perGermStudy <- sort(unique(perGerm$keep)); head(perGermStudy)
+length(unique(perGerm$keep)) 
+
+
 dCurve <- perGerm[perGerm$keep %in% curveStudy, ]
 
-length(unique(dCurve$latbi)) #50
+length(unique(dCurve$latbi)) #15
+length(unique(dCurve$datasetID)) #12
 
 #Simple plots of study by species---not grouping by treatments
 # for(i in 1:length(curveStudy)){
@@ -105,9 +114,10 @@ length(unique(dCurve$latbi)) #50
 #    dev.off()
 # }
 
+######################################################
 # Want to extract the last % germ for every species and the maximum length of time, but account for treatment differences
 
-pgSub <- perGerm[,c("datasetID","datasetIDstudy", "latbi","chillTemp", "chillDuration", "germDuration", "germTemp", "scarifType", "chemicalCor", "responseValueNum", "trt", "provenance.lat", "provenance.long", "keep")]
+pgSub <- perGerm[,c("datasetID","datasetIDstudy", "latbi","chillTemp", "chillDuration", "germDuration", "germTemp", "scarifType", "chemicalCor", "responseValueNum", "trt", "provenance.lat", "provenance.long", "other.treatment", "photoperiod", "figure","keep")]
 
 #temp <- aggregate(pgSub[c("responseValueNum")], pgSub[c("datasetID", "study","latbi","chillTrt", "germTrt", "scarifType", "chemicalCor")], FUN = max, na.rm = T)
 
@@ -115,7 +125,7 @@ studyID <- sort(unique(pgSub$datasetID))
 dataExp <- sort(unique(pgSub$datasetIDstudy))
 trtVar <- sort(unique(pgSub$keep))
 
-length(unique(pgSub$datasetID)) #234 study
+length(unique(pgSub$datasetID)) #200 study
 
 singlePerG <- vector()
 for(i in 1:length(studyID)){
@@ -141,37 +151,40 @@ pgSub$massiveID <- paste(pgSub$keep, pgSub$responseValueNum, pgSub$germDuration)
 pgSub$rowIsMax <- NA
 pgSub$rowIsMax <- ifelse(pgSub$massiveID %in% unique(singlePerG$massiveID),1,0)
 
-
-if(pgSub )
-if(pgSub)
-pgSub$rowIsMax[which(pgSub$massiveID %in% unique(singlePerG$massiveID))] <- 1
-
 head(pgSub$massiveID)
 head(singlePerG$massiveID)
 
+
+######################################################
+
 curveStudy <- sort(unique(dCurve$datasetID))
-pdf("figures/timeSeriesCurves_trt.pdf", width = 12, height = 12)
+pgSubCurve <- pgSub[pgSub$datasetID %in% curveStudy,]
+length(unique(pgSubCurve$datasetID))
+
+pdf("figures/timeSeriesCurvesPoints.pdf", width = 12, height = 12)
 par(mfrow = c(4,2))
 for(i in 1:length(curveStudy)){
- # i <- 5
-  temp <- subset(dCurve, datasetID == curveStudy[i])
+  #i <- 11
+  temp <- subset(pgSub, datasetID == curveStudy[i])
   
   for(j in 1:length(unique(temp$latbi))){
    # j<- 1
     sp <- unique(temp$latbi)
     tempSp <- subset(temp, latbi == sp[j])
-    plot(tempSp$responseValueNum ~ tempSp$germDuration, type = 'n', main = paste(curveStudy[i], sp[j], sep = "_"), xlim = c(0,400), ylim = c(0,120), xlab = "time", ylab = "percent germ")
+    plot(tempSp$responseValueNum ~ tempSp$germDuration, type = 'n', main = paste(curveStudy[i], sp[j], sep = "_"), xlim = c(min(tempSp$germDuration), max(tempSp$germDuration)), ylim = c(min(tempSp$responseValueNum), max(tempSp$responseValueNum)), xlab = "time", ylab = "percent germ")
     
-    for(t in 1:length(unique(tempSp$trt))){
-     # t<-1
-    trtVar <- unique(tempSp$trt)
-    tempTrt <- subset(tempSp, trt == trtVar[t])
+    for(t in 1:length(unique(tempSp$keep))){
+   # t <- 3
+    trtVar <- unique(tempSp$keep)
+    tempTrt <- subset(tempSp, keep == trtVar[t])
     points(tempTrt$responseValueNum ~ tempTrt$germDuration, type = "l")
+    trtVar[t]
+    tempSingle <- subset(singlePerG, keep == unique(tempTrt$keep))
+    points(tempSingle$responseValueNum ~ tempSingle$germDuration, col = "cyan4", pch = 19)
     }
   }
 }
 dev.off()
-
 
 #switch to ggplot
 # update the git issue to fix the amount of data that is in curves
