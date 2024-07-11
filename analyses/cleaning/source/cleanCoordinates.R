@@ -26,7 +26,7 @@ options(stringsAsFactors=FALSE)
 if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
   setwd("~/Documents/github/egret/analyses")
 } else if(length(grep("lizzie", getwd()) > 0)) {
-  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
 }
 
 # grab the data 
@@ -189,7 +189,7 @@ d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "meyer94" & d$so
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "meyer94" & d$source.population == "West of Vernal, Utah, USA")] <- "-109.536"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "meyer94" & d$source.population == "North of Lapointe, Utah, USA")] <- "40.4022"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "meyer94" & d$source.population == "North of Lapointe, Utah, USA")] <- "-109.7959"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "meyer94" & d$source.population == "Kolob Revervoir, Utah, USA")] <- "37.44"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "meyer94" & d$source.population == "oob Revervoir, Utah, USA")] <- "37.44"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "meyer94" & d$source.population == "Kolob Revervoir, Utah, USA")] <- "-113.048"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "meyer94" & d$source.population == "Zion Overlook, Utah, USA")] <- "37.298"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "meyer94" & d$source.population == "Zion Overlook, Utah, USA")] <- "-113.028"
@@ -613,6 +613,7 @@ d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "walck12")] <- "
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "walck12")] <- "-86.34"
 
 #kolodziejek18 no location 
+# This codes has warnings that sound bad ... fixplease
 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kolodziejek19") &# warning message checked by CRD on 2024-07-03: kolodziejek19 locations are ok
                    d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)"] <- "50.57" 
@@ -940,6 +941,30 @@ d.longitude2 <- d.longitude[!grepl(pattern, d.longitude$provenance.long), ]
 # Check how many entries are still problematic
 d.longitude.chg <- d.longitude2[, c("datasetID", "provenance.long")]
 dlong <- unique(d.longitude.chg)
+
+## Checking on whether we need to include altitude when defining provenance
+d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
+d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
+checkprovstuff <- subset(d, select=c("provLatLon", "provenance.altitude"))
+checkprovstuff <- checkprovstuff[!duplicated(checkprovstuff), ]
+
+checkalt <- aggregate(checkprovstuff[c("provenance.altitude")], checkprovstuff[c("provLatLon")], FUN=length)
+checkalt <- checkalt[order(checkalt$provenance.altitude),]
+
+# Manually looking at the ones with issues (I could also have done this in a nice loop) ...
+# these no longer exists, but did yesterday
+# check fixplease once they reappear ... 
+subset(checkprovstuff, provLatLon=="37.11421066 101.5144129")
+subset(checkprovstuff, provLatLon=="36.7 54.35")
+subset(checkprovstuff, provLatLon=="36.51666667 138.35")
+subset(checkprovstuff, provLatLon=="32.3167 77.2") 
+
+subset(checkprovstuff, provLatLon=="25.17 121.55") # okay, real differences
+subset(checkprovstuff, provLatLon=="25.116667 102.733333") # is the NA correct?
+
+## Deleting these out for now, we build them later
+d$provLatLon <- NULL
+d$provLatLonAlt <- NULL
 
 #=== === === === === === === === === === === === === === === === === === === ===
 # 
