@@ -287,11 +287,11 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "ochuodho08")]
 
 #winstead71 provided latitude only, the longitude of the location found on google earth is used
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
-                         d$source.population == "Burlington County, New Jersey, USA")] <- "40"
+                         d$source.population == "Burlington County, New Jersey, USA")] <- "40" #rounded up to 2 decimals. checked in paper
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
                           d$source.population == "Burlington County, New Jersey, USA")] <- "-74.69"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
-                         d$source.population == "Union County, Illinois, USA")] <- "37.5"
+                         d$source.population == "Union County, Illinois, USA")] <- "37.50" #rounded up to 2 decimals. checked in paper
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
                           d$source.population == "Union County, Illinois, USA")] <- "-89.28"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
@@ -299,11 +299,11 @@ d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" &
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
                           d$source.population == "Harris County, Texas, USA")] <- "-95.31"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
-                         d$source.population == "Alachua County, Florida, USA")] <- "29.5"
+                         d$source.population == "Alachua County, Florida, USA")] <- "29.50" #rounded up to 2 decimals. checked in paper
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
                           d$source.population == "Alachua County, Florida, USA")] <- "-82.30"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
-                         d$source.population == "State of San Luis Potosi, Mexico")] <- "22.5"
+                         d$source.population == "State of San Luis Potosi, Mexico")] <- "22.50" #rounded up to 2 decimals. checked in paper
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "winstead71" & 
                           d$source.population == "State of San Luis Potosi, Mexico")] <- "-100.99"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "winstead71" & 
@@ -883,6 +883,10 @@ d$provenance.lat[which(d$datasetID == "ren08" & d$provenance.lat == "27.9")] <- 
 d$provenance.lat[which(d$datasetID == "skordilis95" & d$provenance.lat == "41.2")] <- "41.20"
 # STEP 4.1.28. kolodziejek15: 52
 d$provenance.lat[which(d$datasetID == "kolodziejek15" & d$provenance.lat == "52")] <- "52.00"
+
+# STEP 4.1.29
+d$provenance.lat[which(d$datasetID == "kolodziejek15" & d$provenance.lat == "52")] <- "52.00"
+
 
 # STEP 4.2. LONGITUDE
 # STEP 4.2.1. zhang21 :124.9
