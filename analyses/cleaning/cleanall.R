@@ -52,15 +52,25 @@ source("cleaning/source/cleanStorage.R")
 source("cleaning/source/cleanResponseVar.R")
 
 # 10. Clean coordinates seed provinance
-# source("cleaning/source/cleanCoordinates.R")
+source("cleaning/source/cleanCoordinates.R")
 
 # 11. Clean year of germination (some)
 # source("cleaning/source/cleanYearGermination.R")
 
 # 12. Small final cleaning and write out data!
+
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
 d$datasetIDstudy <- paste(d$datasetID,d$study, sep = "")
+
+# Get a latin binomial
 d$latbi <- paste(d$genus, d$species, sep = "_")
+
+# Get a population or provenance ID ...
+# there are a couple studies where altitude is unqiue (review in cleanCoordinates.R) so...
+# best to use provLatLonAlt to get unique populations
+d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
+d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
+
 write.csv(d, "output/egretclean.csv")
 
