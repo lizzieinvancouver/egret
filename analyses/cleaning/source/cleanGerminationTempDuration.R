@@ -357,3 +357,12 @@ d$tempNightCopy <- NULL
 
 # Checking that germTempGen never changes from germ.temp 
 identical(d$germTempGen, d$germ.temp)
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# Making germTempGen a column for average temperatures, even for those that alternate
+unique(d$germTempGen)
+
+# First we want to make everything numeric and divided by a slash
+# Removing any words
+d$germTempGen <- sub("alternating temperature ",NA, d$germTempGen)
+d$germTempGen <- sub("alternating ",NA, d$germTempGen)
