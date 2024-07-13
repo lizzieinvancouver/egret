@@ -75,5 +75,5 @@ d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altit
 # checking sizing ..
 dim(d) # dim on 11 July 2024: 70 and 30202 
 
-write.csv(d, "output/egretclean.csv") 
+write.csv(d, "output/egretclean.csv", row.names=FALSE)
 
