@@ -19,18 +19,13 @@
 # library(plotly)
 
 # housekeeping
-rm(list=ls())  
-options(stringsAsFactors=FALSE)
+# rm(list=ls())  
+# options(stringsAsFactors=FALSE)
 
 
-if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
-  setwd("~/Documents/github/egret/analyses")
-} else if(length(grep("lizzie", getwd()) > 0)) {
-  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
-}
 
 # grab the data 
-d <- read.csv("input/egretData.csv")
+d <- read.csv("output/egretclean.csv")
 
 # Read in the data by running cleanall.R 1-3
 # Adding a new column to fix/add location if they were not originally scraped 
@@ -614,22 +609,34 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "walck12")] <-
 
 #kolodziejek18 no location 
 # This codes has warnings that sound bad ... fixplease
+kbeforewarning<- subset(d, datasetID == "kolodziejek19")
+kafterwarning <- subset(d, datasetID == "kolodziejek19")
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kolodziejek19") &# warning message checked by CRD on 2024-07-03: kolodziejek19 locations are ok
-                   d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)"] <- "50.57" 
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kolodziejek19" &
+before <- unique(kbeforewarning)
+before <- before[, c("datasetID", "provenance.lat", "provenance.long")]
+before <- unique(before)
+before
+after <- unique(kafterwarning)
+after <- after[, c("datasetID", "provenance.lat", "provenance.long")]
+after<-unique(after)
+after
+
+d$provenance.lat[which(d$datasetIDstudy == "kolodziejek19") & d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)"] <- "50.57"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetIDstudy == "kolodziejek19") & d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)"] <- "50.57"
+
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetIDstudy == "kolodziejek19" &
                           d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)")] <- "19.48"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kolodziejek19") &
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetIDstudy == "kolodziejek19") &
                    d$source.population == "Ornak (Western Tatra Mts)"] <- "49.22" 
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kolodziejek19" &
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetIDstudy == "kolodziejek19" &
                           d$source.population == "Ornak (Western Tatra Mts)")] <- "19.83"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kolodziejek19") &
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetIDstudy == "kolodziejek19") &
                    d$source.population == "Kłobuck-Smugi (Wielun´ Upland)"] <- "50.91" 
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kolodziejek19" &
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetIDstudy == "kolodziejek19" &
                           d$source.population == "Kłobuck-Smugi (Wielun´ Upland)")] <- "18.97"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kolodziejek19") &
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetIDstudy == "kolodziejek19") &
                    d$source.population == "Podde˛bice (Łask Elevation)"] <- "51.89" 
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kolodziejek19" &
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetIDstudy == "kolodziejek19" &
                           d$source.population == "Podde˛bice (Łask Elevation)")] <- "18.96"
 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kulkarni06")] <- "29.61" 
