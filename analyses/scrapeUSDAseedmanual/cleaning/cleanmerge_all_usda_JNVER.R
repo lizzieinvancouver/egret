@@ -1,13 +1,13 @@
-####source file for cleaning USDA seed manual
-#made by Dan July 9, 2024
-
-rm(list=ls())
-options(stringsAsFactors = FALSE)
-options(mc.cores = parallel::detectCores())
-#rstan_options(auto_write = TRUE)
-graphics.off()
-
-# setwd("~/Documents/git/egret/analyses/scrapeUSDAseedmanual/cleaning/")
+# ####source file for cleaning USDA seed manual
+# #made by Dan July 9, 2024
+# 
+# rm(list=ls())
+# options(stringsAsFactors = FALSE)
+# options(mc.cores = parallel::detectCores())
+# #rstan_options(auto_write = TRUE)
+# graphics.off()
+# 
+# # setwd("~/Documents/git/egret/analyses/scrapeUSDAseedmanual/cleaning/")
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # USDA MANUAL GERMINATION MERGED
@@ -607,7 +607,7 @@ colnames(d) <- c("speciesID",
                  "genusID",
                  "pretreatmentFeces",
                  "chilling",
-                 "chill.duraton",
+                 "chill.duration",
                  "scarifType",
                  "scarifTypeGen",
                  "responseVar",
@@ -658,3 +658,73 @@ d$responseVar[which(d$responseVar == "germPercent20degIncubated")] <- "percent.g
 unique(d$darkRange)
 d <- d %>%
   select(-20)
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+# Combining cold stratification duration and chilling duration into one column since they represent the same thing
+unique(d$chill.duration)
+unique(d$cold.stratification.duration)
+# I don't want to touch these original values right?
+# So then I'm only going to transfer things in the min/max/avg columns over...I think
+unique(d$cold.strat.dur.Min)
+unique(d$cold.strat.dur.Max)
+unique(d$cold.strat.dur.Avg)
+
+# First I need to check if there are any rows where values are present in BOTH chill.dur.XXX and cold.strat.dur.XXX
+dcopy <- d %>%
+  select(genus, species,cold.strat.dur.Avg,chill.dur.Avg)
+dcopy$cold.strat.dur.Avg <- as.numeric(dcopy$cold.strat.dur.Avg) 
+dcopy$chill.dur.Avg <- as.numeric(dcopy$chill.dur.Avg)
+#NAS introduced by coercion because of the character class values, can ignore for now
+
+# Adding the columns together to see if any rows actually sum up to a new value
+dcopy$newsum <- rowMeans(dcopy[, c("cold.strat.dur.Avg", "chill.dur.Avg")], na.rm = TRUE)
+unique(dcopy$newsum)
+
+# Making an indicator column that will tell me if there's ever a time where the two columns averaged together DON'T equal the original columns' values, i.e. that there were both cold.strat.dur and chill.dur
+dcopy$Indicator <- ifelse(dcopy$newsum != dcopy$chill.dur.Avg | dcopy$newsum != dcopy$cold.strat.dur.Avg, "Not Equal", "")
+unique(dcopy$Indicator)
+# There aren't any overlaps!
+
+# Then now I can just move the data from cold.strat.dur.XXX into chill.dur.XXX
+# I think I should make this a new column to preserve old columns thought
+d$chill.dur.Avg.comb <- d$chill.dur.Avg
+d$chill.dur.Min.comb <- d$chill.dur.Min
+d$chill.dur.Max.comb <- d$chill.dur.Max
+
+d$chill.dur.Avg.comb[!is.na(d$cold.strat.dur.Avg)] <- d$cold.strat.dur.Avg[!is.na(d$cold.strat.dur.Avg)]
+d$chill.dur.Min.comb[!is.na(d$cold.strat.dur.Min)] <- d$cold.strat.dur.Min[!is.na(d$cold.strat.dur.Min)]
+d$chill.dur.Max.comb[!is.na(d$cold.strat.dur.Max)] <- d$cold.strat.dur.Max[!is.na(d$cold.strat.dur.Max)]
+
+# Making sure that the transfer worked
+unique(d$chill.dur.Avg)
+unique(d$chill.dur.Avg.comb)
+
+dcopy <- d %>%
+  select(genus, species,cold.strat.dur.Avg,chill.dur.Avg,chill.dur.Avg.comb)
+
+# If I subtract chill.dur.Avg from chill.dur.Avg.comb, I should get cold.strat.dur.Avg right?
+dcopy$cold.strat.dur.Avg <- as.numeric(dcopy$cold.strat.dur.Avg)
+dcopy$chill.dur.Avg <- as.numeric(dcopy$chill.dur.Avg)
+dcopy$chill.dur.Avg.comb <- as.numeric(dcopy$chill.dur.Avg.comb)
+dcopy <- dcopy %>%
+  mutate(matching = chill.dur.Avg.comb - chill.dur.Avg)
+identical(dcopy$matching,dcopy$cold.strat.dur.Avg) #why is it FALSE...
+# Oh it's because subtraction into an NA will give NA
+
+# Trying again
+dcopy <- dcopy %>%
+  mutate(matching2 = ifelse(is.na(chill.dur.Avg), chill.dur.Avg.comb, chill.dur.Avg.comb - chill.dur.Avg))
+unique(dcopy$matching2)
+unique(dcopy$cold.strat.dur.Avg)
+identical(dcopy$matching2,dcopy$cold.strat.dur.Avg) #still FALSE...???
+
+# Trying with the ifelse()
+dcopy$Indicator2 <- ifelse(dcopy$matching2 != dcopy$cold.strat.dur.Avg, "NOT EQUAL","")
+  
+dcopy$Indicator <- ifelse(dcopy$newsum != dcopy$chill.dur.Avg | dcopy$newsum != dcopy$cold.strat.dur.Avg, "Not Equal", "")
+unique(dcopy$Indicator2) #I wonder if identical() doesn't work if it's a different class?
+# So long as my indicator column contains no "NOT EQUAL", then I think it's safe to assume that the transfer worked properly...
+
+# Will remove the cold.strat.dur.XXX columns if we feel necessary
+
