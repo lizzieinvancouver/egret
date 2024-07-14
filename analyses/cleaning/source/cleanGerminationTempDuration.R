@@ -384,6 +384,9 @@ d$germTempGen <- rowMeans(d[, c("tempDay","tempNight")], na.rm = TRUE)
 # Turning placeholders back into "ambient"
 d$tempDay[which(d$tempDay == 99991)] <- "ambient"
 d$tempNight[which(d$tempNight == 99991)] <- "ambient"
+d$germTempGen[which(d$germTempGen == 99991)] <- "ambient"
 
 # Removing NaNs
 d$germTempGen[which(is.nan(d$germTempGen))] <- NA
+
+unique(d$germTempGen)
