@@ -82,3 +82,7 @@ d %>% group_by(chemicalCor) %>%count() %>% arrange(-n) #Can we just worry about 
 #H2So4?
 
 ###next: figure out how to keep only these ones in the dataset
+pops<-dplyr::filter(d, grepl('prov', treatment))
+popy<-d %>%group_by(datasetIDstudy,species,provLatLonAlt) %>% count()
+popy<-filter(popy,provLatLonAlt!="NA NA NA")
+popy<-popy %>%group_by(datasetIDstudy,species) %>% count()
