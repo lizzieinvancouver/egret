@@ -359,10 +359,31 @@ d$tempNightCopy <- NULL
 identical(d$germTempGen, d$germ.temp)
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# FROM ISSUE 18 on EGRET repo
 # Making germTempGen a column for average temperatures, even for those that alternate
 unique(d$germTempGen)
 
 # First we want to make everything numeric and divided by a slash
-# Removing any words
-d$germTempGen <- sub("alternating temperature ",NA, d$germTempGen)
-d$germTempGen <- sub("alternating ",NA, d$germTempGen)
+# I think I can use germTemp as my foundation, since I already did all the removal of extraneous characters and reclassified all of the outlying data values?
+# Or even better...use tempDay and tempNight
+
+unique(d$tempDay)
+unique(d$tempNight)
+# Just going to convert "ambient" into a numeric placeholder for now so that rowMeans doesn't induce NA
+d$tempDay[which(d$tempDay == "ambient")] <- 99991
+d$tempNight[which(d$tempNight == "ambient")] <- 99991
+d$tempDay[which(d$tempDay == "NA")] <- NA
+d$tempNight[which(d$tempNight == "NA")] <- NA
+
+# Converting tempDay and tempNight to numeric
+d$tempDay <- as.numeric(d$tempDay)
+d$tempNight <- as.numeric(d$tempNight)
+
+d$germTempGen <- rowMeans(d[, c("tempDay","tempNight")], na.rm = TRUE)
+
+# Turning placeholders back into "ambient"
+d$tempDay[which(d$tempDay == 99991)] <- "ambient"
+d$tempNight[which(d$tempNight == 99991)] <- "ambient"
+
+# Removing NaNs
+d$germTempGen[which(is.nan(d$germTempGen))] <- NA
