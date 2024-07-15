@@ -83,4 +83,7 @@ dat2 <- rbind(egret_DL, egret_SC, dat1)
 colnames(dat2)[colnames(dat2) == "chemcial.concent"] <- "chemical.concent"
 d <- rbind(egret_JN, dat2)
 
+rm(egret_AZ, egret_BW, egret_CRD, egret_DK, egret_DL, egret_DM, egret_GG, egret_HHN, egret_JN, egret_JS, egret_MN, egret_SC, egret_TA, egret_XW, egret_DB, egret_FB, dat1, dat2
+  #, egret_EMW
+)
 #write.csv(dat, "analyses/output/egretData.csv", row.names = F)

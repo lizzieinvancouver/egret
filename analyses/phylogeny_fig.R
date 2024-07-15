@@ -9,22 +9,26 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("/home/deirdre/egret") # for midge
 }
 
-library(tidyverse)
+#library(tidyverse)
 library(stringr)
 library(ape)
 library(phytools)
 library(geiger)
-library(pez)
+#library(pez)
 library(caper)
 library(phangorn)
 
 rm(list = ls()) # Clear whatever is already in R's memory
 options(stringsAsFactors=FALSE)# Make sure words are read in as characters rather than factors
 
-egret <- read.csv("input/egretData.csv")
-egret$sp.name <- paste(egret$genus, egret$species, sep = "_")
+egret <- read.csv("analyses/output/egretclean.csv")
+usda <- read.csv("analyses/scrapeUSDAseedmanual/output/usdaGerminationData.csv")
 
-sps.list <- sort(unique(egret$sp.name))
+egret$latbi <- paste(egret$genus, egret$species, sep = "_")
+usda$latbi <- paste(usda$genus, usda$species, sep = "_")
+
+e
+sps.list <- sort(unique(egret$latbi))
 genus.list=sort(unique(egret$genus))
 
 ## load phylo (from Smith and Brown 2019)
@@ -43,7 +47,7 @@ phenosp.genus.inphylo<-genus.list[which(!genus.list%in%phy.genera.uniq)] #182 ou
 # phy.genera.egret<-drop.tip(phy.plants,
 #                              which(!phy.genera %in% phenosp.genus.inphylo)) #34940 tips
 # length(phy.genera.egret$tip.label)
-tree <- drop.tip(phy.plants, which(!phy.plants$tip.label %in% sps.list))
+tree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% sps.list))
 
 length(tree$tip.label)
 sort(tree$tip.label)
@@ -55,8 +59,8 @@ write.tree(tree,"analyses/output/egretPhylogeny.tre")
 unique(egret$datasetID)
 
 egret$count <- 1
-egretSub <- unique(egret[,c("sp.name", "datasetID", "count")])
-studyNo <- aggregate(egretSub["count"], egretSub[c("sp.name")], FUN = sum)
+egretSub <- unique(egret[,c("latbi", "datasetID", "count")])
+studyNo <- aggregate(egretSub["count"], egretSub[c("latbi")], FUN = sum)
 
 temp <- subset(studyNo, count >1) # 26 sp with more than one study
 
@@ -74,7 +78,9 @@ tree$root.edge <- 0
 is.rooted(tree)
 tree$node.label<-NULL
 
-dataPhy = comparative.data(tree, studyNo, names.col = "sp.name", na.omit = T,
+
+# USDA and egret species and both
+dataPhy = comparative.data(tree, studyNo, names.col = "latbi", na.omit = T,
                            vcv = T, warn.dropped = T)
 
 phyloplot = dataPhy$phy
@@ -90,3 +96,5 @@ pdf("figures/phyloIntColor.pdf", height = 20, width = 7)
 plot(slopeCol,legend = F, lwd=3, ylim=c(1-0.09*(Ntip(slopeCol$tree)),Ntip(slopeCol$tree)))
 
 dev.off()
+
+
