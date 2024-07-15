@@ -1,8 +1,5 @@
 # Started July 11, 2024 by mao
 
-# housekeeping
-rm(list=ls()) 
-options(stringsAsFactors = FALSE)
 
 # Take a look at photoperiod column
 # d$photoperiod <- as.factor (d$photoperiod)
