@@ -51,13 +51,16 @@ source("cleaning/source/cleanStorage.R")
 # 9. Clean response variables and response
 source("cleaning/source/cleanResponseVar.R")
 
-# 10. Clean coordinates seed provinance
+# 10. Clean photoperiod
+source("cleaning/source/cleanPhotoperiod.R")
+
+# 11. Clean coordinates seed provinance
 # source("cleaning/source/cleanCoordinates.R")
 
-# 11. Clean year of germination (some)
+# 12. Clean year of germination (some)
 # source("cleaning/source/cleanYearGermination.R")
 
-# 12. Small final cleaning and write out data!
+# 13. Small final cleaning and write out data!
 
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
