@@ -42,50 +42,6 @@ egret$year.germination[which(egret$year.germination == "TRUE")] <- "2010"
 germ_year <- egret[which(is.na(egret$year.germination)),]
 unique(germ_year$datasetID) #80 papers where there is no germ year 
 
-unique(egret$storage.type)
-egret$storage.type[which(egret$storage.type == "laboratory")] <- "room temp"
-egret$storage.type[which(egret$storage.type == "room conditions")] <- "room temp"
-egret$storage.type[which(egret$storage.type == "glass bottles, laboratory conditions")] <- "room temp"
-egret$storage.type[which(egret$storage.type == "dry/refrigerated")] <- "dry refrigeration"
-egret$storage.type[which(egret$storage.type == "dry refrigerator")] <- "dry refrigeration"
-
-#TO CHECK:
-# natural as in outdoors? - no "natural" input found in data set - JS
-
-# paper bags in dark - room temp? - yes, at room temp - JS
-egret$storage.type[which(egret$storage.type == "paper bags in dark")] <- "room temp"
-
-# controlled environment - not a room? - yes, in a room at 15 degrees - JS
-egret$storage.type[which(egret$storage.type == "controlled environment")] <- "room temp"
-
-# is wet and undried the same? - in aldridge96 for Z Palustris, seeds were stored "imbibed at 2 degrees", so wet - JS
-# - in aldridge96 for P coarctata, seeds were not stored but transferred to experimental conditions immediately - JS
-# if just says dry or wet, should we assume at room temp?  - I think in most cases it is specified in $storage.temp
-
-# only check on papers with dry storage.type and no specified storage.temp
-dry <- egret[which(egret$storage.type == "dry" & is.na(egret$storage.temp)),] # 54 papers
-unique(dry$datasetID) # 6 papers
-#cho18 seeds were stored at 4 +/- 1 degrees
-#could not find chen06 
-#chichizola18 seeds were stored at 5 degrees 
-#kim16 seeds were stored at 5 degrees
-#kolodziejek15 seeds were stored at room temp
-egret$storage.type[which(egret$datasetID == "kolodziejek15")] <- "dry room temp"
-#langlois - storage type included under $treatment (paper, plastic bag, wet sand), unstratified seeds were stored at room temp in paper bags
-wet <- egret[which(egret$storage.type == "wet" & is.na(egret$storage.temp)),] # 0 papers, all specify temp in seperate column
-
-
-unique(egret$storage.humidity)
-
-unique(egret$storage.time)
-egret$storage.time[which(egret$storage.time == "didn't mention")] <- "NA"
-# TO CHECK:
-#"38 5 h" "38 25h" , days + h or missing decimal? - appears to be missing decimal (all values in the paper seem to have a space instead of a decimal) - JS
-egret$storage.time[which(egret$storage.time == "38 5 h")] <- "1.604167"  # 38.5 hours is 1.604167 days
-egret$storage.time[which(egret$storage.time == "38 25h")] <- "1.59375"  # 38.25 hours is 1.59375 days
-
-unique(egret$storage.temp)
-# many ranges or with variance
 
 unique(egret$chill.temp)
 # many ranges or with variance

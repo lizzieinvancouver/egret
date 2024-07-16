@@ -14,10 +14,6 @@ unique(egret$woody) # N, Y, NA, "rhizomatus shrub/bamboo", "succulent"
 temp <- subset(egret, woody == "O") # Magnolia_ingrata aka Magnolia_fulva, yes woody
 egret$woody[which(egret$woody == "O")] <- "Y"
 
-sort(unique(egret$source.population)) #410
-
-unique(egret$provenance.lat) # character bc includes 3 ranges and some wild decimals
-unique(egret$provenance.long)
 
 unique(egret$continent)
 egret$continent[which(egret$continent == "USA")] <- "North America" 
@@ -38,66 +34,9 @@ unique(egret$year.germination)
 egret$year.germination[which(egret$year.germination == "n/a")] <- "NA" #only 19 report this
 #TO CHECK - TRUE? But what is the value?
 
-unique(egret$storage.type) # 75 options
-egret$storage.type[which(egret$storage.type == "N/A")] <- "NA"
-
-# Main categories: 
-#room temp
-egret$storage.type[which(egret$storage.type == "laboratory")] <- "room temp"
-egret$storage.type[which(egret$storage.type == "room conditions")] <- "room temp"
-egret$storage.type[which(egret$storage.type == "coin envelope (room temperature)")] <- "room temp"
-egret$storage.type[which(egret$storage.type == "ambient")] <- "room temp"
-
-egret$storage.type[which(egret$storage.type == "glass bottles, laboratory conditions")] <- "room temp air tight container"
-
-#Air tight container - no temp specified 
-egret$storage.type[which(egret$storage.type == "air-tight")] <- "air-tight no temp spec"
-egret$storage.type[which(egret$storage.type == "air-tight containers")] <- "air-tight no temp spec"
-egret$storage.type[which(egret$storage.type == "airtight plastic bags")] <- "air-tight no temp spec"
-egret$storage.type[which(egret$storage.type == "airtight polyethylene bags")] <- "air-tight no temp spec"
-egret$storage.type[which(egret$storage.type == "glass container")] <- "air-tight no temp spec"
-egret$storage.type[which(egret$storage.type == "plastic bags")] <- "air-tight no temp spec"
-egret$storage.type[which(egret$storage.type == "plastic bag")] <- "air-tight no temp spec"
-egret$storage.type[which(egret$storage.type == "sealed containers")] <- "air-tight no temp spec"
-egret$storage.type[which(egret$storage.type == "sealed glass bottle")] <- "air-tight no temp spec"
-
-#Dry
-#Dry - cold
-egret$storage.type[which(egret$storage.type == "dry/refrigerated")] <- "dry cold"
-egret$storage.type[which(egret$storage.type == "dry refrigerator")] <- "dry cold"
-egret$storage.type[which(egret$storage.type == "dry, refrigerator")] <- "dry cold"
-egret$storage.type[which(egret$storage.type == "cold dry")] <- "dry cold"
-egret$storage.type[which(egret$storage.type == "cold, dry")] <- "dry cold"
-egret$storage.type[which(egret$storage.type == "cold/dry")] <- "dry cold"
-egret$storage.type[which(egret$storage.type == "dry/cold")] <- "dry cold"
-egret$storage.type[which(egret$storage.type == "dry/refrigerated")] <- "dry cold"
-
-# mosit -  cold
-egret$storage.type[which(egret$storage.type == "cold/wet")] <- "moist cold"
-egret$storage.type[which(egret$storage.type == "cold/moist")] <- "moist cold"
-
-#Dark
-egret$storage.type[which(egret$storage.type == "darkness")] <- "dark"
-egret$storage.type[which(egret$storage.type == "in darkness")] <- "dark"
-
-#TO CHECK:
-# natural as in outdoors?
-# paper bags in dark - room temp?
-# controlled environment - not a room?
-# is wet and undried the same?
-# if just says dry or wet, should we assume at room temp?
-# Cold start?
 
 
-unique(egret$storage.humidity)
 
-unique(egret$storage.time)
-egret$storage.time[which(egret$storage.time == "didn't mention")] <- "NA"
-# TO CHECK:
-#"38 5 h" "38 25h" , days + h or missing decimal?
-
-unique(egret$storage.temp)
-# many ranges or with variance
 
 unique(egret$chill.temp)
 # many ranges or with variance
