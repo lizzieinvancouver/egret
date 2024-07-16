@@ -350,6 +350,60 @@ d$tempNight <- as.numeric(d$tempNight)
 
 d$germTempGen <- rowMeans(d[, c("tempDay","tempNight")], na.rm = TRUE)
 
+# Making germTempGen a weighted average based on photoperiod/thermoperiod
+unique(d$photoperiod)
+d$photoperiodCopy <- d$photoperiod
+# Why are there so many that are more than 24???
+d$photoperiodCopy[which(d$photoperiod == "16")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "8")] <- "8/16"
+d$photoperiodCopy[which(d$photoperiod == "12")] <- "12/12"
+d$photoperiodCopy[which(d$photoperiod == "0")] <- "0/24"
+d$photoperiodCopy[which(d$photoperiod == "8:16")] <- "8/16"
+d$photoperiodCopy[which(d$photoperiod == "8.00")] <- "8/16"
+d$photoperiodCopy[which(d$photoperiod == "12 hr light")] <- "12/12"
+d$photoperiodCopy[which(d$photoperiod == "11h light/13h dark")] <- "11/13"
+d$photoperiodCopy[which(d$photoperiod == "14")] <- "14/10"
+d$photoperiodCopy[which(d$photoperiod == "alternating 12/12")] <- "12/12"
+d$photoperiodCopy[which(d$photoperiod == "continuous cool light at 28 microE.m^-2.s^-1")] <- "24/0"
+d$photoperiodCopy[which(d$photoperiod == "8h cool-white")] <- "8/16"
+d$photoperiodCopy[which(d$photoperiod == "2h cool-white")] <- "2/22"
+d$photoperiodCopy[which(d$photoperiod == "4h cool-white")] <- "20/4"
+d$photoperiodCopy[which(d$photoperiod == "16h cool-white")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "24h cool-white")] <- "24/0"
+d$photoperiodCopy[which(d$photoperiod == "8h cool-white")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "cool-white throughout the process")] <- "24/0"
+d$photoperiodCopy[which(d$photoperiod == "constant light")] <- "24/0"
+d$photoperiodCopy[which(d$photoperiod == "alternating 16/8")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "alternating 8/16")] <- "8/16"
+d$photoperiodCopy[which(d$photoperiod == "constant dark")] <- "0/24"
+d$photoperiodCopy[which(d$photoperiod == "cool-white alternating 12/12")] <- "12/12"
+d$photoperiodCopy[which(d$photoperiod == "white alternating 16/8")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "cool-white 24h")] <- "24/0"
+d$photoperiodCopy[which(d$photoperiod == "12-18")] <- "12/18"
+
+# d$photoperiodCopy[which(d$photoperiod == "0/16")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "84")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "0.69")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "0.17")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "13/9h")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "16/9")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "16/10")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "0.25")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "1")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "8/16; 0/24")] <- "???"
+# d$photoperiodCopy[which(d$photoperiod == "25")] <- "???"
+
+# What is with the ones going from like 17 to 32???
+d$datasetID[which(d$photoperiod == "19")] #It's yang08
+
+# Making a photoperiod night column for easier math
+breakbyslashphoto <- strsplit(as.character(d$photoperiodCopy), "/", fixed=TRUE)
+d$photoperiodCopy <- unlist(lapply(breakbyslashphoto, function(x) x[1]))
+d$photoperiodCopyNight <- unlist(lapply(breakbyslashphoto, function(x) x[2]))
+
+# Can I do an ifelse()?
+d$germTempGen <- ifelse()
+
 # Turning placeholders back into "ambient"
 d$tempDay[which(d$tempDay == 99991)] <- "ambient"
 d$tempNight[which(d$tempNight == 99991)] <- "ambient"
