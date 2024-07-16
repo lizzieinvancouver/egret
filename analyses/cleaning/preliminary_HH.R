@@ -125,22 +125,6 @@ unique(oegres$chemical)
 unique(oegres$chemcial.concent)
 unique(oegres$trt.duration)
 
-### Scarification
-unique(oegres[which(oegres$scarification == "Y"), c("datasetID")]) # Only around 36 papers
-unique(oegres[which(oegres$scarification == "N"), c("datasetID")]) # ~131 papers
-unique(oegres$scarif.type) # Sync
-
-### Soaking
-unique(oegres[which(oegres$soaking == "Y"), c("datasetID")]) # ~67 papers
-unique(oegres[which(oegres$soaking == "N"), c("datasetID")]) # ~112 papers
-unique(oegres$soaked.in) # Differentiate between soaking and chem
-unique(oegres$soaking.duration)
-
-### Treatment
-unique(oegres$treatment)
-unique(oegres$other.treatment) # A lot of parameters -- Fix this; alternating temp
-unique(oegres[, c("treatment","other.treatment")]) # A lot of second strat -- Check
-
 ### Other columns
 unique(oegres[which(oegres$no.indiv.collected != "NA" & !is.na(oegres$no.indiv.collected)),c("datasetID","no.indiv.collected")]) # Only 21 papers
 unique(oegres$respvar) # Format sync + Check definitions

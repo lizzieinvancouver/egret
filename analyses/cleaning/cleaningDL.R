@@ -10,19 +10,10 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 }
 
 
-unique(egret$woody) # N, Y, NA, "rhizomatus shrub/bamboo", "succulent" 
-temp <- subset(egret, woody == "O") # Magnolia_ingrata aka Magnolia_fulva, yes woody
-egret$woody[which(egret$woody == "O")] <- "Y"
 
 
-unique(egret$continent)
-egret$continent[which(egret$continent == "USA")] <- "North America" 
-egret$continent[which(egret$continent == "North Ameria")] <- "North America" 
-# to check:
-#South Africa -- africa or south america?
-# Central america
-# America --- North america?
-# "NA, possibly Asia"
+
+
 
 unique(egret$no.indiv.collected) # only 13 reported values
 # some ranges -- some NA possibly...
@@ -40,49 +31,6 @@ egret$year.germination[which(egret$year.germination == "n/a")] <- "NA" #only 19 
 
 
 
-unique(egret$scarification)
-unique(egret$scarif.type)
-
-egret$scarif.type[which(egret$scarif.type == "sandpaper")] <- "mechanical - sandpaper"
-egret$scarif.type[which(egret$scarif.type == "sand paper (Np. 150)")] <- "mechanical - sandpaper"
-
-egret$scarif.type[which(egret$scarif.type == "mechanical with razor")] <- "mechanical - razor"
-egret$scarif.type[which(egret$scarif.type == "H2SO4")] <- "chemical - H2SO4"
-
-#TO CHECK
-# acid - what kinds?
-#scapel - removing what
-# soaking in water?
-#cold
-
-unique(egret$soaking)
-unique(egret$soaked.in)
-egret$soaked.in[which(egret$soaked.in == "water")] <- "H20"
-egret$soaked.in[which(egret$soaked.in == "Water")] <- "H20"
-
-egret$soaked.in[which(egret$soaked.in == "hot H2O - 100C")] <- "H2O 100C"
-egret$soaked.in[which(egret$soaked.in == "100C water")] <- "H2O 100C"
-
-egret$soaked.in[which(egret$soaked.in == "water 35ºC")] <- "H20 35C"
-egret$soaked.in[which(egret$soaked.in == "35C water")] <- "H20 35C"
-
-egret$soaked.in[which(egret$soaked.in == "60C water")] <- "H20 60C"
-egret$soaked.in[which(egret$soaked.in == "80C water")] <- "H20 80C"
-egret$soaked.in[which(egret$soaked.in == "5 C water")] <- "H20 5C"
-
-egret$soaked.in[which(egret$soaked.in == "water 35ºC")] <- "H20 35C"
-
-#TO CHECK
-# what is N, 0 KNO3 - sounds like a control,
-# battaglia93	and 97, what is MPa water and a water solution?
-
-unique(egret$seed.mass.given)
-egret$seed.mass.given[which(egret$seed.mass.given == "yes")] <- "Y"
-egret$seed.mass.given[which(egret$seed.mass.given == "no")] <- "N"
-egret$seed.mass.given[which(egret$seed.mass.given == "Yes")] <- "Y"
-egret$seed.mass.given[which(egret$seed.mass.given == "No")] <- "N"
-egret$seed.mass.given[which(egret$seed.mass.given == "1200")] <- "Y"
-egret$seed.mass.given[which(egret$seed.mass.given == "FALSE")] <- "N"
 
 unique(egret$respvar)
 egret$respvar[which(egret$respvar == "germ.speed")] <- "germ.rate"
@@ -107,24 +55,7 @@ egret$response[which(egret$response == "NA*")] <- "NA"
 
 #TO CHECK what is "NA*"
 
-unique(egret$error.type)
-egret$error.type[which(egret$error.type == "mean+/-SE")] <- "SE"
-egret$error.type[which(egret$error.type == "mean+/-SD")] <- "SD"
-egret$error.type[which(egret$error.type == "not specified")] <- "not.specified"
 
-# TO CHECK what is xz
-
-unique(egret$resp.error)
-
-unique(egret$reps)
-
-unique(egret$n.per.rep)
-unique(egret$germ.duration)
-# TO CHECK
-# why are there so many with decimal places? should it not be in days?
-
-unique(egret$germ.tim.zero)
-# TO CHECK - "TRUE"
 
 #write.csv(egret, "analyses/output/egretData.csv", row.names = FALSE)
 
