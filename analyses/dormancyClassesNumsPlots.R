@@ -1,3 +1,8 @@
+## Started July 2024 ##
+## Started by Dan, edits by Mao ##
+
+## Quick look at what dormancy classes we have data on ##
+
 rm(list=ls())
 options(stringsAsFactors = FALSE)
 options(mc.cores = parallel::detectCores())
