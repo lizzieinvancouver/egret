@@ -1,61 +1,20 @@
-## Updated 7 April 2024 ##
-## By Justin ##
-
-# !!! Don't forget to run cleanall up to line 22 to get the data file "d" !!!
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# 
+# Cleaning Germination Temperature and Duration
+# 
+# Updated 16 July 2024
+# by Justin
+# 
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 ## This contains cleaning of germination temperature ##
 ## Original code taken from file called cleaningDL.R ##
 
-
-
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-# my first look through with tidyverse() for now:
-# library(tidyverse)
-# options(max.print=1000000)
 
-# Some Qs MAKE A NEW ISSUE AND PUT IN EXAMPLES OF THESE ISSUES
-# Some of them say +/-, should we just take the central value? 
-# For alternating germ.temps, should we keep the alternation or take the mean? ESTIMATE how often this comes up so we can think of a decision to make
-# Some of them are in date format, like 20-Oct; this is probably 20/10 warm/cold cycle.
-# Some have dashes instead of slash, probably meaning slash; 3-20 certainly should not mean a broad unknown temperature range spanning 17 degrees. IDENTIFY INPUT PERSON and then ADD COMMENT TO EXPLAIN WHY I MADE A CHOICE
-# ^Commas probably mean the same thing.
-# Those that have the photoperiod include, should check the photoperiod column to make sure the information is also present there.
-# remove "varying".
-# If it's NA but has a secondary comment, take it out and place that information elsewhere.
-# Why are some of these values so random in their decimals? PROBABLY FINE TO KEEP
-# Why do some of them say "greenhouse" as the germ.temp? CONVERT TO "AMBIENT"
-# Take out rows containing "open field". DONT TAKE THEM OUT, JUST CONVERT TO "AMBIENT" put in issue, and find frequency of its occurrence
-# What to do with unregulated? Probably do NA, since "unknown/didn't mention" are also changed to NA.
-
-# Bizarre cases
-# d %>% filter(germ.temp == 45219) #it's tang10b
-# d %>% filter(datasetID == "tang10b") #instead of 45219 it should be 20/10
-# d %>% filter(germ.temp == 100) #basbag09
-# Upon confirmation with the paper, they really did expose the seeds to 100 degC, so no amendments necessary
-
-# Some overview for the git issue
-# Figuring out how many papers have alternating temperature regimes
-# unique(d$germ.temp)
-# d.alt <- d %>%
-#   filter(grepl(",|/|alternating|night|-",germTemp)) %>%
-#   filter(!grepl("+/-",germTemp)) %>%
-#   select(datasetID,study,germTemp)
-# n_distinct(d_alt$datasetID) 
-# There are 122 papers in which alternating temperatures occur
-
-# rm(list=ls()) 
-
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+library(tidyverse) #for checking things and pipelining!!
 
 #1. germination temperature
-unique(d$germ.temp)
-
-#d <- within(d, forcetemp[datasetID== 'falusi96' & study == 'exp3'] <- 24)
-# ALERT: these changes should be in a NEW column, not overwriting the current column. 
-
-# d$germ.temp[which(d$germ.temp == "unknown")] <- "NA"
-# d$germ.temp[which(d$germ.temp == "didn't mention")] <- "NA"
-
 
 # Values that are transformed i.e. averaged or rounded:
 d$germTempGen <- d$germ.temp # This is currently doing nothing
@@ -63,7 +22,7 @@ d$germTempGen <- d$germ.temp # This is currently doing nothing
 # Now make new column with heavy duty cleaning
 d$germTemp  <- d$germ.temp
 
-d$germTemp[which(d$germTemp == "45219")] <- "20/10"
+d$germTemp[which(d$germTemp == "45219")] <- "20/10" # 45219 corresponds to tang10b which had 20/10 germination temperature regime
 d$germTemp[which(d$germTemp == "unknown")] <- "NA"
 d$germTemp[which(d$germTemp == "unknown ")] <- "NA"
 d$germTemp[which(d$germTemp == "didn't mention")] <- "NA"
@@ -258,10 +217,17 @@ d$tempClass[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "const
 d$tempDay[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "20"
 d$tempNight[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "NA"
 
-d$germTemp[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient" # it's not 18.5-21.5, that was a range
+d$germTemp[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient" # it's not 25/10, that's what the authors reported in the intro as a known-to-be-successful germ temperature
+
+# If there are errors in the genus/species name (e.g. a space after the genus name) should I fix it in this code, or just hope that it is fixed in another source code so that this one will run properly?
+
 d$tempClass[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "constant"
 d$tempDay[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient"
 d$tempNight[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "NA"
+
+# Langlois17 has some specified germTemp though;
+# "Minimal day- and night-time temperatures were respectively 208 and 188C, following a cycle of 14 h of light and 10 h of darkness."
+# Was this even scraped?
 
 d$photoperiodNote[which(d$datasetID == "ochuodho08" & d$species == "capense")] <- "just alternating temperature no photoperiod"
 
@@ -404,3 +370,14 @@ d$germTempGen[which(d$germTempGen == "NaN")] <- NA
 # 
 # photona <- unique(dphotona$datasetID)
 # length(photona)
+
+# Some overview for the git issue
+# Figuring out how many papers have alternating temperature regimes
+unique(d$germ.temp)
+d.alt <- d %>%
+  filter(grepl(",|/|alternating|night|-",germTemp)) %>%
+  filter(!grepl("+/-",germTemp)) %>%
+  select(datasetID,study,germTemp)
+n_distinct(d.alt$datasetID)
+# There are 116 papers in which alternating temperatures occur
+
