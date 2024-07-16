@@ -374,11 +374,16 @@ d$germTempGen[which(d$germTempGen == "NaN")] <- NA
 
 # Some overview for the git issue
 # Figuring out how many papers have alternating temperature regimes
-unique(d$germ.temp)
+# unique(d$germ.temp)
 d.alt <- d %>%
   filter(grepl(",|/|alternating|night|-",germTemp)) %>%
   filter(!grepl("+/-",germTemp)) %>%
-  select(datasetID,study,germTemp)
-n_distinct(d.alt$datasetID)
+  select(datasetID,study,genus,species,germTemp)%>%
+  group_by(datasetID)%>%
+  summarize()
+write.csv(d.alt,"cleaning/checks/AlternatingTempPaperList.csv")
+
+getwd()
+# needs to show up in the code so that Lizzie can match it
 # There are 116 papers in which alternating temperatures occur
 
