@@ -48,6 +48,12 @@ unique(egret$woody) # N, Y, NA, "rhizomatus shrub/bamboo", "succulent"
 temp <- subset(egret, woody == "O") # Magnolia_ingrata aka Magnolia_fulva, yes woody
 egret$woody[which(egret$woody == "O")] <- "Y"
 
+unique(egret$no.indiv.collected) # only 13 reported values
+# some ranges -- some NA possibly...
+unique(egret$year.collected)
+egret$year.collected[which(egret$year.collected == "N/A")] <- "NA"
+#character bc 4 values entered as ranges, also from 1951-2019
+
 unique(egret$error.type)
 egret$error.type[which(egret$error.type == "mean+/-SE")] <- "SE"
 egret$error.type[which(egret$error.type == "mean+/-SD")] <- "SD"

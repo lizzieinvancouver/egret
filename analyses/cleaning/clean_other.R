@@ -28,16 +28,3 @@ egret <- read.csv("input/egretData.csv")
 
 
 
-unique(egret$year.germination)
-egret$year.germination[which(egret$year.germination == "n/a")] <- NA #only 19 report this
-#TO CHECK - TRUE? But what is the value?
-germyeartru <- egret[which(egret$year.germination == "TRUE"),] 
-#hawkins19 found to have germination year of 2010 
-egret$year.germination[which(egret$year.germination == "TRUE")] <- "2010" 
-# rechecking all of the NA values
-germ_year <- egret[which(is.na(egret$year.germination)),]
-unique(germ_year$datasetID) #80 papers where there is no germ year 
-
-
-
-
