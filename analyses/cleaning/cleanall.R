@@ -25,34 +25,34 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 }
 
 # 1. Get the data (reads in a dataframe called `egret')
-source("cleaning/source/mergedata.R")
+source("cleaning/source/mergedata.R") # 30766 rows, 45 columns
 
 # 2. Clean up datasetID issues
-source("cleaning/source/cleandatasetID.R")
+source("cleaning/source/cleandatasetID.R") # 30202 rows
 
 # 3. Clean species names
 source("cleaning/source/cleanspecies.R")
 
 # 4. Clean chill duration and temperature
-source("cleaning/source/cleanChillTempDuration.R")
+source("cleaning/source/cleanChillTempDuration.R") # 50 columns
 
 # 5. Clean germination temperature
-source("cleaning/source/cleanGerminationTempDuration.R")
+source("cleaning/source/cleanGerminationTempDuration.R") # 58 columns
 
 # 6. Clean germination scarification
-source("cleaning/source/cleanScarification.R")
+source("cleaning/source/cleanScarification.R") # 61 columns 
 
-# 7. Clean Clean chemical---yes/no column---clean chemcial name col
-source("cleaning/source/cleanChemical.R")
+# 7. Clean chemical
+source("cleaning/source/cleanChemical.R") # 62 columns 
 
 # 8. Clean storage type
-source("cleaning/source/cleanStorage.R")
+source("cleaning/source/cleanStorage.R") # 64 columns
 
 # 9. Clean response variables and response
-source("cleaning/source/cleanResponseVar.R")
+source("cleaning/source/cleanResponseVar.R") # 68 columns
 
 # 10. Clean photoperiod
-source("cleaning/source/cleanPhotoperiod.R")
+source("cleaning/source/cleanPhotoperiod.R") # 69 columns
 
 # 11. Clean coordinates seed provinance
 # source("cleaning/source/cleanCoordinates.R")

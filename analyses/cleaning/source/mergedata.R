@@ -75,6 +75,20 @@ egret_JS <- egret_JS[complete.cases(egret_JS$response),] # tons of empty rows!  
 dim(egret_JS) #757  45
 length(unique(egret_JS$datasetID)) #9
 
+egret_XW <- read.csv("input/egret_XW.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+length(unique(egret_XW$datasetID)) #1
+dim(egret_XW) #240   45
+
+egret_FB <- read.csv("input/egret_FB.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+length(unique(egret_FB$datasetID)) #1
+dim(egret_FB) #90   45
+
+if(FALSE){
+egret_DB <- read.csv("input/egret_DMB.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+length(unique(egret_DB$datasetID)) # 9
+dim(egret_DB) #263   45
+}
+
 dat1 <- rbind(egret_TA, egret_BW, egret_CRD, egret_MN, egret_HHN, egret_DK,
                 egret_JS, egret_DM, egret_AZ, egret_GG)
 colnames(dat1)[colnames(dat1) == "germ.tim.zero"] <- "germ.time.zero"
@@ -86,4 +100,3 @@ d <- rbind(egret_JN, dat2)
 rm(egret_AZ, egret_BW, egret_CRD, egret_DK, egret_DL, egret_DM, egret_GG, egret_HHN, egret_JN, egret_JS, egret_MN, egret_SC, egret_TA, egret_XW, egret_DB, egret_FB, dat1, dat2
   #, egret_EMW
 )
-#write.csv(dat, "analyses/output/egretData.csv", row.names = F)
