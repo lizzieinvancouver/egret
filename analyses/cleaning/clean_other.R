@@ -88,15 +88,6 @@ openair <- egret[which(egret$germ.temp == "open air"),]
 
 unique(egret$other.treatment)
 
-unique(egret$photoperiod)
-# TO CHECK
-# 0.25 - I couldn't find studies with "0.25" - JS
-
-#0.3444444444445
-photo0.34 <- egret[which(egret$photoperiod == "0.3444444444444445"),]
-#borghetti86 photoperiod was 8/16 (8 hours light, 16 dark) - JS
-egret$photoperiod[which(egret$photoperiod == "0.3444444444444445")] <- "8/16"
-
 
 unique(egret$chemical)
 # egret$chemical[which(egret$chemical == "water")] <- "NA"

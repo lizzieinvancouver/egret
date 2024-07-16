@@ -37,13 +37,6 @@ egret$year.germination[which(egret$year.germination == "n/a")] <- "NA" #only 19 
 
 
 
-
-unique(egret$chill.temp)
-# many ranges or with variance
-#TO CHECK: 
-# 38, seems high
-# what does (25/10)/5/0) mean
-
 unique(egret$chill.duration)
 egret$chill.duration[which(egret$chill.duration == "unknown")] <- "NA"
 #TO CHECK
@@ -58,23 +51,7 @@ egret$germ.temp[which(egret$germ.temp == "didn't mention")] <- "NA"
 # 44696, 44854, 44727,44859
 # open air - is this a field study?
 
-unique(egret$other.treatment)
 
-unique(egret$photoperiod)
-# TO CHECK
-#0.3444444444444445
-# 0 a true zero? ie 100% dark?
-# 0.25
-
-unique(egret$chemical)
-# egret$chemical[which(egret$chemical == "water")] <- "NA"
-# is GA, GA3, GA4 all the same thing?
-# 36 diff chemicals
-
-unique(egret$chemcial.concent)
-# some issues with units, g included in some, ppm, nmol/L
-
-unique(egret$trt.duration)
 unique(egret$scarification)
 unique(egret$scarif.type)
 
