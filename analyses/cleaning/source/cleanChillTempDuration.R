@@ -38,13 +38,13 @@ data_points_with_altern <- nrow(d[d$chill.temp %in% temp_vals[altern],])
 data_points_with_comb <- nrow(d[d$chill.temp %in% temp_vals[comb],])
 
 #find data points
-idx <- which(d$chillTemp == unique(d$chillTemp)[62])
+idx <- which(d$chillTemp == unique(d$chillTemp)[15])
 check <- d[idx,]
 check_short <- subset(check, select = c("datasetID", "study", "entered.by",
                                         "treatment", "chill.temp", "chill.duration",
                                         "germ.temp", "germ.duration", "other.treatment",
                                         "photoperiod", "respvar", "response"))
-idx <- which(d$datasetID == "nin17")
+idx <- which(d$datasetID == "airi2009")
 check <- d[idx,]
 check_short <- subset(check, select = c("datasetID", "study", "species", "entered.by",
                                         "treatment", "chill.temp", "chill.duration",
@@ -65,6 +65,11 @@ d$chillTempUnc <- NA
 d$chillTempCycle <- NA
 d$chillLightCycle <- NA
 
+##additional cleaning
+
+#airi2009 - 0
+d$chillTemp[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA
+d$chillDuration[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA
 
 ##clean remaining chill duration
 
@@ -199,16 +204,16 @@ d$chillDuration[which(d$datasetID == "pipinis12" & d$treatment == "chemical")] <
 #one data point potentially missing
 
 #Acosta12 - 25/15
-d$chillTemp[which(d$datasetID == "acosta13")] <- NA
-d$chillDuration[which(d$datasetID == "acosta13")] <- NA
+d$chillTemp[which(d$datasetID == "acosta12")] <- NA
+d$chillDuration[which(d$datasetID == "acosta12")] <- NA
 #possible need to distinguish temperature effects and germ temp
 
 #Brandel2005 - 5/25
 temp <- c(NA, NA, 5, 5, 11, 11, 13, 13, 15, 15)
 d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "primary dormant")] <- temp
 temp <- c("", "", 5, 5, 11, 11, 13, 13, 15, 15)
-d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "secondary dormant")] <- paste0("5 then 25 then ",  temp)
-d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "secondary dormant")] <- "4 then 4 then 4"
+d$chillTemp[which(d$datasetID == "brandel2005" & d$other.treatment == "secondary dormant")] <- paste0("5 then 25 then ",  temp)
+d$chillTemp[which(d$datasetID == "brandel2005" & d$other.treatment == "secondary dormant")] <- "4 then 4 then 4"
 
 #Boscagli01 - 5-7
 d$chillTemp[which(d$datasetID == "boscagli01" & d$chill.temp == "5-7")] <- 6
@@ -583,7 +588,7 @@ d$chillDuration[which(d$chill.duration == "0 (control)")] <- 0
 
 #wang09 - alternating 15/5 dark
 d$chillTemp[which(d$chill.temp == "alternating 15/5")] <- "15 and 5"
-d$chillLightCycle[which(d$datasetID == "Wang09")] <- 0
+d$chillLightCycle[which(d$datasetID == "wang09")] <- 0
 
 #watanabe02 - 25 -> 5 +/- 2 warm to cold strat
 d$chillTemp[which(d$chill.temp == "25 -> 5 +/- 2")] <- "25 then 5"
