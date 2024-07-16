@@ -43,6 +43,8 @@
 # n_distinct(d_alt$datasetID) 
 # There are 122 papers in which alternating temperatures occur
 
+# rm(list=ls()) 
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 #1. germination temperature
@@ -387,6 +389,18 @@ d$tempNight[which(d$tempNight == 99991)] <- "ambient"
 d$germTempGen[which(d$germTempGen == 99991)] <- "ambient"
 
 # Removing NaNs
-d$germTempGen[which(is.nan(d$germTempGen))] <- NA
+d$germTempGen[which(is.nan(d$germTempGen) == TRUE)] <- NA
+d$germTempGen[which(d$germTempGen == "NaN")] <- NA
 
-unique(d$germTempGen)
+# Add these three lines before running cleanAll until it gets fixed
+# egret_XW <- read.csv("input/egret_XW.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+# egret_DB <- read.csv("input/egret_DMB.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+# egret_FB <- read.csv("input/egret_FB.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+
+# # How many papers have photoperiod as NA?
+# library(tidyverse)
+# dphotona <- d %>%
+#   filter(is.na(photoperiod) == TRUE)
+# 
+# photona <- unique(dphotona$datasetID)
+# length(photona)
