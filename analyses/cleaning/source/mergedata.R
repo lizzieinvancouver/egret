@@ -32,7 +32,7 @@ length(unique(egret_CRD$datasetID)) #4
 egret_CRD <- egret_CRD[,1:45]
 dim(egret_CRD) #302  45
 
-# Justin
+# Justin 
 egret_JN <- read.csv("input/egret_JN.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
 colnames(egret_JN)[colnames(egret_JN) == "germ.tim.zero"] <- "germ.time.zero"
 length(unique(egret_JN$datasetID)) #58
@@ -71,19 +71,32 @@ length(unique(egret_AZ$datasetID)) #12
 dim(egret_AZ) #1071   45
 
 egret_JS <- read.csv("input/egret_JS.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+checkJS <- egret_JS[!complete.cases(egret_JS$response),]
+unique(checkJS$datasetID)
 egret_JS <- egret_JS[complete.cases(egret_JS$response),] # tons of empty rows!  # 757 rows actual data
 dim(egret_JS) #757  45
 length(unique(egret_JS$datasetID)) #9
 
+egret_XW <- read.csv("input/egret_XW.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+length(unique(egret_XW$datasetID)) #1
+dim(egret_XW) #240   45
+
+egret_FB <- read.csv("input/egret_FB.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+length(unique(egret_FB$datasetID)) #1
+dim(egret_FB) #90   45
+
+egret_DB <- read.csv("input/egret_DMB.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+egret_DB <- egret_DB[complete.cases(egret_DB$datasetID),] # Lizzie confirms that 94 rows is good
+length(unique(egret_DB$datasetID)) # 1
+dim(egret_DB) #263   45
+
 dat1 <- rbind(egret_TA, egret_BW, egret_CRD, egret_MN, egret_HHN, egret_DK,
-                egret_JS, egret_DM, egret_AZ, egret_GG)
+                egret_JS, egret_DM, egret_AZ, egret_GG) # , egret_XW, egret_FB, egret_DB
 colnames(dat1)[colnames(dat1) == "germ.tim.zero"] <- "germ.time.zero"
 dat2 <- rbind(egret_DL, egret_SC, dat1)
 
 colnames(dat2)[colnames(dat2) == "chemcial.concent"] <- "chemical.concent"
 d <- rbind(egret_JN, dat2)
 
-rm(egret_AZ, egret_BW, egret_CRD, egret_DK, egret_DL, egret_DM, egret_GG, egret_HHN, egret_JN, egret_JS, egret_MN, egret_SC, egret_TA, egret_XW, egret_DB, egret_FB, dat1, dat2
-  #, egret_EMW
-)
-#write.csv(dat, "analyses/output/egretData.csv", row.names = F)
+rm(egret_AZ, egret_BW, egret_CRD, egret_DK, egret_DL, egret_DM, egret_GG, egret_HHN, egret_JN, egret_JS, egret_MN, 
+  egret_SC, egret_TA, egret_XW, egret_DB, egret_FB, dat1, dat2)

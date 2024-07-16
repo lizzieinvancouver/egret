@@ -17,6 +17,15 @@ selected_rows <- grep("light|dark", d$other.treatment, ignore.case = TRUE)
 # Select rows
 subset_othertreatment <- d[selected_rows, ]
 
+# Check by Lizzie ... seems we missed some relevant rows
+sort(unique(d$other.treatment))
+lux_rows <- grep("lux", d$other.treatment, ignore.case = TRUE)
+mol_rows <- grep("μmol/m^2/s light", d$other.treatment, ignore.case = TRUE)
+lightintense_rows <- grep("light intensity", d$other.treatment, ignore.case = TRUE)
+whitelight_rows <- grep("white light", d$other.treatment, ignore.case = TRUE)
+
+morerowsmaybe <- c(lux_rows, mol_rows, lightintense_rows, whitelight_rows)
+
 # Select for rows that is not NA and greater than 0 in photoperiod column
 photoperiod_row <- which(!is.na(d$photoperiod) & d$photoperiod != 0)
 
@@ -24,7 +33,7 @@ photoperiod_row <- which(!is.na(d$photoperiod) & d$photoperiod != 0)
 far.red <- which(d$chemical == "log2(red/far.red)")
 
 # Combine all row numbers
-row_light <- c(selected_rows,photoperiod_row,far.red)
+row_light <- c(selected_rows,photoperiod_row,far.red, morerowsmaybe)
 # Select for unique rows
 light_egret <- d[unique(row_light),]
 
