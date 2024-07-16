@@ -220,6 +220,7 @@ d$tempNight[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "NA"
 d$germTemp[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient" # it's not 25/10, that's what the authors reported in the intro as a known-to-be-successful germ temperature
 
 # If there are errors in the genus/species name (e.g. a space after the genus name) should I fix it in this code, or just hope that it is fixed in another source code so that this one will run properly?
+# d$genus <- gsub(d,pattern = " ",replacement = "")
 
 d$tempClass[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "constant"
 d$tempDay[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient"
