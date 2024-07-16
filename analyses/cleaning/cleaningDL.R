@@ -37,19 +37,7 @@ egret$year.germination[which(egret$year.germination == "n/a")] <- "NA" #only 19 
 
 
 
-unique(egret$chill.duration)
-egret$chill.duration[which(egret$chill.duration == "unknown")] <- "NA"
-#TO CHECK
-# what does "90/30/90" mean
-#"Continuous cold stratification" kept in cold whole experiment? How long was experiment?
-# is 0 a true zero? 
 
-unique(egret$germ.temp)
-egret$germ.temp[which(egret$germ.temp == "unknown")] <- "NA"
-egret$germ.temp[which(egret$germ.temp == "didn't mention")] <- "NA"
-# TO CHECK
-# 44696, 44854, 44727,44859
-# open air - is this a field study?
 
 
 unique(egret$scarification)
