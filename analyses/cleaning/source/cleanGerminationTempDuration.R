@@ -79,6 +79,42 @@ d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# Working on figuring the data for the papers that Ken listed as problematic
+# Acosta13 - "germination temp missing from Figure 3 data"
+d$germTemp[which(d$datasetID = "Acosta12" & figure == "Fig 3")] <- "25/15"
+
+# Mamut20 - "germ durations seem to be weird, like a number 1 was dragged through excel until 14 and then repeated again and again, even for the first three values for table 2 which should be 24, 56, and 84 days"
+    # From looking over Mamut20, germDuration should be 30 days for everything except the experiment where they routinely took out seeds after months-long stratification was over
+
+# Sacande04 - "incubation temp is put as chill temp, might be better to put as germ temp"
+for (i in 1:nrow(d)) {
+  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "Sacande04") { 
+    d$germTemp[i] <- d$chill.temp[i]
+    d$chill.temp[i] <- NA  
+  }
+}
+
+# tylkowski91 - "cold stratification is mistakenly coded as germination temp for some data from table 2"
+tylkowski91 <- d %>%
+  filter(datasetID == "tylkowski91" && figure == "Table 2")
+# I need to swap the columns because chill.temp is meant to be germTemp and I can use germ.temp as my spare
+for (i in 1:nrow(d)) {
+  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "tylkowski91" & d$figure[i] == "Table 2") {
+    d$germTemp[i] <- d$chill.temp[i]
+    d$chill.temp[i] <- d$germ.temp[i]
+    d$germ.temp[i] <- d$germTemp[i]
+  }
+}
+d$germTemp[which(d$germTemp == "3-15")] <- "15/3"
+d$germTemp[which(d$germTemp == "3-20")] <- "20/3"
+# These have 16/8 photoperiod
+# pick this back up tomorrow!
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
 # Making new columns for temperature regime class (constant or alternating), temperature 1, and temperature 2
 # To make things easier turn the +/- temperature regimes into just their median value in germTemp column
 # unique(d$germTemp)
@@ -155,6 +191,10 @@ d$tempClass[which(d$germTemp == "22.2/20/29.4")] <- "other"
 d$tempClass[which(d$germTemp == "15/20/25")] <- "other"
 d$tempClass[which(d$germTemp == "20/15/20/25")] <- "other"
 
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# Splitting apart the Night and Day
 breakbyslash <- strsplit(as.character(d$germTemp), "/", fixed=TRUE)
 d$tempDay <- unlist(lapply(breakbyslash, function(x) x[1]))
 d$tempNight <- unlist(lapply(breakbyslash, function(x) x[2]))
@@ -171,21 +211,11 @@ d$tempDay[which(d$datasetID == "Dehgan84" & d$tempDay == "27-29")] <- "28"
 d$tempNight[which(d$datasetID == "Dehgan84" & d$tempNight == "16-18")] <- "17"
 d$tempNight[which(d$datasetID == "Dehgan84" & d$tempNight == "6-18")] <- "17" 
 d$tempNight[which(d$datasetID == "Scocco98" & d$tempNight == "30 (varying)")] <- "30" 
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
-# 2. germ.duration
-#This variable is important---if NA or unknown or negative please double check the paper
-# unique(d$germ.duration)
-# d$germDuration <- d$germ.duration
-# 
-# dneg <- d %>% filter(grepl("-",germ.duration))
-# unique(dneg$datasetID)
-# # jensen97, schutz02, gremer20, ren15 have NEGATIVE or a RANGE in germ duration
-# duno <- d %>% filter(grepl("unknown",germ.duration))
-# dna <- d %>% filter(grepl("NA",germ.duration))
-# dnatrue <- d %>% filter(germ.duration = NA)
-# unique(dna$datasetID)
-# # kato11 and marcello15 have UNKNOWN or NA germ.duration
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# Germination Duration
 
 d$germDuration[which(d$datasetID == "jensen97" & d$germ.time.zero == "when incubation begins")] <- "30"
 d$germDuration[which(d$datasetID == "gremer20" & d$germ.duration == "30-31")] <- "7"
@@ -198,7 +228,11 @@ d[, 'germDurComment'] = NA
 d$germDurComment[which(d$datasetID == "Schutz02" & d$germDuration == "50")] <- "Paper says 30-50 as germDuration due to end of germination = 1 week since last observed germinant"
 d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- "Looked into the paper and found nothing except for germination counted every 3 days"
 
-# Fixing the day/night conundrum
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# Fixing the day/night conundrum in the alternating temperature papers
 d[ , 'photoperiodNote'] = NA
 d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp1" & d$photoperiod == "12")] <- "constant light" # change photoperiod to 24
 d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp1" & d$photoperiod == "0")] <- "constant darkness"
@@ -218,9 +252,7 @@ d$tempDay[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "20"
 d$tempNight[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "NA"
 
 d$germTemp[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient" # it's not 25/10, that's what the authors reported in the intro as a known-to-be-successful germ temperature
-
-# If there are errors in the genus/species name (e.g. a space after the genus name) should I fix it in this code, or just hope that it is fixed in another source code so that this one will run properly?
-# d$genus <- gsub(d,pattern = " ",replacement = "")
+# Langlois17 has a part that isn't scraped; it's light intensity
 
 d$tempClass[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "constant"
 d$tempDay[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient"
@@ -402,7 +434,7 @@ d$photoperiodCopy <- unlist(lapply(breakbyslashphoto, function(x) x[1]))
 d$photoperiodCopyNight <- unlist(lapply(breakbyslashphoto, function(x) x[2]))
 
 # Can I do an ifelse()?
-d$germTempGen <- ifelse()
+# d$germTempGen <- ifelse()
 
 # Turning placeholders back into "ambient"
 d$tempDay[which(d$tempDay == 99991)] <- "ambient"
@@ -435,9 +467,6 @@ d.alt <- d %>%
   select(datasetID,study,genus,species,germTemp)%>%
   group_by(datasetID)%>%
   summarize()
-write.csv(d.alt,"cleaning/checks/AlternatingTempPaperList.csv")
-
-getwd()
-# needs to show up in the code so that Lizzie can match it
+# write.csv(d.alt,"cleaning/checks/AlternatingTempPaperList.csv")
 # There are 116 papers in which alternating temperatures occur
 
