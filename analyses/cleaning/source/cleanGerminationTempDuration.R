@@ -97,7 +97,7 @@ for (i in 1:nrow(d)) {
 
 # tylkowski91 - "cold stratification is mistakenly coded as germination temp for some data from table 2"
 tylkowski91 <- d %>%
-  filter(datasetID == "tylkowski91" && figure == "Table 2")
+  filter(datasetID == "tylkowski91" & figure == "Table 2")
 # I need to swap the columns because chill.temp is meant to be germTemp and I can use germ.temp as my spare
 for (i in 1:nrow(d)) {
   if (!is.na(d$datasetID[i]) && d$datasetID[i] == "tylkowski91" & d$figure[i] == "Table 2") {
@@ -109,7 +109,28 @@ for (i in 1:nrow(d)) {
 d$germTemp[which(d$germTemp == "3-15")] <- "15/3"
 d$germTemp[which(d$germTemp == "3-20")] <- "20/3"
 # These have 16/8 photoperiod
-# pick this back up tomorrow!
+d$photoperiodCopy[which(d$datasetID == "tylkowski91" & d$figure == "Table 2")] <- "16/8"
+
+# yang08 - "germ temp is missing"
+# According to the paper, it's 30/20 day/night
+d$germTemp[which(d$datasetID == "yang08" & d$genus == "Litsea")] <- "30/20"
+
+# yang18_1 - "chill and germination data for Figures 4 and 5 is complicated because some germination data were taken during stratification so the stratification conditions should actually be the germination data; I think cleaning these columns together would be easier than separately"
+yang18.1 <- d %>%
+  filter(datasetID == "yang18" & genus == "Maackia") %>%
+  filter(figure == "Figure 4" | figure == "Figure 5")
+# honestly the data looks like it was entered fine? some are 4 degrees and some are 30/20
+
+# yeom21 - "for Figure 4, germination measurement details may be lacking; if lacking, germ temp and duration should be NA, if germination measurement is done at very end of stratification, germ temp and duration should be chill temp and duration"
+yeom21 <- d %>%
+  filter(datasetID == "yeom21" & figure == "Figure 4")
+# The highest percent germ occurred for constant 25 degC, lowest for constant 5 degC, and intermediate for  5 -> 25 degC treatment
+d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "10.866")] <- "25"
+d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "1.904")] <- "25/5"
+d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "0")] <- "5"
+d$photoperiodNote[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "1.904")] <- "two stage temperature regime not photoperiod"
+
+# zhou08 - "germ temp for figure 1 is missing"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -238,7 +259,7 @@ d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp1" & d$phot
 d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp1" & d$photoperiod == "0")] <- "constant darkness"
 d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp3" & d$photoperiod == "0")] <- "constant darkness"
 
-d$photoperiodNote[which(d$datasetID == "cicek08" & d$species == "fraxinifolia ")] <- "just alternating temperature no photoperiod" # Change photoperiod to NA
+d$photoperiodNote[which(d$datasetID == "cicek08" & d$species == "fraxinifolia ")] <- "just alternating temperature not photoperiod" # Change photoperiod to NA
 
 d$photoperiodNote[which(d$datasetID == "han10" & d$species == "ingrata" & d$photoperiod == "12")] <- "assumed day is warmer temperature"
 
@@ -262,12 +283,12 @@ d$tempNight[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "NA"
 # "Minimal day- and night-time temperatures were respectively 208 and 188C, following a cycle of 14 h of light and 10 h of darkness."
 # Was this even scraped?
 
-d$photoperiodNote[which(d$datasetID == "ochuodho08" & d$species == "capense")] <- "just alternating temperature no photoperiod"
+d$photoperiodNote[which(d$datasetID == "ochuodho08" & d$species == "capense")] <- "just alternating temperature not photoperiod"
 
 d$photoperiodNote[which(d$datasetID == "povoa09" & d$species == "euaptoria" & d$photoperiod == "0")] <- "constant darkness"
 d$photoperiodNote[which(d$datasetID == "povoa09" & d$species == "euaptoria" & d$photoperiod == "12")] <- "assumed day is warmer temperature"
 
-d$photoperiodNote[which(d$datasetID == "roh08" & d$genus == "Corylopsis")] <- "just alternating temperature no photoperiod"
+d$photoperiodNote[which(d$datasetID == "roh08" & d$genus == "Corylopsis")] <- "just alternating temperature not photoperiod"
 
 d$photoperiodNote[which(d$datasetID == "tylkowski07" & d$species == "catharticus")] <- "assumed day is warmer temperature"
 d$photoperiodNote[which(d$datasetID == "tylkowski09" & d$species == "communis")] <- "assumed day is warmer temperature"
@@ -280,7 +301,7 @@ d$photoperiodNote[which(d$datasetID == "zhang21" & d$species == "koraiensis" & d
 
 d$photoperiodNote[which(d$datasetID == "Chien10" & d$species == "glaucescens")] <- "assumed day is warmer temperature"
 
-d$photoperiodNote[which(d$datasetID == "brenchley98" & d$species == "capricorni")] <- "two stage temperature regime no photoperiod"
+d$photoperiodNote[which(d$datasetID == "brenchley98" & d$species == "capricorni")] <- "two stage temperature regime not photoperiod"
 
 d$germTemp[which(d$datasetID == "markovic20" & d$genus == "Liriodendron")] <- "21.5" 
 d$tempClass[which(d$datasetID == "markovic20" & d$genus == "Liriodendron")] <- "constant"
@@ -307,7 +328,7 @@ d$tempClass[which(d$datasetID == "yaqoob17" & d$genus == "Ferula")] <- "constant
 d$tempDay[which(d$datasetID == "yaqoob17" & d$genus == "Ferula")] <- "ambient"
 d$tempNight[which(d$datasetID == "yaqoob17" & d$genus == "Ferula")] <- "NA"
 
-d$photoperiodNote[which(d$datasetID == "geszprych02" & d$genus == "Rhaponticum")] <- "just alternating temperature no photoperiod"
+d$photoperiodNote[which(d$datasetID == "geszprych02" & d$genus == "Rhaponticum")] <- "just alternating temperature not photoperiod"
 
 d$photoperiodNote[which(d$datasetID == "winstead71" & d$genus == "Liquidambar")] <- "photoperiod 15 but alternating temperature at 12 hr interval"
 
