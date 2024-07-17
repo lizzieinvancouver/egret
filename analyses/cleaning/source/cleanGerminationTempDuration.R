@@ -82,7 +82,7 @@ d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Working on figuring the data for the papers that Ken listed as problematic
 # Acosta13 - "germination temp missing from Figure 3 data"
-d$germTemp[which(d$datasetID = "Acosta12" & figure == "Fig 3")] <- "25/15"
+d$germTemp[which(d$datasetID == "Acosta12" & d$figure == "Fig 3")] <- "25/15"
 
 # Mamut20 - "germ durations seem to be weird, like a number 1 was dragged through excel until 14 and then repeated again and again, even for the first three values for table 2 which should be 24, 56, and 84 days"
     # From looking over Mamut20, germDuration should be 30 days for everything except the experiment where they routinely took out seeds after months-long stratification was over
