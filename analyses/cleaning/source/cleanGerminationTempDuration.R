@@ -21,6 +21,7 @@ d$germTempGen <- d$germ.temp # This is currently doing nothing
 
 # Now make new column with heavy duty cleaning
 d$germTemp  <- d$germ.temp
+d$germDuration <- d$germ.duration
 
 d$germTemp[which(d$germTemp == "45219")] <- "20/10" # 45219 corresponds to tang10b which had 20/10 germination temperature regime
 d$germTemp[which(d$germTemp == "unknown")] <- "NA"
@@ -120,6 +121,23 @@ yang18.1 <- d %>%
   filter(datasetID == "yang18" & genus == "Maackia") %>%
   filter(figure == "Figure 4" | figure == "Figure 5")
 # honestly the data looks like it was entered fine? some are 4 degrees and some are 30/20
+# Ken says its the durations that need to line up correctly;
+yang18.1 <- yang18.1 %>%
+  select(datasetID, genus, species,figure,chill.temp,chill.duration,germ.temp,germ.duration,germTemp,germDuration)
+# "if chill.duration is a certain length, and germination occurred during this stratification period BEFORE the seeds were put in the incubation temperature, then germ.temp should = chill.temp because it germinated at chilling temperature, not incubation. Then anything > than chill.duration should have germ.temp = 30/20."
+
+for (i in 1:nrow(d)) {
+  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$figure[i] == "Figure 4 | Figure 5" && d$genus[i] == "Maackia") {
+    if (d$germ.duration[i] >= d$chill.duration[i]) {
+      d$germTemp[i] <- "30/20"
+      d$germDuration[i] <- d$germ.duration[i] - d$chill.duration[i]
+    }
+    else if (d$germ.duration[i] < d$chill.duration[i]) {
+      d$germTemp <- "4"
+    }
+  }
+}
+# This stupid ass code won't work it doesn't even do anything
 
 # yeom21 - "for Figure 4, germination measurement details may be lacking; if lacking, germ temp and duration should be NA, if germination measurement is done at very end of stratification, germ temp and duration should be chill temp and duration"
 yeom21 <- d %>%
@@ -198,7 +216,7 @@ d$germTemp[which(d$germTemp == "20°C (6h dark) ")] <- "20/25"
 d$germTemp[which(d$germTemp == "15 - 25")] <- "15/25"
 d$germTemp[which(d$germTemp == "24/30 (varying)")] <- "24/30"
 
-d$germDuration <- d$germ.duration
+# d$germDuration <- d$germ.duration
 d$germDuration[which(d$germDuration == "14(7)")] <- "14"
 d$germDuration[which(d$germDuration == "21(7)")] <- "21"
 d$germDuration[which(d$germDuration == "28(7)")] <- "28"
