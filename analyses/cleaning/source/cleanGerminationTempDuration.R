@@ -544,18 +544,6 @@ d$photoperiodCopy[which(d$photoperiod == "0/24 ")] <- "0/24"
 d$photoperiodCopy[which(d$photoperiod == "white 24h")] <- "24/0"
 d$photoperiodCopy[which(d$photoperiod == "not.specified")] <- NA
 
-unique(d$photoperiodCopy)
-unique(d$photoperiod)
-
-# d$photoperiodCopy[which(d$photoperiod == "0.69")] <- "???"
-# d$photoperiodCopy[which(d$photoperiod == "0.17")] <- "???"
-# d$photoperiodCopy[which(d$photoperiod == "13/9h")] <- "???"
-# d$photoperiodCopy[which(d$photoperiod == "0.25")] <- "???"
-# d$photoperiodCopy[which(d$photoperiod == "1")] <- "???"
-# d$photoperiodCopy[which(d$photoperiod == "8/16; 0/24")] <- "???"
-
-
-
 # Figuring out the papers that these weird photoperiod values came from
 # d$datasetID[which(d$photoperiod == "0/16")] #gianni19 and goggans74
 #   # it's just 16/8 for both
@@ -569,27 +557,32 @@ unique(d$photoperiod)
 # d$datasetID[which(d$photoperiod == "16/10")] #rahnama-ghahfarokhi07
 #   # It's just 16/8
 
-
-
-
-# ASK LIZZIE
+# AS PER LIZZIE MEETING 23 JULY 2024
 d$datasetID[which(d$photoperiod == "0.69")] #bungard97
   # 2 hours every 3 days, this would be 2 / 72
+d$photoperiodCopy[which(d$photoperiod == "0.69")] <- 
+
 d$datasetID[which(d$photoperiod == "0.17")] #grose57
   # These weren't actually light treatments, it was just when the researchers wanted to check for germination
         # Not rlly photoperiod
+d$photoperiodCopy[which(d$photoperiod == "0.17")] <- NA
+
 d$datasetID[which(d$photoperiod == "13/9h")] #Middleton96
   # Uhhh...the paper literally says 13/9 ijbol
         # Assume 13 is correct, but then note it down somewhere
+d$photoperiodCopy[which(d$photoperiod == "13/9h")] <- "13/11"
+d$photoperiodNote[which(d$photoperiodCopy == "13/11" & d$datasetID == "Middleton96")] <- "The paper explicitly said 13/9h which is questionable"
+
 d$datasetID[which(d$photoperiod == "0.25")] #batlla03
 d$datasetID[which(d$photoperiod == "1")] #batlla03
   # The treatment itself was a red light pulse exposure for 15 mins, does that count as photoperiod? They only turned the light on to check for germination
         # This would be 15 minutes out of 24 hours
+        # But on further review it's not a period of red light
+
 d$datasetID[which(d$photoperiod == "8/16; 0/24")] #mattana09
   # data points are an average of 6 replicates (3 in light and 3 in dark)
         # This might have to become NA sadly, we might also just treat it as 4/20 and take the mean of day and night
-
-
+d$photoperiodCopy[which(d$photoperiod == "8/16; 0/24")] <- "4/20"
 
 
 # Making a photoperiod night column for easier math
