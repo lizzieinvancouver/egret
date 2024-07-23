@@ -612,32 +612,35 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "walck12")] <-
 kbeforewarning<- subset(d, datasetID == "kolodziejek19")
 kafterwarning <- subset(d, datasetID == "kolodziejek19")
 
-before <- unique(kbeforewarning)
-before <- before[, c("datasetID", "provenance.lat", "provenance.long")]
-before <- unique(before)
-before
-after <- unique(kafterwarning)
-after <- after[, c("datasetID", "provenance.lat", "provenance.long")]
-after<-unique(after)
-after
-
-d$provenance.lat[which(d$datasetIDstudy == "kolodziejek19") & d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)"] <- "50.57"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetIDstudy == "kolodziejek19") & d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)"] <- "50.57"
-
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetIDstudy == "kolodziejek19" &
-                          d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)")] <- "19.48"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetIDstudy == "kolodziejek19") &
-                   d$source.population == "Ornak (Western Tatra Mts)"] <- "49.22" 
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetIDstudy == "kolodziejek19" &
-                          d$source.population == "Ornak (Western Tatra Mts)")] <- "19.83"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetIDstudy == "kolodziejek19") &
-                   d$source.population == "Kłobuck-Smugi (Wielun´ Upland)"] <- "50.91" 
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetIDstudy == "kolodziejek19" &
-                          d$source.population == "Kłobuck-Smugi (Wielun´ Upland)")] <- "18.97"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetIDstudy == "kolodziejek19") &
-                   d$source.population == "Podde˛bice (Łask Elevation)"] <- "51.89" 
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetIDstudy == "kolodziejek19" &
-                          d$source.population == "Podde˛bice (Łask Elevation)")] <- "18.96"
+# adding exp id
+# exp0
+d$provenance.lat[which(d$datasetID == "kolodziejek19" & d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)")] <- "50.57"
+# exp1
+d$provenance.lat[which(d$datasetIDstudy == "kolodziejek19") & d$study == "exp1" & d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)"] <- "50.57"
+# exp0
+d$provenance.long[which(is.na(d$provenance.long) & d$study == "exp0" & d$datasetIDstudy == "kolodziejek19" & d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)")] <- "19.48"
+# exp1
+d$provenance.long[which(is.na(d$provenance.long) & d$study == "exp1" & d$datasetIDstudy == "kolodziejek19" & d$source.population == "Rze˛dkowice (Cze˛stochowa Upland)")] <- "19.48"
+# exp0
+d$provenance.lat[which(is.na(d$provenance.lat) &  d$study == "exp0" & d$datasetIDstudy == "kolodziejek19") & d$source.population == "Ornak (Western Tatra Mts)"] <- "49.22" 
+# exp1
+d$provenance.lat[which(is.na(d$provenance.lat) &  d$study == "exp1" & d$datasetIDstudy == "kolodziejek19") & d$source.population == "Ornak (Western Tatra Mts)"] <- "49.22" 
+# exp0
+d$provenance.long[which(is.na(d$provenance.long) &  d$study == "exp0" & d$datasetIDstudy == "kolodziejek19" & d$source.population == "Ornak (Western Tatra Mts)")] <- "19.83"
+# exp1
+d$provenance.long[which(is.na(d$provenance.long) &  d$study == "exp1" & d$datasetIDstudy == "kolodziejek19" & d$source.population == "Ornak (Western Tatra Mts)")] <- "19.83"
+# exp0
+d$provenance.lat[which(is.na(d$provenance.lat) &  d$study == "exp0" & d$datasetIDstudy == "kolodziejek19") & d$source.population == "Kłobuck-Smugi (Wielun´ Upland)"] <- "50.91" 
+# exp1
+d$provenance.lat[which(is.na(d$provenance.lat) &  d$study == "exp1" & d$datasetIDstudy == "kolodziejek19") & d$source.population == "Kłobuck-Smugi (Wielun´ Upland)"] <- "50.91" 
+# exp0
+d$provenance.long[which(is.na(d$provenance.long) &  d$study == "exp0" & d$datasetIDstudy == "kolodziejek19" & d$source.population == "Kłobuck-Smugi (Wielun´ Upland)")] <- "18.97"
+# exp1
+d$provenance.long[which(is.na(d$provenance.long) &  d$study == "exp1" & d$datasetIDstudy == "kolodziejek19" & d$source.population == "Kłobuck-Smugi (Wielun´ Upland)")] <- "18.97"
+# exp0
+d$provenance.lat[which(is.na(d$provenance.lat) &  d$study == "exp0" & d$datasetIDstudy == "kolodziejek19") & d$source.population == "Podde˛bice (Łask Elevation)"] <- "51.89" 
+# exp1
+d$provenance.long[which(is.na(d$provenance.long) &  d$study == "exp1" & d$datasetIDstudy == "kolodziejek19" & d$source.population == "Podde˛bice (Łask Elevation)")] <- "18.96"
 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "kulkarni06")] <- "29.61" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kulkarni06")] <- "30.35"

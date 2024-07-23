@@ -16,9 +16,9 @@ if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
 }
 
 # read file
-d <- read.csv2("output/egretclean.csv", sep=",")
+d <- read.csv("output/egretclean.csv", sep=",", stringsAsFactors = FALSE)
 
-#Create warm strat column
+# #Create warm strat column
 d$warmstrat <- NA
 # vector for all treatments that have warm stratification
 warmstrat.names <- unique(d$treatment[grep("warm", d$treatment)])
@@ -28,7 +28,7 @@ warmstrat.names[!warmstrat.names %in% c("cold strat + soak in warm water")]
 d$warmstrat[which(d$treatment %in% warmstrat.names)] <- 1
 
 
-d$provLatLon<-paste(d$provenance.lat,d$provenance.long ,sep=" ")
+d$provLatLon <- paste(d$provenance.lat,d$provenance.long ,sep=" ")
 # create a vector of columns to check
 col2check <- c("germTemp", "chillTemp","chillDuration", "warmstrat", "scarifType", "chemicalCor", "storageType","provLatLon")
 ##add provinence
@@ -113,6 +113,7 @@ studydesign$datasetIDstudy <- unique.studies
 
 # loop to count unique treatments in each column
 # currently treats NAs as a treatment (NAs are not deleted out)
+
 for (i in c(1:length(unique.studies))) { # i = 1
   subby <- d[which(d$datasetIDstudy == unique.studies[i]),]
   for(j in c(1:length(col2check))) { # j = 2
