@@ -109,12 +109,16 @@ for (i in 1:nrow(d)) {
 }
 d$germTemp[which(d$germTemp == "3-15")] <- "15/3"
 d$germTemp[which(d$germTemp == "3-20")] <- "20/3"
-# These have 16/8 photoperiod
-d$photoperiodCopy[which(d$datasetID == "tylkowski91" & d$figure == "Table 2")] <- "16/8"
 
 # yang08 - "germ temp is missing"
 # According to the paper, it's 30/20 day/night
 d$germTemp[which(d$datasetID == "yang08" & d$genus == "Litsea")] <- "30/20"
+
+
+
+
+
+
 
 # yang18_1 - "chill and germination data for Figures 4 and 5 is complicated because some germination data were taken during stratification so the stratification conditions should actually be the germination data; I think cleaning these columns together would be easier than separately"
 yang18.1 <- d %>%
@@ -126,8 +130,28 @@ yang18.1 <- yang18.1 %>%
   select(datasetID, genus, species,figure,chill.temp,chill.duration,germ.temp,germ.duration,germTemp,germDuration)
 # "if chill.duration is a certain length, and germination occurred during this stratification period BEFORE the seeds were put in the incubation temperature, then germ.temp should = chill.temp because it germinated at chilling temperature, not incubation. Then anything > than chill.duration should have germ.temp = 30/20."
 
+# Making an empty column to give numeric values for just this subset of data
+d$yang18germTemp <- NA
+d$yang18germ.temp <- NA
+d$yang18chill.duration <- NA
+d$yang18germ.duration <- NA
+
 for (i in 1:nrow(d)) {
-  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$figure[i] == "Figure 4 | Figure 5" && d$genus[i] == "Maackia") {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4 | Figure 5") {
+    d$yang18germTemp[i] <- d$germTemp[i]
+    d$yang18chill.duration[i] <- d$chill.duration[i]
+    d$yang18germ.duration[i] <- d$germ.duration[i]
+    d$yang18germ.temp[i] <- d$germ.temp[i]
+  }
+}
+
+d$yang18germTemp <- as.numeric(d$yang18germTemp)
+d$yang18germ.temp <- as.numeric(d$yang18germ.temp)
+d$yang18chill.duration <- as.numeric(d$yang18chill.duration)
+d$yang18germ.duration <- as.numeric(d$yang18germ.duration)
+
+for (i in 1:nrow(d)) {
+  if (!is.na(d$yang18germ.temp[i])) {
     if (d$germ.duration[i] >= d$chill.duration[i]) {
       d$germTemp[i] <- "30/20"
       d$germDuration[i] <- d$germ.duration[i] - d$chill.duration[i]
@@ -138,6 +162,12 @@ for (i in 1:nrow(d)) {
   }
 }
 # This stupid ass code won't work it doesn't even do anything
+# Is it because the columns aren't numeric??
+
+
+
+
+
 
 # yeom21 - "for Figure 4, germination measurement details may be lacking; if lacking, germ temp and duration should be NA, if germination measurement is done at very end of stratification, germ temp and duration should be chill temp and duration"
 yeom21 <- d %>%
@@ -146,9 +176,17 @@ yeom21 <- d %>%
 d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "10.866")] <- "25"
 d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "1.904")] <- "25/5"
 d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "0")] <- "5"
-d$photoperiodNote[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "1.904")] <- "two stage temperature regime not photoperiod"
 
 # zhou08 - "germ temp for figure 1 is missing"
+
+# Chen15 the germ.temp was put into photoperiod
+
+for (i in 1:nrow(d)) {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "Chen15" && d$treatment[i] == "incubation temperature"){
+    d$germ.temp[i] <- d$photoperiod[i]
+    d$photoperiod[i] <- 12
+  }
+}
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -321,6 +359,8 @@ d$photoperiodNote[which(d$datasetID == "Chien10" & d$species == "glaucescens")] 
 
 d$photoperiodNote[which(d$datasetID == "brenchley98" & d$species == "capricorni")] <- "two stage temperature regime not photoperiod"
 
+d$photoperiodNote[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "1.904")] <- "two stage temperature regime not photoperiod"
+
 d$germTemp[which(d$datasetID == "markovic20" & d$genus == "Liriodendron")] <- "21.5" 
 d$tempClass[which(d$datasetID == "markovic20" & d$genus == "Liriodendron")] <- "constant"
 d$tempDay[which(d$datasetID == "markovic20" & d$genus == "Liriodendron")] <- "21.5"
@@ -398,9 +438,16 @@ d$tempNightCopy <- NULL
 # Checking that germTempGen never changes from germ.temp 
 identical(d$germTempGen, d$germ.temp)
 
+
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+
+
 # FROM ISSUE 18 on EGRET repo
-# Making germTempGen a column for average temperatures, even for those that alternate
+# Making germTempGen a column for average temperatures, even for those that alternate; we need to use photoperiod as our thermoperiod
 unique(d$germTempGen)
 
 # First we want to make everything numeric and divided by a slash
@@ -451,25 +498,65 @@ d$photoperiodCopy[which(d$photoperiod == "cool-white alternating 12/12")] <- "12
 d$photoperiodCopy[which(d$photoperiod == "white alternating 16/8")] <- "16/8"
 d$photoperiodCopy[which(d$photoperiod == "cool-white 24h")] <- "24/0"
 d$photoperiodCopy[which(d$photoperiod == "12-18")] <- "12/18"
+d$photoperiodCopy[which(d$datasetID == "tylkowski91" & d$figure == "Table 2")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "0/16")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "84")] <- "14/10"
+d$photoperiodCopy[which(d$photoperiod == "16/9")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "16/10")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "25" & d$datasetID == "Chen15")] <- "12/12"
+d$photoperiodCopy[which(d$datasetID == "yang08" & d$treatment == "warm stratification")] <- "8/16" #yang08 the photoperiod was dragged down so it's a series of values from 8 onward for warm strat. seeds
+d$photoperiodCopy[which(d$photoperiod == "25/15")] <- "12/12"
+d$photoperiodCopy[which(d$photoperiod == "0/24 ")] <- "0/24"
+d$photoperiodCopy[which(d$photoperiod == "white 24h")] <- "24/0"
+d$photoperiodCopy[which(d$photoperiod == "not.specified")] <- NA
 
-# d$photoperiodCopy[which(d$photoperiod == "0/16")] <- "???"
-# d$photoperiodCopy[which(d$photoperiod == "84")] <- "???"
+unique(d$photoperiodCopy)
+unique(d$photoperiod)
+
 # d$photoperiodCopy[which(d$photoperiod == "0.69")] <- "???"
 # d$photoperiodCopy[which(d$photoperiod == "0.17")] <- "???"
 # d$photoperiodCopy[which(d$photoperiod == "13/9h")] <- "???"
-# d$photoperiodCopy[which(d$photoperiod == "16/9")] <- "???"
-# d$photoperiodCopy[which(d$photoperiod == "16/10")] <- "???"
 # d$photoperiodCopy[which(d$photoperiod == "0.25")] <- "???"
 # d$photoperiodCopy[which(d$photoperiod == "1")] <- "???"
 # d$photoperiodCopy[which(d$photoperiod == "8/16; 0/24")] <- "???"
-# d$photoperiodCopy[which(d$photoperiod == "25")] <- "???"
 
-# What is with the ones going from like 17 to 32???
-d$datasetID[which(d$photoperiod == "19")] #It's yang08
+
+
+# Figuring out the papers that these weird photoperiod values came from
+# d$datasetID[which(d$photoperiod == "0/16")] #gianni19 and goggans74
+#   # it's just 16/8 for both
+# d$datasetID[which(d$photoperiod == "84")] #king12
+#   # Should be 14/10
+# d$datasetID[which(d$photoperiod == "25")] #chen15 and yang08
+# d$datasetID[which(d$photoperiod == "25/15")]
+#   # The actual photoperiod for chen15 is 12 and yang08 is 8
+# d$datasetID[which(d$photoperiod == "16/9")] #rahnama-ghahfarokhi07
+#   # It's just 16/8
+# d$datasetID[which(d$photoperiod == "16/10")] #rahnama-ghahfarokhi07
+#   # It's just 16/8
+
+
+
+
+# ASK LIZZIE
+d$datasetID[which(d$photoperiod == "0.69")] #bungard97
+  # 2 hours every 3 days
+d$datasetID[which(d$photoperiod == "0.17")] #grose57
+  # These weren't actually light treatments, it was just when the researchers wanted to check for germination
+d$datasetID[which(d$photoperiod == "13/9h")] #Middleton96
+  # Uhhh...the paper literally says 13/9 ijbol
+d$datasetID[which(d$photoperiod == "0.25")] #batlla03
+d$datasetID[which(d$photoperiod == "1")] #batlla03
+  # The treatment itself was a red light pulse exposure for 15 mins, does that count as photoperiod? They only turned the light on to check for germination
+d$datasetID[which(d$photoperiod == "8/16; 0/24")] #mattana09
+  # data points are an average of 6 replicates (3 in light and 3 in dark)
+
+
+
 
 # Making a photoperiod night column for easier math
 breakbyslashphoto <- strsplit(as.character(d$photoperiodCopy), "/", fixed=TRUE)
-d$photoperiodCopy <- unlist(lapply(breakbyslashphoto, function(x) x[1]))
+d$photoperiodCopyDay <- unlist(lapply(breakbyslashphoto, function(x) x[1]))
 d$photoperiodCopyNight <- unlist(lapply(breakbyslashphoto, function(x) x[2]))
 
 # Can I do an ifelse()?
@@ -484,11 +571,6 @@ d$germTempGen[which(d$germTempGen == 99991)] <- "ambient"
 d$germTempGen[which(is.nan(d$germTempGen) == TRUE)] <- NA
 d$germTempGen[which(d$germTempGen == "NaN")] <- NA
 
-# Add these three lines before running cleanAll until it gets fixed
-# egret_XW <- read.csv("input/egret_XW.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
-# egret_DB <- read.csv("input/egret_DMB.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
-# egret_FB <- read.csv("input/egret_FB.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
-
 # # How many papers have photoperiod as NA?
 # library(tidyverse)
 # dphotona <- d %>%
@@ -496,6 +578,12 @@ d$germTempGen[which(d$germTempGen == "NaN")] <- NA
 # 
 # photona <- unique(dphotona$datasetID)
 # length(photona)
+
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
 
 # Some overview for the git issue
 # Figuring out how many papers have alternating temperature regimes
@@ -508,4 +596,3 @@ d.alt <- d %>%
   summarize()
 # write.csv(d.alt,"cleaning/checks/AlternatingTempPaperList.csv")
 # There are 116 papers in which alternating temperatures occur
-
