@@ -131,43 +131,77 @@ yang18.1 <- yang18.1 %>%
 # "if chill.duration is a certain length, and germination occurred during this stratification period BEFORE the seeds were put in the incubation temperature, then germ.temp should = chill.temp because it germinated at chilling temperature, not incubation. Then anything > than chill.duration should have germ.temp = 30/20."
 
 # Making an empty column to give numeric values for just this subset of data
-d$yang18germTemp <- NA
-d$yang18germ.temp <- NA
 d$yang18chill.duration <- NA
 d$yang18germ.duration <- NA
+d$yang18germDuration <- NA
 
-for (i in 1:nrow(d)) {
-  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4 | Figure 5") {
-    d$yang18germTemp[i] <- d$germTemp[i]
+# For figure 4
+for (i in c(1:nrow(d))) {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
     d$yang18chill.duration[i] <- d$chill.duration[i]
     d$yang18germ.duration[i] <- d$germ.duration[i]
-    d$yang18germ.temp[i] <- d$germ.temp[i]
+    d$yang18germDuration[i] <- d$germDuration[i]
   }
 }
 
-d$yang18germTemp <- as.numeric(d$yang18germTemp)
-d$yang18germ.temp <- as.numeric(d$yang18germ.temp)
+# For figure 5
+for (i in c(1:nrow(d))) {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
+    d$yang18chill.duration[i] <- d$chill.duration[i]
+    d$yang18germ.duration[i] <- d$germ.duration[i]
+    d$yang18germDuration[i] <- d$germDuration[i]
+  }
+}
+
+# Converting these temp columns to numeric
 d$yang18chill.duration <- as.numeric(d$yang18chill.duration)
 d$yang18germ.duration <- as.numeric(d$yang18germ.duration)
+d$yang18germDuration <- as.numeric(d$yang18germDuration)
 
-for (i in 1:nrow(d)) {
-  if (!is.na(d$yang18germ.temp[i])) {
-    if (d$germ.duration[i] >= d$chill.duration[i]) {
-      d$germTemp[i] <- "30/20"
-      d$germDuration[i] <- d$germ.duration[i] - d$chill.duration[i]
+# For Figure 4
+for (i in c(1:nrow(d))) {
+  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
+    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration) && d$yang18germ.duration[i] < d$yang18chill.duration[i]) {
+      d$germTemp[i] <- "4"
+      d$yang18germDuration[i] <- d$yang18germ.duration[i] - d$yang18chill.duration[i]
     }
-    else if (d$germ.duration[i] < d$chill.duration[i]) {
-      d$germTemp <- "4"
+    else if (!is.na(d$yang18germ.duration[i]) && !is.na(d$chill.duration[i]) && d$yang18germ.duration[i] >= d$yang18chill.duration[i]) {
+      d$germTemp[i] <- "30/20"
     }
   }
 }
-# This stupid ass code won't work it doesn't even do anything
-# Is it because the columns aren't numeric??
 
+# For Figure 5
+for (i in c(1:nrow(d))) {
+  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
+    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration) && d$yang18germ.duration[i] < d$yang18chill.duration[i]) {
+      d$germTemp[i] <- "4"
+      d$yang18germDuration[i] <- d$yang18germ.duration[i] - d$yang18chill.duration[i]
+    }
+    else if (!is.na(d$yang18germ.duration[i]) && !is.na(d$chill.duration[i]) && d$yang18germ.duration[i] >= d$yang18chill.duration[i]) {
+      d$germTemp[i] <- "30/20"
+    }
+  }
+}
 
+# Assigning germDuration the temporary column values, figure 4
+for (i in c(1:nrow(d))) {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
+    d$germDuration[i] <- d$yang18germDuration[i]
+  }
+}
 
+# Assigning germDuration the temporary column values, figure 5
+for (i in c(1:nrow(d))) {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
+    d$germDuration[i] <- d$yang18germDuration[i]
+  }
+}
 
-
+# Removing the temporary columns
+d <- d[, -which(names(d) == "yang18chill.duration")]
+d <- d[, -which(names(d) == "yang18germ.duration")]
+d <- d[, -which(names(d) == "yang18germDuration")]
 
 # yeom21 - "for Figure 4, germination measurement details may be lacking; if lacking, germ temp and duration should be NA, if germination measurement is done at very end of stratification, germ temp and duration should be chill temp and duration"
 yeom21 <- d %>%
@@ -540,16 +574,20 @@ unique(d$photoperiod)
 
 # ASK LIZZIE
 d$datasetID[which(d$photoperiod == "0.69")] #bungard97
-  # 2 hours every 3 days
+  # 2 hours every 3 days, this would be 2 / 72
 d$datasetID[which(d$photoperiod == "0.17")] #grose57
   # These weren't actually light treatments, it was just when the researchers wanted to check for germination
+        # Not rlly photoperiod
 d$datasetID[which(d$photoperiod == "13/9h")] #Middleton96
   # Uhhh...the paper literally says 13/9 ijbol
+        # Assume 13 is correct, but then note it down somewhere
 d$datasetID[which(d$photoperiod == "0.25")] #batlla03
 d$datasetID[which(d$photoperiod == "1")] #batlla03
   # The treatment itself was a red light pulse exposure for 15 mins, does that count as photoperiod? They only turned the light on to check for germination
+        # This would be 15 minutes out of 24 hours
 d$datasetID[which(d$photoperiod == "8/16; 0/24")] #mattana09
   # data points are an average of 6 replicates (3 in light and 3 in dark)
+        # This might have to become NA sadly, we might also just treat it as 4/20 and take the mean of day and night
 
 
 
