@@ -2,8 +2,8 @@
 # started by Christophe on July 10, 2024
 
 # housekeeping
-# rm(list=ls())  
-# options(stringsAsFactors=FALSE)
+rm(list=ls())
+options(stringsAsFactors=FALSE)
 
 
 # if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
