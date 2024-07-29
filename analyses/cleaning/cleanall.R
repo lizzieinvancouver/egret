@@ -58,7 +58,7 @@ source("cleaning/source/cleanPhotoperiod.R") # 69 columns
 # source("cleaning/source/cleanCoordinates.R")
 
 # 12. Clean year of germination (some)
-# source("cleaning/source/cleanYearGermination.R")
+source("cleaning/source/cleanYearGermination.R")
 
 # 13. Small final cleaning and write out data!
 
