@@ -17,23 +17,8 @@ if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
   setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
 }
 
-# read file
-d <- read.csv2("output/egretclean.csv", sep=",")
 
-#Create warm strat column
-d$warmstrat <- NA
-# vector for all treatments that have warm stratification
-warmstrat.names <- unique(d$treatment[grep("warm", d$treatment)])
-# remove entry that shouldn't be there
-warmstrat.names[!warmstrat.names %in% c("cold strat + soak in warm water")]
-# add a 1 in warmstrat column whenever "warm" appepeared in the treatment column
-d$warmstrat[which(d$treatment %in% warmstrat.names)] <- 1
-
-
-#####add chilling units
-source("cleaning/source/addChill.R") ### add chill
-
-##need to come up with a way 
+##need to come up with a way ntonc
 unique(d$treatment)
 
 
