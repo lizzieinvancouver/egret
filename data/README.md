@@ -17,4 +17,5 @@ This folder contains data scraped as part of the EGTRET meta-analysis. Files are
 1. Baskin_Database: data and notes from the Baskin database:
    - Baskin dormancy database
    - Baskin database read me
-2. Notes: notes on specific scraped papers or transfer of scraping tasks between people
+2. Early: early files of the source papers and notes on search terms
+3. Notes: notes on specific scraped papers or transfer of scraping tasks between people
