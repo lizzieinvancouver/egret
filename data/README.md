@@ -11,6 +11,10 @@ This folder contains data scraped as part of the EGTRET meta-analysis. Files are
 2. TaxonomicInfo files: a file each for the NCBI and ITIS databases
 3. Saved abstracts initially reviewed: savedrecs_part1 and savedrecs_part2, as both .xls and .txt
 4. Lists of papers flagged for further review: papersToReview1.csv and papersToReview2.csv
-5. Baskin_Database: data and notes from the Baskin database:
+
+##Folders
+
+1. Baskin_Database: data and notes from the Baskin database:
    - Baskin dormancy database
    - Baskin database read me
+2. Notes: notes on specific scraped papers or transfer of scraping tasks between people
