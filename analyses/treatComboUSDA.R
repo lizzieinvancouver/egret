@@ -303,33 +303,6 @@ egret[egret$latbi=="Fagus_sylvatica","latbi"]
 unique(egret[egret$latbi=="Fagus_sylvatica","datasetIDstudy"]) 2 studies
 
 
-
-
-
 # same for dataset usda
 unique(usda$latbi[grepl("Fagus", usda$latbi)])
 
-
-names(usda)
-usda$seed.type
-summary(usda)
-usda$pretreatmentFeces
-
-###in usda
-unique(usda$pretreatmentFeces)
-unique(usda$other.treatment[grepl("fece", egret$other.treatment)])
-
-###in egret
-#does "fece" appear in these columns in egret?
-unique(egret$chemicalCor)
-unique(egret$other.treatment[grepl("fece", egret$other.treatment)])
-unique(egret$scarifTypeSpe[grepl("fece", egret$scarifTypeSpe)])
-unique(egret$scarifTypeGen[grepl("fece", egret$scarifTypeGen)])
-unique(egret$scarifType[grepl("fece", egret$scarifType)])
-unique(egret$scarif.type[grepl("fece", egret$scarif.type)])
-unique(egret$treatment[grepl("fece", egret$treatment)])
-unique(egret$scarifType[grepl("fece", egret$scarifType)])
-
-#any column containing "fece" in egret?
-unique(usda[, grepl("Fece", colnames(usda))])
-unique(egret[, grepl("Fece", colnames(egret))])
