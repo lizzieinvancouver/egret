@@ -12,10 +12,11 @@
 # d$chemical <- as.factor (d$chemical)
 
 # Select for row numbers with either light or dark in other treatment column
-selected_rows <- grep("light|dark", d$other.treatment, ignore.case = TRUE)
+selected_rows <- grep("light|dark|photoperiod|lux", d$other.treatment, ignore.case = TRUE)
 
 # Select rows
 subset_othertreatment <- d[selected_rows, ]
+
 
 # Select for rows that is not NA and greater than 0 in photoperiod column
 photoperiod_row <- which(!is.na(d$photoperiod) & d$photoperiod != 0)
@@ -24,7 +25,7 @@ photoperiod_row <- which(!is.na(d$photoperiod) & d$photoperiod != 0)
 far.red <- which(d$chemical == "log2(red/far.red)")
 
 # Combine all row numbers
-row_light <- c(selected_rows,photoperiod_row,far.red)
+row_light <- c(selected_rows,photoperiod_row,far.red, morerowsmaybe)
 # Select for unique rows
 light_egret <- d[unique(row_light),]
 
@@ -36,7 +37,7 @@ length(unique(d$datasetIDstudy))
 length(unique(d$latbi))
 
 # Make an extra column recording light/dark data
-light_row1 <- grep("light", d$other.treatment, ignore.case = TRUE)
+light_row1 <- grep("light|photoperiod|lux", d$other.treatment, ignore.case = TRUE)
 light_rows <- c(light_row1,photoperiod_row,far.red)
 light_rows <- unique(light_rows)
 

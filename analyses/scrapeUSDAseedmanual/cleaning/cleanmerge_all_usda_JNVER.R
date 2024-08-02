@@ -15,13 +15,28 @@
 # 10 JULY 2024
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
-rm(list=ls())
+# housekeeping
+rm(list=ls())  
+options(stringsAsFactors=FALSE)
+library(dplyr)
+library(chillR)
+library(stringr)
+library(ggplot2)
 library(tidyverse)
 library(xlsx)
 library(tibble)
 library(taxize)
-getwd()
-d <- read_csv("germination_master_spreadsheet.csv", na = c("", "NA"))
+
+if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
+  setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses/")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+}
+
+
+d <- read_csv("scrapeUSDAseedmanual/cleaning/germination_master_spreadsheet.csv", na = c("", "NA"))
 
 # Removing apostrophe across all cells
 d[] <- lapply(d, gsub, pattern="'", replacement="")
