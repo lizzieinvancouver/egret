@@ -1,7 +1,12 @@
 Data Scraping of the USDA Woody Plant Seed Manual, 2008
 UBC Temporal Ecology Lab
-May 24, 2024
+README started 24 May 2024
 
+Update by Lizzie on 2 August 2024: This folder contains:
+* cleaning/ which is cleaning after the scraping and includes all major cleaning of USDA data
+* input/ a folder of ??? (I am guessing these are the OUTPUT of scraping that are INPUT for cleaning? May be worth a new name here like inputForCleaning)
+* output/ a folder of ??? (I really do not know) 
+* scraping/ 
 
 General Overview:
 Starting in January of 2024, we aimed to scrape the USDA Woody Plant Seed Manual (published 2008): https://www.fs.usda.gov/rm/pubs_series/wo/wo_ah727.pdf. 
