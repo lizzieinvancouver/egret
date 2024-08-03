@@ -5,7 +5,7 @@ README started 24 May 2024
 Update by Lizzie on 2 August 2024: This folder contains:
 * cleaning/ which is cleaning after the scraping and includes all major cleaning of USDA data
 * input/ a folder of ??? (I am guessing these are the OUTPUT of scraping that are INPUT for cleaning? May be worth a new name here like inputForCleaning)
-* output/ a folder of ??? (I really do not know) 
+* output/ a folder of cleaned data after running through cleaning scripts
 * scraping/ 
 
 General Overview:
