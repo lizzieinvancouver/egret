@@ -11,9 +11,6 @@
 ## Original code taken from file called cleaningDL.R ##
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-
-library(tidyverse) #for checking things and pipelining!!
-
 #1. germination temperature
 
 # Values that are transformed i.e. averaged or rounded:
@@ -46,47 +43,25 @@ d$germTemp[which(d$germTemp == "20,15,20, 25")] <- "20/15/20/25"
 d$germTemp[which(d$germTemp == "22.2//20/29.4")] <- "22.2/20/29.4"
 d$germTemp[which(is.na(d$germTemp))] <- "NA"
 
-
-#Check unusual values:
-# open field---does this qualify for this study ie controlled environment?
-# ____________________________________
-# d.open <- d %>% 
-#   filter(grepl("unregulated: 6-27|open air|open field|greenhouse",germ.temp))
-# xd %>% filter(grepl("greenhouse",germTemp))
-# unique(d_open$datasetID)
-# # parmenter96, deb17, parvin15, and olmez08
-# # parvin15 is controlled greenhouse, so it's fine
-# # upon checking parmenter98, it seems there are indeed estimates for temperature; checking parmenter96
-# d.parm <- d %>% 
-#   filter(datasetID == "parmenter96")
-# # it's either 10-30 (ok) or unregulated (6-27)
-# # deb17 is open air, so disqualify
-# d.olmez <- d %>%
-#   filter(datasetID == "olmez08")
-# ____________________________________
-# Some of the plants here are open field, so we'll keep the other ones that are listed as "greenhouse"
-
+# Anything ambient or greenhouse
 d$germTemp[which(d$germTemp == "greenhouse")] <- "ambient"
 d$germTemp[which(d$germTemp == "controlled greenhouse")] <- "ambient"
 d$germTemp[which(d$germTemp == "open air")] <- "ambient"
 d$germTemp[which(d$germTemp == "open field")] <- "ambient"
 d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
 
-# We should disqualify deb17 and some of olmez08 based on their open field status
-# SCRUM: olmez08 stratified their seeds indoors in a controlled environment, so keep as ambient; deb17 also has controlled environment in treatment so keep it as ambient too
-# d %>% filter(datasetID == "Deb17")
-# d %>% filter(datasetID == "olmez08")
-# d %>% filter(germTemp == "unregulated: 6-27")
-
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Working on figuring the data for the papers that Ken listed as problematic
+
 # Acosta13 - "germination temp missing from Figure 3 data"
 d$germTemp[which(d$datasetID == "Acosta12" & d$figure == "Fig 3")] <- "25/15"
 
 # Mamut20 - "germ durations seem to be weird, like a number 1 was dragged through excel until 14 and then repeated again and again, even for the first three values for table 2 which should be 24, 56, and 84 days"
     # From looking over Mamut20, germDuration should be 30 days for everything except the experiment where they routinely took out seeds after months-long stratification was over
+d$germDuration[which(d$datasetID == "Mamut20")]
+# This will be addressed in the germDuration section
 
 # Sacande04 - "incubation temp is put as chill temp, might be better to put as germ temp"
 for (i in 1:nrow(d)) {
@@ -113,12 +88,6 @@ d$germTemp[which(d$germTemp == "3-20")] <- "20/3"
 # yang08 - "germ temp is missing"
 # According to the paper, it's 30/20 day/night
 d$germTemp[which(d$datasetID == "yang08" & d$genus == "Litsea")] <- "30/20"
-
-
-
-
-
-
 
 # yang18_1 - "chill and germination data for Figures 4 and 5 is complicated because some germination data were taken during stratification so the stratification conditions should actually be the germination data; I think cleaning these columns together would be easier than separately"
 yang18.1 <- d %>%
@@ -161,11 +130,11 @@ d$yang18germDuration <- as.numeric(d$yang18germDuration)
 # For Figure 4
 for (i in c(1:nrow(d))) {
   if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
-    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration) && d$yang18germ.duration[i] < d$yang18chill.duration[i]) {
+    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration) && d$yang18germ.duration[i] <= d$yang18chill.duration[i]) {
       d$germTemp[i] <- "4"
       d$yang18germDuration[i] <- d$yang18germ.duration[i] - d$yang18chill.duration[i]
     }
-    else if (!is.na(d$yang18germ.duration[i]) && !is.na(d$chill.duration[i]) && d$yang18germ.duration[i] >= d$yang18chill.duration[i]) {
+    else if (!is.na(d$yang18germ.duration[i]) && !is.na(d$chill.duration[i]) && d$yang18germ.duration[i] > d$yang18chill.duration[i]) {
       d$germTemp[i] <- "30/20"
     }
   }
@@ -174,11 +143,11 @@ for (i in c(1:nrow(d))) {
 # For Figure 5
 for (i in c(1:nrow(d))) {
   if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
-    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration) && d$yang18germ.duration[i] < d$yang18chill.duration[i]) {
+    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration) && d$yang18germ.duration[i] <= d$yang18chill.duration[i]) {
       d$germTemp[i] <- "4"
       d$yang18germDuration[i] <- d$yang18germ.duration[i] - d$yang18chill.duration[i]
     }
-    else if (!is.na(d$yang18germ.duration[i]) && !is.na(d$chill.duration[i]) && d$yang18germ.duration[i] >= d$yang18chill.duration[i]) {
+    else if (!is.na(d$yang18germ.duration[i]) && !is.na(d$chill.duration[i]) && d$yang18germ.duration[i] > d$yang18chill.duration[i]) {
       d$germTemp[i] <- "30/20"
     }
   }
@@ -214,7 +183,6 @@ d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response =
 # zhou08 - "germ temp for figure 1 is missing"
 
 # Chen15 the germ.temp was put into photoperiod
-
 for (i in 1:nrow(d)) {
   if(!is.na(d$datasetID[i]) && d$datasetID[i] == "Chen15" && d$treatment[i] == "incubation temperature"){
     d$germ.temp[i] <- d$photoperiod[i]
@@ -228,36 +196,6 @@ for (i in 1:nrow(d)) {
 
 # Making new columns for temperature regime class (constant or alternating), temperature 1, and temperature 2
 # To make things easier turn the +/- temperature regimes into just their median value in germTemp column
-# unique(d$germTemp)
-# d.pom <- d %>%
-#   filter(grepl("+/-",germTemp)) %>%
-#   select(datasetID,study,germTemp)
-# d.pom <- sub("\\+.*","\\+",d.pom$germTemp)
-# d.pom <- as.data.frame(d.pom)
-
-# sandbox dataframe to mess around with three new columns to get a feel
-# d.calcomanie <- d %>%
-#   mutate(tempClass = ifelse(grepl(",|/|alternating|night|-",germTemp) & !grepl("+/-",germTemp),"alternating","constant"))
-
-# In base R
-# d.calcomania <- d
-# d.calcomania$germTemp <- sub("\\+.*","",d.calcomania$germTemp)
-# d.calcomania$tempClass <- ifelse(grepl(",|/|alternating|night|-",d.calcomania$germTemp) & !grepl("+/-",d.calcomania$germTemp),"alternating","constant")
-# unique(d.calcomania$germTemp)
-# 
-# d.calcomania$temp1 <- d.calcomania$germTemp
-# d.calcomania$temp1 <- sub("\\/.*","",d.calcomania$temp1) #removing forslash
-# d.calcomania$temp1 <- sub("\\-.*","",d.calcomania$temp1) #removing dash
-# d.calcomania$temp1 <- sub("alternating temperature ","", d.calcomania$temp1)
-# d.calcomania$temp1 <- sub("alternating ","", d.calcomania$temp1)
-# d.calcomania$temp1 <- sub("\\s.*","",d.calcomania$temp1) #removing to (order of this matters; if you remove the space first, it messes up the two lines above)
-# 
-# d.calcomania$temp2 <- d.calcomania$germTemp
-# d.calcomania$temp2 <- sub("alternating temperature ","", d.calcomania$temp2)
-# d.calcomania$temp2 <- sub("alternating ","", d.calcomania$temp2)
-# d.calcomania$temp2 <- gsub(".*/","",d.calcomania$temp2) #removing backslash
-# d.calcomania$temp2 <- gsub(".*-","",d.calcomania$temp2) #removing backslash
-
 
 d$germTemp <- sub("\\+.*","",d$germTemp)
 d$tempClass <- ifelse(grepl(",|/|alternating|night|-",d$germTemp) & !grepl("+/-",d$germTemp),"alternating","constant")
@@ -339,6 +277,10 @@ d[, 'germDurComment'] = NA
 d$germDurComment[which(d$datasetID == "Schutz02" & d$germDuration == "50")] <- "Paper says 30-50 as germDuration due to end of germination = 1 week since last observed germinant"
 d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- "Looked into the paper and found nothing except for germination counted every 3 days"
 
+# Fixing the mamut20 issue here that Ken raised in ISSUE 14
+# I'm certain that all values should be 30 days incubation...the 24, 56, 84 are referring to to cold/warm stratification, not germination
+# Table 2 has mixed warm and cold stratification, so we need to transfer the data on stratification out of germTemp and into the chill or other.treatment columns
+d$germDuration[which(d$datasetID == "Mamut20")] <- "30"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -466,41 +408,21 @@ d$tempNight[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")] <-
 d$tempDay[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")] <- d$tempNightCopy[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")]
 
 # Deleting the template columns
-d$tempDayCopy <- NULL
-d$tempNightCopy <- NULL
+d <- d[, -which(names(d) == "tempNightCopy")]
+d <- d[, -which(names(d) == "tempDayCopy")]
 
 # Checking that germTempGen never changes from germ.temp 
 identical(d$germTempGen, d$germ.temp)
 
-
-
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-
-
 
 # FROM ISSUE 18 on EGRET repo
 # Making germTempGen a column for average temperatures, even for those that alternate; we need to use photoperiod as our thermoperiod
-unique(d$germTempGen)
-
 # First we want to make everything numeric and divided by a slash
 # I think I can use germTemp as my foundation, since I already did all the removal of extraneous characters and reclassified all of the outlying data values?
 # Or even better...use tempDay and tempNight
-
-unique(d$tempDay)
-unique(d$tempNight)
-# Just going to convert "ambient" into a numeric placeholder for now so that rowMeans doesn't induce NA
-d$tempDay[which(d$tempDay == "ambient")] <- 99991
-d$tempNight[which(d$tempNight == "ambient")] <- 99991
-d$tempDay[which(d$tempDay == "NA")] <- NA
-d$tempNight[which(d$tempNight == "NA")] <- NA
-
-# Converting tempDay and tempNight to numeric
-d$tempDay <- as.numeric(d$tempDay)
-d$tempNight <- as.numeric(d$tempNight)
-
-d$germTempGen <- rowMeans(d[, c("tempDay","tempNight")], na.rm = TRUE)
 
 # Making germTempGen a weighted average based on photoperiod/thermoperiod
 unique(d$photoperiod)
@@ -508,6 +430,7 @@ d$photoperiodCopy <- d$photoperiod
 # Why are there so many that are more than 24???
 d$photoperiodCopy[which(d$photoperiod == "16")] <- "16/8"
 d$photoperiodCopy[which(d$photoperiod == "8")] <- "8/16"
+d$photoperiodCopy[which(d$photoperiod == "18")] <- "18/6"
 d$photoperiodCopy[which(d$photoperiod == "12")] <- "12/12"
 d$photoperiodCopy[which(d$photoperiod == "0")] <- "0/24"
 d$photoperiodCopy[which(d$photoperiod == "8:16")] <- "8/16"
@@ -515,6 +438,7 @@ d$photoperiodCopy[which(d$photoperiod == "8.00")] <- "8/16"
 d$photoperiodCopy[which(d$photoperiod == "12 hr light")] <- "12/12"
 d$photoperiodCopy[which(d$photoperiod == "11h light/13h dark")] <- "11/13"
 d$photoperiodCopy[which(d$photoperiod == "14")] <- "14/10"
+d$photoperiodCopy[which(d$photoperiod == "14:10")] <- "14/10"
 d$photoperiodCopy[which(d$photoperiod == "alternating 12/12")] <- "12/12"
 d$photoperiodCopy[which(d$photoperiod == "continuous cool light at 28 microE.m^-2.s^-1")] <- "24/0"
 d$photoperiodCopy[which(d$photoperiod == "8h cool-white")] <- "8/16"
@@ -559,8 +483,9 @@ d$photoperiodCopy[which(d$photoperiod == "not.specified")] <- NA
 
 # AS PER LIZZIE MEETING 23 JULY 2024
 d$datasetID[which(d$photoperiod == "0.69")] #bungard97
-  # 2 hours every 3 days, this would be 2 / 72
-d$photoperiodCopy[which(d$photoperiod == "0.69")] <- 
+  # 2 hours every 3 days + 1.5 minutes
+  # This is 2.025 hours every 72 hours, then divide it by 3 so it's out of 24
+d$photoperiodCopy[which(d$photoperiod == "0.69")] <- "0.675/23.325"
 
 d$datasetID[which(d$photoperiod == "0.17")] #grose57
   # These weren't actually light treatments, it was just when the researchers wanted to check for germination
@@ -578,43 +503,88 @@ d$datasetID[which(d$photoperiod == "1")] #batlla03
   # The treatment itself was a red light pulse exposure for 15 mins, does that count as photoperiod? They only turned the light on to check for germination
         # This would be 15 minutes out of 24 hours
         # But on further review it's not a period of red light
+d$photoperiodCopy[which(d$photoperiod == "0.25" & d$datasetID == "batlla03")] <- "NA"
+d$photoperiodCopy[which(d$photoperiod == "1" & d$datasetID == "batlla03")] <- "NA"
 
 d$datasetID[which(d$photoperiod == "8/16; 0/24")] #mattana09
   # data points are an average of 6 replicates (3 in light and 3 in dark)
         # This might have to become NA sadly, we might also just treat it as 4/20 and take the mean of day and night
 d$photoperiodCopy[which(d$photoperiod == "8/16; 0/24")] <- "4/20"
 
+# Just checking anything I missed
+unique(d$photoperiodCopy)
+d$photoperiodCopy[which(d$photoperiodCopy == "greenhouse")] <- "ambient"
+d$photoperiodCopy[which(is.na(d$photoperiodCopy))] <- "NA"
+d$datasetID[which(d$photoperiodCopy == "0 then 24")] #yang20
+  #The paper says the seeds were dark incubated and then transferred to light, which was 12/12 in their methods...so for now I will write 12/12 and change as needed
+d$photoperiodCopy[which(d$datasetID == "yang20" & d$photoperiod == "0 then 24")] <- "12/12"
 
+# Converting any ambient into numeric placeholder so as.numeric doesn't mess it up
+d$photoperiodCopy[which(d$photoperiodCopy == "ambient")] <- "99991"
+
+# Now that the photoperiod business is all cleared up, I can separate it into two columns
 # Making a photoperiod night column for easier math
 breakbyslashphoto <- strsplit(as.character(d$photoperiodCopy), "/", fixed=TRUE)
 d$photoperiodCopyDay <- unlist(lapply(breakbyslashphoto, function(x) x[1]))
 d$photoperiodCopyNight <- unlist(lapply(breakbyslashphoto, function(x) x[2]))
 
-# Can I do an ifelse()?
-# d$germTempGen <- ifelse()
+# Now I need to make germTempGen a weighted average using photoperiod as a stand-in for thermoperiod
+# firstly converting the photoperiodCopy and tempGen day and night columns into numeric
+# Just going to convert "ambient" into a numeric placeholder for now so that rowMeans doesn't induce NA
+d$tempDay[which(d$tempDay == "ambient")] <- 99991
+d$tempNight[which(d$tempNight == "ambient")] <- 99991
+d$tempDay[which(d$tempDay == "NA")] <- NA
+d$tempNight[which(d$tempNight == "NA")] <- NA
 
-# Turning placeholders back into "ambient"
+unique(d$photoperiodCopyDay)
+unique(d$photoperiodCopyNight)
+d$photoperiodCopyDay <- as.numeric(d$photoperiodCopyDay)
+d$photoperiodCopyNight <- as.numeric(d$photoperiodCopyNight)
+
+unique(d$tempDay)
+unique(d$tempNight)
+d$tempDay <- as.numeric(d$tempDay)
+d$tempNight <- as.numeric(d$tempNight)
+
+# Can I do this in a for loop??
+d$germTempGen <- NA #making this an empty column to populate
+
+# The weighted average is the sum of tempDay and tempNight multiplied by their corresponding ratio of day or night hours out of 24
+for(i in 1:nrow(d)){
+  if(!is.na(d$tempDay[i]) && !is.na(d$tempNight[i])){
+    d$germTempGen[i] <- (d$tempDay[i]*d$photoperiodCopyDay[i])/24+(d$tempNight[i]*d$photoperiodCopyNight[i])/24
+  }
+}
+# Now what about the columns in which there's constant temperature and therefore only values in tempDay and not in tempNight?
+# We can do regular mean average in these ones then
+for(i in 1:nrow(d)){
+  if(is.na(d$tempNight[i] && !is.na(d$tempDay[i]))){
+    d$germTempGen[i] <- (d$tempDay[i]+d$tempNight[i])/2
+  }
+}
+
+# These for loops might assume that darkness treatments where photoperiod is 0 will always be cool, but this is not true, because sometimes seeds incubated in darkness were still exposed to alternating temperatures
+for(i in 1:nrow(d)){
+  if(!is.na(d$photoperiodCopyDay[i]) && d$photoperiodCopyDay[i] == 0 && d$tempClass[i] == "alternating"){
+    d$germTempGen[i] <- (d$tempDay[i]+d$tempNight[i])/2
+  }
+}
+
+# Converting things back to ambient and character class
+d$photoperiodCopyDay <- as.character(d$photoperiodCopyDay)
+d$photoperiodCopyNight <- as.character(d$photoperiodCopyNight)
+d$photoperiodCopyDay[which(d$photoperiodCopyDay == 99991)] <- "ambient"
+d$photoperiodCopyNight[which(d$photoperiodCopyNight == 99991)] <- "ambient"
+
+d$germTempGen <- as.character(d$germTempGen)
+d$germTempGen[which(d$tempDay == 99991)] <- "ambient"
+
 d$tempDay[which(d$tempDay == 99991)] <- "ambient"
 d$tempNight[which(d$tempNight == 99991)] <- "ambient"
-d$germTempGen[which(d$germTempGen == 99991)] <- "ambient"
-
-# Removing NaNs
-d$germTempGen[which(is.nan(d$germTempGen) == TRUE)] <- NA
-d$germTempGen[which(d$germTempGen == "NaN")] <- NA
-
-# # How many papers have photoperiod as NA?
-# library(tidyverse)
-# dphotona <- d %>%
-#   filter(is.na(photoperiod) == TRUE)
-# 
-# photona <- unique(dphotona$datasetID)
-# length(photona)
-
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-
 
 # Some overview for the git issue
 # Figuring out how many papers have alternating temperature regimes
@@ -626,4 +596,3 @@ d.alt <- d %>%
   group_by(datasetID)%>%
   summarize()
 # write.csv(d.alt,"cleaning/checks/AlternatingTempPaperList.csv")
-# There are 116 papers in which alternating temperatures occur
