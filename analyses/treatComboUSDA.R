@@ -17,19 +17,8 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 egret <- read.csv("./output/egretclean.csv", sep=",", header=TRUE)
 
 
-#make as factor/as numeric
-egret$species <- as.factor(egret$species)
-egret$woody <- as.factor(egret$woody)
-egret$crop <- as.factor(egret$crop)
-egret$continent <- as.factor(egret$continent)
-egret$storage.type <- as.factor(egret$storage.type)
-egret$storage.time <- as.numeric(egret$storage.time)
-summary(egret$storage.time)
-egret$storage.temp <- as.numeric(egret$storage.temp)
-summary(egret$storage.time)
-egret$woody <- as.factor(egret$woody)
-egret$woody <- as.factor(egret$woody)
-
+unique(egret$woody)
+unique(as.character(egret$woody))
 #
 names(egret)
 
@@ -47,12 +36,15 @@ unique(sppwith_both) #these spp have both storage time and temp -> great 149 spe
 tapply(egret$latbi, egret$storageType, function(x) length(unique(x)))
 tapply(egret$datasetIDstudy, egret$storageType, function(x) length(unique(x)))
 
-aggregate(latbi ~ storageType, data = egret, FUN = function(x) length(unique(x)))
-aggregate(datasetIDstudy ~ storageType, data = egret, FUN = function(x) length(unique(x)))
+tmp_spp <- aggregate(latbi ~ storageType, data = egret, FUN = function(x) length(unique(x)))
+tmp_stud <- aggregate(datasetIDstudy ~ storageType, data = egret, FUN = function(x) length(unique(x)))
 
-aggregate(latbi ~ scarifTypeGen, data = egret, FUN = function(x) length(unique(x)))
-aggregate(datasetIDstudy ~ scarifTypeGen, data = egret, FUN = function(x) length(unique(x)))
+#aggregate(latbi ~ scarifTypeGen, data = egret, FUN = function(x) length(unique(x)))
+#aggregate(datasetIDstudy ~ scarifTypeGen, data = egret, FUN = function(x) length(unique(x)))
 
+
+ggplot(tmp_spp, aes(x = storageType, y = latbi, fill = storageType)) +
+    geom_bar(stat = "identity", position = "dodge")
 
 egret$scarifTypeGen
 
@@ -91,7 +83,7 @@ usda$chill.dur.Avg<-ifelse(!is.na(usda$cold.strat.dur.Avg),usda$cold.strat.dur.A
 usda$chill.duraton<-ifelse(!is.na(usda$cold.stratification.duration),usda$cold.stratification.duration,usda$chill.duraton)
 
 #
-usda$responseVar_clean <- usda$responseVar
+usda$responseVarClean <- usda$responseVar
 #these columns show probably the same type of percentage, so rename them to "perc.standard"
 usda$responseVar_clean[usda$responseVar_clean == "percent.germ"] <- "perc.standard"
 usda$responseVar_clean[usda$responseVar_clean == "percent.germ.total"] <- "perc.standard"
@@ -102,12 +94,9 @@ usda$responseVar_clean[usda$responseVar_clean == "percent.germ.15degC.incubated"
 usda$responseVar_clean[usda$responseVar_clean == "mean.percent.germ.energy"] <- "percent.germ.energy"
 
 #make a new column "spec" to combine genus and species
-usda$spec <- paste(usda$genus, usda$species, sep = "_")
-summary(is.na(usda$spec))
+usda$latbi <- paste(usda$genus, usda$species, sep = "_")
 
-#these are the interesting exploratory variables 
-names(usda)
-
+#these are the interesting exploratory variables
 ##forcing
 ##chilling
 ##scarification
@@ -302,4 +291,18 @@ unique(usda_new[usda_new$spec,"spec"])
 # Is the number of rows in the new dataframe "usda_new" larger by 20 to the number of rows in the old dataframe "usda"?
 nrow(usda_new) == nrow(usda) + 20
 
+
+
+
+### 
+#search for latbi containing "Fagus"
+unique(egret$latbi[grepl("Fagus", egret$latbi)])
+egret[egret$latbi=="Fagus_sylvatica","latbi"]
+
+#how many studies report on Fagus sylvatica
+unique(egret[egret$latbi=="Fagus_sylvatica","datasetIDstudy"]) 2 studies
+
+
+# same for dataset usda
+unique(usda$latbi[grepl("Fagus", usda$latbi)])
 
