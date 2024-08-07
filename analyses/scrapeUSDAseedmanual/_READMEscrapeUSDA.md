@@ -4,9 +4,11 @@ README started 24 May 2024
 
 Update by Lizzie on 2 August 2024: This folder contains:
 * cleaning/ which is cleaning after the scraping and includes all major cleaning of USDA data
-* input/ a folder of ??? (I am guessing these are the OUTPUT of scraping that are INPUT for cleaning? May be worth a new name here like inputForCleaning)
+* input/ the first 5 folders, which are all numbered, contain the scraped data tables directly from the Amazon Textract tool. There are also 2 other folders that contain copies of either all of the seed data or all of the phenology data; these folders contain the inputs for the data preparation script found in cleaning ("phenology_data_preparation_script.R"). Two other folders contain a random assortment of copies of data tables to be used as tests while building the scripts. A copy of the original PDF of the USDA Woody Plant Seed Manual (2008), which is the original source of all of the data, also lives in this folder.
 * output/ a folder of cleaned data after running through cleaning scripts
 * scraping/ 
+
+As of August, all of the germination data has been properly cleaned and the various germination scripts used have been merged together. Work continues on cleaning the phenology & seed data.
 
 General Overview:
 Starting in January of 2024, we aimed to scrape the USDA Woody Plant Seed Manual (published 2008): https://www.fs.usda.gov/rm/pubs_series/wo/wo_ah727.pdf. 
