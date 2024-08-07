@@ -508,7 +508,7 @@ temp <- c("20 and 30", "20 and 30", "20 and 30", "20 and 30", "15 and 25", "15 a
           "15 and 25", "15 and 25", "10 and 20", "10 and 20", "10 and 20", "10 and 20", 20, 20, 20, 20,
           "20 and 30", "20 and 30", "20 and 30", "20 and 30", "15 and 25", "15 and 25",
           "15 and 25", "15 and 25", "10 and 20", "10 and 20", "10 and 20", "10 and 20", 20, 20, 20, 20)
-d$chillTemp[which(d$datasetID == "tylkowski91" & d$study == "exp1" & !d$treatment == "thermal stratification (cold phase)")] <- paste0(temp, " then 3")
+d$chillTemp[which(d$datasetID == "tylkowski91" & d$study == "exp1" & !d$treatment == "thermal stratification (cold phase)")][-48] <- paste0(temp, " then 3")
 temp <- c("20 and 30", "20 and 30", "20 and 30", "20 and 30", "15 and 25", "15 and 25",
           "15 and 25", "15 and 25", "10 and 20", "10 and 20", "10 and 20", "10 and 20")
 d$chillTemp[which(d$datasetID == "tylkowski91" & d$study == "exp1" & d$treatment == "thermal stratification (cold phase)")] <- temp
@@ -518,7 +518,7 @@ temp <- c(126, 126, 168, 168, 126, 126, 168, 168, 126, 126, 168, 168, 126, 126, 
 temp2 <- c(126, 168, 126, 168, 126, 168, 126, 168, 126, 168, 126, 168, 126, 168, 126, 168,
            126, 168, 126, 168, 126, 126, 168, 126, 168, 126, 168, 126, 168, 126, 168,
            126, 168, 126, 168, 126, 168, 126, 168, 126, 168, 126, 168, 126, 168, 126, 168)
-d$chillDuration[which(d$datasetID == "tylkowski91" & d$study == "exp1" & !d$treatment == "thermal stratification (cold phase)")] <- paste0(temp, " then ", temp2)
+d$chillDuration[which(d$datasetID == "tylkowski91" & d$study == "exp1" & !d$treatment == "thermal stratification (cold phase)")][-48] <- paste0(temp, " then ", temp2)
 d$chillDuration[which(d$datasetID == "tylkowski91" & d$study == "exp1" & d$treatment == "thermal stratification (cold phase)")] <- c(126, 126, 168, 168)
 
 #exp2

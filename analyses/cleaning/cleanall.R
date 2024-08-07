@@ -33,32 +33,32 @@ source("cleaning/source/cleandatasetID.R") # 30202 rows
 # 3. Clean species names
 source("cleaning/source/cleanspecies.R")
 
-# 4. Clean chill duration and temperature
+# 4. Clean miscellaneous -- add here!
+
+
+# 5. Clean chill duration and temperature
 source("cleaning/source/cleanChillTempDuration.R") # 50 columns
 
-# 5. Clean germination temperature
+# 6. Clean germination temperature
 source("cleaning/source/cleanGerminationTempDuration.R") # 58 columns
 
-# 6. Clean germination scarification
+# 7. Clean germination scarification
 source("cleaning/source/cleanScarification.R") # 61 columns 
 
-# 7. Clean chemical
+# 8. Clean chemical
 source("cleaning/source/cleanChemical.R") # 62 columns 
 
-# 8. Clean storage type
+# 9. Clean storage type
 source("cleaning/source/cleanStorage.R") # 64 columns
 
-# 9. Clean response variables and response
+# 10. Clean response variables and response
 source("cleaning/source/cleanResponseVar.R") # 68 columns
 
-# 10. Clean photoperiod
+# 11. Clean photoperiod
 source("cleaning/source/cleanPhotoperiod.R") # 69 columns
 
-# 11. Clean coordinates seed provinance
+# 12. Clean coordinates seed provinance
 # source("cleaning/source/cleanCoordinates.R")
-
-# 12. Clean year of germination (some)
-source("cleaning/source/cleanYearGermination.R")
 
 # 13. Small final cleaning and write out data!
 
