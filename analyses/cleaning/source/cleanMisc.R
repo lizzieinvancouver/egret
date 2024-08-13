@@ -9,6 +9,9 @@
 # Lee 21 table2 and Fig 1c redundant data, subset to table only
 d <- d[-(which(d$datasetID == "lee21" & d$figure %in% c("Figure 1c", "Figure 1b", "Figure 2a", "Figure 3b"))),]
 
+#na11: the description of the treatments vary between the methods and the results, so we are removing this study
+
+d <- d[-(which(d$datasetID == "na11")),]
 
 if(FALSE){
 ##	

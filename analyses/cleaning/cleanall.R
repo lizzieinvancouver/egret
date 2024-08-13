@@ -60,7 +60,13 @@ source("cleaning/source/cleanPhotoperiod.R") # 69 columns
 # 12. Clean coordinates seed provinance
 # source("cleaning/source/cleanCoordinates.R")
 
-# 13. Small final cleaning and write out data!
+# 13. Clean misc. removing redundant data between tables and fig, studies we can't trust data quality after reviewing pdf's again.
+source("cleaning/source/cleanMisc.R") 
+
+
+# source("cleaning/source/cleanCoordinates.R")
+
+# 14. Small final cleaning and write out data!
 
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
