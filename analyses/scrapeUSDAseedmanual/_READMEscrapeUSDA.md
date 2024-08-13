@@ -1,14 +1,15 @@
-Data Scraping of the USDA Woody Plant Seed Manual, 2008
-UBC Temporal Ecology Lab
+Data Scraping of the USDA Woody Plant Seed Manual, 2008 (scraping tables from PDF of manual)
+UBC Temporal Ecology Lab ...
+... with much work by Sandy Zhang and Selena Shew (who worked together on getting Amazon Textract to work), and Justin Ngo and Britany Wu (who helped with cleaning the resulting mess)
 README started 24 May 2024
 
-Update by Lizzie on 2 August 2024: This folder contains:
+Update by Lizzie on 2 August 2024 (with much text added by Selena also in August 2024): This folder contains:
 * cleaning/ which is cleaning after the scraping and includes all major cleaning of USDA data
 * input/ the first 5 folders, which are all numbered, contain the scraped data tables directly from the Amazon Textract tool. There are also 2 other folders that contain copies of either all of the seed data or all of the phenology data; these folders contain the inputs for the data preparation script found in cleaning ("phenology_data_preparation_script.R"). Two other folders contain a random assortment of copies of data tables to be used as tests while building the scripts. A copy of the original PDF of the USDA Woody Plant Seed Manual (2008), which is the original source of all of the data, also lives in this folder.
 * output/ a folder of cleaned data after running through cleaning scripts
-* scraping/ 
+* scraping/ one txt file explaining the basic plan, by Sandy Zhang (back when we were evaluating options in Feb 2024)
 
-As of August, all of the germination data has been properly cleaned and the various germination scripts used have been merged together. Work continues on cleaning the phenology & seed data.
+As of August 2024, all of the germination data has been properly cleaned and the various germination scripts used have been merged together (see egret issue #15). Work continues on cleaning the phenology & seed data.
 
 General Overview:
 Starting in January of 2024, we aimed to scrape the USDA Woody Plant Seed Manual (published 2008): https://www.fs.usda.gov/rm/pubs_series/wo/wo_ah727.pdf. 
@@ -46,7 +47,7 @@ a page for phenology data, a page for germination data, and a page for seedcrop 
 4) scraping: the scripts/documentation of how the data was scraped.
 
 
-UPDATES June 13, 2024
+UPDATES 13 June 2024
 _______________________
 
 - 2 scripts have been completed: 'rename_relevant_data_tables_script.R' goes through every single CSV file in all of the input folders and checks if they are a phenology, germination, or seed data table (and renames them if they are). The second script, 'count_data_table_types_script.R' was run after to count the number of data tables per each type (phenology, germination, or seed).
