@@ -72,8 +72,8 @@ for (i in 1:nrow(d)) {
 }
 
 # tylkowski91 - "cold stratification is mistakenly coded as germination temp for some data from table 2"
-tylkowski91 <- d %>%
-  filter(datasetID == "tylkowski91" & figure == "Table 2")
+# tylkowski91 <- d %>%
+#   filter(datasetID == "tylkowski91" & figure == "Table 2")
 # I need to swap the columns because chill.temp is meant to be germTemp and I can use germ.temp as my spare
 for (i in 1:nrow(d)) {
   if (!is.na(d$datasetID[i]) && d$datasetID[i] == "tylkowski91" & d$figure[i] == "Table 2") {
@@ -90,13 +90,13 @@ d$germTemp[which(d$germTemp == "3-20")] <- "20/3"
 d$germTemp[which(d$datasetID == "yang08" & d$genus == "Litsea")] <- "30/20"
 
 # yang18_1 - "chill and germination data for Figures 4 and 5 is complicated because some germination data were taken during stratification so the stratification conditions should actually be the germination data; I think cleaning these columns together would be easier than separately"
-yang18.1 <- d %>%
-  filter(datasetID == "yang18" & genus == "Maackia") %>%
-  filter(figure == "Figure 4" | figure == "Figure 5")
+# yang18.1 <- d %>%
+#   filter(datasetID == "yang18" & genus == "Maackia") %>%
+#   filter(figure == "Figure 4" | figure == "Figure 5")
 # honestly the data looks like it was entered fine? some are 4 degrees and some are 30/20
 # Ken says its the durations that need to line up correctly;
-yang18.1 <- yang18.1 %>%
-  select(datasetID, genus, species,figure,chill.temp,chill.duration,germ.temp,germ.duration,germTemp,germDuration)
+# yang18.1 <- yang18.1 %>%
+#   select(datasetID, genus, species,figure,chill.temp,chill.duration,germ.temp,germ.duration,germTemp,germDuration)
 # "if chill.duration is a certain length, and germination occurred during this stratification period BEFORE the seeds were put in the incubation temperature, then germ.temp should = chill.temp because it germinated at chilling temperature, not incubation. Then anything > than chill.duration should have germ.temp = 30/20."
 
 # Making an empty column to give numeric values for just this subset of data
@@ -173,8 +173,8 @@ d <- d[, -which(names(d) == "yang18germ.duration")]
 d <- d[, -which(names(d) == "yang18germDuration")]
 
 # yeom21 - "for Figure 4, germination measurement details may be lacking; if lacking, germ temp and duration should be NA, if germination measurement is done at very end of stratification, germ temp and duration should be chill temp and duration"
-yeom21 <- d %>%
-  filter(datasetID == "yeom21" & figure == "Figure 4")
+# yeom21 <- d %>%
+#   filter(datasetID == "yeom21" & figure == "Figure 4")
 # The highest percent germ occurred for constant 25 degC, lowest for constant 5 degC, and intermediate for  5 -> 25 degC treatment
 d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "10.866")] <- "25"
 d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "1.904")] <- "25/5"
@@ -197,7 +197,7 @@ for (i in 1:nrow(d)) {
 # Making new columns for temperature regime class (constant or alternating), temperature 1, and temperature 2
 # To make things easier turn the +/- temperature regimes into just their median value in germTemp column
 
-d$germTemp <- sub("\\+.*","",d$germTemp)
+d$germTemp <- sub("\\+.*",NA,d$germTemp)
 d$tempClass <- ifelse(grepl(",|/|alternating|night|-",d$germTemp) & !grepl("+/-",d$germTemp),"alternating","constant")
 
 d$germTemp[which(d$germTemp == "10-20")] <- "10/20"
@@ -231,8 +231,8 @@ d$germDuration[which(d$germDuration == "14(7)")] <- "14"
 d$germDuration[which(d$germDuration == "21(7)")] <- "21"
 d$germDuration[which(d$germDuration == "28(7)")] <- "28"
 
-d$germTemp <- sub("alternating temperature ","", d$germTemp)
-d$germTemp <- sub("alternating ","", d$germTemp)
+d$germTemp <- sub("alternating temperature ",NA, d$germTemp)
+d$germTemp <- sub("alternating ",NA, d$germTemp)
 
 
 d$tempClass[which(d$germTemp == "25/20/15")] <- "other"
@@ -250,8 +250,8 @@ d$tempNight <- unlist(lapply(breakbyslash, function(x) x[2]))
 # There's a weird one where the temp is 27-29/6-18
 
 #those with triple or quadruple temp regimes are not going to have their temp1/temp2 columns populated
-d$tempDay[which(d$tempClass == "other")] <- "" 
-d$tempNight[which(d$tempClass == "other")] <- ""
+d$tempDay[which(d$tempClass == "other")] <- NA 
+d$tempNight[which(d$tempClass == "other")] <- NA
 
 # d %>% filter(germTemp == "27-29/6-18") #Dehgan84
 # This paper says it's 27-29 in the day and 16-18 at night; which value should we take for each part of photoperiod?
@@ -582,6 +582,13 @@ d$germTempGen[which(d$tempDay == 99991)] <- "ambient"
 d$tempDay[which(d$tempDay == 99991)] <- "ambient"
 d$tempNight[which(d$tempNight == 99991)] <- "ambient"
 
+# And if germTempGen is NA, then we can just put in germTemp values
+for(i in 1:nrow(d)){
+  if(is.na(d$germTempGen[i])){
+    d$germTempGen[i] <- d$germTemp[i]
+  }
+}
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -589,10 +596,8 @@ d$tempNight[which(d$tempNight == 99991)] <- "ambient"
 # Some overview for the git issue
 # Figuring out how many papers have alternating temperature regimes
 # unique(d$germ.temp)
-d.alt <- d %>%
-  filter(grepl(",|/|alternating|night|-",germTemp)) %>%
-  filter(!grepl("+/-",germTemp)) %>%
-  select(datasetID,study,genus,species,germTemp)%>%
-  group_by(datasetID)%>%
-  summarize()
-# write.csv(d.alt,"cleaning/checks/AlternatingTempPaperList.csv")
+d.filtered <- d[grepl(",|/|alternating|night|-", d$germTemp) & !grepl("\\+/-", d$germTemp), ]
+d.filtered <- d.filtered[, c("datasetID", "study", "genus", "species", "germTemp")]
+d.summarized <- aggregate(. ~ datasetID, data = d.filtered, FUN = function(x) unique(x))
+# d.summarized <- unique(d.filtered$datasetID)
+# write.csv(d.summarized,"cleaning/checks/AlternatingTempPaperList.csv")
