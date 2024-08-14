@@ -7,6 +7,9 @@ length(unique(d$respvar)) # 167 raw unique resp vars
 
 # germination rate
 d$responseVar <- d$respvar
+d$responseVar[which(d$responseVar == "germ.cap")] <- "germ.capacity"
+
+
 d$responseVar[which(d$responseVar == "germ.speed")] <- "germ.rate"
 d$responseVar[which(d$responseVar == "rates.germ")] <- "germ.rate"
 d$responseVar[which(d$responseVar == "germ.rate (days)")] <- "germ.rate"
@@ -241,3 +244,54 @@ temp <- d[,c("datasetID", "responseVar"#, "responseValue", "errorType"
 temp <- unique(temp)
 
 
+##########################################################
+# Check response variable units: especially germination rate and capacity
+
+germRate <- subset(d, responseVar == "germ.rate"); sort(unique(germRate$datasetID))
+germSpeed <- subset(d, responseVar == "germ.speed(%/day)"); sort(unique(germSpeed$datasetID))
+germSpeedIndex <- subset(d, responseVar =="germination.speed.index"); sort(unique(germSpeedIndex$datasetID))
+germTime <- subset(d, responseVar =="germ.time"); sort(unique(germTime$datasetID))
+
+germCap <- subset(d, responseVar == "germ.capacity")
+# Farhadi13: unit = %
+sort(unique(germCap$datasetID))
+
+
+# "amini2018"   - % seeds /week
+# "beikmohammadi12" — # seeds/day
+# "bungard97”—   days to T50
+# "cicek08”—               
+# "edwards96" — days to T50            
+# "feng18”— # seeds/day                
+# "fetouh14”— no units, maybe %, (no seeds after 70 days/ no seeds after 120 days)*100             
+# "fulbright86" — # seeds per day         
+# "jabarzare11" — % seeds /days          
+# "javanmard14”— # seeds/day           
+# "kamareh12”— % seeds/ days            
+# "keshtkar08”— # seeds/day           
+# "ma03" — % seeds/day                 
+# "markovic20"—  %          
+# "martinik14"— % seeds/day           
+# "moeini21"—  # seeds/day           
+# "muller03"—   germ rate should be mgt           
+# "nasri14"—  # seeds/day           
+# "olmez07"—   # seeds/day             
+# "olmez08" —  # seeds/day            
+# "olmez09"—   # seeds/day             
+# "olmez17"—   # seeds/day               
+# "parvin15"—    # seeds/day             
+# "rahnama-ghahfarokhi07"— # seeds/day  
+# "raisi13" —   # seeds/day              
+# "ranil15" —   % seeds/day         
+# "santos19"— no units reported             
+# "statton17"— # seeds/day        
+# "surya17"—  # seeds/day            
+# "tabatabaeian18" —  # seeds/day    
+# "teimouri13"—   # seeds/day            
+# "tilki06"—   # seeds/day            
+# "vleeshouwers98" — (1/T50)/ days  inverse median of the distribution of germination times       
+# "yan16”—% seeds after 60 days                 
+# "yang20" — 1/T50 per days               
+# "yaqoob17”— cites: Ashtari R, Heidari M, Omidi M, Zare AR (2013) Seed germination and dormancy breaking techniques for Ducrosia anethifolia (DC.). Trakia J Sci 11:82–87   
+# "yusefi-tanha19" — # seeds/day 
+# "zare11”— # seeds/day   
