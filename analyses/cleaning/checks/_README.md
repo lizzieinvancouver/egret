@@ -10,5 +10,6 @@ R files:
 data files:
 - alternatingTempPaperList_withNotes.xlsx: this file was created to review all papers that had alternating germination temperature regimes and check whether they were "day/night" or "night/day" regimes.
 - alternatingTempPaperList.csv: this file was created to review all papers that had alternating germination temperature and is the csv version
+  * The code that writes these two files can be found in analyses/cleaning/source/cleanGerminationTempDuration.R
 
 
