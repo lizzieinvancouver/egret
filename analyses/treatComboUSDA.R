@@ -82,21 +82,15 @@ usda$chill.dur.Max<-ifelse(!is.na(usda$cold.strat.dur.Max),usda$cold.strat.dur.M
 usda$chill.dur.Avg<-ifelse(!is.na(usda$cold.strat.dur.Avg),usda$cold.strat.dur.Avg,usda$chill.dur.Avg)
 usda$chill.duraton<-ifelse(!is.na(usda$cold.stratification.duration),usda$cold.stratification.duration,usda$chill.duraton)
 
-#
+#create a new column 
 usda$responseVarClean <- usda$responseVar
 
-unique(usda$responseVarClean)
-
 #how many uniques entries are in usda$responseVar
-
 tapply(usda$speciesID, usda$responseVarClean, function(x) length(!is.na(x)))
 aggregate(speciesID ~ responseVar, data = usda, FUN = function(x) length(unique(x)))
-summary(usda$responseVar)
-names(usda)
-usda$responseVarClean
 usda[usda$responseVarClean == "percent.germ","responseVarClean"]
 
-#these columns show probably the same type of percentage, so rename them to "perc.standard"
+#these columns most likely show the same type of percentage, so rename them to "perc.standard"
 usda$responseVarClean[usda$responseVarClean == "percent.germ"] <- "perc.standard"
 usda$responseVarClean[usda$responseVarClean == "percent.germ.total"] <- "perc.standard"
 usda$responseVarClean[usda$responseVarClean == "germ.capacity"] <- "perc.standard"
@@ -194,7 +188,7 @@ combinations <- expand.grid(forc_indic = c("yes", "no"),
               chill_indic = c("yes", "no"),
               scar_indic = c("yes", "no"))
 
-# Initialize an empty vector to store the number of unique species for each combination
+# Initialize an empty vector to store the number of unique spp for each combination
 n_ssp <- vector()
 n_obs <- vector()
 
@@ -208,7 +202,7 @@ for (i in 1:nrow(combinations)) {
   # Filter the data based on the current combination
   filtered_data <- usda[usda$forc_indic == forc & usda$chill_indic == chill & usda$scar_indic == scar, ]
   
-  # Count the number of unique species in the filtered data
+  # Count the number of unique spp in the filtered data
   unique_species <- length(unique(filtered_data$latbi))
   
   # Append the number to the vector
