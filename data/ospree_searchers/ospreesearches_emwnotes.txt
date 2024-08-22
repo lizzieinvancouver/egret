@@ -1,0 +1,56 @@
+Started 9 December 2023
+By Lizzie
+
+Papers are in not posting/mygenera/ 
+
+Working on best papers to scrape for: Tilia, Rhododendron, Syringa
+See also: https://github.com/lizzieinvancouver/egret/issues/13
+
+Tilia americana" -- Spaeth, 1932; Barton, 1934; Pitel & Wang, 1988              
+"Tilia cordata" -- Barton, 1934               
+"Tilia dasystyla" -- not in B2             
+"Tilia japonica" -- Heit, 1969b             
+"Tilia platyphyllos" -- Barton, 1934; Heit, 1969b; Baskin et al., unpubl.
+
+NONE of these are in B2 .. Some are in Woody Plant Manual, but it does not have germination info tables other refs in B2 for this genera are: Tiwari & Chauhan, 2007 and Wang et al., 2009d and Nichols, 1934
+"Rhododendron dauricum"
+"Rhododendron mucronulatum"    
+"Rhododendron prinophyllum"
+"Rhododendron simsii"          
+
+Syringa josikaea"  -- not in B2            
+"Syringa reticulata" --- mentioned as "High tempera- tures caused a significant increase in the mechanical resis- tance of the endosperm in seeds of Syringa vulgaris (Junttila, 1973b)." But this is about embryo covering         
+"Syringa villosa" -- not in B2
+"Syringa vulgaris" -- Wang et al., 2009d
+
+
+REFS:
+
+Tilia: Woody plant manual not great and below sound not great, but ordered some 
+
+Spaeth, J.N., 1932. Hastening germination of basswood seeds. J. For. 30, 925928. Journal of Forestry, Volume 30, Issue 8, December 1932, Pages 925–928, https://doi.org/10.1093/jof/30.8.925  -- ORDERED 
+
+Barton, L.V., 1934. Dormancy in Tilia seeds. Contrib. Boyce Thompson Inst. 6, 6989. -- ORDERED 
+
+Pitel, J.A., Wang, B.S.P., 1988. Improving germination of basswood (Tilia americana L.) seeds with gibberellic acid. Seed Sci. Technol. 16, 273280. -- seems not great so did not try to track down
+
+Also looked at A PRACTICAL METHOD OF OVERCOMING
+SEED DORMANCY IN TILIA AMERICANA L.' Which is chemical but mentions stratification
+
+*Promising* (find on G Scholar): Seed germination of woody and shrubby
+introduced species by Khudonogova -- mix of our species across genera
+
+Heit, C.E., 1969b. Propagation from seed. Part 7: germinating six hardseeded groups. Amer. Nurseryman 125, 1012, 3741, 4445. -- ORDERED
+
+Tiwari, O.N., Chauhan, U.K., 2007. Seed germination studies in Rhododendron maddenii Hook. f. and Rhododendron niveum Hook. F. Indian J. Plant Physiol. 12, 5056. -- ORDERED
+
+Nichols, G.E., 1934. The influence of exposure to winter temperatures upon seed germination in various native American plants. Ecology. 15, 364373. -- JSTOR, have, need to review
+
+Wang, J.-H., Du, G.-Z., Cui, X.-L., Zheng, X.-F., Qi, W., 2009d. Germination characteristics of 61 common woody species from the eastern Qinghai-Tibet Plateau of China and their life history corre- lates. Zhi. Sheng. Xue. 33, 171179. -- Have looked this up before it is in CHINESE.
+
+
+PROPOSED methods:
+
+(A) To maximize overlap with species in OSPREE we reviewed references for in Baskin & Baskin for the top XX genera, obtaining all possible and extracting data from any mentioning our species and meeting criteria for our ISI/Google Scholar Searches. 
+
+(B) To maximize overlap with species in OSPREE we reviewed references for in Baskin & Baskin for all OSPREE species, and reviewed reference titles for ... err, not sure!
