@@ -25,7 +25,7 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 }
 
 # 1. Get the data (reads in a dataframe called `egret')
-source("cleaning/source/mergedata.R") # 30766 rows, 45 columns
+source("cleaning/source/mergedata.R") # 61839 rows, 45 columns
 
 # 2. Clean up datasetID issues
 source("cleaning/source/cleandatasetID.R") # 30202 rows
