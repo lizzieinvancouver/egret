@@ -1,29 +1,30 @@
-####source file for cleaning USDA seed manual 
-#made by Dan July 9, 2024
-
-rm(list=ls())
-options(stringsAsFactors = FALSE)
-options(mc.cores = parallel::detectCores())
-#rstan_options(auto_write = TRUE)
-graphics.off()
-
-setwd("~/Documents/git/egret/analyses/scrapeUSDAseedmanual/cleaning/")
-
+# ####source file for cleaning USDA seed manual
+# #made by Dan July 9, 2024
+### Not able to run as of August 23 2024
+rm(list=ls())  
+options(stringsAsFactors=FALSE)
 library(dplyr)
-library(reshape2)
+library(chillR)
+library(stringr)
+library(ggplot2)
+library(tidyverse)
 library(xlsx)
-d <- read_csv("germination_master_spreadsheet.csv", na = c("", "NA"))
+library(tibble)
+library(taxize)
 
-source("germination_cleaning.R")
+if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
+  setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses/")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+}
 
-#Note from Justin: the output of this was called germinationCleaned.xlsx, 
-#which Selena then went through and manually fixed some issues based on
-#weird values from the USDA manual pdf
-#This was then saved as "germinationCleaned_official.csv
+d <- read_csv("scrapeUSDAseedmanual/cleaning/germination_master_spreadsheet.csv", na = c("", "NA"))
 
-d<-read.csv("..//output/earlyIterationDataSheets/germinationCleaned_official.csv")
+source("scrapeUSDAseedmanual/cleaning/cleanmerge_all_usda_JNVER.R") ### this is Justin's cleaning code
 
 
-source("germinationCleaningFinal.R")
+source("scrapeUSDAseedmanual/cleaning/cleaningUSDA_forDan.r") ### this is Justin's cleaning code
 
-source("germinationEGRETCorrections.R")
+#write.csv(usda)
