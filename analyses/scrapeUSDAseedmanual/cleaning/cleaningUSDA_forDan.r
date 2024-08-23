@@ -15,9 +15,11 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 
 #################################################################################
 #################################################################################
-usda <- read.csv("./scrapeUSDAseedmanual/output/usdaGerminationData.csv", sep=",", header=TRUE)
+usda.orig <- read.csv("./scrapeUSDAseedmanual/output/usdaGerminationData.csv", sep=",", header=TRUE)
 }
 usda<-d
+
+setdiff(colnames(usda.orig),colnames(usda))
 #
 ###add stratification and chilling
 usda$chilling<-ifelse(!is.na(usda$cold.strat.dur.Avg),"Y",usda$chilling)
