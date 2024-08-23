@@ -23,7 +23,7 @@ egret_SC <- read.csv("input/egretScraping/egret_SC.csv", na.strings=c("NA","NaN"
 colnames(egret_SC)[colnames(egret_SC) == "notes"] <- "Notes"
 egret_SC <- egret_SC[complete.cases(egret_SC$datasetID),]
 length(unique(egret_SC$datasetID)) #35
-dim(egret_SC) # 4949   45
+dim(egret_SC) # 4947   45
 
 #Christophe
 egret_CRD <- read.csv("input/egretScraping/egret_CRD.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
@@ -88,11 +88,11 @@ dim(egret_FB) #90   45
 egret_DB <- read.csv("input/egretScraping/egret_DMB.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
 egret_DB <- egret_DB[complete.cases(egret_DB$datasetID),] # Lizzie confirms that 94 rows is good
 length(unique(egret_DB$datasetID)) # 1
-dim(egret_DB) #263   45
+dim(egret_DB) #94   45
 
 egret_missing <- read.csv("input/egretScraping/missingData.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
 length(unique(egret_missing$datasetID)) #1
-dim(egret_missing) #90   45
+dim(egret_missing) #37   45
 
 dat1 <- rbind(egret_TA, egret_BW, egret_CRD, egret_MN, egret_HHN, egret_DK,
                 egret_JS, egret_DM, egret_AZ, egret_GG)
