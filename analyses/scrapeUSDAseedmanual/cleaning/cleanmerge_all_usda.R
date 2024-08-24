@@ -18,6 +18,8 @@ if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
   setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses/")
 } else if(length(grep("lizzie", getwd()) > 0)) {
   setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+} else if(length(grep("sapph", getwd()) > 0)) { # Justin wd
+  setwd("/Users/sapph/Documents/ubc things/work/egret/analyses/")
 }
 
 d <- read_csv("scrapeUSDAseedmanual/cleaning/germination_master_spreadsheet.csv", na = c("", "NA"))

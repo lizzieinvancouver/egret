@@ -31,7 +31,9 @@ usda$chilling<-ifelse(!is.na(usda$cold.strat.dur.Min),"Y",usda$chilling)
 usda$chill.dur.Min<-ifelse(!is.na(usda$cold.strat.dur.Min),usda$cold.strat.dur.Min,usda$chill.dur.Min)
 usda$chill.dur.Max<-ifelse(!is.na(usda$cold.strat.dur.Max),usda$cold.strat.dur.Max,usda$chill.dur.Max)
 usda$chill.dur.Avg<-ifelse(!is.na(usda$cold.strat.dur.Avg),usda$cold.strat.dur.Avg,usda$chill.dur.Avg)
-usda$chill.duraton<-ifelse(!is.na(usda$cold.stratification.duration),usda$cold.stratification.duration,usda$chill.duraton) # error there is no column chill.duration in that comes from Justin's new work flow
+usda$chill.duration<-ifelse(!is.na(usda$cold.stratification.duration),usda$cold.stratification.duration,usda$chill.duration) # error there is no column chill.duration in that comes from Justin's new work flow
+
+#  ^ from Justin: I fixed "chill.duraton" to "chill.duration"
 
 #create a new column 
 usda$responseVarClean <- usda$responseVar
