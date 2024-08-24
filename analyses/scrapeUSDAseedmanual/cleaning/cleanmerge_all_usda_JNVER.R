@@ -16,9 +16,6 @@
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 
-
-#d <- read_csv("scrapeUSDAseedmanual/cleaning/germination_master_spreadsheet.csv", na = c("", "NA")) #this now gets read in in cleanmerg_all_usda.R
-
 # Removing apostrophe across all cells
 d[] <- lapply(d, gsub, pattern="'", replacement="")
 
