@@ -6,6 +6,7 @@ This folder contains code and output files generated when we were checking data 
 R files:
 - dataNotScraped.R: code created that merges everyone's updated source tab and checks whether all data that should have been scraped was. This accounts for papers that were later decided to be outside our criteria or not in english.
 - pdfMissing.R: This was code used to generate a list of pdf's that we would need to download after it was discovered the original Google drive was missing.
+- checkNewData.R: code created to check that the data and treatments scraped by SS are correct and now give us the curves of the percent germination we need 
 
 data files:
 - alternatingTempPaperList_withNotes.xlsx: this file was created to review all papers that had alternating germination temperature regimes and check whether they were "day/night" or "night/day" regimes.
