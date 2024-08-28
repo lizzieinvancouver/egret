@@ -29,4 +29,4 @@ source("scrapeUSDAseedmanual/cleaning/cleanmerge_all_usda_JNVER.R") ### this is 
 
 source("scrapeUSDAseedmanual/cleaning/cleaningUSDA_forDan.r") ### this is Justin's cleaning code
 
-#write.csv(usda)
+write.csv(usda_new,"input/usda_germination_cleaned.csv")

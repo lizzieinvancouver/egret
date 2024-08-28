@@ -15,11 +15,11 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 
 #################################################################################
 #################################################################################
-usda.orig <- read.csv("./scrapeUSDAseedmanual/output/usdaGerminationData.csv", sep=",", header=TRUE)
+#usda.orig <- read.csv("./scrapeUSDAseedmanual/output/usdaGerminationData.csv", sep=",", header=TRUE)
 }
 usda<-d
 
-setdiff(colnames(usda.orig),colnames(usda))
+#setdiff(colnames(usda.orig),colnames(usda))
 #
 ###add stratification and chilling
 usda$chilling<-ifelse(!is.na(usda$cold.strat.dur.Avg),"Y",usda$chilling)
@@ -68,6 +68,9 @@ maxcols <- grep("Max", names(usda), value = TRUE)
 
 aggregate(latbi ~ chill.dur.Max, data = usda, FUN = function(x) length(unique(x)))
 
+###need to make a rowmnames column
+usda$X<-rownames(usda)
+
 
 # Step 1: Filter rows with non-NA values in all specified columns
 filtered_rows <- usda[!is.na(usda$chill.dur.Min) & !is.na(usda$chill.dur.Max) & 
@@ -75,6 +78,7 @@ filtered_rows <- usda[!is.na(usda$chill.dur.Min) & !is.na(usda$chill.dur.Max) &
 
 filtered_spp <- usda[!is.na(usda$chill.dur.Min) & !is.na(usda$chill.dur.Max) & 
                       !is.na(usda$responseValueMin) & !is.na(usda$responseValueMax), "latbi"]
+
 
 tmp_X <- filtered_rows$X
 spec_X <- filtered_rows$latbi
@@ -108,7 +112,14 @@ df_max$responseValue <- df_max$responseValueMax
 
 
 #add the new dataframes "df_min" and "df_max" to the "usda_new" dataframe
+##dmb need to change to resposeValue
+class(usda_new$responseValue)
+class(df_min$responseValue)
+
+df_min$responseValue<-as.character(df_min$responseValue)
 usda_new <- rbind(usda_new, df_min)
+
+df_max$responseValue<-as.character(df_max$responseValue)
 usda_new <- rbind(usda_new, df_max)
 
 #check
