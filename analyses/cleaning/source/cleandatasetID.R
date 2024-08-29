@@ -39,25 +39,26 @@ d$datasetID[which(d$datasetID == "yang18" & d$genus == "Scaevola")] <- "yang18_3
 
 d$datasetID[which(d$datasetID == "tang10a")] <- "tang10_1"
 d$datasetID[which(d$datasetID == "tang10b")] <- "tang10_2"
+d$datasetID <- tolower(d$datasetID)
 
 temp <- unique(d[,c("datasetID", "entered.by")])
 temp$count <-1
 temp$datasetID <- tolower(temp$datasetID)
 tempy <- aggregate(temp["count"], temp[c("datasetID")], FUN = sum)
 
-d <- subset(d, datasetID !="al-absi10" | entered.by != "TA")
-d <- subset(d, datasetID !="chen06" | entered.by != "AZ")
-d <- subset(d, datasetID !="chen15" | entered.by != "TA")
+d <- d[-which(d$datasetID == "al-absi10" & d$entered.by == "TA"),]  #96 rows to remove
+d <- d[-which(d$datasetID == "chen06" & d$entered.by == "AZ"),] #96
+d <- d[-which(d$datasetID == "chen15" & d$entered.by == "TA"),] #11
+d <- d[-which(d$datasetID == "chichizola18" & d$entered.by == "AZ"),] #45
 
-d <- subset(d, datasetID !="chichizola18" | entered.by != "TA") #entered by two people---but different figures/tables
-d <- subset(d, datasetID !="han10" | entered.by != "CRD")
-d <- subset(d, datasetID !="lee21" | entered.by != "AZ") #entered by two people---but different figures/tables
-d <- subset(d, datasetID !="moeini21" | entered.by != "MN")
-d <- subset(d, datasetID !="tilki07" | entered.by != "MN") #entered by two people---but different figures/tables
-d <- subset(d, datasetID !="wytsalucy21" | entered.by != "DK")
-d <- subset(d, datasetID !="yusefi-tanha19" | entered.by != "JS")
+d <- d[-which(d$datasetID == "han10" & d$entered.by == "CRD"),] #40
+d <- d[-which(d$datasetID == "lee21" & d$entered.by == "AZ"),] #30
+d <- d[-which(d$datasetID == "moeini21" & d$entered.by == "MN"),] #45
+d <- d[-which(d$datasetID == "tilki07" & d$entered.by == "MN"),] #104
+d <- d[-which(d$datasetID == "wytsalucy21" & d$entered.by == "DK"),]#92
+d <- d[-which(d$datasetID == "yusefi-tanha19" & d$entered.by == "JS"),]#40
 
-d$datasetID <- tolower(d$datasetID)
+
 
 # ident <- read.csv("..//data/datasetID.csv")
 # ident$dup <- duplicated(ident$studyID)

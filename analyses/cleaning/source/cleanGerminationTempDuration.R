@@ -181,6 +181,7 @@ d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response =
 d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response == "0")] <- "5"
 
 # zhou08 - "germ temp for figure 1 is missing"
+# Should be resolved now that Selena has helped scrape this
 
 # Chen15 the germ.temp was put into photoperiod
 for (i in 1:nrow(d)) {
@@ -306,14 +307,12 @@ d$tempNight[which(d$datasetID == "herron01" & d$genus == "Melicytus")] <- "NA"
 
 d$germTemp[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient" # it's not 25/10, that's what the authors reported in the intro as a known-to-be-successful germ temperature
 # Langlois17 has a part that isn't scraped; it's light intensity
+d$germTemp[which(d$datasetID == "langlois17" & d$figure == "Fig 4")] <- "20/18" #These are the light intensity treatments
+d$photoperiod[which(d$datasetID == "langlois17" & d$figure == "Fig 4")] <- "14/10"
 
 d$tempClass[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "constant"
 d$tempDay[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "ambient"
 d$tempNight[which(d$datasetID == "langlois17" & d$genus == "Carex")] <- "NA"
-
-# Langlois17 has some specified germTemp though;
-# "Minimal day- and night-time temperatures were respectively 208 and 188C, following a cycle of 14 h of light and 10 h of darkness."
-# Was this even scraped?
 
 d$photoperiodNote[which(d$datasetID == "ochuodho08" & d$species == "capense")] <- "just alternating temperature not photoperiod"
 
@@ -366,6 +365,13 @@ d$photoperiodNote[which(d$datasetID == "geszprych02" & d$genus == "Rhaponticum")
 
 d$photoperiodNote[which(d$datasetID == "winstead71" & d$genus == "Liquidambar")] <- "photoperiod 15 but alternating temperature at 12 hr interval"
 
+d$photoperiodNote[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")] <- "assumed day is warmer temperature"
+d$photoperiodNote[which(d$datasetID == "zhou08" & d$figure == "Fig 1d")] <- "assumed day is warmer temperature"
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
 # Swapping night and day for papers in which night came first when stating their photoperiod
 # We don't want to overwrite the original columns, so making copy template columns
 d$tempDayCopy <- d$tempDay
@@ -406,6 +412,11 @@ d$tempDay[which(d$datasetID == "ren08" & d$genus == "Pedicularis")] <- d$tempNig
 
 d$tempNight[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")] <- d$tempDayCopy[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")]
 d$tempDay[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")] <- d$tempNightCopy[which(d$datasetID == "tang10a" & d$species == "tristaniaecarpa")]
+
+d$tempNight[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")] <- d$tempDayCopy[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")]
+d$tempDay[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")] <- d$tempNightCopy[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")]
+d$tempNight[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")] <- d$tempDayCopy[which(d$datasetID == "zhou08" & d$figure == "Fig 1d")]
+d$tempDay[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")] <- d$tempNightCopy[which(d$datasetID == "zhou08" & d$figure == "Fig 1d")]
 
 # Deleting the template columns
 d <- d[, -which(names(d) == "tempNightCopy")]

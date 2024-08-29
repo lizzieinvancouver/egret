@@ -1,4 +1,5 @@
-# started Nov 30, 2023 by Deirdre and Lizzie
+# Started 30 Nov 2023 
+# by Deirdre and Lizzie
 
 # aim is read in the csv files from everyone's data that will include both sourced cleaning code and write out a raw file
 
@@ -25,7 +26,7 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 }
 
 # 1. Get the data (reads in a dataframe called `egret')
-source("cleaning/source/mergedata.R") # 30766 rows, 45 columns
+source("cleaning/source/mergedata.R") # 31227 rows, 45 columns
 
 # 2. Clean up datasetID issues
 source("cleaning/source/cleandatasetID.R") # 30202 rows

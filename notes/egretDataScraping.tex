@@ -78,7 +78,7 @@ Now here's what to do:
 \item When dealing with error, enter it as zero if bars are not distinguishable from the points, or as "indistinguishable" if multiple overlapping points have overlapping error bars that can not be scraped with certainty (see issue of a visual example of this).
 \end{itemize}
 \item We decided at our first retreat which columns we wanted to clean, the list of columns and who was assigned to clean them is outlined at \url{https://github.com/lizzieinvancouver/egret/issues/14}, key points from this issue are discussed below for each cleaning script they pertain to. This is also the issue were we list updated column names.
-\item JS had 10,000+ empty rows in their csv data file for some reason, which was making the code run slowly. DL manually corrected this in the csv file.
+\item JS and missingData.csv had 10,000+ empty rows in their csv data files for some reason, which was making the code run slowly. DL manually corrected this in the csv files.
 \item The following outlines some of the more complex cleaning decisions and issues:
 \begin{itemize}
 \item \textbf{cleanChemical.R}: Chemical names should be cleaned and standardized, updating names of brand name products to clarify what they are (e.g. include explanations such as "---herbicide"). Names were updated to remove the treatment duration (which was moved to the trt.duration column where it belongs). Also see issue \#65.
