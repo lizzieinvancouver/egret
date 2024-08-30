@@ -56,25 +56,22 @@ d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
 # Working on figuring the data for the papers that Ken listed as problematic
 
 # Acosta13 - "germination temp missing from Figure 3 data"
-d$germTemp[which(d$datasetID == "Acosta12" & d$figure == "Fig 3")] <- "25/15"
+d$germTemp[which(d$datasetID == "acosta12" & d$figure == "Fig 3")] <- "25/15"
 
 # Mamut20 - "germ durations seem to be weird, like a number 1 was dragged through excel until 14 and then repeated again and again, even for the first three values for table 2 which should be 24, 56, and 84 days"
     # From looking over Mamut20, germDuration should be 30 days for everything except the experiment where they routinely took out seeds after months-long stratification was over
-d$germDuration[which(d$datasetID == "Mamut20")]
+d$germDuration[which(d$datasetID == "mamut20")]
 # This will be addressed in the germDuration section
 
 # Sacande04 - "incubation temp is put as chill temp, might be better to put as germ temp"
 for (i in 1:nrow(d)) {
-  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "Sacande04") { 
+  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "sacande04") { 
     d$germTemp[i] <- d$chill.temp[i]
     d$chill.temp[i] <- NA  
   }
 }
 
 # tylkowski91 - "cold stratification is mistakenly coded as germination temp for some data from table 2"
-# tylkowski91 <- d %>%
-#   filter(datasetID == "tylkowski91" & figure == "Table 2")
-# I need to swap the columns because chill.temp is meant to be germTemp and I can use germ.temp as my spare
 for (i in 1:nrow(d)) {
   if (!is.na(d$datasetID[i]) && d$datasetID[i] == "tylkowski91" & d$figure[i] == "Table 2") {
     d$germTemp[i] <- d$chill.temp[i]
@@ -90,14 +87,6 @@ d$germTemp[which(d$germTemp == "3-20")] <- "20/3"
 d$germTemp[which(d$datasetID == "yang08" & d$genus == "Litsea")] <- "30/20"
 
 # yang18_1 - "chill and germination data for Figures 4 and 5 is complicated because some germination data were taken during stratification so the stratification conditions should actually be the germination data; I think cleaning these columns together would be easier than separately"
-# yang18.1 <- d %>%
-#   filter(datasetID == "yang18" & genus == "Maackia") %>%
-#   filter(figure == "Figure 4" | figure == "Figure 5")
-# honestly the data looks like it was entered fine? some are 4 degrees and some are 30/20
-# Ken says its the durations that need to line up correctly;
-# yang18.1 <- yang18.1 %>%
-#   select(datasetID, genus, species,figure,chill.temp,chill.duration,germ.temp,germ.duration,germTemp,germDuration)
-# "if chill.duration is a certain length, and germination occurred during this stratification period BEFORE the seeds were put in the incubation temperature, then germ.temp should = chill.temp because it germinated at chilling temperature, not incubation. Then anything > than chill.duration should have germ.temp = 30/20."
 
 # Making an empty column to give numeric values for just this subset of data
 d$yang18chill.duration <- NA
@@ -128,9 +117,9 @@ d$yang18germ.duration <- as.numeric(d$yang18germ.duration)
 d$yang18germDuration <- as.numeric(d$yang18germDuration)
 
 # For Figure 4
-for (i in c(1:nrow(d))) {
+for (i in 1:nrow(d)) {
   if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
-    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration) && d$yang18germ.duration[i] <= d$yang18chill.duration[i]) {
+    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration[i]) && d$yang18germ.duration[i] <= d$yang18chill.duration[i]) {
       d$germTemp[i] <- "4"
       d$yang18germDuration[i] <- d$yang18germ.duration[i] - d$yang18chill.duration[i]
     }
@@ -141,9 +130,9 @@ for (i in c(1:nrow(d))) {
 }
 
 # For Figure 5
-for (i in c(1:nrow(d))) {
+for (i in 1:nrow(d)) {
   if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
-    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration) && d$yang18germ.duration[i] <= d$yang18chill.duration[i]) {
+    if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration[i]) && d$yang18germ.duration[i] <= d$yang18chill.duration[i]) {
       d$germTemp[i] <- "4"
       d$yang18germDuration[i] <- d$yang18germ.duration[i] - d$yang18chill.duration[i]
     }
@@ -185,7 +174,7 @@ d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response =
 
 # Chen15 the germ.temp was put into photoperiod
 for (i in 1:nrow(d)) {
-  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "Chen15" && d$treatment[i] == "incubation temperature"){
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "chen15" && d$treatment[i] == "incubation temperature"){
     d$germ.temp[i] <- d$photoperiod[i]
     d$photoperiod[i] <- 12
   }
@@ -226,6 +215,9 @@ d$germTemp[which(d$germTemp == "21/18 day/night")] <- "21/18"
 d$germTemp[which(d$germTemp == "20°C (6h dark) ")] <- "20/25"
 d$germTemp[which(d$germTemp == "15 - 25")] <- "15/25"
 d$germTemp[which(d$germTemp == "24/30 (varying)")] <- "24/30"
+d$germTemp[which(d$germTemp == "19-24")] <- "19/24"
+d$germTemp[which(d$germTemp == "15 and 5")] <- "15/5"
+d$germTemp[which(d$germTemp == "25 and 15")] <- "25/15"
 
 # d$germDuration <- d$germ.duration
 d$germDuration[which(d$germDuration == "14(7)")] <- "14"
@@ -235,11 +227,11 @@ d$germDuration[which(d$germDuration == "28(7)")] <- "28"
 d$germTemp <- sub("alternating temperature ",NA, d$germTemp)
 d$germTemp <- sub("alternating ",NA, d$germTemp)
 
-
 d$tempClass[which(d$germTemp == "25/20/15")] <- "other"
 d$tempClass[which(d$germTemp == "22.2/20/29.4")] <- "other"
 d$tempClass[which(d$germTemp == "15/20/25")] <- "other"
 d$tempClass[which(d$germTemp == "20/15/20/25")] <- "other"
+d$tempClass[which(d$germTemp == "15 and 25 then 3")] <- "other"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -257,10 +249,12 @@ d$tempNight[which(d$tempClass == "other")] <- NA
 # d %>% filter(germTemp == "27-29/6-18") #Dehgan84
 # This paper says it's 27-29 in the day and 16-18 at night; which value should we take for each part of photoperiod?
 # SCRUM: take the mean of each period as our alternating; 28 for day and 17 at night
-d$tempDay[which(d$datasetID == "Dehgan84" & d$tempDay == "27-29")] <- "28"
-d$tempNight[which(d$datasetID == "Dehgan84" & d$tempNight == "16-18")] <- "17"
-d$tempNight[which(d$datasetID == "Dehgan84" & d$tempNight == "6-18")] <- "17" 
-d$tempNight[which(d$datasetID == "Scocco98" & d$tempNight == "30 (varying)")] <- "30" 
+d$tempDay[which(d$datasetID == "dehgan84" & d$tempDay == "27-29")] <- "28"
+d$tempNight[which(d$datasetID == "dehgan84" & d$tempNight == "16-18")] <- "17"
+d$tempNight[which(d$datasetID == "dehgan84" & d$tempNight == "6-18")] <- "17" 
+d$tempNight[which(d$datasetID == "scocco98" & d$tempNight == "30 (varying)")] <- "30" 
+
+d$tempNight[which(d$tempNight == "05")] <- "5"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -270,27 +264,27 @@ d$tempNight[which(d$datasetID == "Scocco98" & d$tempNight == "30 (varying)")] <-
 d$germDuration[which(d$datasetID == "jensen97" & d$germ.time.zero == "when incubation begins")] <- "30"
 d$germDuration[which(d$datasetID == "gremer20" & d$germ.duration == "30-31")] <- "7"
 d$germDuration[which(d$datasetID == "ren15" & d$germ.duration == "30-31")] <- "30"
-d$germDuration[which(d$datasetID == "Marcello15" & d$germ.duration == "NA (<35)")] <- "35"
+d$germDuration[which(d$datasetID == "marcello15" & d$germ.duration == "NA (<35)")] <- "35"
 d$germDuration[which(d$germDuration == "~30")] <- "30"
-d$germDuration[which(d$datasetID == "Schutz02" & d$germ.duration == "30-50")] <- "50"
+d$germDuration[which(d$datasetID == "schutz02" & d$germ.duration == "30-50")] <- "50"
 
 d[, 'germDurComment'] = NA
-d$germDurComment[which(d$datasetID == "Schutz02" & d$germDuration == "50")] <- "Paper says 30-50 as germDuration due to end of germination = 1 week since last observed germinant"
+d$germDurComment[which(d$datasetID == "schutz02" & d$germDuration == "50")] <- "Paper says 30-50 as germDuration due to end of germination = 1 week since last observed germinant"
 d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- "Looked into the paper and found nothing except for germination counted every 3 days"
 
 # Fixing the mamut20 issue here that Ken raised in ISSUE 14
 # I'm certain that all values should be 30 days incubation...the 24, 56, 84 are referring to to cold/warm stratification, not germination
 # Table 2 has mixed warm and cold stratification, so we need to transfer the data on stratification out of germTemp and into the chill or other.treatment columns
-d$germDuration[which(d$datasetID == "Mamut20")] <- "30"
+d$germDuration[which(d$datasetID == "mamut20")] <- "30"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Fixing the day/night conundrum in the alternating temperature papers
 d[ , 'photoperiodNote'] = NA
-d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp1" & d$photoperiod == "12")] <- "constant light" # change photoperiod to 24
-d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp1" & d$photoperiod == "0")] <- "constant darkness"
-d$photoperiodNote[which(d$datasetID == "Albrecht20" & d$study == "exp3" & d$photoperiod == "0")] <- "constant darkness"
+d$photoperiodNote[which(d$datasetID == "albrecht20" & d$study == "exp1" & d$photoperiod == "12")] <- "constant light" # change photoperiod to 24
+d$photoperiodNote[which(d$datasetID == "albrecht20" & d$study == "exp1" & d$photoperiod == "0")] <- "constant darkness"
+d$photoperiodNote[which(d$datasetID == "albrecht20" & d$study == "exp3" & d$photoperiod == "0")] <- "constant darkness"
 
 d$photoperiodNote[which(d$datasetID == "cicek08" & d$species == "fraxinifolia ")] <- "just alternating temperature not photoperiod" # Change photoperiod to NA
 
@@ -330,7 +324,7 @@ d$photoperiodNote[which(d$datasetID == "zhang21" & d$species == "koraiensis" & d
 d$photoperiodNote[which(d$datasetID == "zhang21" & d$species == "koraiensis" & d$other.treatment == "20 μmol/m^2/s light")] <- "constant light"
 d$photoperiodNote[which(d$datasetID == "zhang21" & d$species == "koraiensis" & d$other.treatment == "0 μmol/m^2/s light")] <- "constant darkness"
 
-d$photoperiodNote[which(d$datasetID == "Chien10" & d$species == "glaucescens")] <- "assumed day is warmer temperature"
+d$photoperiodNote[which(d$datasetID == "chien10" & d$species == "glaucescens")] <- "assumed day is warmer temperature"
 
 d$photoperiodNote[which(d$datasetID == "brenchley98" & d$species == "capricorni")] <- "two stage temperature regime not photoperiod"
 
@@ -458,6 +452,7 @@ d$photoperiodCopy[which(d$photoperiod == "4h cool-white")] <- "20/4"
 d$photoperiodCopy[which(d$photoperiod == "16h cool-white")] <- "16/8"
 d$photoperiodCopy[which(d$photoperiod == "24h cool-white")] <- "24/0"
 d$photoperiodCopy[which(d$photoperiod == "8h cool-white")] <- "16/8"
+d$photoperiodCopy[which(d$photoperiod == "16-Aug")] <- "16/8"
 d$photoperiodCopy[which(d$photoperiod == "cool-white throughout the process")] <- "24/0"
 d$photoperiodCopy[which(d$photoperiod == "constant light")] <- "24/0"
 d$photoperiodCopy[which(d$photoperiod == "alternating 16/8")] <- "16/8"
@@ -507,7 +502,7 @@ d$datasetID[which(d$photoperiod == "13/9h")] #Middleton96
   # Uhhh...the paper literally says 13/9 ijbol
         # Assume 13 is correct, but then note it down somewhere
 d$photoperiodCopy[which(d$photoperiod == "13/9h")] <- "13/11"
-d$photoperiodNote[which(d$photoperiodCopy == "13/11" & d$datasetID == "Middleton96")] <- "The paper explicitly said 13/9h which is questionable"
+d$photoperiodNote[which(d$photoperiodCopy == "13/11" & d$datasetID == "middleton96")] <- "The paper explicitly said 13/9h which is questionable"
 
 d$datasetID[which(d$photoperiod == "0.25")] #batlla03
 d$datasetID[which(d$photoperiod == "1")] #batlla03
@@ -549,6 +544,7 @@ d$tempNight[which(d$tempNight == "NA")] <- NA
 
 unique(d$photoperiodCopyDay)
 unique(d$photoperiodCopyNight)
+d$photoperiodCopy[which(is.na(d$photoperiodCopy))] <- NA
 d$photoperiodCopyDay <- as.numeric(d$photoperiodCopyDay)
 d$photoperiodCopyNight <- as.numeric(d$photoperiodCopyNight)
 
@@ -612,3 +608,4 @@ d.filtered <- d.filtered[, c("datasetID", "study", "genus", "species", "germTemp
 d.summarized <- aggregate(. ~ datasetID, data = d.filtered, FUN = function(x) unique(x))
 # d.summarized <- unique(d.filtered$datasetID)
 # write.csv(d.summarized,"cleaning/checks/AlternatingTempPaperList.csv")
+
