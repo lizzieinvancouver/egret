@@ -18,7 +18,6 @@ d$germTempGen <- d$germ.temp # This is currently doing nothing
 
 # Now make new column with heavy duty cleaning
 d$germTemp  <- d$germ.temp
-d$germDuration <- d$germ.duration
 
 d$germTemp[which(d$germTemp == "45219")] <- "20/10" # 45219 corresponds to tang10b which had 20/10 germination temperature regime
 d$germTemp[which(d$germTemp == "unknown")] <- "NA"
@@ -232,6 +231,7 @@ d$tempClass[which(d$germTemp == "22.2/20/29.4")] <- "other"
 d$tempClass[which(d$germTemp == "15/20/25")] <- "other"
 d$tempClass[which(d$germTemp == "20/15/20/25")] <- "other"
 d$tempClass[which(d$germTemp == "15 and 25 then 3")] <- "other"
+d$tempClass[which(d$germTemp == "pooled across 3 temp regimes: 15/5, 20/10, 25/76")] <- "other"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -260,6 +260,7 @@ d$tempNight[which(d$tempNight == "05")] <- "5"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Germination Duration
+d$germDuration <- d$germ.duration
 
 d$germDuration[which(d$datasetID == "jensen97" & d$germ.time.zero == "when incubation begins")] <- "30"
 d$germDuration[which(d$datasetID == "gremer20" & d$germ.duration == "30-31")] <- "7"
@@ -276,6 +277,16 @@ d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <
 # I'm certain that all values should be 30 days incubation...the 24, 56, 84 are referring to to cold/warm stratification, not germination
 # Table 2 has mixed warm and cold stratification, so we need to transfer the data on stratification out of germTemp and into the chill or other.treatment columns
 d$germDuration[which(d$datasetID == "mamut20")] <- "30"
+
+# From Selena's new data
+for (i in 1:nrow(d)){
+  if(!is.na(d$datasetID) && d$datasetID == "batlla03" && d$germ.duration < 0){
+    germDuration <- 0
+  }
+}
+
+d$germDuration[which(d$germ.duration == "9 months")] <- "273.75"
+d$germDuration[which(d$germ.duration == "6 montns")] <- "273.75"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -437,6 +448,7 @@ d$photoperiodCopy[which(d$photoperiod == "16")] <- "16/8"
 d$photoperiodCopy[which(d$photoperiod == "8")] <- "8/16"
 d$photoperiodCopy[which(d$photoperiod == "18")] <- "18/6"
 d$photoperiodCopy[which(d$photoperiod == "12")] <- "12/12"
+d$photoperiodCopy[which(d$photoperiod == "12/12 hours")] <- "12/12"
 d$photoperiodCopy[which(d$photoperiod == "0")] <- "0/24"
 d$photoperiodCopy[which(d$photoperiod == "8:16")] <- "8/16"
 d$photoperiodCopy[which(d$photoperiod == "8.00")] <- "8/16"
