@@ -30,6 +30,7 @@ setwd("C:\\Users\\User\\my_repo_dir\\egret\\analyses\\scrapeUSDAseedmanual\\outp
 
 #setwd("C:\\Users\\User\\my_repo_dir\\egret\\analyses\\scrapeUSDAseedmanual\\input\\test_folder")
 
+#---------------------------------------------------------------------------------------------------
 # Read in test data
 
 # phen_data_test <- read.csv('phenCom_added_missing_pagenum_genus_test.csv', colClasses = "character")
@@ -51,7 +52,7 @@ setwd("C:\\Users\\User\\my_repo_dir\\egret\\analyses\\scrapeUSDAseedmanual\\outp
 #   mutate(across(everything(), ~ ifelse(.x == ".", NA, .x))) %>%
 #   mutate(across(everything(), ~ str_replace_all(.x, "\\|", "1")))
 
-phen_data <- read.csv('phenCom_added_missing_pagenum_genus.csv', colClasses = "character")
+phen_data <- read.csv('phenComAddedPageNumGenus', colClasses = "character")
 
 phen_data <- phen_data %>%
   mutate(across(everything(), ~ na_if(.x, ""))) %>%
@@ -167,7 +168,7 @@ phen_data$origin[which(phen_data$species == "vulgaris" & phen_data$genusName == 
 
 #-----------------------------------------------------------------------------------------------------------
 # 2) Clean the seed_data
-seed_data <- read.csv('seedCom_added_missing_pagenum_genus.csv', colClasses = "character")
+seed_data <- read.csv('seedComAddedPageNumGenus.csv', colClasses = "character")
 
 # test
 # seed_data_test <- seed_data_test %>%
@@ -289,5 +290,5 @@ seed_data$preripeFruitColor[which(seed_data$species == "umbellata" & seed_data$g
 # write_csv(phen_data_test, "cleaned_phen_data_test.csv")
 # write_csv(seed_data_test, "cleaned_seed_data_test.csv")
 
-write_csv(phen_data, "cleaned_phen_data_final.csv")
-write_csv(seed_data, "cleaned_seed_data_final.csv")
+write_csv(phen_data, "phenCleanedFinalMaster.csv")
+write_csv(seed_data, "seedCleanedFinalMaster.csv")
