@@ -216,6 +216,7 @@ seed_data <- seed_data %>%
   unite(col = "yearsBetweenLargeSeedCrops", c("yearsBetweenLargeSeedCrops", "yearsBetweenLargeSeedcrops", "crops", "yearsBetweenLargeCrops", "yearsLargeTime"), sep = "") %>%
   unite(col = "preripeFruitColor", c("fruitPreripeColor", "fruitRipenessPreripeColor", "fruitPreripe"), sep = "") %>%
   unite(col = "ripeFruitColor", c("ripenessCriteriaRipeColor", "ripeFruitColor", "colorRipe"), sep = "")
+  unite(col = "yearFirstCultivated", c("yearFirstCultivated", "yearCultivated"), sep = "")
 
 colnames(seed_data)
 
