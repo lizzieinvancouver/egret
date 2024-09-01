@@ -257,20 +257,173 @@ d$storageDuration <- d$storage.time
 
 unique(d$storage.temp)
 unique(d$storage.time)
+unique(d$storageTemp)
+unique(d$storageDuration)
 
-idx <- which(d$storage.temp == unique(d$storage.temp)[60])
+idx <- which(d$storage.time == unique(d$storageDuration)[58])
 check <- d[idx,]
 check_short <- subset(check, select = c("datasetID", "study", "species", "storage.type", "storage.temp",
                                         "storage.time", "storage.humidity", "treatment", "chillTemp",
                                         "chillDuration", "storageType", "storageDetails",
                                         "respvar", "response", "figure"))
 
-idx <- which(d$datasetID == "arslan11")
+idx <- which(d$datasetID == "bytnerowicz14")
 check <- d[idx,]
 check_short <- subset(check, select = c("datasetID", "study", "species", "storage.type", "storage.temp",
                                         "storage.time", "storage.humidity", "treatment", "chill.temp",
                                         "chill.duration", "chillTemp", "chillDuration", "storageType",
                                         "storageDetails", "responseVar", "responseValue", "figure"))
+
+##cleaned remaining storage duration
+
+#bhatt00 - estimate
+d$storageTemp[d$datasetID == "pipinis12"] <- 26
+d$storageDuration[d$datasetID == "bhatt00"] <- NA
+
+#aldridge1992 - 5, paper pending
+
+#bytnerowicz - 5/12, a lot of storage data need rescraping
+d$storageDuration[d$datasetID == "bytnerowicz14" & d$storage.time == "5/12"] <- NA
+
+#middleton96 - 1, 2-3, >3 years 
+temp <- c(rep(365, 913, NA), 2)
+d$storageDuration[d$datasetID == "middleton96" & !is.na(d$storage.time)] <- temp
+
+#pipinis12 - 1 month
+d$storageDuration[d$datasetID == "pipinis12"] <- 30
+
+#tang21 - 0-3
+d$storageDuration[d$datasetID == "tang21" & d$storage.time == "0-3"] <- 1.5
+
+#tylkowski07 - 28-49, have to fix chilling
+d$storagetemp[d$datasetID == "tylkowski07"] <- 0
+d$storageDuration[d$datasetID == "tylkowski07"] <- 0
+
+#yan16 - 35-75
+d$storageDuration[d$datasetID == "yan16" & d$storage.time == "35-75"] <- 55
+
+#feng18 - very short, only for transportation
+d$storageDuration[d$datasetID == "feng18"] <- NA
+
+#werner13 - 1 to 2 years
+d$storageDuration[d$datasetID == "werner13" & d$figure == "table 2"] <- 730
+d$storageDuration[d$datasetID == "werner13" & d$figure == "table 3"] <- 365
+
+#washitani89 - 60 to 90
+d$storageDuration[d$datasetID == "washitani89"] <- 75
+
+#zulfiqar15 - ~ 90
+d$storageDuration[d$datasetID == "zulfiqar15"] <- 91
+
+#bibby53 - 14-28, paper pending
+#d$storageDuration[d$datasetID == "bibby53" & d$storage.time == "14-28"] <- 21
+
+#ren08 - 30-31
+d$storageDuration[d$datasetID == "ren08"] <- 30
+
+#gimenez-benavides13 - 4-5 months
+d$storageDuration[d$datasetID == "gimenez-benavides13"] <- 123
+
+#guo20 - ~*
+temp <- c(rep(1095, 4), rep(730, 4), rep(365, 4), rep(0, 4),
+          rep(1095, 2), rep(730, 2), rep(365, 2), rep(0, 2),
+          rep(1095, 2), rep(730, 2), rep(365, 2), rep(0, 2),
+          rep(1095, 2), rep(730, 2), rep(365, 2), rep(0, 2))
+d$storageTemp[which(d$datasetID == "guo20" & d$study != "exp1")] <- 5
+d$storageDuration[which(d$datasetID == "guo20" & d$study != "exp1")] <- temp
+
+#all vague durations
+d$storageDuration[d$storage.time == "didn't mention" |
+                    d$storage.time == "few days" |
+                    d$storage.time == "until constant weight"] <- NA
+
+##cleaned storage temp
+
+#acosta12 - 18-20
+d$storageTemp[d$datasetID == "acosta12"] <- 19
+d$storageDuration[d$datasetID == "acosta12"] <- 120
+
+#brandel2005 - 15-20
+d$storageTemp[d$datasetID == "brandel2005"] <- 17.5
+
+#vahdati12 - 15-20
+d$storageTemp[d$datasetID == "vahdati12"] <- 17.5
+
+#albrecht20 - 21-23
+d$storageTemp[d$datasetID == "albrecht20"] <- 22
+d$storageDuration[d$datasetID == "albrecht20"] <- NA
+
+#boscagli01 - 18-22
+d$storageTemp[d$datasetID == "boscagli01"] <- 20
+
+#basaran12 - 18+/-2, paper pending
+#d$storageTemp[d$datasetID == "basaran12"] <- 18
+
+#jusung16 - 4+/-1
+d$storageTemp[d$datasetID == "jusung16"] <- 4
+
+#karlsson08 - natural, fluctuating temperatures
+d$storageTemp[d$datasetID == "karlsson08"] <- NA
+
+#kazaz10 - 20-24
+d$storageTemp[d$datasetID == "kazaz10"] <- 22
+
+#meyer94 - 20-22
+d$storageTemp[d$datasetID == "meyer94"] <- 21
+
+#meyer95 - 20-22
+d$storageTemp[d$datasetID == "meyer95"] <- 21
+
+#schutz02 - 20-22
+d$storageTemp[d$datasetID == "schutz02"] <- 21
+d$storageTemp[d$datasetID == "schutz02"] <- NA
+
+#ordonez-salanueva15 - 20+/-1
+d$storageTemp[d$datasetID == "ordonez-salanueva15"] <- 20
+
+#parmenter96 - 2-3
+d$storageTemp[d$datasetID == "parmenter96"] <- 2.5
+
+#alptekin2002 - 105
+d$storageTemp[d$datasetID == "alptekin2002"] <- NA
+d$storageDuration[d$datasetID == "alptekin2002"] <- NA
+
+#naseri18 - 2 - 4
+d$storageTemp[d$datasetID == "naseri18"] <- 3
+
+#pipinis09 - 2 - 4
+d$storageTemp[d$datasetID == "pipinis09"] <- 3
+
+#sacande04 - 103
+d$storageTemp[d$datasetID == "sacande04"] <- 5
+d$storageDuration[d$datasetID == "sacande04"] <- 183
+
+#all room temp
+d$storageTemp[d$storage.temp == "room temp" | d$storage.temp == "room temperature"] <- "NA"
+
+#lee21 - room temp/4
+d$storageTemp[d$datasetID == "lee21"] <- "NA then 4"
+d$storageDuration[d$datasetID == "lee21"] <- "30 then NA"
+
+#lee06 - 20-25
+d$storageTemp[d$datasetID == "lee06" & d$storage.temp == "20-25"] <- 22.5
+
+#li21 - 20 - 25
+d$storageTemp[d$datasetID == "li21" & d$storage.temp == "20 - 25"] <- 22.5
+
+#pipinis20 - multiple values
+d$storageTemp[d$datasetID == "pipinis20"] <- 4
+
+#pritchard93 - 11-16, 16/4
+d$storageTemp[d$datasetID == "pritchard93" & d$storage.temp == "11-16"] <- 13.5
+d$storageTemp[d$datasetID == "pritchard93" & d$storage.temp == "16/4"] <- "16 then 4"
+d$storageDuration[d$datasetID == "pritchard93" & d$storage.time == "7-9"] <- 8
+d$storageDuration[d$datasetID == "pritchard93" & d$storage.time == "10-14"] <- 12
+d$storageDuration[d$datasetID == "pritchard93" & d$storage.time == "21-35"] <- 28
+d$storageDuration[d$datasetID == "pritchard93" & d$storage.time == "2 wk (16°C) + 4 wk (2°C )"] <- "14 then 14"
+
+#prknova15 - multiple values
+d$storageTemp[d$datasetID == "prknova15"] <- "multiple"
 
 #arslan11 - 18 - 20
 d$storageTemp[d$datasetID == "arslan11"] <- 19
@@ -287,6 +440,7 @@ d$storageTemp[d$datasetID == "esmaeili09"] <- 20
 #mamut20 - 23 - 26
 d$storageTemp[d$datasetID == "mamut20" & is.na(d$chill.temp)] <- 24.5
 d$storageDuration[d$datasetID == "mamut20" & !is.na(d$chill.temp)] <- NA
+d$storageDuration[d$datasetID == "mamut20" & d$storage.time == "0 (control)"] <- 0
 
 #washitani85 - room temp + 4
 d$storageTemp[d$datasetID == "washitani85" & is.na(d$chill.temp)] <- "NA then 4"
@@ -300,19 +454,18 @@ d$storageTemp[d$datasetID == "zhou08" & d$storage.temp != "room temp"] <- NA
 d$storageDuration[d$datasetID == "zhou08" & d$storage.temp != "room temp"] <- NA
 
 #yang08 - 4:65, 30/20, 4
-d$storageTemp[d$datasetID == "ren04"] <- 24.5
+d$storageTemp[d$datasetID == "yang08" & d$figure == "Figure 3"] <- 4
+d$storageTemp[d$datasetID == "yang08" & d$storage.temp == "30/20, 4"] <- NA
+d$storageDuration[d$datasetID == "yang08" & d$storage.temp == "30/20, 4"] <- NA
 
-#li17 - avg17, avg18
-d$storageTemp[d$datasetID == "ren04"] <- 24.5
-
-#forbes09 - -80
-d$storageTemp[d$datasetID == "ren04"] <- 24.5
-
-#chen15 - -80
-d$storageTemp[d$datasetID == "ren04"] <- 24.5
+#li17 - avg17, avg18, paper pending
+#d$storageTemp[d$storage.temp == "avg 17"] <- 17
+#d$storageTemp[d$storage.temp == "avg 18"] <- 18
 
 #ghimeray14 - 22+-22
 d$storageTemp[d$storage.temp == "22+-22"] <- 22
+d$storageDuration[d$datasetID == "ghimeray14" & d$storage.time == "30-31"] <- 30
+d$storageDuration[d$datasetID == "ghimeray14" & d$storage.time == "60-62"] <- 61
 
 #ren04 - 23-26
 d$storageTemp[d$datasetID == "ren04"] <- 24.5
@@ -326,9 +479,10 @@ d$storageTemp[d$datasetID == "kolodziejek18" & !is.na(d$chill.temp)] <- NA
 d$storageDuration[d$datasetID == "kolodziejek18" & !is.na(d$chill.temp)] <- NA
 
 #ahola99 - 2.1-5.9
-d$storageTemp[d$datasetID == "veatch-blohm11" & d$species == "pendula"] <- 4
-d$storageTemp[d$datasetID == "veatch-blohm11" & d$species == ""] <- 4
-d$storageTemp[d$datasetID == "veatch-blohm11" & d$species == "pendula"] <- 4
+d$storageTemp[d$datasetID == "ahola99" & d$species == "pendula"] <- "-18 then NA"
+d$storageTemp[d$datasetID == "ahola99" & d$species == "abies"] <- "-3 then NA"
+d$storageTemp[d$datasetID == "ahola99" & d$species == "sylvestris"] <- "-3 then NA"
+d$storageDuration[d$datasetID == "ahola99"] <- "NA then NA"
 
 #veatch-blohm11 - 21-25
 d$storageTemp[d$datasetID == "veatch-blohm11"] <- 23

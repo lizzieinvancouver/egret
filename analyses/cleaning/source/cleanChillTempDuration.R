@@ -67,6 +67,12 @@ d$chillLightCycle <- NA
 
 ##additional cleaning
 
+#vahdati12
+d$chillDuration[which(d$datasetID == "vahdati12")] <- d$chill.duration[which(d$datasetID == "vahdati12")] * 7
+
+#lee21
+d$chillDuration[which(d$datasetID == "lee21")] <- d$chill.duration[which(d$datasetID == "lee21")] * 7
+
 #airi2009 - 0
 d$chillTemp[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA
 d$chillDuration[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA
@@ -210,7 +216,7 @@ d$chillDuration[which(d$datasetID == "acosta12")] <- NA
 
 #Brandel2005 - 5/25
 temp <- c(NA, NA, 5, 5, 11, 11, 13, 13, 15, 15)
-d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "primary dormant")] <- temp
+d$chillTemp[which(d$datasetID == "brandel2005" & d$other.treatment == "primary dormant")] <- temp
 temp <- c("", "", 5, 5, 11, 11, 13, 13, 15, 15)
 d$chillTemp[which(d$datasetID == "brandel2005" & d$other.treatment == "secondary dormant")] <- paste0("5 then 25 then ",  temp)
 d$chillTemp[which(d$datasetID == "brandel2005" & d$other.treatment == "secondary dormant")] <- "4 then 4 then 4"
