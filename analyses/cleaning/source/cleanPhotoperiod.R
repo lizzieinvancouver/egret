@@ -25,7 +25,7 @@ photoperiod_row <- which(!is.na(d$photoperiod) & d$photoperiod != 0)
 far.red <- which(d$chemical == "log2(red/far.red)")
 
 # Combine all row numbers
-row_light <- c(selected_rows,photoperiod_row,far.red, morerowsmaybe)
+row_light <- c(selected_rows,photoperiod_row,far.red)
 # Select for unique rows
 light_egret <- d[unique(row_light),]
 
