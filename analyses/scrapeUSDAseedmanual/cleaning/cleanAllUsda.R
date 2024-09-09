@@ -22,11 +22,11 @@ if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
   setwd("/Users/sapph/Documents/ubc things/work/egret/analyses/")
 }
 
-d <- read_csv("scrapeUSDAseedmanual/cleaning/germination_master_spreadsheet.csv", na = c("", "NA"))
+d <- read_csv("scrapeUSDAseedmanual/cleaning/germPreCleanedMasterSheet.csv", na = c("", "NA"))
 
-source("scrapeUSDAseedmanual/cleaning/cleanmerge_all_usda_JNVER.R") ### this is Justin's cleaning code
+source("scrapeUSDAseedmanual/cleaning/source/cleanAllUsda_JNVER.R") ### this is Justin's cleaning code
 
 
-source("scrapeUSDAseedmanual/cleaning/cleaningUSDA_forDan.r") ### this is Justin's cleaning code
+source("scrapeUSDAseedmanual/cleaning/source/cleaningUSDA_ForDan.R") ### this is Justin's cleaning code
 
-write.csv(usda_new,"input/usda_germination_cleaned.csv")
+write.csv(usda_new,"input/usdaGerminationCleaned.csv")
