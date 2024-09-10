@@ -22,17 +22,55 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("/Users/frederik/github/egret/analyses")
 }
 
-d <- read.csv("..//data/scrapedEgret/egret_SS.csv")
+s <- read.csv("..//data/scrapedEgret/egret_SS.csv")
 
 # were all the right papers/fig scraped?
 
-d$studyFig <- paste(d$datasetID, d$figure, sep = "_")
-sort(unique(d$studyFig))
+s$studyFig <- paste(s$datasetID, s$figure, sep = "_")
+sort(unique(s$studyFig))
 
 # create the mega label that we want to keep data by: taken from germResponseVar.R lines 25-28
-d$germDuration <- as.numeric(d$germDuration)
-d$latbi <- paste(d$genus, d$species, sep = "_")
-d$trt <- paste(d$chillDuration, d$chillTemp, d$germTemp, d$chemicalCor, d$scarifType, sep = "_")
-d$keep <- paste(d$datasetIDstudy, d$latbi, d$trt, d$provenance.lat, d$provenance.long, d$other.treatment, d$photoperiod, d$figure)
-
+s$response <- as.numeric(s$response) # two rows of NA Chen15
+temp <- subset(d, is.na(response))
+s$germDuration <- as.numeric(s$germ.duration)
+s$latbi <- paste(s$genus, s$species, sep = "_")
+s$trt <- paste(s$chill.duration, s$chill.temp, s$germ.temp, s$chemical.concent, s$scarif.type, sep = "_")
+s$keep <- paste(s$datasetID, s$study, s$latbi, s$trt, s$provenance.lat, s$provenance.long, s$other.treatment, s$photoperiod, s$figure, sep = "_")
+s$datasetID <- as.factor(s$datasetID)
+s$keep <- as.factor(s$keep)
 # write a loop that saves a figure for each unique study to see that curves are correct
+
+#subset to datasets with percent germ
+curve <- subset(s, respvar == "per.germ")
+
+studyFigs <- unique(curve$studyFig)
+study <- unique(curve$datasetID)
+
+studyFigs <- unique(curve$studyFig)
+j <- 9
+#for (j in 1:length(unique(studyFigs))){
+temp2 <- curve[which(curve$studyFig == studyFigs[j]),]
+
+keeping <- unique(temp2$keep)
+
+plot(temp2$response ~ temp2$germ.duration, type = "n", xlim = c(0,35), ylim = c(0,100))
+for (i in 1:length(keeping)){
+
+  temp3 <- temp2[which(temp2$keep == keeping[i]),]
+  
+# plot(temp3$response ~ temp3$germ.duration, type = "n", xlim = c(0,35), ylim = c(0,100))
+points(temp3$response ~ temp3$germ.temp)
+#points(temp3$response ~ temp3$germ.duration, type = "l")
+}
+
+
+# still need to check langlois; Nurse 
+# Lo19 was supposed to be table2, fig 2?
+
+# still something off
+#"Batlla03; Batlla03_Fig1b" add space between fig 1b
+#"Jang22_Fig 6"---error with x-axis of Fig 6 0nm trt; 
+# Jang22_Fig 7 chill temp dragged, should all be 4 with 2 trt
+# Redondo-gomez11_Fig 1a still missing zeros and declines on the end
+# looks great
+# Jang22_Fig 5
