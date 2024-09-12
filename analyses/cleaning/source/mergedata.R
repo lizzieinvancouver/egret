@@ -13,9 +13,10 @@ egret_TA <- read.csv("input/egretScraping/egret_TA.csv", na.strings=c("NA","NaN"
 #colnames(egret_TA)[colnames(egret_TA) == "germ.tim.zero"] <- "germ.time.zero"
 colnames(egret_TA)[colnames(egret_TA) == "notes"] <- "Notes"
 length(unique(egret_TA$datasetID)) #38
-# egret_TA <- subset(egret_TA, datasetID !="Al-Absi10")
+#Delete data scraped from "Airi2009", will re-scrape this paper and add to missingdata.csv
+egret_TA <- subset(egret_TA, datasetID !="Airi2009")
 
-dim(egret_TA) # 2879   45
+dim(egret_TA) # 2789   45
 
 # Sophia C
 egret_SC <- read.csv("input/egretScraping/egret_SC.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
