@@ -18,6 +18,7 @@ d$germTempGen <- d$germ.temp # This is currently doing nothing
 
 # Now make new column with heavy duty cleaning
 d$germTemp  <- d$germ.temp
+d$germDuration <- d$germ.duration
 
 d$germTemp[which(d$germTemp == "45219")] <- "20/10" # 45219 corresponds to tang10b which had 20/10 germination temperature regime
 d$germTemp[which(d$germTemp == "unknown")] <- "NA"
@@ -280,7 +281,7 @@ d$germDuration[which(d$datasetID == "mamut20")] <- "30"
 
 # From Selena's new data
 for (i in 1:nrow(d)){
-  if(!is.na(d$datasetID) && d$datasetID == "batlla03" && d$germ.duration < 0){
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "batlla03" && d$germ.duration[i] < 0){
     germDuration <- 0
   }
 }
@@ -558,6 +559,7 @@ unique(d$photoperiodCopyDay)
 unique(d$photoperiodCopyNight)
 d$photoperiodCopy[which(is.na(d$photoperiodCopy))] <- NA
 d$photoperiodCopyDay <- as.numeric(d$photoperiodCopyDay)
+print("This `NAs introduced by coercion' happens when we make photoperiodCopyDay numeric")
 d$photoperiodCopyNight <- as.numeric(d$photoperiodCopyNight)
 
 unique(d$tempDay)

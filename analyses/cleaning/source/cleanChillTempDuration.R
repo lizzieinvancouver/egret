@@ -68,10 +68,10 @@ d$chillLightCycle <- NA
 ##additional cleaning
 
 #vahdati12
-d$chillDuration[which(d$datasetID == "vahdati12")] <- d$chill.duration[which(d$datasetID == "vahdati12")] * 7
+d$chillDuration[which(d$datasetID == "vahdati12")] <- as.numeric(d$chill.duration[which(d$datasetID == "vahdati12")]) * 7
 
 #lee21
-d$chillDuration[which(d$datasetID == "lee21")] <- d$chill.duration[which(d$datasetID == "lee21")] * 7
+d$chillDuration[which(d$datasetID == "lee21")] <- as.numeric(d$chill.duration[which(d$datasetID == "lee21")]) * 7
 
 #airi2009 - 0
 d$chillTemp[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA

@@ -272,7 +272,7 @@ check <- d[idx,]
 check_short <- subset(check, select = c("datasetID", "study", "species", "storage.type", "storage.temp",
                                         "storage.time", "storage.humidity", "treatment", "chill.temp",
                                         "chill.duration", "chillTemp", "chillDuration", "storageType",
-                                        "storageDetails", "responseVar", "responseValue", "figure"))
+                                        "storageDetails", "figure"))
 
 ##cleaned remaining storage duration
 
@@ -286,7 +286,7 @@ d$storageDuration[d$datasetID == "bhatt00"] <- NA
 d$storageDuration[d$datasetID == "bytnerowicz14" & d$storage.time == "5/12"] <- NA
 
 #middleton96 - 1, 2-3, >3 years 
-temp <- c(rep(365, 913, NA), 2)
+temp <- rep(c(365, 913, NA), 2)
 d$storageDuration[d$datasetID == "middleton96" & !is.na(d$storage.time)] <- temp
 
 #pipinis12 - 1 month
