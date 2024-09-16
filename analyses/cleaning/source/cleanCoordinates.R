@@ -48,8 +48,6 @@ d$source.population.edit[which(d$datasetID == "lai03")] <- "Ninshan County, Chin
 
 # Work by Tolu Amuwo where she looked up locations and manually added lat/lon
 na.coords <- d[which(is.na(d$provenance.lat)),]
-d$lat.long.coarse[which(is.na(d$provenance.lat))] <- "Y"
-d$lat.long.coarse[which(is.na(d$lat.long.coarse))] <- "N"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Chuanren04")] <- "56.13"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Chuanren04")] <- "-106.347"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Albrecht20")] <- "37.838"
@@ -1096,72 +1094,72 @@ d$provLatLonAlt <- NULL
 
 #=== === === === === === === === === === === === === === === === === === === ===
 # 
-# #### MAP ####
-# Start a quick map with given locations
-### Available locations
-no.na.values <- d[complete.cases(d["provenance.lat"]),]
-
-# Select only 1 entry per provenance
-df.4.map <- no.na.values[!duplicated(no.na.values$provenance.lat), ]
-# clean columns not necessary
-df.4.map <- df.4.map[, c("datasetID", "provenance.lat", "provenance.long", "continent")]
-head(df.4.map)
+# # #### MAP ####
+# # Start a quick map with given locations
+# ### Available locations
+# no.na.values <- d[complete.cases(d["provenance.lat"]),]
+# 
+# # Select only 1 entry per provenance
+# df.4.map <- no.na.values[!duplicated(no.na.values$provenance.lat), ]
+# # clean columns not necessary
+# df.4.map <- df.4.map[, c("datasetID", "provenance.lat", "provenance.long", "continent")]
+# head(df.4.map)
 # color coding
 # i need to find another way than using dplyr
-library(dplyr)
-occurence <- df.4.map %>%
-  group_by(continent) %>%
-  summarize(continent = first(continent), count = n())
-head(occurence)
-# map
-plot_geo(occurence) %>%
-  layout(
-    geo = list(
-      showframe = TRUE,
-      showcoastlines = TRUE,
-      showland = TRUE,
-      landcolor = toRGB("white"),
-      countrycolor = toRGB("darkgrey"),
-      coastlinecolor = toRGB("black"),
-      coastlinewidth = 0.5,
-      lataxis = list(
-        range = c(-55, 80),
-        showgrid = FALSE
-      ),
-      lonaxis = list(
-        range = c(-130, 160),
-        showgrid = FALSE
-      )
-    )
-  ) %>%
-  # # Color gradient set to the number of papers in each country
-  # add_trace(
-  #   z = ~count, color = ~count, colors = 'GnBu',
-  #   text = ~continent, locations = ~continent,
-  #   marker = list(
-  #     line = list(width = 0.5, color = "black")
-  #   ),
-  #   # Edit the colar bar position --> make the X value negative if I want to set it on the left
-  #   colorbar = list(title = "", x = 1, y = 1.1, len = 1.03)
-  # ) %>%
-add_trace(
-  type = "scattergeo",
-  lat = ~df.4.map$provenance.lat,
-  lon = ~df.4.map$provenance.long,
-  text = ~paste("ID: ", df.4.map$datasetID),
-  mode = "markers",
-  marker = list(
-    size = 1,
-    symbol = "circle",
-    color = "lightgrey",
-    line = list(width = 1.5, color = "black")
-  )
-) %>%
-  layout(title = "")
-
-# save figure
-save_image(egretlocations,
-           file="/Users/christophe_rouleau-desrochers/Documents/mapegret.html")
+# library(dplyr)
+# occurence <- df.4.map %>%
+#   group_by(continent) %>%
+#   summarize(continent = first(continent), count = n())
+# head(occurence)
+# # map
+# plot_geo(occurence) %>%
+#   layout(
+#     geo = list(
+#       showframe = TRUE,
+#       showcoastlines = TRUE,
+#       showland = TRUE,
+#       landcolor = toRGB("white"),
+#       countrycolor = toRGB("darkgrey"),
+#       coastlinecolor = toRGB("black"),
+#       coastlinewidth = 0.5,
+#       lataxis = list(
+#         range = c(-55, 80),
+#         showgrid = FALSE
+#       ),
+#       lonaxis = list(
+#         range = c(-130, 160),
+#         showgrid = FALSE
+#       )
+#     )
+#   ) %>%
+#   # # Color gradient set to the number of papers in each country
+#   # add_trace(
+#   #   z = ~count, color = ~count, colors = 'GnBu',
+#   #   text = ~continent, locations = ~continent,
+#   #   marker = list(
+#   #     line = list(width = 0.5, color = "black")
+#   #   ),
+#   #   # Edit the colar bar position --> make the X value negative if I want to set it on the left
+#   #   colorbar = list(title = "", x = 1, y = 1.1, len = 1.03)
+#   # ) %>%
+# add_trace(
+#   type = "scattergeo",
+#   lat = ~df.4.map$provenance.lat,
+#   lon = ~df.4.map$provenance.long,
+#   text = ~paste("ID: ", df.4.map$datasetID),
+#   mode = "markers",
+#   marker = list(
+#     size = 1,
+#     symbol = "circle",
+#     color = "lightgrey",
+#     line = list(width = 1.5, color = "black")
+#   )
+# ) %>%
+#   layout(title = "")
+# 
+# # save figure
+# save_image(egretlocations,
+#            file="/Users/christophe_rouleau-desrochers/Documents/mapegret.html")
 
 
 
