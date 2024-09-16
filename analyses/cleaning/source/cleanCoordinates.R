@@ -19,13 +19,9 @@
 # library(plotly)
 
 # housekeeping
-# rm(list=ls())  
+# rm(list=ls())
 # options(stringsAsFactors=FALSE)
 
-
-
-# grab the data 
-d <- read.csv("output/egretclean.csv")
 
 # Read in the data by running cleanall.R 1-3
 # Adding a new column to fix/add location if they were not originally scraped 
@@ -793,7 +789,8 @@ d$provenance.lat[which(d$datasetID == "zhou08" & d$provenance.lat == "103.42")] 
 # STEP 3.1.4. karlsson08: 9.4167/9.3833
 # to DOUBLE CHECK
 # STEP 3.1.10. nurse08: 42
-# different environments were used within in Essex Ontario, not a precise location was given. I don't know if we should use this because essex is closer to 42.1 than 42.0
+# different environments were used within in Essex Ontario, not a precise location was given. I don't know if we should use this because essex is closer to 42.1 than 42.0 
+# Talked with Deirdre on 16 Sept 2024, decided to keep 42 because not a huge climatic difference
 # STEP 3.1.12. teimouri13: 35.47 and 36.3 
 d$provenance.lat[which(d$datasetID == "teimouri13" & d$provenance.lat == "35.5 and 36.3")] <- "35.47"
 #chose the first location given, they did merged the two locations together
@@ -857,6 +854,7 @@ d$provenance.long[which(d$datasetID == "karlsson08" & d$provenance.long == "42.0
 # different environments were used within in Essex Ontario, not a precise location was given. I don't know if we should use this because essex is closer to 42.1 than 42.0
 # STEP 3.2.13. olmez07 :41.83, 41.87, 41.85
 # need to spend time redoing that whole scrapping. Very clearly were the locations given in the article with distinct provenance names and coordinates.
+
 # STEP 3.2.15. teimouri13 : 59.05 and 59.2
 d$provenance.long[which(d$datasetID == "teimouri13" & d$provenance.long == "59.05 and 59.2")] <- "59.05" #chose the first location given, they did merged the two locations together
 # STEP 3.2.17. yeom21 : 129
@@ -1025,10 +1023,10 @@ d$provenance.long[which(d$datasetID == "tylkowski10" & d$provenance.long == "17.
 
 
 
-tmp<-subset(d, datasetID == "wickens01")
+# tmp<-subset(d, datasetID == "wickens01")
 
 ##### STEP 5 FIXING +/- #####
-list(tmp$provenance.long)
+# list(tmp$provenance.long)
 # d$provenance.long[which(d$datasetID == "edwards96" & d$provenance.long == "124.1")] <- "124.10" # checked the article,location is good
 # d$provenance.long[which(d$datasetID == "edwards96" & d$provenance.long == "122.4")] <- "122.40" # checked the article,location is good
 # d$provenance.long[which(d$datasetID == "edwards96" & d$provenance.long == "122.4")] <- "122.40" # checked the article,location is good
@@ -1091,6 +1089,10 @@ subset(checkprovstuff, provLatLon=="25.116667 102.733333") # is the NA correct?
 ## Deleting these out for now, we build them later
 d$provLatLon <- NULL
 d$provLatLonAlt <- NULL
+
+# Create two new columns
+d$provenance.Lat <- as.numeric(d$provenance.lat)
+d$provenance.Long <- as.numeric(d$provenance.long)
 
 #=== === === === === === === === === === === === === === === === === === === ===
 # 
