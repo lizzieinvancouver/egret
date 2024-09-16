@@ -59,9 +59,7 @@ source("cleaning/source/cleanResponseVar.R") # 68 columns
 source("cleaning/source/cleanPhotoperiod.R") # 69 columns
 
 # 12. Clean coordinates seed provinance
-# source("cleaning/source/cleanCoordinates.R")
-
-# source("cleaning/source/cleanCoordinates.R")
+source("cleaning/source/cleanCoordinates.R") # 74
 
 # 14. Small final cleaning and write out data!
 
