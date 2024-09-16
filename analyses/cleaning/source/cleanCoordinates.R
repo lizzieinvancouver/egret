@@ -1066,33 +1066,35 @@ d.longitude2 <- d.longitude[!grepl(pattern, d.longitude$provenance.long), ]
 d.longitude.chg <- d.longitude2[, c("datasetID", "provenance.long")]
 dlong <- unique(d.longitude.chg)
 
-## Checking on whether we need to include altitude when defining provenance
-d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
-d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
-checkprovstuff <- subset(d, select=c("provLatLon", "provenance.altitude"))
-checkprovstuff <- checkprovstuff[!duplicated(checkprovstuff), ]
-
-checkalt <- aggregate(checkprovstuff[c("provenance.altitude")], checkprovstuff[c("provLatLon")], FUN=length)
-checkalt <- checkalt[order(checkalt$provenance.altitude),]
 
 # Manually looking at the ones with issues (I could also have done this in a nice loop) ...
 # these no longer exists, but did yesterday
 # check fixplease once they reappear ... 
-subset(checkprovstuff, provLatLon=="37.11421066 101.5144129")
-subset(checkprovstuff, provLatLon=="36.7 54.35")
-subset(checkprovstuff, provLatLon=="36.51666667 138.35")
-subset(checkprovstuff, provLatLon=="32.3167 77.2") 
+# subset(checkprovstuff, provLatLon=="37.11421066 101.5144129")
+# subset(checkprovstuff, provLatLon=="36.7 54.35")
+# subset(checkprovstuff, provLatLon=="36.51666667 138.35")
+# subset(checkprovstuff, provLatLon=="32.3167 77.2") 
+# 
+# subset(checkprovstuff, provLatLon=="25.17 121.55") # okay, real differences
+# subset(checkprovstuff, provLatLon=="25.116667 102.733333") # is the NA correct?
 
-subset(checkprovstuff, provLatLon=="25.17 121.55") # okay, real differences
-subset(checkprovstuff, provLatLon=="25.116667 102.733333") # is the NA correct?
-
-## Deleting these out for now, we build them later
-d$provLatLon <- NULL
-d$provLatLonAlt <- NULL
+# ## Deleting these out for now, we build them later
+# d$provLatLon <- NULL
+# d$provLatLonAlt <- NULL
 
 # Create two new columns
 d$provenance.Lat <- as.numeric(d$provenance.lat)
 d$provenance.Long <- as.numeric(d$provenance.long)
+d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
+d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
+
+## Checking on whether we need to include altitude when defining provenance
+
+# checkprovstuff <- subset(d, select=c("provLatLon", "provenance.altitude"))
+# checkprovstuff <- checkprovstuff[!duplicated(checkprovstuff), ]
+# 
+# checkalt <- aggregate(checkprovstuff[c("provenance.altitude")], checkprovstuff[c("provLatLon")], FUN=length)
+# checkalt <- checkalt[order(checkalt$provenance.altitude),]
 
 #=== === === === === === === === === === === === === === === === === === === ===
 # 
