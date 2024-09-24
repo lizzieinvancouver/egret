@@ -3,19 +3,6 @@
 # cleaning treatment column of egret
 
 # housekeeping
-rm(list=ls())  
-options(stringsAsFactors=FALSE)
-
-if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
-  setwd("~/Documents/github/egret/analyses")
-} else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
-  setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses/")
-} else if(length(grep("lizzie", getwd()) > 0)) {
-  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
-}
-
-# read file
-d <- read.csv("output/egretclean.csv", sep=",", stringsAsFactors = FALSE)
 
 # #Create warm strat column (this code now in analyseSeedCues/dropExtraTreats.R and I think could be DELETED?)
 d$warmstrat <- NA

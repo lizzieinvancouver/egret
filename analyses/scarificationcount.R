@@ -14,10 +14,7 @@ options(stringsAsFactors=FALSE)
 # load librairies
 library(ggplot2)
 
-# read csv
-d <- read.csv("output/egretclean.csv", sep=",", stringsAsFactors = FALSE)
-
-
+str(d)
 
 #Create warm strat column
 d$warmstrat <- NA
@@ -27,7 +24,7 @@ warmstrat.names <- unique(d$treatment[grep("warm", d$treatment)])
 warmstrat.names[!warmstrat.names %in% c("cold strat + soak in warm water")]
 # add a 1 in warmstrat column whenever "warm" appepeared in the treatment column
 d$warmstrat[which(d$treatment %in% warmstrat.names)] <- 1
-       
+d       
 
 #### Scarification ####
 # select only columns needed
