@@ -57,9 +57,9 @@ Now here's what to do:
 \item Take a screen shot of the figure and import into ImageJ, following detailed instructions from Tim's OSPREE data scraping video from git/ospree/notes/howtoscrape/Data Scraping Tutorial.mp4 or the general instructions outlined in the egret wiki. Use the scratch tab to get data into the right format, and then copy into data\textunderscore detailed.\end{enumerate}
 \subsection*{A few more ``how to's", trouble shooting etc} 
  \begin{itemize}
- \item In generally we try to follow the language used in the paper, for example if a level of a treatment is referred to as chilling, but is actually warm, we still put it in the chilling column.
+ \item Generally, we try to follow the language used in the paper, for example if a level of a treatment is referred to as chilling, but is actually warm, we still put it in the chilling column.
  \item \textbf{Our definition of a crop:} we defined crops as anything that is bred and produced at scale and for consumption. We still included species that were edible but foraged and species that are likely to grow in natural stands.
-  \item \textbf{For dealing with lats and lons:} Tool to convert to decimal latitude and longitude: \url{https://andrew.hedges.name/experiments/convert\_lat\_long/}  and remember to add NEGATIVE to your longitude if it's West. Also, you can check where things are by just typing in lat and long into Google maps.
+  \item \textbf{For dealing with lats and lons:} Tool to convert to decimal latitude and longitude: \url{https://www.fcc.gov/media/radio/dms-decimal}  and remember to add NEGATIVE to your longitude if it's West. Also, you can check where things are by just typing in lat and long into Google maps. 
 \item \textbf{On entering response times:} If the figure is a time-series or curve of the percent germination over time, the days to germination will be the values from the figures's x-axis. Otherwise the value will be the final day that germination was observed. Remember for time-series to also include the zero point, or to include days along the x-axis that have zero on the y-axis as this is still part of the curve. 
 \item \textbf{On dealing with error:} If it's figures records error and it is *clear enough* to scrape, error can be recorded. Often times the SE bars are in the way of each other or not quite discernible, in which case we've decided to avoid them. But if the bars are clear, record them. Values can go in "resp\_error" and just SE in "error type."
  \item \textbf{For dealing with cold storage conditions:} we defined storage as the period between when the seeds were obtained or collected and when they started applying treatments to them. See below for more detail on how we decided to deal with studies that has cold storage that could be physiologically similar to chilling.
@@ -73,7 +73,7 @@ Now here's what to do:
 \begin{itemize}
 \item We are trying to use camel case where possible for both script names and column names. 
 \item Adding a column for the rare cases where studies start measuring germination day relative to the day of first germination and not the day they start monitoring germination (i.e. day of germination temperatures, imbibing etc)
-\item Excluding papers not in english unless the person scraping the data could read the language fluently
+\item Excluding papers not in english unless the person scraping the data could read the language fluently %CRD26Setp2024 I think we decided to drop all papers that are not in english in the end, right?
 \item Decided to just add seed mass as a yes/no for now, we will have to go back and scrape it some day if we want it
 \item When dealing with error, enter it as zero if bars are not distinguishable from the points, or as "indistinguishable" if multiple overlapping points have overlapping error bars that can not be scraped with certainty (see issue of a visual example of this).
 \end{itemize}
@@ -96,6 +96,7 @@ Now here's what to do:
 \item We added an additional column to denote when we needed to take these less specific site locations. 
 \item To check that coordinates seem right we plotted them on a map. 
 \item See issue \#21 for cleaning coordinates, \#48 on number of studies with multiple provenances, \#47 mapping code.
+\item If available we kept a minimum of two decimals per lat/long, but in some cases, vague coordinates of a region were provided with no decimals and we kept those indicating a less specific site location. % CRD24Sept2024 not sure if necessary here, but thought I mentioned it. If we want to keep, I could check if that is the case that we actually mentioned something in the column about non specific location. 
 \end{itemize}
 \item \textbf{cleanGerminationTempDuration.R}: 
 \begin{itemize} 
