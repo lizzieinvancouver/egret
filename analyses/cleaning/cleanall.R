@@ -61,7 +61,8 @@ source("cleaning/source/cleanPhotoperiod.R") # 69 columns
 # 12. Clean coordinates seed provinance
 source("cleaning/source/cleanCoordinates.R") # 80 columns
 
-# 14. Small final cleaning and write out data!
+
+git pushgit pushBack(git statusgit status)# 14. Small final cleaning and write out data!
 
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
