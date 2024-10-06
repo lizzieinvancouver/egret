@@ -92,11 +92,11 @@ d$treatmentCat[which(d$datasetID == "tang10_1" & d$study =="exp2" & d$treatment 
 d$treatmentCat[which(d$datasetID == "tang10_1" & d$study =="exp3" & d$treatment == "stratification")] <- "cold.strat"
 d$treatmentCat[which(d$datasetID == "tang10_1" & d$study =="exp4" & d$treatment == "stratification")] <- "cold.strat"
 
-# tang10_1 : change stratification to are warm strat #tocheck
+# tang10_1 : change stratification to warm strat #tocheck
 
 # tilki07 : change stratification to warm or cold. Has both cold strat and cold+warmstrat
 tilki07<-subset(d, datasetID == "tilki07")
-d$treatmentCat[which(d$datasetID == "tilki07" & d$chill.temp =="****" & d$treatment == "stratification")] <- "cold.strat"
+d$treatmentCat[which(d$datasetID == "tilki07" & d$chill.temp =="***" & d$treatment == "stratification")] <- "cold.strat"
 
 # tilki06 : change stratification to warm or cold
 # tang10_1 : change stratification to warm or cold
