@@ -7,7 +7,7 @@
 rm(list=ls()) 
 options(stringsAsFactors = FALSE)
 
-if(length(grep("deirdreloughnan", getwd()) > 0)) {
+if(length(grep("deirdre", getwd()) > 0)) {
   setwd("~/Documents/github/egret/analyses")
 } else if(length(grep("lizzie", getwd()) > 0)) {
   setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
@@ -60,9 +60,6 @@ source("cleaning/source/cleanPhotoperiod.R") # 69 columns
 
 # 12. Clean coordinates seed provinance
 source("cleaning/source/cleanCoordinates.R") # 80 columns
-
-
-git pushgit pushBack(git statusgit status)# 14. Small final cleaning and write out data!
 
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
