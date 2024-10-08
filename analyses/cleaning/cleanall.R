@@ -26,16 +26,16 @@ if(length(grep("deirdre", getwd()) > 0)) {
 }
 
 # 1. Get the data (reads in a dataframe called `egret')
-source("cleaning/source/mergedata.R") # 31227 rows, 45 columns
+source("cleaning/source/mergedata.R") # 31227 rows, 45 columns with additional ss data: 32705
 
 # 2. Clean up datasetID issues
-source("cleaning/source/cleandatasetID.R") # 30202 rows
+source("cleaning/source/cleandatasetID.R") # 
 
 # 3. Clean species names
 source("cleaning/source/cleanspecies.R")
 
 # 4. Clean miscellaneous -- removing redundant data between tables and fig, studies we can't trust data quality after reviewing pdf's again.
-source("cleaning/source/cleanMisc.R") 
+source("cleaning/source/cleanMisc.R") # 30937
 
 # 5. Clean chill duration and temperature
 source("cleaning/source/cleanChillTempDuration.R") # 50 columns

@@ -4,7 +4,7 @@
 rm(list=ls()) 
 options(stringsAsFactors = FALSE)
 
-if(length(grep("deirdreloughnan", getwd()) > 0)) {
+if(length(grep("deirdre", getwd()) > 0)) {
   setwd("~/Documents/github/egret/analyses")
 } else if(length(grep("lizzie", getwd()) > 0)) {
   setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
@@ -31,7 +31,7 @@ sort(unique(s$studyFig))
 
 # create the mega label that we want to keep data by: taken from germResponseVar.R lines 25-28
 s$response <- as.numeric(s$response) # two rows of NA Chen15
-temp <- subset(d, is.na(response))
+
 s$germDuration <- as.numeric(s$germ.duration)
 s$latbi <- paste(s$genus, s$species, sep = "_")
 s$trt <- paste(s$chill.duration, s$chill.temp, s$germ.temp, s$chemical.concent, s$scarif.type, sep = "_")
@@ -63,14 +63,12 @@ points(temp3$response ~ temp3$germ.temp)
 #points(temp3$response ~ temp3$germ.duration, type = "l")
 }
 
+s$datasetID <- tolower(s$datasetID)
+ssData <- unique(s$datasetID)
+s$keep <- paste(s$latbi, s$trt, s$provenance.lat, s$provenance.long, s$other.treatment, s$photoperiod, s$figure)
 
-# still need to check langlois; Nurse 
-# Lo19 was supposed to be table2, fig 2?
+d$keep <- paste( d$latbi, d$trt, d$provenance.lat, d$provenance.long, d$other.treatment, d$photoperiod, d$figure)
 
-# still something off
-#"Batlla03; Batlla03_Fig1b" add space between fig 1b
-#"Jang22_Fig 6"---error with x-axis of Fig 6 0nm trt; 
-# Jang22_Fig 7 chill temp dragged, should all be 4 with 2 trt
-# Redondo-gomez11_Fig 1a still missing zeros and declines on the end
-# looks great
-# Jang22_Fig 5
+tempS <- s[which(s$datasetID == ssData[4]),]; unique(tempS$keep)
+
+tempD <- d[which(d$datasetID == ssData[9]),]; unique(tempD$keep)
