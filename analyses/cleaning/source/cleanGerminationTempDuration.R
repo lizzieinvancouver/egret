@@ -173,12 +173,12 @@ d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response =
 # Should be resolved now that Selena has helped scrape this
 
 # Chen15 the germ.temp was put into photoperiod
-for (i in 1:nrow(d)) {
-  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "chen15" && d$treatment[i] == "incubation temperature"){
-    d$germ.temp[i] <- d$photoperiod[i]
-    d$photoperiod[i] <- 12
-  }
-}
+# for (i in 1:nrow(d)) {
+#   if(!is.na(d$datasetID[i]) && d$datasetID[i] == "chen15" && d$treatment[i] == "incubation temperature"){
+#     d$germ.temp[i] <- d$photoperiod[i]
+#     d$photoperiod[i] <- 12
+#   }
+# }
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -279,12 +279,12 @@ d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <
 # Table 2 has mixed warm and cold stratification, so we need to transfer the data on stratification out of germTemp and into the chill or other.treatment columns
 d$germDuration[which(d$datasetID == "mamut20")] <- "30"
 
-# From Selena's new data
-for (i in 1:nrow(d)){
-  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "batlla03" && d$germ.duration[i] < 0){
-    germDuration <- 0
-  }
-}
+# From Selena's new data--no longer needed after data was re-re-scraped
+# for (i in 1:nrow(d)){
+#   if(!is.na(d$datasetID[i]) && d$datasetID[i] == "batlla03" && d$germ.duration[i] < 0){
+#     germDuration <- 0
+#   }
+# }
 
 d$germDuration[which(d$germ.duration == "9 months")] <- "273.75"
 d$germDuration[which(d$germ.duration == "6 montns")] <- "273.75"

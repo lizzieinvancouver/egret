@@ -92,8 +92,13 @@ length(unique(egret_DB$datasetID)) # 1
 dim(egret_DB) #94   45
 
 egret_missing <- read.csv("input/egretScraping/missingData.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
-length(unique(egret_missing$datasetID)) #1
-dim(egret_missing) #37   45
+length(unique(egret_missing$datasetID)) #4
+dim(egret_missing) #127   45
+
+## some papers were re-scraped after we plotted the curves:
+egret_SS <- read.csv("input/egretScraping/egret_SS.csv", na.strings=c("NA","NaN", " ","","n/a","N/A"))
+length(unique(egret_SS$datasetID)) #12
+dim(egret_SS) #1478 45
 
 dat1 <- rbind(egret_TA, egret_BW, egret_CRD, egret_MN, egret_HHN, egret_DK,
                 egret_JS, egret_DM, egret_AZ, egret_GG)
@@ -101,7 +106,9 @@ colnames(dat1)[colnames(dat1) == "germ.tim.zero"] <- "germ.time.zero"
 dat2 <- rbind(egret_DL, egret_SC, dat1, egret_XW, egret_FB, egret_DB)
 
 colnames(dat2)[colnames(dat2) == "chemcial.concent"] <- "chemical.concent"
-d <- rbind(egret_JN, dat2, egret_missing)
+d <- rbind(egret_JN, dat2, egret_missing, egret_SS)
+
+
 
 rm(egret_AZ, egret_BW, egret_CRD, egret_DK, egret_DL, egret_DM, egret_GG, egret_HHN, egret_JN, egret_JS, egret_MN, 
-  egret_SC, egret_TA, egret_XW, egret_DB, egret_FB, egret_missing, dat1, dat2)
+  egret_SC, egret_TA, egret_XW, egret_DB, egret_FB, egret_missing, dat1, dat2, egret_SS)

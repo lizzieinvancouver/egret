@@ -58,7 +58,7 @@ d <- d[-which(d$datasetID == "tilki07" & d$entered.by == "MN"),] #104
 d <- d[-which(d$datasetID == "wytsalucy21" & d$entered.by == "DK"),]#92
 d <- d[-which(d$datasetID == "yusefi-tanha19" & d$entered.by == "JS"),]#40
 
-
+d$entered.by[which(d$entered.by == "DL ")] <- "DL"
 
 # ident <- read.csv("..//data/datasetID.csv")
 # ident$dup <- duplicated(ident$studyID)
