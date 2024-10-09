@@ -278,14 +278,6 @@ d$germDurComment[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <
 # I'm certain that all values should be 30 days incubation...the 24, 56, 84 are referring to to cold/warm stratification, not germination
 # Table 2 has mixed warm and cold stratification, so we need to transfer the data on stratification out of germTemp and into the chill or other.treatment columns
 d$germDuration[which(d$datasetID == "mamut20")] <- "30"
-
-# From Selena's new data--no longer needed after data was re-re-scraped
-# for (i in 1:nrow(d)){
-#   if(!is.na(d$datasetID[i]) && d$datasetID[i] == "batlla03" && d$germ.duration[i] < 0){
-#     germDuration <- 0
-#   }
-# }
-
 d$germDuration[which(d$germ.duration == "9 months")] <- "273.75"
 d$germDuration[which(d$germ.duration == "6 montns")] <- "273.75"
 
