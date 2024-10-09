@@ -1,5 +1,6 @@
 ## Updated 30 November 2023 ##
 ## By Lizzie and Deirdre ##
+## Then mostly by CRD #
 
 ## Adds lat/lon coordinates when we did not have them (manually looked up by Tolu Amuwo) #
 # and does some other cleaning and mapping ##
@@ -11,17 +12,6 @@
 #To find the lat/long of a region, please use google earth:
 #https://earth.google.com/web/
 # once you search a region, use the "add placemark" tool to drop a pin in the regions centre and record the lat long that is shown in the popup box. Note: the unit of the coordinates can be changed to decimal degress by going to "Tools"-->"Settings"--> scroll down to "Formats and Units" and select "decimal" from the drop down menu for the "Latitude Longitude formatting"
-
-## load packages ##
-# library(leaflet)
-# library(sp)
-# library(sf)
-# library(plotly)
-
-# housekeeping
-# rm(list=ls())
-# options(stringsAsFactors=FALSE)
-
 
 # Read in the data by running cleanall.R 1-3
 # Adding a new column to fix/add location if they were not originally scraped 

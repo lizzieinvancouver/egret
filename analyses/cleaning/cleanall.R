@@ -49,6 +49,7 @@ source("cleaning/source/cleanChemical.R") # 30937  65
 
 # 9. Clean storage type
 source("cleaning/source/cleanStorage.R") # 30937 70  
+# ALERT! Need to potentially add source/combineStorageChill.R here, see issue #39
 
 # 10. Clean response variables and response
 source("cleaning/source/cleanResponseVar.R") # 30937    74
