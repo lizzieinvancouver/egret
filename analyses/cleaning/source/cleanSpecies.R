@@ -10,6 +10,7 @@ runworldflora <- FALSE
 if(runworldflora)
 {library("stringr")
 library("WorldFlora")
+#Read in the backbone dataset
 backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
 d$species <- tolower(d$species)
 # Remove trailing spaces:
@@ -21,7 +22,7 @@ d_species_fix <- unique(checks$scientificName)
 names_changed <- setdiff(d_species, d_species_fix)
 names_changed}
 
-# Fix#########################################
+# Fix species names that Worldflora flagged#########################################
 d$genus[which(d$genus == "Borreria" & d$species == "articularis")] <- "Spermacoce"
 d$species[which(d$genus == "Dichotomanthes" & d$species == "tristaniaecarpa")] <- "tristaniicarpa"
 d$species[which(d$genus == "Magnolia" & d$species == "ingrata")] <- "fulva"
@@ -92,7 +93,7 @@ d$species[which(d$genus == "Ferula" & d$species == "ammoniacum d.")] <- "ammonia
 
 
 
-# Confirm ####################################
+# Confirm every flagged name has been corrected####################################
 if(runworldflora)
 {d_species <- unique(paste(d$genus, d$species))
 checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
