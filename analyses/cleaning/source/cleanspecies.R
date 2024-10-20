@@ -6,7 +6,6 @@
 
 # Needs to be sourced in cleanall.R
 
-#library("taxize")
 #library("stringr")
 #library("WorldFlora")
 
@@ -21,20 +20,6 @@ d$species <- str_trim(d$species)
 #names_changed <- setdiff(d_species, d_species_fix)
 #names_changed
 # General chekcs:
-#1. fix typos and minor issues:
-### Clean Species ##############################
-#library("taxize")
-#d$species <- tolower(d$species)
-#d_species <- unique(paste(d$genus, d$species))
-
-# Use taxize package to inspect whether names are correct
-#ref <- gnr_datasources() # Full list of dabases available
-#fix_names <- gnr_resolve(sci = d_species, with_canonical_ranks = T)
-#d_species_fix_1 <- unique(fix_names$matched_name2)
-#names_changed_1 <- setdiff(d_species, d_species_fix_1)
-#names_changed_1
-
-#sort(d_species)
 
 # Fix#########################################
 d$genus[which(d$genus == "Borreria" & d$species == "articularis")] <- "Spermacoce"
