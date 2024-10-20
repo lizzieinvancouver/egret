@@ -6,20 +6,20 @@
 
 # Needs to be sourced in cleanall.R
 
-#library("stringr")
-#library("WorldFlora")
-
-#backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
+runworldflora <- FALSE
+if(runworldflora)
+{library("stringr")
+library("WorldFlora")
+backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
 d$species <- tolower(d$species)
 # Remove trailing spaces:
 d$genus <- str_trim(d$genus)
 d$species <- str_trim(d$species)
-#d_species <- unique(paste(d$genus, d$species))
-#checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
-#d_species_fix <- unique(checks$scientificName)
-#names_changed <- setdiff(d_species, d_species_fix)
-#names_changed
-# General chekcs:
+d_species <- unique(paste(d$genus, d$species))
+checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
+d_species_fix <- unique(checks$scientificName)
+names_changed <- setdiff(d_species, d_species_fix)
+names_changed}
 
 # Fix#########################################
 d$genus[which(d$genus == "Borreria" & d$species == "articularis")] <- "Spermacoce"
@@ -93,11 +93,9 @@ d$species[which(d$genus == "Ferula" & d$species == "ammoniacum d.")] <- "ammonia
 
 
 # Confirm ####################################
-#d_species <- unique(paste(d$genus, d$species))
-#checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
-#d_species_fix <- unique(checks$scientificName)
-#names_changed <- setdiff(d_species, d_species_fix)
-#names_changed
-
-### TO CHECK: look though the species names or there any that seem strange? If so---flag for discussion. For example:
-#Rows of NAs found in the dataset.
+if(runworldflora)
+{d_species <- unique(paste(d$genus, d$species))
+checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
+d_species_fix <- unique(checks$scientificName)
+names_changed <- setdiff(d_species, d_species_fix)
+names_changed}
