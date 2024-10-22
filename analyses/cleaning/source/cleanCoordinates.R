@@ -27,6 +27,9 @@ d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == 
 d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == "Arbor Kornicke, Pozman")] <- "Arbor, Kornicke"
 #tylkowski91: removing Pozman as stated in table 1 AND removing ","
 d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == "Arbor, Kornicke, Pozman")] <- "Arbor, Kornicke"
+#tylkowski91: adding "," to one of the entry that should have one
+d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == "Arbor Kornicke")] <- "Arbor, Kornicke"
+
 # barnhill82: adding missing source.population
 d$source.population[which(d$datasetID == "barnhill82")] <- "Morgan County, Tennessee, USA"
 # lai03: adding missing source.population
@@ -82,37 +85,35 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "cho18"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "crank92")] <- "26.973"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "crank92")] <- "-99.101"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Cuena-Lombrana18")] <- "40.02"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Cuena-Lombrana18")] <- "9.32"
-#####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
- ##### I AM HERE FOR CHANGING CAP TO SMALL LETTERS 
-#####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Dehgan84")] <- "29.65"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Dehgan84")] <- "-82.324"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "cuena-Lombrana18")] <- "40.02"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "cuena-Lombrana18")] <- "9.32"
+
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "dehgan84")] <- "29.65"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "dehgan84")] <- "-82.324"
 d$source.population[which(is.na(d$provenance.lat) & d$source.population == "Gainesville, Flroida")] <- "Gainesville, Florida"
 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "cousins10")] <- "33.433"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "cousins10")] <- "-79.121"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Naseri18")] <- "36.79"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Naseri18")] <- "54.11"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "naseri18")] <- "36.79"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "naseri18")] <- "54.11"
 
-d$source.population[which(d$datasetID == "Naumovski05" & d$source.population == "Bile Natural Habitat, Croatia")] <- "Velika kapela mountain, Croatia"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Naumovski05" & d$source.population == "Velika kapela mountain, Croatia")] <- "43.192"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Naumovski05" & d$source.population == "Velika kapela mountain, Croatia")] <- "17.194"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Naumovski05" & d$source.population == "University of Zagreb, Croatia")] <- "45.811"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Naumovski05" & d$source.population == "University of Zagreb, Croatia")] <- "15.97"
+d$source.population[which(d$datasetID == "naumovski05" & d$source.population == "Bile Natural Habitat, Croatia")] <- "Velika kapela mountain, Croatia"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "naumovski05" & d$source.population == "Velika kapela mountain, Croatia")] <- "43.192"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "naumovski05" & d$source.population == "Velika kapela mountain, Croatia")] <- "17.194"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "naumovski05" & d$source.population == "University of Zagreb, Croatia")] <- "45.811"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "naumovski05" & d$source.population == "University of Zagreb, Croatia")] <- "15.97"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Necajeva13")] <- "56.997"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Necajeva13")] <- "24.023"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "necajeva13")] <- "56.997"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "necajeva13")] <- "24.023"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Nin17")] <- "42.469"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Nin17")] <- "13.566"
-d$source.population[which(d$datasetID == "Nin17" & d$source.population == "Central Apennine, Tuscasy")] <- "Central Apennine, Tuscany"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "nin17")] <- "42.469"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "nin17")] <- "13.566"
+d$source.population[which(d$datasetID == "nin17" & d$source.population == "Central Apennine, Tuscasy")] <- "Central Apennine, Tuscany"
 
-d$datasetID[which(d$datasetID == "Sacande05")] <- "Sacande04"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Sacande04")] <- "0.283"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Sacande04")] <- "34.752"
+d$datasetID[which(d$datasetID == "Sacande05")] <- "sacande04"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "sacande04")] <- "0.283"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "sacande04")] <- "34.752"
 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "barros12")] <- "37.78"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "barros12")] <- "-25.497"
@@ -334,23 +335,23 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "morozowska02"
 
 #javanmard14 didn't provide any info regarding location
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1993")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1993")] <- "94.69"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1993")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1993")] <- "94.69"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1994")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1994")] <- "-94.69"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1994")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1994")] <- "-94.69"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1995")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1995")] <- "-94.69"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1995")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1995")] <- "-94.69"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1996")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1996")] <- "-94.69"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1996")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1996")] <- "-94.69"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1997")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1997")] <- "-94.69"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1997")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1997")] <- "-94.69"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1998")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1998")] <- "-94.69"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1998")] <- "46.73"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1998")] <- "-94.69"
 
 #nasri14 no location given 
 
@@ -431,14 +432,14 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "tabatabaeian1
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "thomsen02")] <- "54.92"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "thomsen02")] <- "9.58"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "tylkowski91" &
-                   d$source.population == "Arbor Kornicke")] <- "52.24"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "tylkowski91" & 
+                   d$source.population == "Arbor, Kornicke")] <- "52.24"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "tylkowski91" &
-                          d$source.population == "Arbor Kornicke")] <- "17.02"
+                          d$source.population == "Arbor, Kornicke")] <- "17.02"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "tylkowski91" &
-                   d$source.population == "Pozman")] <- "52.41"
+                   d$source.population == "Poznan")] <- "52.41"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "tylkowski91" &
-                          d$source.population == "Pozman")] <- "16.93" #typo, should be Poznan
+                          d$source.population == "Poznan")] <- "16.93" #typo, should be Poznan
 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "tylkowski09" &
                    d$source.population == "Wieluń Forest District")] <- "51.22"
@@ -450,11 +451,15 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "tylkowski09" 
                           d$source.population == "Grodziec Forest District")] <- "15.79" 
 
 #yaqoob17 no location, although "The plants were identified at the Department of Botany, University of Kashmir, Srinagar" <- does that mean seeds were collected there?
-
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "yuan21")] <- "34.61"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "yuan21")] <- "127.28"
-
+# yuan21
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "yuan21")] <- "34.61" 
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "yuan21")] <- "127.28" # checked long and its wrong. 
+tmp<-subset(d, datasetID == "yuan21")
 #yurteri21 from gene back so no location?
+
+#####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
+##### I AM HERE FOR CHANGING CAP TO SMALL LETTERS 
+#####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
 
 #yusefi-tanha19 seeds provided by an agriculture company... put the location of the company for now
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "yusefi-tanha19")] <- "32.68"
