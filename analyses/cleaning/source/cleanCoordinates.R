@@ -2,77 +2,91 @@
 ## By Lizzie and Deirdre ##
 ## Then mostly by CRD #
 
-# To convert lat/long from Degree minute seconds to decimals degrees:
-# https://www.fcc.gov/media/radio/dms-decimal
+# Read in the data by running cleanall.R
 
-#To find the lat/long of a region, please use google earth:
-#https://earth.google.com/web/
-# once you search a region, use the "add placemark" tool to drop a pin in the regions centre and record the lat long that is shown in the popup box. Note: the unit of the coordinates can be changed to decimal degress by going to "Tools"-->"Settings"--> scroll down to "Formats and Units" and select "decimal" from the drop down menu for the "Latitude Longitude formatting"
+### ### ### ### ### ### ### ### ###
+## Fix or add source.population ##
+### ### ### ### ### ### ### ### ###
+# bhatt00: source.population in wrong column
+d$source.population[which(d$datasetID == "bhatt00" & d$other.treatment == "Kalika - population")] <- "Kalika, Kumaun, Himalaya"
+d$source.population[which(d$datasetID == "bhatt00" & d$other.treatment == "Jalna - population")] <- "Jalna, Kumaun, Himalaya"
+d$source.population[which(d$datasetID == "bhatt00" & d$other.treatment == "Binsar - population")] <- "Binsar, Kumaun, Himalaya"
+# boscagli01: adding missing source.population
+d$source.population[which(d$datasetID == "boscagli01")] <- "Rosellae, Grosseto, Italy"
+# parvin15: adding missing source.population
+d$source.population[which(d$datasetID == "parvin15")] <- "Kostelec nad Černými lesy"
+# kalimuthu95: adding missing source.population
+d$source.population[which(d$datasetID == "kalimuthu95")] <- "Coimbatore"
+# naseri18: adding missing source.population
+d$source.population[which(d$datasetID == "naseri18")] <- "Kord-koy, Golestan, Iran"
+# tabatabaeian18: adding missing source.population
+d$source.population[which(d$datasetID == "tabatabaeian18")] <- NA
+#tylkowski91: typo
+d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == "Pozman")] <- "Poznan"
+#tylkowski91: removing Pozman as stated in table 1
+d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == "Arbor Kornicke, Pozman")] <- "Arbor, Kornicke"
+#tylkowski91: removing Pozman as stated in table 1 AND removing ","
+d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == "Arbor, Kornicke, Pozman")] <- "Arbor, Kornicke"
+# barnhill82: adding missing source.population
+d$source.population[which(d$datasetID == "barnhill82")] <- "Morgan County, Tennessee, USA"
+# lai03: adding missing source.population
+d$source.population[which(d$datasetID == "lai03")] <- "Ninshan County, China"
 
-# Read in the data by running cleanall.R 1-3
-# Adding a new column to fix/add location if they were not originally scraped 
-d$source.population.edit <- d$source.population
-d$source.population.edit[which(d$datasetID == "Bhatt00" & d$other.treatment == "Kalika - population")] <- "Kalika, Kumaun, Himalaya"
-d$source.population.edit[which(d$datasetID == "Bhatt00" & d$other.treatment == "Jalna - population")] <- "Jalna, Kumaun, Himalaya"
-d$source.population.edit[which(d$datasetID == "Bhatt00" & d$other.treatment == "Binsar - population")] <- "Binsar, Kumaun, Himalaya"
 
-d$source.population.edit[which(d$datasetID == "Boscagli01")] <- "Rosellae, Grosseto, Italy"
-d$source.population.edit[which(d$datasetID == "parvin15")] <- "Kostelec nad Černými lesy"
-d$source.population.edit[which(d$datasetID == "kalimuthu95")] <- "Coimbatore"
-d$source.population.edit[which(d$datasetID == "Naseri18")] <- "Kord-koy, Golestan, Iran"
-d$source.population.edit[which(d$datasetID == "tabatabaeian18")] <- NA
-d$source.population.edit[which(d$datasetID == "tylkowski91" & d$source.population == "Pozman")] <- "Poznan"
-d$source.population.edit[which(d$datasetID == "tylkowski91" & d$source.population == "Arbor, Kornicke, Pozman")] <- "Arbor, Kornicke, Poznan"
-d$source.population.edit[which(d$datasetID == "tylkowski91" & d$source.population == "Arbor, Kornicke")] <- "Arbor, Kornicke, Poznan"
-d$source.population.edit[which(d$datasetID == "barnhill82")] <- "Morgan County, Tennessee, USA"
-d$source.population.edit[which(d$datasetID == "lai03")] <- "Ninshan County, China"
-
-
+### ### ### ### ### ### ### ### ### ###
+## Adding missing lat/long as stated ## 
+## Looked back into the papers ##
+### ### ### ### ### ### ### ### ### ###
+t<-subset(d, datasetID=="chuanren04")
+# Adding
 # Work by Tolu Amuwo where she looked up locations and manually added lat/lon
-na.coords <- d[which(is.na(d$provenance.lat)),]
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Chuanren04")] <- "56.13"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Chuanren04")] <- "-106.347"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Albrecht20")] <- "37.838"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Albrecht20")] <- "83.826"
+na.coords <- d[which(is.na(d$provenance.lat)),] # ASK LIZZIE: should I keep this line?
+# chuanren04: adding missing lat/long
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "chuanren04")] <- "56.13"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "chuanren04")] <- "-106.347"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "albrecht20")] <- "37.838"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "albrecht20")] <- "83.826"
 
 #Bhatt00 has three source population with coordinates provided, only figure 1 didn't specify the provenance. coordinates of Kumaun are entered
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Bhatt00" & is.na(d$other.treatment))] <- "29.392"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Bhatt00" & is.na(d$other.treatment))] <- "79.74"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Bhatt00" & d$other.treatment == "Kalika -population")] <- "29.63"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Bhatt00" & d$other.treatment == "Kalika -population")] <- "79.83"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Bhatt00" & d$other.treatment == "Jalna -population")] <- "29.57"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Bhatt00" & d$other.treatment == "Jalna -population")] <- "79.68"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Bhatt00" & d$other.treatment == "Binsar - population")] <- "29.65"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Bhatt00" & d$other.treatment == "Binsar - population")] <- "79.82"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "bhatt00" & is.na(d$other.treatment))] <- "29.392"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bhatt00" & is.na(d$other.treatment))] <- "79.74"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "bhatt00" & d$other.treatment == "Kalika -population")] <- "29.63"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bhatt00" & d$other.treatment == "Kalika -population")] <- "79.83"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "bhatt00" & d$other.treatment == "Jalna -population")] <- "29.57"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bhatt00" & d$other.treatment == "Jalna -population")] <- "79.68"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "bhatt00" & d$other.treatment == "Binsar - population")] <- "29.65"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bhatt00" & d$other.treatment == "Binsar - population")] <- "79.82"
 
 #location should be Rosellae, Grosseto, Italy
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Boscagli01")] <- "42.83"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Boscagli01")] <- "11.16"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "boscagli01")] <- "42.83"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "boscagli01")] <- "11.16"
 
 # The below only run assuming Aldridge199X gets fixed elsewhere
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Aldridge1992")] <- "46.73" #Britany: this doens't look right
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Aldridge1992")] <- "94.69"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1992")] <- "46.73" #Britany: this doens't look right
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1992")] <- "94.69"
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Amini2018")] <- "36.812"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Amini2018")] <- "54.945"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "amini2018")] <- "36.812"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "amini2018")] <- "54.945"
 
 #two cho18
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Cho18" 
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "cho18" 
                        & d$source.population == "Cheogju-si, Korea")] <- "36.63"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Cho18" 
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "cho18" 
                         & d$source.population == "Cheogju-si, Korea")] <- "127.50"
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Cho18"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "cho18"
                        & d$source.population == "Hoengseong-gun, Gangwon-do, Korea")] <- "37.51"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Cho18"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "cho18"
                         & d$source.population == "Hoengseong-gun, Gangwon-do, Korea")] <- "128.077"
 
 
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Crank92")] <- "26.973"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Crank92")] <- "-99.101"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "crank92")] <- "26.973"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "crank92")] <- "-99.101"
 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Cuena-Lombrana18")] <- "40.02"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Cuena-Lombrana18")] <- "9.32"
-
+#####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
+ ##### I AM HERE FOR CHANGING CAP TO SMALL LETTERS 
+#####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "Dehgan84")] <- "29.65"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "Dehgan84")] <- "-82.324"
 d$source.population[which(is.na(d$provenance.lat) & d$source.population == "Gainesville, Flroida")] <- "Gainesville, Florida"
