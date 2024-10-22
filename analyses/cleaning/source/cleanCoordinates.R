@@ -2,10 +2,6 @@
 ## By Lizzie and Deirdre ##
 ## Then mostly by CRD #
 
-## Adds lat/lon coordinates when we did not have them (manually looked up by Tolu Amuwo) #
-# and does some other cleaning and mapping ##
-## Original file called coordinate_cleaning_TA.R ##
-
 # To convert lat/long from Degree minute seconds to decimals degrees:
 # https://www.fcc.gov/media/radio/dms-decimal
 
