@@ -58,8 +58,11 @@ source("cleaning/source/cleanResponseVar.R") # 68 columns
 # 11. Clean photoperiod
 source("cleaning/source/cleanPhotoperiod.R") # 69 columns
 
-# 12. Clean coordinates seed provinance
+# 12. Clean coordinates seed provenance
 source("cleaning/source/cleanCoordinates.R") # 80 columns
+
+# 13. Clean storage conditions that are chilling (ie. cold and wet)
+source("cleaning/source/combineStorageChill.R") # 80 columns
 
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
