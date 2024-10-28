@@ -2,7 +2,7 @@
 ## Started by Deirdre ##
 ## Followed by Justin's (Ngo) efforts
 ## Starting 1 May 2024
-## This contains code to clean chill duration and temperature ##
+## This contains code to clean storageType ##
 ## Original code taken from file called cleaningDL.R ##
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>

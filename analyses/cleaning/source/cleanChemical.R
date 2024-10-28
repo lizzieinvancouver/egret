@@ -3,7 +3,9 @@
 ## Upded 30 January 2024 ##
 ## By Deirdre ##
 
-## This contains code to clean chill duration and temperature ##
+## This contains code to clean the chemical column ##
+## Because it is ONE word, we name the cleaned column chemicalCor to show it's corrected #
+## (Otherwise cleaned columns are in camelCase.)
 ## Original code taken from file called cleaningDL.R ##
 
 #1. Chemical---type
