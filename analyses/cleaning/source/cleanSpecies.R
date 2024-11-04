@@ -2,25 +2,27 @@
 ## Started by Deirdre ##
 ## Revised 20 Feb 2024 by Mao# #
 ## Revised 11 Oct 2024 by Mao using WorldFlora instead of taxize ##
-## taken from cleaningDL.R ##
 
-# Needs to be sourced in cleanall.R
+# This file needs to be sourced in cleanall.R
 
+# Worldflora runs slow and requires you have a backbone dataset ...
+# Set below to TRUE if you want to run it ##
 runworldflora <- FALSE
-if(runworldflora)
-{library("stringr")
-library("WorldFlora")
-#Read in the backbone dataset
-backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
-d$species <- tolower(d$species)
-# Remove trailing spaces:
-d$genus <- str_trim(d$genus)
-d$species <- str_trim(d$species)
-d_species <- unique(paste(d$genus, d$species))
-checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
-d_species_fix <- unique(checks$scientificName)
-names_changed <- setdiff(d_species, d_species_fix)
-names_changed}
+if(runworldflora){	
+	library("stringr")
+	library("WorldFlora")
+	# Read in the backbone dataset
+	backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
+	d$species <- tolower(d$species)
+	# Remove trailing spaces:
+	d$genus <- str_trim(d$genus)
+	d$species <- str_trim(d$species)
+	d_species <- unique(paste(d$genus, d$species))
+	checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
+	d_species_fix <- unique(checks$scientificName)
+	names_changed <- setdiff(d_species, d_species_fix)
+	names_changed
+}
 
 # Fix species names that Worldflora flagged#########################################
 d$genus[which(d$genus == "Borreria" & d$species == "articularis")] <- "Spermacoce"
@@ -94,9 +96,10 @@ d$species[which(d$genus == "Ferula" & d$species == "ammoniacum d.")] <- "ammonia
 
 
 # Confirm every flagged name has been corrected####################################
-if(runworldflora)
-{d_species <- unique(paste(d$genus, d$species))
-checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
-d_species_fix <- unique(checks$scientificName)
-names_changed <- setdiff(d_species, d_species_fix)
-names_changed}
+if(runworldflora){
+	d_species <- unique(paste(d$genus, d$species))
+	checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
+	d_species_fix <- unique(checks$scientificName)
+	names_changed <- setdiff(d_species, d_species_fix)
+	names_changed
+}
