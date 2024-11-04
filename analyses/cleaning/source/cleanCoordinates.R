@@ -38,19 +38,20 @@ d$source.population[which(d$datasetID == "lai03")] <- "Ninshan County, China"
 
 ### ### ### ### ### ### ### ### ### ###
 ## Adding missing lat/long as stated ## 
-## Looked back into the papers ##
+## Looked back into the papers       ##
 ### ### ### ### ### ### ### ### ### ###
 t<-subset(d, datasetID=="chuanren04")
-# Adding
+
 # Work by Tolu Amuwo where she looked up locations and manually added lat/lon
 na.coords <- d[which(is.na(d$provenance.lat)),] # ASK LIZZIE: should I keep this line?
 # chuanren04: adding missing lat/long
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "chuanren04")] <- "56.13"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "chuanren04")] <- "-106.347"
+# albrecht20: adding missing lat/long
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "albrecht20")] <- "37.838"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "albrecht20")] <- "83.826"
 
-#Bhatt00 has three source population with coordinates provided, only figure 1 didn't specify the provenance. coordinates of Kumaun are entered
+# Bhatt00: has three source population with coordinates provided, only figure 1 didn't specify the provenance. coordinates of Kumaun are entered
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "bhatt00" & is.na(d$other.treatment))] <- "29.392"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bhatt00" & is.na(d$other.treatment))] <- "79.74"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "bhatt00" & d$other.treatment == "Kalika -population")] <- "29.63"
@@ -60,11 +61,13 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bhatt00" & d$
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "bhatt00" & d$other.treatment == "Binsar - population")] <- "29.65"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bhatt00" & d$other.treatment == "Binsar - population")] <- "79.82"
 
-#location should be Rosellae, Grosseto, Italy
+# boscagli01: location should be Rosellae, Grosseto, Italy
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "boscagli01")] <- "42.83"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "boscagli01")] <- "11.16"
 
-# The below only run assuming Aldridge199X gets fixed elsewhere
+# aldridge1992 :The below only run assuming Aldridge199X gets fixed elsewhere
+# DOTHIS: the locations are very wrong. I need to go back in the paper
+sub<- subset(d, datasetID == "aldridge1992")
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1992")] <- "46.73" #Britany: this doens't look right
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1992")] <- "94.69"
 
