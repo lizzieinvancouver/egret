@@ -18,10 +18,9 @@ sort(unique(d$storage.type))
 d$storageType <- d$storage.type
 d$storageType <- tolower(d$storageType)
 
-# Details = all details including substrate/vessell
+# Details = all details including substrate/vessel
 d$storageDetails <- d$storage.type
 d$storageDetails <- tolower(d$storageDetails)
-
 
 # Just dry
 d$storageType[which(d$storageType == "dry")] <- "dry"
@@ -96,7 +95,6 @@ d$storageType[which(d$storageType == "darkness")] <- "dark"
 d$storageType[which(d$storageType == "in darkness")] <- "dark"
 
 # Photoperiod
-#
 d$storageType[which(d$storageType == "cool-white alternating 12/12")] <- "cold"
 d$storageType[which(d$storageType == "moist, in light/dark at 12/12h")] <- "moist" # statton17--- 12-12 photoperiod not entered
 
@@ -186,7 +184,6 @@ d$storageDetails[which(d$storageDetails == "cold dry")] <- "dry/cold"
 d$storageDetails[which(d$storageDetails == "dry cold")] <- "dry/cold"
 d$storageDetails[which(d$storageDetails == "dry frozen")] <- "dry/frozen"
 
-
 # Dry room temp
 d$storageDetails[which(d$storageDetails == "dry, room temp")] <- "dry/room"
 d$storageDetails[which(d$storageDetails == "dry room temp")] <- "dry/room"
@@ -214,6 +211,10 @@ d$storageDetails[which(d$storageDetails == "in tap water")] <- "moist"
 d$storageDetails[which(d$storageDetails == "partly dry")] <- "moist"
 d$storageDetails[which(d$storageDetails == "wet; water")] <- "moist"
 d$storageDetails[which(d$storageDetails == "damp")] <- "moist"
+d$storageDetails[which(d$storageDetails == "wet")] <- "moist"
+d$storageDetails[which(d$storageDetails == "wet sand")] <- "moist sand"
+
+
 
 # Just cold
 d$storageDetails[which(d$storageDetails == "vapor of liquid nitrogen")] <- "liquid nitrogen"
@@ -527,3 +528,4 @@ d$storageDuration[d$datasetID == "veiga-barbosa14"] <- 123
 # "NA then 4"
 # multiple
 
+source("cleaning/source/combineStorageChill.R")
