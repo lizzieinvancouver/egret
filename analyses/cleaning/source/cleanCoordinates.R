@@ -5,7 +5,13 @@
 # Read in the data by running cleanall.R
 
 ### ### ### ### ### ### ### ### ###
-## Fix or add source.population ##
+# Standardize NA format in lat/long
+### ### ### ### ### ### ### ### ###
+d$provenance.lat <- gsub("N/A", "NA", d$provenance.lat)
+d$provenance.long <- gsub("N/A", "NA", d$provenance.long)
+
+### ### ### ### ### ### ### ### ###
+# Fix or add source.population 
 ### ### ### ### ### ### ### ### ###
 # bhatt00: source.population in wrong column
 d$source.population[which(d$datasetID == "bhatt00" & d$other.treatment == "Kalika - population")] <- "Kalika, Kumaun, Himalaya"
@@ -35,10 +41,9 @@ d$source.population[which(d$datasetID == "barnhill82")] <- "Morgan County, Tenne
 # lai03: adding missing source.population
 d$source.population[which(d$datasetID == "lai03")] <- "Ninshan County, China"
 
-
 ### ### ### ### ### ### ### ### ### ###
-## Adding missing lat/long as stated ## 
-## Looked back into the papers       ##
+# Adding missing lat/long as stated 
+# Looked back into the papers       
 ### ### ### ### ### ### ### ### ### ###
 t<-subset(d, datasetID=="chuanren04")
 
@@ -602,19 +607,9 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "herron01")] <
 #irvani12,13,14 couldn't find Fozveh research station in Google Earth, coordinates were in a weird form in the paper: Lat: 361 270 N; Lon: 591 630 E DOTHIS
 
 ############################################################################
-## fixing continent points ... this needs to BE CHECKED!
+## fixing continent points ... this needs to BE CHECKED! DOTHIS
 ############################################################################
 
-###  ###  ###  ###  ### ###  ###  ###  ###  ### ###  ###  ###  ###  ###
-###  ###  ###  ###  ### ###  ###  ###  ###  ### ###  ###  ###  ###  ###
-###  ###  ###  ###  ### ###  ###  ###  ###  ### ###  ###  ###  ###  ###
-###  ###  ###  ###  ### ###  ###  ###  ###  ### ###  ###  ###  ###  ###
-###  ###  ###  ###  ### ###  ###  ###  ###  ### ###  ###  ###  ###  ###
-### CRD I AM HERE ###
-###  ###  ###  ###  ### ###  ###  ###  ###  ### ###  ###  ###  ###  ###
-###  ###  ###  ###  ### ###  ###  ###  ###  ### ###  ###  ###  ###  ###
-###  ###  ###  ###  ### ###  ###  ###  ###  ### ###  ###  ###  ###  ###
-###  ###  ###  ###  ### ###  ###  ###  ###  ### ###  ###  ###  ###  ###
 
 d$continent[which(d$continent == "USA")] <- "North America"
 
@@ -645,202 +640,141 @@ d$provenance.lat[which(d$continent == "Asia" & d$provenance.long == "124.549")] 
 d$provenance.long[which(d$continent == "Asia" & d$provenance.lat == "34.831")] <- "34.656"
 
 d$provenance.lat[which(d$continent == "Africa" & d$provenance.lat == "-39.983333")] <- "-33.988"
-############################################################################
 
 
-# 
-# # tests with a smaller df. Only take single entries
-# dred <- d[!duplicated(d$datasetID), ]
-# str(dred)
-# # Many entries are still problematic. Some have lat and long in the lat column, some have a letter (e.g. 39N). So I'll separate those:
-# # below is a pattern that takes entries that are between 0-9 and have 2 digits, followed by a "." followed by decimals that have between 2 and 16 values. I chose these because some have up to 16 decimals (weird) and 2 because otherwise there is no precise provenance 
-# pattern <- "^-?[0-9]{1}\\.\\d{2,16}$|^-?[0-9]{2}\\.\\d{2,16}$|^-?[0-9]{3}\\.\\d{2,16}$"
-
-### COLUMN LATITUDE ###
-# # Filter values that have the above pattern
-# dred.lat <- dred[!grepl(pattern, dred$provenance.lat), ]
-# # Check how many entries are still problematic
-# dred.lat$provenance.lat # at this point, there are still 89 entries that either NAs or in a bad format
-# # Filter out NAs
-# dred.lat2 <- dred.lat[!is.na(dred.lat$provenance.lat), ]
-# dred.lat2$provenance.lat # good! now only 29 entries are not in a good format!
-# # Create provenance.lat vector entries that need to be changed
-# provenance.lat.chg <- dred.lat2$provenance.lat
-
-# ### COLUMN LONGITUDE ###
-# # Filter values that have the above pattern
-# dred.long <- dred[!grepl(pattern, dred$provenance.long), ]
-# # Check how many entries are still problematic
-# dred.long$provenance.long # at this point, there are *** still  entries that either NAs or in a bad format
-# # Filter out NAs
-# dred.long2 <- dred.long[!is.na(dred.long$provenance.long), ]
-# dred.long2$provenance.long # good! now only *** entries are not in a good format!
-# # Create provenance.long vector entries that need to be changed
-# provenance.long.chg <- dred.long2$provenance.long
 
 
-#=== === === === === === === === === === === === === === === === === === === ===
-#### Second cleaning step ####
-#=== === === === === === === === === === === === === === === === === === === ===
+### ### ### ### ### ### ### ### ###
+# Fix locations have lat long in same entry AND entries with N or S in the coordinate
+### ### ### ### ### ### ### ### ###
 
-#=== === === === === === === === === === === === === === === === === === === ===
-##### STEP 1. Replace N/A by NA #####
-#=== === === === === === === === === === === === === === === === === === === ===
-d$provenance.lat <- gsub("N/A", "NA", d$provenance.lat)
-d$provenance.long <- gsub("N/A", "NA", d$provenance.long)
-
-#=== === === === === === === === === === === === === === === === === === === ===
-##### STEP 2. Select entries that have lat long in same entry #####
-#=== === === === === === === === === === === === === === === === === === === ===
-
-# STEP 2.1. in lat
-# STEP 2.1.1. karlsson08 : 9.4167/9.3833 
-d$provenance.lat[which(d$datasetID == "karlsson08" & d$provenance.lat == "9.4167/9.3833", "9.4167")] <- "9.4167"# in the paper, they merged the two locations together, and since they are only 5km appart, I took the first latitude value
-# STEP 2.1.2. teimouri13 : 35.5 and 36.3
-# the one below, we will need to look into the paper for more info. There is a "and" but it's the same source population
+### === ### === ### === ### === 
+# For latitude
+### === ### === ### === ### === 
+# karlsson08 : 9.4167/9.3833. They merged the two locations together, they are only 5km appart, first latitude value was chosen
+d$provenance.lat[which(d$datasetID == "karlsson08" & d$provenance.lat == "9.4167/9.3833", "9.4167")] <- "9.4167"
+# teimouri13 : 35.5 and 36.3
+# the one below, we will need to look into the paper for more info. There is a "and" but it's the same source population DOTHIS
 #subset(d, provenance.lat == "35.5 and 36.3")
-# STEP 2.1.3. zulfiqar15 : "34.464444 N "
+# zulfiqar15
 d$provenance.lat[which(d$datasetID == "zulfiqar15" & d$provenance.lat == "34.464444 N")] <- "34.46"
-# STEP 2.1.3.1. zulfiqar15 : "34.358333 N"
+# zulfiqar15
 d$provenance.lat[which(d$datasetID == "zulfiqar15" & d$provenance.lat == "34.358333 N")] <- "34.36"
-# STEP 2.1.3.2. zulfiqar15 : " 34.218611 N"
-# R doesn't detect this entry, probably because of the space
-# function to force every entry that isn't the problematic one
+# zulfiqar15 : " 34.218611 N". R doesn't detect this entry, probably because of the space. Function to force every entry that isn't the problematic one and removing the space
 d$provenance.lat <- ifelse(d$datasetID == "zulfiqar15" & !d$provenance.lat %in% c("34.46", "34.36"), "34.22", d$provenance.lat)
-# STEP 2.1.4.li17 : 31.0333 N
+# li17 
 d$provenance.lat[which(d$datasetID == "li17" & d$provenance.lat == "31.0333 N")] <- "31.0333"
-# STEP 2.1.5. li21 : 44.316667 N
+# li21
 d$provenance.lat[which(d$datasetID == "li21" & d$provenance.lat == "44.316667 N")] <- "44.316667"
-# STEP 2.1.6. li21 : 42.0760 S
+# li21
 d$provenance.lat[which(d$datasetID == "li21" & d$provenance.lat == "42.0760 S")] <- "-42.0760"
-# STEP 2.1.7. yang14: 36.11139 N
+# yang14
 d$provenance.lat[which(d$datasetID == "yang14" & d$provenance.lat == "36.11139 N")] <- "36.11139"
+# teimouri13: Chose the first location given, they merged the two locations together
+d$provenance.lat[which(d$datasetID == "teimouri13" & d$provenance.lat == "35.5 and 36.3")] <- "35.47"
 
-
-#=== === === === === === === === === === === === === === === === === === === ===
-# STEP 2.2. in long
-# STEP 2.2.1. karlsson08 :42.0333/42.0167
-d$provenance.lat[which(d$datasetID == "karlsson08" & d$provenance.lat == "42.0333/42.0167")] <- "42.0333"# See step 2.1.1.
-# STEP 2.2.2. zulfiqar15: 71.625833 E
+### === ### === ### === ### === 
+# For longitude
+### === ### === ### === ### === 
+# karlsson08 :42.0333/42.0167. They merged the two locations together, they are only 5km appart, first latitude value was chosen
+d$provenance.lat[which(d$datasetID == "karlsson08" & d$provenance.lat == "42.0333/42.0167")] <- "42.0333"
+# zulfiqar15
 d$provenance.long[which(d$datasetID == "zulfiqar15" & d$provenance.long == "71.625833 E")] <- "71.625833"
-# STEP 2.2.3. zlesak07: 93.16667 W
+# zlesak07
 d$provenance.long[which(d$datasetID == "zlesak07" & d$provenance.long == "93.16667 W")] <- "-93.16667"
-# STEP 2.2.4. li17: 112.26667 E
+# li17
 d$provenance.long[which(d$datasetID == "li17" & d$provenance.long == "112.26667 E")] <- "112.26667"
-# STEP 2.2.5. li21: 86.95 E
+# li21
 d$provenance.long[which(d$datasetID == "li21" & d$provenance.long == "86.95 E")] <- "86.95"
-# STEP 2.2.6. li21 : 147.0275 E
+# li21
 d$provenance.long[which(d$datasetID == "li21" & d$provenance.long == "147.0275 E")] <- "147.0275"
-# STEP 2.2.7. yang14 : 81.8125 W
+# yang14
 d$provenance.long[which(d$datasetID == "yang14" & d$provenance.long == " 81.8125 W")] <- "-81.8125"
-# STEP 2.2.8. gremer20 :  "–121.551"
-d$provenance.long[which(d$datasetID == "gremer20" & d$provenance.long == "–121.551")] <- "–121.551"# just a typo 
+# teimouri13: Chose the first location given, they merged the two locations together
+d$provenance.long[which(d$datasetID == "teimouri13" & d$provenance.long == "59.05 and 59.2")] <- "59.05"
 
 #=== === === === === === === === === === === === === === === === === === === ===
 ##### STEP 3. Check in the articles for exact coordinates #####
 #=== === === === === === === === === === === === === === === === === === === ===
-
-# STEP 3.1 LATITUDES
-###  zhou08 wasn't flagged until I saw it's longitude. Lat and long were switched.
+### === ### === ### === ### === 
+# For latitude
+### === ### === ### === ### === 
+### zhou08 wasn't flagged until I saw its longitude. Lat and long were switched.
 d$provenance.lat[which(d$datasetID == "zhou08" & d$provenance.lat == "103.42")] <- "32.00"
-# STEP 3.1.2. brandel05: 54 
-# to DOUBLE CHECK
-# STEP 3.1.4. karlsson08: 9.4167/9.3833
-# to DOUBLE CHECK
-# STEP 3.1.10. nurse08: 42
-# different environments were used within in Essex Ontario, not a precise location was given. I don't know if we should use this because essex is closer to 42.1 than 42.0 
-# Talked with Deirdre on 16 Sept 2024, decided to keep 42 because not a huge climatic difference
-# STEP 3.1.12. teimouri13: 35.47 and 36.3 
-d$provenance.lat[which(d$datasetID == "teimouri13" & d$provenance.lat == "35.5 and 36.3")] <- "35.47"
-#chose the first location given, they did merged the two locations together
-# STEP 3.1.15. yeom21: 39
-# they give location that isn't precise and searching the institute does't give anything conclusive. It's in North Korea... It's not the source population also, it's a crop research institute. My opinion: exclude these locations from the coordinates.
-# STEP 3.1.16. zardari19: 35
-d$provenance.lat[which(d$datasetID == "zardari19" & d$provenance.lat == "35")] <- "35.58" #given location had no decimals. I took a central point in the town indicated in the article. 
-# STEP 3.1.17. zare11: 3147
-d$provenance.lat[which(d$datasetID == "zare11" & d$provenance.lat == "3147")] <- "31.47" #missing a .
-# STEP 3.1.18. downie91: 46.9
-d$provenance.lat[which(d$datasetID == "downie91" & d$provenance.lat == "46.9")] <- "46.92"#verified location and added the missing decimal
-# STEP 3.1.18.1. downie91: 46.6
-d$provenance.lat[which(d$datasetID == "downie91" & d$provenance.lat == "46.6")] <- "46.67"#verified location and added the missing decimal
-# STEP 3.1.19. esmaeili09: 48
-# Location provided: Marais poitevin which is a 120 000ha wetland. Not sure what to do with this.  
-# STEP 3.1.20. seng20: 103.3
-d$provenance.lat[which(d$datasetID == "seng20" & d$provenance.lat == "103.3")] <- "13.60" # location scrapped doesn't make sens. I took in a central location of Forest Restoration and Development “Banteay Srei”Cambodia
-# STEP 3.1.21. zulfiqar15: 34.218611
-# that's ok, but there is a space before the number which I don't know why
-# STEP 3.1.22. zlesak07: 45 N
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "45 N")] <- "45.00" #double checked location and added the 0
-### below I think the mistake comes from dragging in Excel. It goes from 46 N to 62 N
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "46 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "47 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "48 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "49 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "50 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "51 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "52 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "53 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "54 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "55 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "56 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "57 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "58 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "59 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "60 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "61 N")] <- "45.00" #double checked location and added the 0
-d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "62 N")] <- "45.00" #double checked location and added the 0
-# STEP 3.1.22. skordilis95 : 38.967 and 37.9
-#fixplease
-# STEP 3.1.23. bibby53: 40.9
-#missing from the google drive
-# STEP 3.1.24. guo20: ~34-34.666667
-d$provenance.lat[which(d$datasetID == "guo20" & d$provenance.lat == "~34-34.666667")] <- "34.33" # took the central latitude betweeen the two points provided in the article
-# STEP 3.1.25. ren15: 33.825278 - 34.136389
-d$provenance.lat[which(d$datasetID == "ren15" & d$provenance.lat == "33.825278 - 34.136389")] <- "33.98" # took the central latitude betweeen the two points provided in the article
-# STEP 3.1.25. necajeva13 : 57.233333-56.783333
-# fixplease
-# STEP 3.1.25. olmez09
-# fixplease
+# brandel05: 54 DOTHIS to DOUBLE CHECK
+# nurse08: 42. Different environments were used within Essex Ontario, not a precise location was given. Decided to keep 42 because not a huge climatic difference. No change required
 
-# STEP 3.2. LONGITUDE
-# STEP 3.2.4. karlsson08 : 42.0333/42.0167
-d$provenance.long[which(d$datasetID == "karlsson08" & d$provenance.long == "42.0333/42.0167")] <- "42.02" # mean of the 2 longitudes given
-# STEP 3.2.7. lee06 : NA
-# STEP 3.2.8. rizwan18 : NA
-# STEP 3.2.9. grose57 : NA
-# STEP 3.2.10. maithani90 : NA
-# STEP 3.2.12. nurse08 : -82
-# different environments were used within in Essex Ontario, not a precise location was given. I don't know if we should use this because essex is closer to 42.1 than 42.0
-# STEP 3.2.13. olmez07 :41.83, 41.87, 41.85
-# need to spend time redoing that whole scrapping. Very clearly were the locations given in the article with distinct provenance names and coordinates.
+# yeom21: 39
+# they give a location that isn't precise and searching the institute doesn't give anything conclusive. It's in North Korea... It's not the source population also, it's a crop research institute. My opinion: exclude these locations from the coordinates. DOTHIS: go back in git issue and see what was decided
 
-# STEP 3.2.15. teimouri13 : 59.05 and 59.2
-d$provenance.long[which(d$datasetID == "teimouri13" & d$provenance.long == "59.05 and 59.2")] <- "59.05" #chose the first location given, they did merged the two locations together
-# STEP 3.2.17. yeom21 : 129
-# they give location that isn't precise and searching the institute does't give anything conclusive. It's in North Korea... It's not the source population also, it's a crop research institute. My opinion: exclude these locations from the coordinates.
-# STEP 3.2.19. zardari19 :53
-d$provenance.long[which(d$datasetID == "zardari19" & d$provenance.long == "53")] <- "53.39" #given location had no decimals. I took a central point in the town indicated in the article.
-# STEP 3.2.20. zare11 : 5352
+# zardari19: 35
+d$provenance.lat[which(d$datasetID == "zardari19" & d$provenance.lat == "35")] <- "35.58" # given location had no decimals. A central point in the town indicated in the article was taken. 
+
+# zare11: 3147
+d$provenance.lat[which(d$datasetID == "zare11" & d$provenance.lat == "3147")] <- "31.47" # missing a .
+
+# esmaeili09: 48
+# Location provided: Marais poitevin which is a 120 000ha wetland. Not sure what to do with this. DOTHIS: go back in git issue and see what was decided
+
+# seng20: 103.3
+d$provenance.lat[which(d$datasetID == "seng20" & d$provenance.lat == "103.3")] <- "13.60" # Central location of Forest Restoration and Development “Banteay Srei” Cambodia was taken
+
+# zlesak07: Dragging in Excel. It goes from 46 N to 62 N. Location was confirmed in article.
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "45 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "46 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "47 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "48 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "49 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "50 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "51 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "52 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "53 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "54 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "55 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "56 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "57 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "58 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "59 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "60 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "61 N")] <- "45.00" 
+d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "62 N")] <- "45.00" 
+# skordilis95 : 38.967 and 37.9 DOTHIS
+# bibby53: 40.9 DOTHIS
+# guo20: Took the central latitude between the two points provided in the article
+d$provenance.lat[which(d$datasetID == "guo20" & d$provenance.lat == "~34-34.666667")] <- "34.33" 
+# ren15: Took the central latitude betweeen the two points provided in the article
+d$provenance.lat[which(d$datasetID == "ren15" & d$provenance.lat == "33.825278 - 34.136389")] <- "33.98" # 
+# necajeva13 : 57.233333-56.783333. DOTHIS
+# olmez09 DOTHIS: check issue
+
+### === ### === ### === ### === 
+# For longitude
+### === ### === ### === ### === 
+# karlsson08: They merged the two locations together, they are only 5km appart, first latitude value was chosen
+d$provenance.long[which(d$datasetID == "karlsson08" & d$provenance.long == "42.0333/42.0167")] <- "42.03" 
+# nurse08 : Different environments were used within Essex Ontario, not a precise location was given. Decided to keep 42 because not a huge climatic difference. No change required
+# olmez07 :41.83, 41.87, 41.85. # need to spend time redoing that whole scrapping. Very clearly were the locations given in the article with distinct provenance names and coordinates. DOTHIS: CHECK ISSUE IT SHOULD BE SOLVED
+# yeom21 : 129. they give location that isn't precise and searching the institute does't give anything conclusive. It's in North Korea... It's not the source population also, it's a crop research institute. My opinion: exclude these locations from the coordinates.DOTHIS
+# zardari19: given location had no decimals. I took a central point in the town indicated in the article.
+d$provenance.long[which(d$datasetID == "zardari19" & d$provenance.long == "53")] <- "53.39" 
+# zare11: missing .
 d$provenance.long[which(d$datasetID == "zare11" & d$provenance.long == "5352")] <- "53.52"
-# STEP 3.2.21. erken21 : 29.3
-d$provenance.long[which(d$datasetID == "erken21" & d$provenance.long == "29.3")] <- "29.26"
-# STEP 3.2.22. esmaeili09 :-4.5
-# Location provided: Marais poitevin which is a 120 000ha wetland. Not sure what to do with this.  
-# STEP 3.2.23. zhou08 : 32
+# esmaeili09 : Location provided: Marais poitevin which is a 120 000ha wetland. Not sure what to do with this.  DOTHIS
+# zhou08: wasn't flagged until I saw its longitude. Lat and long were switched.
 d$provenance.long[which(d$datasetID == "zhou08" & d$provenance.long == "32")] <- "103.42"
-# STEP 3.2.24. yang08 : 121.3
-d$provenance.long[which(d$datasetID == "yang08" & d$provenance.long == "121.3")] <- "121.50" # wrong conversion from hour minute to decimals
-# STEP 3.2.25. guo20 : ~105.5-106.5
-d$provenance.long[which(d$datasetID == "guo20" & d$provenance.long == "~105.5-106.5", "106.00")] <- "106.00" # took the central latitude betweeen the two points provided in the article
-# STEP 3.2.26. ren15 : 107.373333 - 107.861389
-d$provenance.long[which(d$datasetID == "ren15" & d$provenance.long == "107.373333 - 107.861389")] <- "107.62" # took the central latitude betweeen the two points provided in the article
-# STEP 3.2.27. zulfiqar15: 73.135833 E
-d$provenance.long[which(d$datasetID == "zulfiqar15" & d$provenance.long == "73.135833 E")] <- "73.135833" # removing E
-# STEP 3.2.28. zulfiqar15: 73.472222 E
-d$provenance.long[which(d$datasetID == "zulfiqar15" & d$provenance.long == "73.472222 E")] <- "73.472222" # removing E
-# STEP 3.2.29. zlesak07: 93.16667 W
-d$provenance.long[which(d$datasetID == "zlesak07" & d$provenance.long == "93.16667 W ")] <- "93.16667" #removing W
-# Step 3.2.30 harrison14 # removing all E
+# yang08 : fixed wrong conversion from hour minute to decimals
+d$provenance.long[which(d$datasetID == "yang08" & d$provenance.long == "121.3")] <- "121.50" 
+# guo20 : Took the central latitude betweeen the two points provided in the article
+d$provenance.long[which(d$datasetID == "guo20" & d$provenance.long == "~105.5-106.5", "106.00")] <- "106.00" 
+# ren15: Took the central latitude betweeen the two points provided in the article
+d$provenance.long[which(d$datasetID == "ren15" & d$provenance.long == "107.373333 - 107.861389")] <- "107.62"
+# zulfiqar15
+d$provenance.long[which(d$datasetID == "zulfiqar15" & d$provenance.long == "73.135833 E")] <- "73.135833"
+# zulfiqar15
+d$provenance.long[which(d$datasetID == "zulfiqar15" & d$provenance.long == "73.472222 E")] <- "73.472222"
+# zlesak07
+d$provenance.long[which(d$datasetID == "zlesak07" & d$provenance.long == "93.16667 W ")] <- "93.16667"
+# harrison14 
 d$provenance.long[which(d$datasetID == "harrison14" & d$provenance.long == "147.0275 E")] <- "147.0275"
 d$provenance.long[which(d$datasetID == "harrison14" & d$provenance.long == "147.1339 E")] <- "147.1339"
 d$provenance.long[which(d$datasetID == "harrison14" & d$provenance.long == "147.7958 E")] <- "147.7958"
@@ -851,201 +785,102 @@ d$provenance.long[which(d$datasetID == "harrison14" & d$provenance.long == "146.
 d$provenance.long[which(d$datasetID == "harrison14" & d$provenance.long == "147.1526 E")] <- "147.1526"
 d$provenance.long[which(d$datasetID == "harrison14" & d$provenance.long == "145.6873 E")] <- "145.6873"
 d$provenance.long[which(d$datasetID == "harrison14" & d$provenance.long == "145.2676 E")] <- "145.2676"
-# STEP 3.2.31. yang14: 81.8125 W
-d$provenance.long[which(d$datasetID == "yang14" & d$provenance.long == "81.8125 W")] <- "-81.8125" #removing W
-# STEP 3.2.32. gremer20
-# checked and locations seems good
-#=== === === === === === === === === === === === === === === === === === === ===
-##### STEP 4. Round up to 2 decimals #####
-# below are the lat long values that have no decimals, they have been checked and it's because they have been rounded up 
-#=== === === === === === === === === === === === === === === === === === === ===
-# STEP 4.1. LATITUDES
-# STEP 4.1.1. winstead71: 40
-d$provenance.lat[which(d$datasetID == "winstead71" & d$provenance.lat == "40")] <- "40.00"
-# STEP 4.1.3. borghetti86: 39.9
-d$provenance.lat[which(d$datasetID == "borghetti86" & d$provenance.lat == "39.9")] <- "39.90"
-# STEP 4.1.5. mulaudzi09: -29.3
-d$provenance.lat[which(d$datasetID == "mulaudzi09" & d$provenance.lat == "-29.3")] <- "-29.30"
-# STEP 4.1.11. tang21: 27.5
-d$provenance.lat[which(d$datasetID == "tang21" & d$provenance.lat == "27.5")] <- "27.50"
-# STEP 4.1.13. tylkowski10: 54.2
-d$provenance.lat[which(d$datasetID == "tylkowski10" & d$provenance.lat == "54.2")] <- "54.20"
-# STEP 4.1.14. tylkowski07: 52.3
-d$provenance.lat[which(d$datasetID == "tylkowski07" & d$provenance.lat == "52.3")] <- "52.30"
-# STEP 4.1.26. ren08: 27.9
-d$provenance.lat[which(d$datasetID == "ren08" & d$provenance.lat == "27.9")] <- "27.90"
-# STEP 4.1.27. skordilis95: 41.2
-d$provenance.lat[which(d$datasetID == "skordilis95" & d$provenance.lat == "41.2")] <- "41.20"
-d$provenance.lat[which(d$datasetID == "skordilis95" & d$provenance.lat == "35.2")] <- "35.20"
-# STEP 4.1.28. kolodziejek15: 52
-d$provenance.lat[which(d$datasetID == "kolodziejek15" & d$provenance.lat == "52")] <- "52.00"
-# STEP 4.1.29
-d$provenance.lat[which(d$datasetID == "kolodziejek15" & d$provenance.lat == "52")] <- "52.00"
-# STEP 4.2.30 edwards96 : 50.3 49.3 50.4 56.3
-d$provenance.lat[which(d$datasetID == "edwards96" & d$provenance.lat == "50.3")] <- "50.30"# checked the article, location is good
-d$provenance.lat[which(d$datasetID == "edwards96" & d$provenance.lat == "49.3")] <- "49.30"# checked the article, location is good
-d$provenance.lat[which(d$datasetID == "edwards96" & d$provenance.lat == "50.4")] <- "50.40"# checked the article, location is good
-d$provenance.lat[which(d$datasetID == "edwards96" & d$provenance.lat == "56.3")] <- "56.30"# checked the article, location is good
-# STEP 4.2.31 downie98: 58.3
-d$provenance.lat[which(d$datasetID == "downie98" & d$provenance.lat == "58.3")] <- "58.30"# checked the article, location is good
-# STEP 4.2.32 brandel2005: 54
-d$provenance.lat[which(d$datasetID == "brandel2005" & d$provenance.lat == "54")] <- "54.00" # checked the article, location given isn't precise 
-# STEP 4.2.32 ma03 : 49 
-# couldnt find the pdf
-# STEP 4.2.33 picciau19 : 39.4
-d$provenance.lat[which(d$datasetID == "picciau19" & d$provenance.lat == "39.4")] <- "39.40" # checked the article,location is good
-# STEP 4.2.33 castro95 : -18.4
-d$provenance.lat[which(d$datasetID == "castro95" & d$provenance.lat == "-18.4")] <- "-18.40" # checked the article,location is good
-# STEP 4.2.34 middleton96 : -37.3
-d$provenance.lat[which(d$datasetID == "middleton96" & d$provenance.lat == "-37.3")] <- "-37.30" # checked the article,location is good
-# STEP 4.2.36 rostamipoor20 : 35.7
-# STEP 4.2.37 ucler18: 40.7
-d$provenance.lat[which(d$datasetID == "ucler18" & d$provenance.lat == "40.7")] <- "40.70" # checked the article,location is good
-# STEP 4.2.38 farhadi13: 36.7
-d$provenance.lat[which(d$datasetID == "farhadi13" & d$provenance.lat == "36.7")] <- "36.70" # checked the article,location is good
-# STEP 4.2.39 harrison14 : 42.0760 S
-d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "42.0760 S")] <- "-42.0760" # removing N and S to the locatiions. I checked in the article and they are given in decimals
-d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "41.8888 S")] <- "-41.8888" # removing N and S to the locatiions. I checked in the article and they are given in decimals
-d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "43.2397 S")] <- "-43.2397" # removing N and S to the locatiions. I checked in the article and they are given in decimals
-d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "41.9405 S")] <- "-41.9405" # removing N and S to the locatiions. I checked in the article and they are given in decimals
-d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "41.3684 S ")] <- "-41.3684" # removing N and S to the locatiions. I checked in the article and they are given in decimals
-d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "41.0595 S")] <- "-41.0595" # removing N and S to the locatiions. I checked in the article and they are given in decimals
-d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "42.9005 S")] <- "-42.9005" # removing N and S to the locatiions. I checked in the article and they are given in decimals
-d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "42.0889 S")] <- "-42.0889" # removing N and S to the locatiions. I checked in the article and they are given in decimals
-d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "42.0273 S")] <- "-42.0273" # removing N and S to the locatiions. I checked in the article and they are given in decimals
+# yang14
+d$provenance.long[which(d$datasetID == "yang14" & d$provenance.long == "81.8125 W")] <- "-81.8125" 
 
-# STEP 4.2. LONGITUDE
-# STEP 4.2.1. zhang21 :124.9
+# harrison14
+d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "42.0760 S")] <- "-42.0760" 
+d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "41.8888 S")] <- "-41.8888" 
+d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "43.2397 S")] <- "-43.2397" 
+d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "41.9405 S")] <- "-41.9405" 
+d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "41.3684 S ")] <- "-41.3684" # DOTHIS
+d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "41.0595 S")] <- "-41.0595" 
+d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "42.9005 S")] <- "-42.9005" 
+d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "42.0889 S")] <- "-42.0889" 
+d$provenance.lat[which(d$datasetID == "harrison14" & d$provenance.lat == "42.0273 S")] <- "-42.0273" 
+
+# LONGITUDE
+# zhang21:124.9
 d$provenance.long[which(d$datasetID == "zhang21" & d$provenance.long == "124.9")] <- "124.90" 
-# STEP 4.2.2. brandel05 :10
+# brandel05 :10
 # d$provenance.long[which(d$datasetID == "brandel05" & d$provenance.long == "10")] <- "10.00"
 # to DOUBLE CHECK
-# STEP 4.2.3. beikmohammadi12 :55.8
+# beikmohammadi12 :55.8
 d$provenance.long[which(d$datasetID == "beikmohammadi12" & d$provenance.long == "55.8")] <- "55.80"
-# STEP 4.2.5. alptekin02 : 39.5
+# alptekin02 : 39.5
 d$provenance.long[which(d$datasetID == "alptekin02" & d$provenance.long == "39.5")] <- "39.50"
-# STEP 4.2.6. mulaudzi09 : 27.5
+# mulaudzi09 : 27.5
 d$provenance.long[which(d$datasetID == "mulaudzi09" & d$provenance.long == "27.5")] <- "27.50"
-# STEP 4.2.11. middleton96 : 142.5
+# middleton96 : 142.5
 d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "142.5")] <- "142.50"
-# STEP 4.2.14. pliszko18 : 21
+# pliszko18 : 21
 d$provenance.long[which(d$datasetID == "pliszko18" & d$provenance.long == "21")] <- "21.00"
-# STEP 4.2.16. yang18 : 121.5
+# yang18 : 121.5
 d$provenance.long[which(d$datasetID == "yang18" & d$provenance.long == "121.5")] <- "121.50"
-# STEP 4.2.18. yin09 :117.4
+# yin09 :117.4
 d$provenance.long[which(d$datasetID == "yin09" & d$provenance.long == "117.4")] <- "117.40"
-# STEP 4.2.18. chien09 121.2
+# chien09 121.2
 d$provenance.long[which(d$datasetID == "chien09" & d$provenance.long == "121.2")] <- "121.20" # checked the article,location is good
-# STEP 4.2.19. liu13
-#fixplease
-# STEP 4.2.20. edwards96: 124.1
-#fixplease
-# STEP 4.2.21. brandel2005: 10
+# liu13
+# fixplease
+# edwards96: 124.1
+# fixplease
+# brandel2005: 10
 d$provenance.long[which(d$datasetID == "brandel2005" & d$provenance.long == "10")] <- "10.00" # checked the article, location given isn't precise 
-# STEP 4.2.22. ma03: -128.4, -124.8, -121.5
+# ma03: -128.4, -124.8, -121.5
 # pdf unvailable
-# STEP 4.2.23. airi2009: 79.5
+# airi2009: 79.5
 d$provenance.long[which(d$datasetID == "airi2009" & d$provenance.long == "79.5")] <- "79.50" # checked the article,location is good
-# STEP 4.2.24. alptekin2002: 39.5
+# alptekin2002: 39.5
 d$provenance.long[which(d$datasetID == "alptekin2002" & d$provenance.long == "39.5")] <- "39.50" # added decimals 
-# STEP 4.2.25. necajeva13 :21.416667-21.05
+# necajeva13 :21.416667-21.05
 #fixplease
-# STEP 4.2.26. ucler18: 38.9
+# ucler18: 38.9
 d$provenance.long[which(d$datasetID == "ucler18" & d$provenance.long == "38.9")] <- "38.90"
-# STEP 4.2.27. yang18_1: 121.5
+# yang18_1: 121.5
 d$provenance.long[which(d$datasetID == "yang18_1" & d$provenance.long == "121.5")] <- "121.50" # checked the article,location is good
-# STEP 4.2.28. yang18_2
+# yang18_2
 d$provenance.long[which(d$datasetID == "yang18_2" & d$provenance.long == "121.5")] <- "121.50" # checked the article,location is good
-# STEP 4.2.28. yang18_3
+# yang18_3
 d$provenance.long[which(d$datasetID == "yang18_3" & d$provenance.long == "121")] <- "121.00" # checked the article,location is good
-# STEP 4.2.29. yang10: 120.8
+# yang10: 120.8
 d$provenance.long[which(d$datasetID == "yang10" & d$provenance.long == "120.8")] <- "120.80" # checked the article,location is good
-# STEP 4.2.30. yeom21 
+# yeom21 
 # see above
-# STEP 4.2.31. downie91: -67.4, -66.3
+# downie91: -67.4, -66.3
 d$provenance.long[which(d$datasetID == "downie91" & d$provenance.long == "-67.4")] <- "-67.38" # checked the article,missing decimal when converted
 d$provenance.long[which(d$datasetID == "downie91" & d$provenance.long == "-66.3")] <- "-66.30" # checked the article,location is good
-# STEP 4.2.32. esmaeili09
+# esmaeili09
 # see above
-# STEP 4.2.33. wickens01: 28
+# wickens01: 28
 d$provenance.long[which(d$datasetID == "wickens01" & d$provenance.long == "28")] <- "28.00" # checked the article,location was estimated and seems precise enough
-# STEP 4.2.34. joshi03: 77.2
+# joshi03: 77.2
 d$provenance.long[which(d$datasetID == "joshi03" & d$provenance.long == "77.2")] <- "77.20" # checked the article,location is good
-# STEP 4.2.35. tylkowski10: 17.1
+# tylkowski10: 17.1
 d$provenance.long[which(d$datasetID == "tylkowski10" & d$provenance.long == "17.1")] <- "17.10" # checked the article,missing decimal when converted
-# STEP 4.2.36. 
-# STEP 4.2.37. 
-# STEP 4.2.38. 
-# STEP 4.2.39. 
-
-
-
-
-
-# tmp<-subset(d, datasetID == "wickens01")
 
 ##### STEP 5 FIXING +/- #####
-# list(tmp$provenance.long)
-# d$provenance.long[which(d$datasetID == "edwards96" & d$provenance.long == "124.1")] <- "124.10" # checked the article,location is good
-# d$provenance.long[which(d$datasetID == "edwards96" & d$provenance.long == "122.4")] <- "122.40" # checked the article,location is good
-# d$provenance.long[which(d$datasetID == "edwards96" & d$provenance.long == "122.4")] <- "122.40" # checked the article,location is good
-
-
-##### STEP 6. Miscelleneous fixing #####
+# edwards96
 d$provenance.long[which(d$datasetID == "edwards96" & d$provenance.long == "122.4")] <- "122.40"
 #Removing entries in the middle of the ocean
-#alptekin02
-d$provenance.long[which(d$datasetID == "alptekin02" & d$provenance.long == "-43.74")] <- "43.74" #entry was good, but just a negative was added 
-d$provenance.long[which(d$datasetID == "veiga-barbosa16" & d$provenance.long == "3.5667")] <- "-3.5667" #entry was good, but just a negative was added 
-d$provenance.lat[which(d$datasetID == "ochuodho08" & d$provenance.lat == "32.29")] <- "-32.29" #entry was good, but just a negative was added 
-d$provenance.long[which(d$datasetID == "barros12" & d$provenance.long == "25.497")] <- "-25.497" #entry was good, but just a negative was added 
-d$provenance.lat[which(d$datasetID == "herron01" & d$provenance.lat == "40.39")] <- "-40.39" #entry was good, but just a negative was added 
-d$provenance.lat[which(d$datasetID == "bibby53" & d$provenance.lat == "40.9")] <- "-40.90" #entry was good, but just a negative was added 
+# alptekin02: checked in article. Entry was good, but missing a negative
+d$provenance.long[which(d$datasetID == "alptekin02" & d$provenance.long == "-43.74")] <- "43.74" 
+# veiga-barbosa16: checked in article. Entry was good, but missing a negative
+d$provenance.long[which(d$datasetID == "veiga-barbosa16" & d$provenance.long == "3.5667")] <- "-3.5667"
+# ochuodho08: checked in article. Entry was good, but missing a negative
+d$provenance.lat[which(d$datasetID == "ochuodho08" & d$provenance.lat == "32.29")] <- "-32.29"
+# barros12: checked in article. Entry was good, but missing a negative
+d$provenance.long[which(d$datasetID == "barros12" & d$provenance.long == "25.497")] <- "-25.497"
+# herron01: checked in article. Entry was good, but missing a negative
+d$provenance.lat[which(d$datasetID == "herron01" & d$provenance.lat == "40.39")] <- "-40.39"
+# bibby53: checked in article. Entry was good, but missing a negative
+d$provenance.lat[which(d$datasetID == "bibby53" & d$provenance.lat == "40.9")] <- "-40.90" 
 
-
-
-# #=== === === === === === === === === === === === === === === === === === === ===
-# #### CHECKING BAD ENTRIES ####
-# #=== === === === === === === === === === === === === === === === === === === ===
-d3 <- d[!duplicated(d$datasetID), ]
-### COLUMN LATITUDE ###
-pattern <- "^-?[0-9]{1}\\.\\d{2,16}$|^-?[0-9]{2}\\.\\d{2,16}$|^-?[0-9]{3}\\.\\d{2,16}$"
-# # Filter out NAs
-d.latitude <- d[!is.na(d$provenance.lat), ]
-# # Filter values that have the above pattern
-d.latitude2 <- d.latitude[!grepl(pattern, d.latitude$provenance.lat), ]
-# # Check how many entries are still problematic
-provenance.lat.chg <- d.latitude2[, c("datasetID", "provenance.lat")]
-dlat<-unique(provenance.lat.chg)
-
-# ### COLUMN LONGITUDE ###
-d.longitude <- d[!is.na(d$provenance.long), ]
-d.longitude2 <- d.longitude[!grepl(pattern, d.longitude$provenance.long), ]
-# Check how many entries are still problematic
-d.longitude.chg <- d.longitude2[, c("datasetID", "provenance.long")]
-dlong <- unique(d.longitude.chg)
-
-
-# Manually looking at the ones with issues (I could also have done this in a nice loop) ...
-# these no longer exists, but did yesterday
-# check fixplease once they reappear ... 
-# subset(checkprovstuff, provLatLon=="37.11421066 101.5144129")
-# subset(checkprovstuff, provLatLon=="36.7 54.35")
-# subset(checkprovstuff, provLatLon=="36.51666667 138.35")
-# subset(checkprovstuff, provLatLon=="32.3167 77.2") 
-# 
-# subset(checkprovstuff, provLatLon=="25.17 121.55") # okay, real differences
-# subset(checkprovstuff, provLatLon=="25.116667 102.733333") # is the NA correct?
-
-# ## Deleting these out for now, we build them later
-# d$provLatLon <- NULL
-# d$provLatLonAlt <- NULL
-
-# Create two new columns
-d$provenance.Lat <- as.numeric(d$provenance.lat)
-d$provenance.Long <- as.numeric(d$provenance.long)
-d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
-d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
+# Create two new columns DOTHIS Check with Lizzie if I should keep the ones below. 
+# d$provenance.Lat <- as.numeric(d$provenance.lat)
+# d$provenance.Long <- as.numeric(d$provenance.long)
+# d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
+# d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
 
 ## Checking on whether we need to include altitude when defining provenance
 
