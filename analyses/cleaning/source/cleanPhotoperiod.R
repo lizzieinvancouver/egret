@@ -17,34 +17,29 @@ selected_rows <- grep("light|dark|photoperiod|lux", d$other.treatment, ignore.ca
 # Select rows
 subset_othertreatment <- d[selected_rows, ]
 
-
 # Select for rows that is not NA and greater than 0 in photoperiod column
 photoperiod_row <- which(!is.na(d$photoperiod) & d$photoperiod != 0)
 
 # Select rows with "log2(red/far.red)" in chemical column
 far.red <- which(d$chemical == "log2(red/far.red)")
 
-# Combine all row numbers
-row_light <- c(selected_rows,photoperiod_row,far.red)
-# Select for unique rows
-light_egret <- d[unique(row_light),]
-
-# Calculate how many datasetIDstudy, and how many sp have photoperiod data
-length(unique(light_egret$datasetIDstudy))
-length(unique(light_egret$latbi))
-
-length(unique(d$datasetIDstudy))
-length(unique(d$latbi))
-
-# Make an extra column recording light/dark data
+# Select for rows with any word indicating presence of light in other treatment column
 light_row1 <- grep("light|photoperiod|lux", d$other.treatment, ignore.case = TRUE)
+
+# Combine all light rows
 light_rows <- c(light_row1,photoperiod_row,far.red)
 light_rows <- unique(light_rows)
 
+# Select for rows with word dark in other treatment column
 dark_row1 <- grep("dark", d$other.treatment, ignore.case = TRUE)
+
+# Select for rows with any photoperiod values equal to 0
 dark_row2 <- which(d$photoperiod == 0)
+
+# Combine all dark rows
 dark_rows <- unique(c(dark_row1, dark_row2))
 
+# Make an extra column recording light/dark data
 d$lightDark <- NA
 d$lightDark[light_rows] <- "light"
 d$lightDark[dark_rows] <- "dark"
