@@ -88,7 +88,7 @@ usda_new <- usda[!usda$X %in% tmp_X, ]
 #check
 length(usda_new$X) + length(tmp_X)
 length(usda$X)
-
+### DB Nov 20 2024 I think below might be redundant with something in Justins code. Leaving it in, because I think it just makes extra columns
 #create new dataframe for chill.dur.Min and responseValueMin
 df_min <- filtered_rows
 #assign "NA" to all rows of column "chill.dur.Max" and "responseValueMax"

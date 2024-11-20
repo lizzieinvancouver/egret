@@ -154,6 +154,11 @@ Following our first egret retreat in November 2023, we realized that the egret d
 \subsection*{Data cleaning and decisions}
 \begin{itemize}
 \item Our goal is to format the data in such as way it can be merged with the egret data
+\item for response variable we coverted  "percent.germ.total", "percent.germ","germ.capacity","mean.germ.capacity" and "percent.germ.15degC.incubated" to "perc.standard"
+\item We combined chilling and cold stratification entries into a new class of columns called: chill.dur.Min and chill.dur.Max.comb, and chill.dur.Avg.comb
+\item We converted entries with a range of chilling durations (e.g. 6 to 12 weeks went into the chill.dur.Min.comb, chill.dur.Max.comb, And chill.dur.Avg.comb. 
+\item Entries with only one original value for chilling end up in chill.dur.Avg.comb. 
+\item The same as above was done for response variables.
 \end{itemize}
 
 \end{document}
