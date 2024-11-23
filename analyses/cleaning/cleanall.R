@@ -58,7 +58,7 @@ source("cleaning/source/cleanResponseVar.R") # 30937    74
 source("cleaning/source/cleanPhotoperiod.R") # 30937    75
 
 # 12. Clean coordinates seed provenance
-source("cleaning/source/cleanCoordinates.R") # 80 columns
+#source("cleaning/source/cleanCoordinates.R") # commented it until the code is cleaned
 
 # 13. Clean storage conditions that are chilling (ie. cold and wet)
 source("cleaning/source/combineStorageChill.R") # 80 columns

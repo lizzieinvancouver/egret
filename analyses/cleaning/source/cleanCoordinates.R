@@ -3,6 +3,8 @@
 ## Then mostly by CRD #
 
 # Read in the data by running cleanall.R
+# Don't run the map code for now
+mapCode <- FALSE
 
 ### ### ### ### ### ### ### ### ###
 # Standardize NA format in lat/long
@@ -773,7 +775,7 @@ d$provenance.lat[which(d$continent == "Africa" & d$provenance.lat == "-39.983333
 # d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
 
 
-if(FALSE){
+if(mapCode){
   library(plotly)
   library(dplyr)
 #### MAP ####
