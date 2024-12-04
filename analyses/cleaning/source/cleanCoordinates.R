@@ -675,7 +675,7 @@ d$provenance.long[which(d$datasetID == "zare11" & d$provenance.long == "5352")] 
 # esmaeili09: 48. Location provided: Marais poitevin which is a 120 000ha wetland. Not sure what to do with this. DOTHIS: go back in git issue and see what was decided
 # seng20: 103.3. # Central location of Forest Restoration and Development “Banteay Srei” Cambodia extracted from google earth. Long ok
 d$provenance.lat[which(d$datasetID == "seng20" & d$provenance.lat == "103.3")] <- "13.60" 
-# zlesak07: Dragging error in Excel. It goes from 46 N to 62 N. Location was confirmed in article.
+# zlesak07: Dragging error in Excel. It goes from 46 N to 62 N. Location confirmed in article.
 d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "45 N")] <- "45.00" 
 d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "46 N")] <- "45.00" 
 d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "47 N")] <- "45.00" 
