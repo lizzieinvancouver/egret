@@ -386,6 +386,7 @@ d$storageDuration[which(d$storage.time == "didn't mention" |
                           d$storage.time == "until constant weight")] <- NA
 
 ##cleaned storage temp
+d$storageTemp[d$storage.temp == "3-5"] <- 4
 
 #acosta12 - 18-20
 d$storageTemp[which(d$datasetID == "acosta12")] <- 19
@@ -453,8 +454,8 @@ d$storageTemp[which(d$storage.temp == "room temp" |
                       d$storage.temp == "room temperature")] <- "NA"
 
 #lee21 - room temp/4
-d$storageTemp[which(d$datasetID == "lee21")] <- "NA then 4"
-d$storageDuration[which(d$datasetID == "lee21")] <- "30 then NA"
+d$storageTemp[which(d$datasetID == "lee21")] <- "4"
+d$storageDuration[which(d$datasetID == "lee21")] <- "30"
 
 #lee06 - 20-25
 d$storageTemp[which(d$storage.temp == "20-25")] <- 22.5
@@ -500,10 +501,10 @@ d$storageDuration[which(d$datasetID == "mamut20" & !is.na(d$chill.temp))] <- NA
 d$storageDuration[which(d$datasetID == "mamut20" & d$storage.time == "0 (control)")] <- 0
 
 #washitani85 - room temp + 4
-d$storageTemp[which(d$datasetID == "washitani85" & is.na(d$chill.temp))] <- "NA then 4"
-d$storageDuration[which(d$datasetID == "washitani85" & is.na(d$chill.temp))] <- "153 then 61"
+d$storageTemp[which(d$datasetID == "washitani85" & is.na(d$chill.temp))] <- "4"
+d$storageDuration[which(d$datasetID == "washitani85" & is.na(d$chill.temp))] <- "NA"
 d$storageTemp[which(d$datasetID == "washitani85" & !is.na(d$chill.temp))] <- NA
-d$storageDuration[which(d$datasetID == "washitani85" & !is.na(d$chill.temp))] <- 214
+d$storageDuration[which(d$datasetID == "washitani85" & !is.na(d$chill.temp))] <- NA
 
 #zhou08 - 5,25, room temp
 d$storageTemp[which(d$datasetID == "zhou08" & d$storage.temp == "room temp")] <- 17.5
