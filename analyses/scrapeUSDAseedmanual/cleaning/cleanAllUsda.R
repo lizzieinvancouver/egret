@@ -20,6 +20,8 @@ if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
   setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
 } else if(length(grep("sapph", getwd()) > 0)) { # Justin wd
   setwd("/Users/sapph/Documents/ubc things/work/egret/analyses/")
+} else if(length(grep("Xiaomao", getwd()) > 0)) {
+  setwd("C:/PhD/Project/egret/analyses")
 }
 
 d <- read_csv("scrapeUSDAseedmanual/cleaning/germPreCleanedMasterSheet.csv", na = c("", "NA"))
