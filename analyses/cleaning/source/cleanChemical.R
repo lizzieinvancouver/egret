@@ -118,4 +118,23 @@ d$chemicalCor[which(d$chemicalCor == "Plasma O2N2")] <- "oxygen.nitrogen.plasma"
 d$chemicalCor[which(d$chemicalCor == "control")] <- "H2O"
 d$chemicalCor[which(d$chemicalCor == "Nitrosol")] <- "Nitrosol(fertilizer)"
 
-unique(d$chemicalCor)
+d$chemicalCor[which(d$chemicalCor == "Captan")] <- "captan"
+d$chemicalCor[which(d$chemicalCor == "captan (control)")] <- "captan(control)"
+# BA or BAP = 6-Benzylaminopurine
+d$chemicalCor[which(d$chemicalCor == "BA")] <- "BAP(hormone)"
+d$chemicalCor[which(d$chemicalCor == "BA + NAA + IBA ")] <- "BAP(hormone)+NAA(hormone)+IBA(hormone)"
+d$chemicalCor[which(d$chemicalCor == "NA ")] <- NA
+
+d$chemicalCor[which(d$chemicalCor == "GA4" & d$datasetID == "moeini21")] <- "GA3"
+d$chemicalCor[which(d$chemicalCor == "GA5" & d$datasetID == "moeini21")] <- "GA3"
+
+d$chemicalCor[which(d$chemicalCor == "GA4" & d$datasetID == "zlesak07")] <- "GA3"
+d$chemicalCor[which(d$chemicalCor == "GA5" & d$datasetID == "zlesak07")] <- "GA3"
+
+d$chemicalCor[which(d$chemicalCor == "Control" & d$datasetID == "lo19")] <- "H2O" # double checked the paper
+
+# GA = GA3? GA4, GA5
+# Double checked Chen15 and Chien10---really is GA4; but others were typos
+sort(unique(d$chemicalCor))
+
+
