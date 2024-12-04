@@ -3,7 +3,7 @@
 
 ## This contains code to clean the response variable names and values ##
 
-length(unique(d$respvar)) # 167 raw unique resp vars
+length(unique(d$respvar)) # 167 raw unique resp vars #dmb Dec 4 2024 find 186
 
 # germination rate
 d$responseVar <- d$respvar
@@ -167,7 +167,7 @@ print("This `NAs introduced by coercion' happens when we make ResponseValue nume
 
 # rows of data, number study (experiments per paper), papers, species
 temp <- subset(d, responseVar == "percent.germ")
-(nrow(temp)/nrow(d))*100 #77% data
+(nrow(temp)/nrow(d))*100 #77% data #dmb on Dec 4 2024 75.6%
 
 # yan18 -ve value Fig 6; tabatabaeian18, Acosta12, Washitani85, battaglia93 > 100
 #"1/5" 
@@ -224,7 +224,7 @@ temp <- subset(d, errorType == "max standard") #"Washitani89"
 noError <- c("not specified", "not.specified", "unknown")
 
 temp <- temp[!temp$errorType %in% noError, ]
-nrow(temp)/nrow(d)  # 35.9% of the data has some sort of entry for error
+nrow(temp)/nrow(d)  # 35.9% of the data has some sort of entry for error Dec 4 24, dan for 3%
 
 # How many studies have sample size---n.per.rep and reps
 temp <- subset(d, !is.na(n.per.rep))
@@ -295,3 +295,4 @@ sort(unique(germCap$datasetID))
 # "yaqoob17”— cites: Ashtari R, Heidari M, Omidi M, Zare AR (2013) Seed germination and dormancy breaking techniques for Ducrosia anethifolia (DC.). Trakia J Sci 11:82–87   
 # "yusefi-tanha19" — # seeds/day 
 # "zare11”— # seeds/day   
+

@@ -13,10 +13,12 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
 } else if(length(grep("sapph", getwd()) > 0)) {
   setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
+} else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
+  setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
 } else if(length(grep("britanywuuu", getwd()) > 0)) {
-  setwd("~/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
+  setwd("/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
 } else if(length(grep("Ken", getwd())) > 0){
   setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
 } else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
