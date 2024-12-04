@@ -5,12 +5,12 @@
 
 library(stringr)
 
-length(which(d$storage.humidity != 0 & !is.na(d$storage.humidity))) #3284
-length(which(is.na(d$storage.humidity))) # 27235
+length(which(d$storage.humidity != 0 & !is.na(d$storage.humidity))) #3364
+length(which(is.na(d$storage.humidity))) # 27571
 length(which(d$storage.humidity == 0)) # 2
 
-length(which(!is.na(d$storage.temp))) #18749
-length(which(!is.na(d$storage.time) & !is.na(d$storage.temp)))
+length(which(!is.na(d$storage.temp))) #18858
+length(which(!is.na(d$storage.time) & !is.na(d$storage.temp))) #12430
 
 d$dormancyTemp <- NA
 d$dormancyDuration <- NA
