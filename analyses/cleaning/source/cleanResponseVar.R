@@ -200,11 +200,13 @@ d$response[which(d$response == "NA*")] <- "NA"
 d$errorType <- d$error.type
 sort(unique(d$errorType))
 
-# wat is SEM, max standard
+# what is SEM, max standard
 d$errorType[which(d$errorType == "mean+/-SE")] <- "SE"
 d$errorType[which(d$errorType == "standard error")] <- "SE"
 d$errorType[which(d$errorType == "mean standard error")] <- "SE"
 d$errorType[which(d$errorType == " +/-SE")] <- "SE"
+d$errorType[which(d$errorType == "se")] <- "SE"
+
 
 d$errorType[which(d$errorType == "mean+/-SD")] <- "SD"
 d$errorType[which(d$errorType == "standard deviation")] <- "SD"
@@ -215,16 +217,16 @@ d$errorType[which(d$errorType == "95CI")] <- "95% CI"
 d$errorType[which(d$errorType == "not.specified")] <- "not specified"
 d$errorType[which(d$errorType == "unknown")] <- "not specified"
 
-# what is xz--- Cho18 Fig 5
-temp <- subset(d, !is.na(resp.error))
+d$resp.error[which(d$resp.error == "indistinguisable")] <- NA
+d$resp.error[which(d$resp.error == "numbers in bracket?")] <- NA
+d$resp.error[which(d$resp.error == "NG")] <- NA
+d$resp.error[which(d$resp.error == "#REF!")] <- NA
 
-temp <- subset(d, errorType == "SEM")  #"bungard97"
-temp <- subset(d, errorType == "max standard") #"Washitani89"
+# temp <- subset(d, errorType == "SEM")  #"bungard97"
+# temp <- subset(d, errorType == "max standard") #"Washitani89"
 
-noError <- c("not specified", "not.specified", "unknown")
-
-temp <- temp[!temp$errorType %in% noError, ]
-nrow(temp)/nrow(d)  # 35.9% of the data has some sort of entry for error Dec 4 24, dan for 3%
+dError <- subset(d, !is.na(resp.error))
+nrow(dError)/nrow(d)  # 11782 rows has an entry for resp.error and 19155 rows have none; 38% of the data has some sort of entry for error Dec 4 24, dan for 3%
 
 # How many studies have sample size---n.per.rep and reps
 temp <- subset(d, !is.na(n.per.rep))
