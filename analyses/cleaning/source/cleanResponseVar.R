@@ -103,6 +103,11 @@ d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "c")] <- "c:variat
 d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "TMGR")] <- "time.of.max.germ.rate"
 d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "D_lag-50")] <- "duration.between.lag.and.c"
 d$responseVar[which(d$datasetID == "liu13" & d$responseVar == "DI")] <- "dormancy.index"# area between the germination 
+
+d$responseVar[which(d$datasetID == "schutz02" & d$figure == "Table 3")] <- "days.to.1%"# area between the germination 
+
+d$responseVar[which(d$datasetID == "pritchard93" & d$figure == "Figure 2")] <- "percent.germ.probability"# area between the germination 
+
 # liu13 data of % germ from table 1 missing
 
 #	zhang21 one is not in english
