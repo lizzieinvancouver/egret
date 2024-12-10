@@ -38,9 +38,9 @@ d <- d[-which(d$datasetID == "redondo-gomez11" & d$entered.by == "DM"),]#40
 d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK"),]  #96 rows to remove
 d <- d[-which(d$datasetID == "pritchard93" & d$entered.by == "DM"),]  #96 rows to remove
 
-
-# d <- d[-(which(d$datasetID == "olmez07" & d$entered.by == "MN" & d$figure == "Table 2")),]
-# d <- d[-(which(d$datasetID == "olmez09" & d$entered.by == "MN" & d$figure == "Table 3")),]
+# momonoki79: issue #65 these two tables switch the seeds to lettuce---a crop
+d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "Table 20")),]
+d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "Table 21")),]
 
 if(FALSE){
 ##	
