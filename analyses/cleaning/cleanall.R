@@ -63,7 +63,7 @@ source("cleaning/source/cleanPhotoperiod.R") # 30937    75
 #source("cleaning/source/cleanCoordinates.R") # commented it until the code is cleaned
 
 # 13. Clean storage conditions that are chilling (ie. cold and wet)
-source("cleaning/source/combineStorageChill.R") # 80 columns
+# source("cleaning/source/combineStorageChill.R") # 80 columns
 
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
