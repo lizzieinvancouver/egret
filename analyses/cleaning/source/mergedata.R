@@ -105,6 +105,5 @@ colnames(dat2)[colnames(dat2) == "chemcial.concent"] <- "chemical.concent"
 d <- rbind(egret_JN, dat2, egret_missing, egret_SS)
 #32801 rows of data, 45 columns
 
-
 rm(egret_AZ, egret_BW, egret_CRD, egret_DK, egret_DL, egret_DM, egret_GG, egret_HHN, egret_JN, egret_JS, egret_MN, 
   egret_SC, egret_TA, egret_XW, egret_DB, egret_FB, egret_missing, dat1, dat2, egret_SS)
