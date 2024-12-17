@@ -4,7 +4,7 @@
 # Code to clean the treatment categories 
 
 # Create new column of treatment category of cleaned treatments
-d$treatmentCat <- d$treatment ### could potentially change that name
+d$Treatment <- d$treatment ### could potentially change that name
 
 # Unique by treatments
 subby <- d[!duplicated(d$treatment), ]
@@ -13,90 +13,79 @@ vec.treat <- subby$treatment
 head(vec.treat)
 
 ### checking validity
-subby.check <- d[!duplicated(d$treatmentCat), ]
+subby.check <- d[!duplicated(d$Treatment), ]
 # Vector of all unique treatments
-vec.treatcheck <- subby.check$treatmentCat
-head(vec.treatcheck)
+vec.treatcheck <- subby.check$Treatment
+
 
 ### === ### === ### === ### === ### === ### === ### === ### === ### === 
-#### Step 1. Easy cleaning of main treatments ####
+#### Easy cleaning of main treatments ####
 ### === ### === ### === ### === ### === ### === ### === ### === ### === 
+subset(d, Treatment == "control, no dormancy breaking treatment")
+sub<-subset(d, datasetID == "maithani90")
 
+View(sub)
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><<><><><><><><><>
-##### 1.1. Control #####
+##### Don #####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><<><><><><><><><>
 #### checking different versions of control
+d$Treatment[which(d$treatment == "storage.control")] <- "control"
 
-#han10: missing control temperature for second experiment. Need to check other treatment names moisture.content.storage.freeze and moisture.content.storage.cold
-# d$treatmentCat[which(d$treatment == "moisture.content.control")] <- "control"
+# nawrot-chorabik21: blue and red colors only in treatment columns. Don't know what to do
 
-# momonoki79: might need to be rescraped. Different types of entries e.g. storage.control, storage.stratif, storage time etc.
-# d$treatmentCat[which(d$treatment == "storage.control")] <- "control"
-
-# bhatt00: control scarified and non-scarified, I decided to change this to scarified and control, because it's input GA3 is input in chemical #tocheck
-d$treatmentCat[which(d$treatment == "control - scarified")] <- "scarification"
-d$treatmentCat[which(d$treatment == "controll - nonscarified")] <- "control"
-
-# boscagli01
-d$treatmentCat[which(d$treatment == "control - intact")] <- "control"
-
-# picciau17 : decided to convert light control to light as they manipulated germ duration #tocheck
-d$treatmentCat[which(d$treatment == "light control")] <- "light"
-d$treatmentCat[which(d$treatment == "dark control")] <- "dark"
-# nawrot-chorabik21: need to be investigated. Controls are not controls and there are a lot of different treatments #to check
-d$treatmentCat[which(d$treatment == "control, no dormancy breaking treatment")] <- "control"
-
-d$treatmentCat[which(d$treatment == "NA (control)")] <- "control"
-# watanabe02 : ok to change to control
-d$treatmentCat[which(d$treatment == "NA (control strat)")] <- "control"
-
+# bhatt00: checked and more specific treatments entered in appropriate columns
+# momonoki79: checked and more specific treatments entered in appropriate columns
+# boscagli01: checked and more specific treatments entered in appropriate columns
+# picciau17 : checked and more specific treatments entered in appropriate columns
+# maithani90: checked and more specific treatments entered in appropriate columns
+# nawrot-chorabik21
+d$Treatment[which(d$treatment == "control, no dormancy breaking treatment" & d$datasetID == "nawrot-chorabik21")] <- "control"
+# NA (control)
+d$Treatment[which(d$treatment == "NA (control)")] <- "control"
+d$Treatment[which(d$treatment == "NA(control)")] <- "control"
+# control, no treatment
+d$Treatment[which(d$treatment == "control, no treatment")] <- "control"
+# watanabe02 : change to control
+d$Treatment[which(d$treatment == "NA (control strat)")] <- "control"
 # basbag09: removed space
-d$treatmentCat[which(d$datasetID =="basbag09" & d$treatment == "control ")] <- "control"
-
+d$Treatment[which(d$datasetID =="basbag09" & d$treatment == "control ")] <- "control"
 # yan16: removed space
-d$treatmentCat[which(d$datasetID =="yan16" & d$treatment == "control ")] <- "control"
+d$Treatment[which(d$datasetID =="yan16" & d$treatment == "control ")] <- "control"
 
-# maithani90: a couple of things needs to be changed. Should change stratification to cold strat and change nursery and laboratory to two different experiments
-### change to two studies. Check if it's ok if I changed original column
-d$study[which(d$datasetID == "maithani90" & d$treatment == "control (nursery)")] <- "exp2"
-d$study[which(d$datasetID == "maithani90" & d$treatment == "stratified (30days) (nursery)")] <- "exp2"
-### control
-d$treatmentCat[which(d$datasetID == "maithani90" & d$treatment == "control (nursery)")] <- "control"
 
-d$treatmentCat[which(d$treatment == "NA(control)")] <- "control"
 
-d$treatmentCat[which(d$treatment == "control, no treatment")] <- "control"
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><<><><><><><><><>
 ##### 1.2. Stratification #####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><<><><><><><><><>
 #### Scrap-Subset for double checking -- will be deleted
 unique(d$treatment[grep("strat", d$treatment)])
 
-sub <- d[, c("datasetID", "study", "entered.by", "species", "provenance.lat", "treatment", "other.treatment", "photoperiod", "chemical", "chemical.concent", "trt.duration", "scarification", "scarif.type", "soaking", "soaked.in", "soaking.duration", "germ.duration")]
 subb<-subset(sub, treatment == "stratification")
 unique(subb$datasetID)
-head(subb)
-maithani90<-subset(d, datasetID == "maithani90")
+cchead(subb)
+sub<-subset(d, datasetID == "tilki06")
+View(sub)
 ######## ####### ######## ####### ######## ####### ######## ####### 
+# maithani90: maithani90: checked and more specific treatments entered in appropriate columns
+# 
+# d$Treatment[which(d$datasetID == "maithani90" & d$treatment == "stratified (15days)")] <- "cold.strat"
+# d$Treatment[which(d$datasetID == "maithani90" & d$treatment == "stratified (30days)")] <- "cold.strat"
+# d$Treatment[which(d$datasetID == "maithani90" & d$treatment == "stratified (15days) (nursery)")] <- "cold.strat"
+# d$Treatment[which(d$datasetID == "maithani90" & d$treatment == "stratified (30days) (nursery)")] <- "cold.strat"
 
-d$treatmentCat[which(d$datasetID == "maithani90" & d$treatment == "stratified (15days)")] <- "cold.strat"
-d$treatmentCat[which(d$datasetID == "maithani90" & d$treatment == "stratified (30days)")] <- "cold.strat"
-d$treatmentCat[which(d$datasetID == "maithani90" & d$treatment == "stratified (15days) (nursery)")] <- "cold.strat"
-d$treatmentCat[which(d$datasetID == "maithani90" & d$treatment == "stratified (30days) (nursery)")] <- "cold.strat"
-
-# tilki06 : change stratification to warm or cold
-d$treatmentCat[which(d$datasetID == "tilki06" & d$treatment == "stratification")] <- "cold.strat"
+# tilki06 : spring and fall sowing are not specified in more precise colums
+d$Treatment[which(d$datasetID == "tilki06" & d$treatment == "stratification")] <- "cold.strat"
 
 # tang10_1 : change stratification to cold, 2, 3 and 4 are cold strat #tocheck
-d$treatmentCat[which(d$datasetID == "tang10_1" & d$study =="exp2" & d$treatment == "stratification")] <- "cold.strat"
-d$treatmentCat[which(d$datasetID == "tang10_1" & d$study =="exp3" & d$treatment == "stratification")] <- "cold.strat"
-d$treatmentCat[which(d$datasetID == "tang10_1" & d$study =="exp4" & d$treatment == "stratification")] <- "cold.strat"
+d$Treatment[which(d$datasetID == "tang10_1" & d$study =="exp2" & d$treatment == "stratification")] <- "cold.strat"
+d$Treatment[which(d$datasetID == "tang10_1" & d$study =="exp3" & d$treatment == "stratification")] <- "cold.strat"
+d$Treatment[which(d$datasetID == "tang10_1" & d$study =="exp4" & d$treatment == "stratification")] <- "cold.strat"
 
 # tang10_1 : change stratification to warm strat #tocheck
 
 # tilki07 : change stratification to warm or cold. Has both cold strat and cold+warmstrat
 tilki07<-subset(d, datasetID == "tilki07")
-d$treatmentCat[which(d$datasetID == "tilki07" & d$chill.temp =="***" & d$treatment == "stratification")] <- "cold.strat"
+d$Treatment[which(d$datasetID == "tilki07" & d$chill.temp =="***" & d$treatment == "stratification")] <- "cold.strat"
 
 # tilki06 : change stratification to warm or cold
 # tang10_1 : change stratification to warm or cold
