@@ -40,111 +40,104 @@ d$species_name <- gsub("\\+","",d$species_name)
 
 # Removing minus only if encountered on its own
 d <- mutate_all(d, ~ gsub("^-$", "", .))
+# Read in the backbone dataset
+runworldflora <- FALSE
+if(runworldflora){
+backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
+d$species_name <- tolower(d$species_name)
+d$genus_name <- str_trim(d$genus_name)
+d$species_name <- str_trim(d$species_name)
+d_species <- unique(paste(d$genus_name, d$species_name))
+checks<-WFO.match(spec.data=d_species, WFO.data=backbone, counter=1, verbose=TRUE)
+d_species_fix <- unique(checks$scientificName)
+names_changed <- setdiff(d_species, d_species_fix)
+names_changed
+}
+
+d$seed_source[which(d$species_name == "macrophyllum source i")] <- "Source 1"
+d$seed_source[which(d$species_name == "acrophyllum source 2")] <- "Source 2"
+d$seed_source[which(d$species_name == "acrophyllum source 3")] <- "Source 3"
+d$seed_source[which(d$species_name == "rubrump low elevation (u)")] <- "low elevation (u)"
+d$seed_source[which(d$species_name == "rubrump low elevation (s)")] <- "low elevation (s)"
+d$seed_source[which(d$species_name == "rubrump high elevation (u)")] <- "high elevation (u)"
+d$seed_source[which(d$species_name == "rubrump high elevation (s)")] <- "high elevation (s)"
+d$seed_source[which(d$species_name == "glutinosa (pennsylvania)")] <- "Pennsylvania"
+d$seed_source[which(d$species_name == "glutinosa (finland)")] <- "Finland"
+d$seed_source[which(d$species_name == "incana (europe)")] <- "Europe"
+d$seed_source[which(d$species_name == "incana (finland)")] <- "Finland"
+d$seed_type[which(is.na(d$seed_type) & d$species_name == "incana ssp. tenuifolia fresh seeds")] <- "fresh seed"
 
 # Fixing species names
-d$species_name[which(d$species_name == "idaeust Glen Cova")] <- "idaeus 'Glen Cova'"
-d$species_name[which(d$species_name == "macrophyllum Source I")] <- "macrophyllum Source 1"
-d$species_name[which(d$species_name == "pensylvanicumt")] <- "pensylvanicum"
-d$species_name[which(d$species_name == "chamemorus")] <- "chamaemorus"
-d$species_name <- gsub("rubrump","rubrum",d$species_name)
-d$species_name[which(d$species_name == "i. ssp. tenuifolia fresh seeds")] <- "incana ssp. tenuifolia fresh seeds"
-d$species_name[which(d$species_name == "arguta")] <- "glabra var. arguta"
-d$species_name[which(d$species_name == "latifolia" & d$genus_name == "Pinus")] <- "contorta var. latifolia"
-d$species_name[which(d$species_name == "murrayana" & d$genus_name == "Pinus")] <- "contorta var. murrayana"
-d$species_name[which(d$species_name == "densa" & d$genus_name == "Pinus")] <- "elliottii var. densa"
-d$species_name[which(d$species_name == "scopulorum" & d$genus_name == "Pinus")] <- "ponderosa var. scopulorum"
-d$species_name[which(d$species_name == "glauca" & d$genus_name == "Pseudotsuga")] <- "menziesii var. glauca"
-d$species_name[which(d$species_name == "ioensist" & d$genus_name == "Malus")] <- "ioensis"
-d$species_name[which(d$rowID == "500|501|502")] <- "elliottii var. elliotii"
-d$species_name[which(d$rowID == "611")] <- "menziesii var. menziesii"
-
-# Removing the blank space after some specific epithets
-d$species_name <- sub(" ","",d$species_name)
-
-# Adding back in the space for any places where it was removed for var. or ssp. etc.
-d$species_name <- sub("var"," var",d$species_name)
-d$species_name <- sub("ssp"," ssp",d$species_name)
-d$species_name <- sub("Xprunifolia","X prunifolia",d$species_name)
-d$species_name <- sub("Xrobusta","X robusta",d$species_name)
-d$species_name <- sub(" variabilis","variabilis",d$species_name)
-d$species_name <- sub("\\("," \\(",d$species_name)
-d$species_name <- sub("Source"," Source",d$species_name)
-d$species_name <- sub("Low"," Low",d$species_name)
-d$species_name <- sub("High"," High",d$species_name)
-d$species_name <- sub("  (U)"," (U)",d$species_name)
-d$species_name <- sub("  (S)"," (S)",d$species_name)
-
-# Filling in blank d$species_name
-# Replacing all blanks with NA
-d <- d %>% mutate_all(na_if,"")
-d <- d %>% 
-  fill(species_name)
-
-# Mass checking species nomenclature with package taxize
-# d_species <- unique(paste(d$genus_name, d$species_name))
-# 
-# ref <- gnr_datasources() # Full list of dabases available
-# fix_names <- gnr_resolve(sci = d_species, with_canonical_ranks = T)
-# d_species_fix <- unique(fix_names$matched_name2)
-# names_changed <- setdiff(d_species, d_species_fix)
-# names_changed
-
-d$species_name[which(d$species_name == "X prunifolia")] <- "x prunifolia"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "macrophyllum Source 1")] <- "Source 1"
-d$species_name[which(d$species_name == "macrophyllum Source 1")] <- "macrophyllum"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "macrophyllum Source 2")] <- "Source 2"
-d$species_name[which(d$species_name == "macrophyllum Source 2")] <- "macrophyllum"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "macrophyllum Source 3")] <- "Source 3"
-d$species_name[which(d$species_name == "macrophyllum Source 3")] <- "macrophyllum"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "rubrum Low elevation  (U)")] <- "Low elevation (U)"
-d$species_name[which(d$species_name == "rubrum Low elevation  (U)")] <- "rubrum"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "rubrum Low elevation  (S)")] <- "Low elevation (S)"
-d$species_name[which(d$species_name == "rubrum Low elevation  (S)")] <- "rubrum"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "rubrum High elevation  (U)")] <- "High elevation (U)"
-d$species_name[which(d$species_name == "rubrum High elevation  (U)")] <- "rubrum"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "rubrum High elevation  (S)")] <- "High elevation (S)"
-d$species_name[which(d$species_name == "rubrum High elevation  (S)")] <- "rubrum"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "glutinosa (Pennsylvania)")] <- "Pennsylvania"
-d$species_name[which(d$species_name == "glutinosa (Pennsylvania)")] <- "glutinosa"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "glutinosa (Finland)")] <- "Finland"
-d$species_name[which(d$species_name == "glutinosa (Finland)")] <- "glutinosa"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "incana (Europe)")] <- "Europe"
-d$species_name[which(d$species_name == "incana (Europe)")] <- "incana"
-
-d$seed_source[which(is.na(d$seed_source) & d$species_name == "incana (Finland)")] <- "Finland"
-d$species_name[which(d$species_name == "incana (Finland)")] <- "incana"
-
-d$seed_type[which(is.na(d$seed_type) & d$species_name == "incana ssp. tenuifolia fresh seeds")] <- "fresh seed"
-d$species_name[which(d$species_name == "incana ssp. tenuifolia fresh seeds")] <- "incana ssp. tenuifolia"
-
-d$species_name[which(d$species_name == "veluting" & d$genus_name == "Fraxinus")] <- "velutina"
-d$species_name[which(d$species_name == "bacatta" & d$genus_name == "Malus")] <- "baccata"
-d$species_name[which(d$species_name == "X robusta" & d$genus_name == "Malus")] <- "x robusta"
-d$species_name[which(d$species_name == "nigraspp. cerulea" & d$genus_name == "Sambucus")] <- "nigra ssp. cerulea"
-d$species_name[which(d$species_name == "rotundifolia" & d$genus_name == "Ribes")] <- "rotundifolium"
-d$species_name[which(d$species_name == "idaeus'Glen Cova'" & d$genus_name == "Rubus")] <- "idaeus 'Glen Cova'"
-d$species_name[which(d$species_name == "durmosa" & d$genus_name == "Quercus")] <- "dumosa"
-d$species_name[which(d$species_name == "caroliana" & d$genus_name == "Prunus")] <- "caroliniana"
-d$species_name[which(d$species_name == "ponderosa var. ponderosa " & d$genus_name == "Pinus")] <- "ponderosa var. ponderosa"
-
-# # Final check of species names
-# d_species2 <- unique(paste(d$genus_name, d$species_name))
-# 
-# ref <- gnr_datasources() # Full list of databases available
-# fix_names2 <- gnr_resolve(sci = d_species2, with_canonical_ranks = T)
-# d_species_fix2 <- unique(fix_names2$matched_name2)
-# names_changed2 <- setdiff(d_species2, d_species_fix2)
-# names_changed2 # ALL GOOD!!
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "ginnala")] <-"tataricum subsp. ginnala"
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "macrophyllum source i")] <-"macrophyllum"
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "macrophyllum source 2")] <-"macrophyllum"
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "macrophyllum source 3")] <-"macrophyllum"
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "pensylvanicumt")] <-"pensylvanicum"
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "")] <-"sp."
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "rubrump")] <-"rubrum"
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "rubrump low elevation (u)")] <-"rubrum"
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "rubrump low elevation (s)")] <-"rubrum"
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "rubrump high elevation (u)")] <-"rubrum"
+d$species_name[which(d$genus_name == "Acer" & d$species_name == "rubrump high elevation (s)")] <-"rubrum"
+d$species_name[which(d$genus_name == "Alnus" & d$species_name == "glutinosa (pennsylvania)")] <-"glutinosa"
+d$species_name[which(d$genus_name == "Alnus" & d$species_name == "glutinosa (finland)")] <-"glutinosa"
+d$species_name[which(d$genus_name == "Alnus" & d$species_name == "incana (europe)")] <-"incana"
+d$species_name[which(d$genus_name == "Alnus" & d$species_name == "incana (finland)")] <-"incana"
+d$species_name[which(d$genus_name == "Alnus" & d$species_name == "i. ssp. tenuifolia fresh seeds")] <-"incana subsp. tenuifolia"
+d$species_name[which(d$genus_name == "Alnus" & d$species_name == "i. ssp. tenuifolia fresh seeds")] <-"incana subsp. tenuifolia"
+d$species_name[which(d$genus_name == "Alnus" & d$species_name == "viridis")] <-"alnobetula subsp. fruticosa"
+d$species_name[which(d$genus_name == "Alnus" & d$species_name == "viridis ssp. crispa")] <-"alnobetula subsp. crispa"
+d$species_name[which(d$genus_name == "Alnus" & d$species_name == "viridis ssp. sinuata")] <-"alnobetula subsp. sinuata"
+d$species_name[which(d$genus_name == "Aesculus" & d$species_name == "arguta")] <-"glabra var. arguta"
+d$species_name[which(d$genus_name == "Cotoneaster" & d$species_name == "lucidus")] <-"acutifolius"
+d$species_name[which(d$genus_name == "Corylus" & d$species_name == "cornuta var. californica")] <-"cornuta subsp. californica"
+d$species_name[which(d$genus_name == "Crataegus" & d$species_name == "anomala")] <-"holmesiana"
+d$species_name[which(d$genus_name == "Ceanothus" & d$species_name == "greggii")] <-"pauciflorus"
+d$species_name[which(d$genus_name == "Ceanothus" & d$species_name == "sorediatus")] <-"arboreus"
+d$species_name[which(d$genus_name == "Carya" & d$species_name == "illinoensis")] <-"illinoinensis"
+d$species_name[which(d$genus_name == "Cercis" & d$species_name == "canadensis var. texensis")] <-"canadensis subsp. texensis"
+d$species_name[which(d$genus_name == "Celtis" & d$species_name == "laevigata var. reticulata")] <-"reticulata"
+d$species_name[which(d$genus_name == "Euonymus" & d$species_name == "americana")] <-"americanum"
+d$species_name[which(d$genus_name == "Euonymus" & d$species_name == "atropurpurea")] <-"atropurpureus"
+d$species_name[which(d$genus_name == "Euonymus" & d$species_name == "bungeana")] <-"maackii"
+d$species_name[which(d$genus_name == "Euonymus" & d$species_name == "europaea")] <-"europaeus"
+d$species_name[which(d$genus_name == "Euonymus" & d$species_name == "hamiltoniana ssp. maackii")] <-"maackii"
+d$species_name[which(d$genus_name == "Euonymus" & d$species_name == "verrucosa")] <-"verrucosus"
+d$species_name[which(d$genus_name == "Fraxinus" & d$species_name == "veluting")] <-"velutina"
+d$genus_name[which(d$genus_name == "Acacia" & d$species_name == "farnesiana")] <-"Vachellia"
+d$genus_name[which(d$genus_name == "Acacia" & d$species_name == "nilotica")] <-"Vachellia"
+d$genus_name[which(d$genus_name == "Mahonia" & d$species_name == "aquifolium")] <-"Berberis"
+d$genus_name[which(d$genus_name == "Mahonia" & d$species_name == "fremontii")] <-"Berberis"
+d$genus_name[which(d$genus_name == "Mahonia" & d$species_name == "nevinii")] <-"Berberis"
+d$genus_name[which(d$genus_name == "Mahonia" & d$species_name == "repens")] <-"Berberis"
+d$species_name[which(d$genus_name == "Malus" & d$species_name == "bacatta")] <-"baccata"
+d$species_name[which(d$genus_name == "Malus" & d$species_name == "ioensist")] <-"ioensis"
+d$species_name[which(d$genus_name == "Nyssa" & d$species_name == "sylvatica var. sylvatica")] <-"sylvatica"
+d$species_name[which(d$genus_name == "Sambucus" & d$species_name == "nigra ssp. canadensis")] <-"canadensis"
+d$species_name[which(d$genus_name == "Sambucus" & d$species_name == "nigra spp. cerulea")] <-"cerulea"
+d$species_name[which(d$genus_name == "Sambucus" & d$species_name == "racemosa var. racemosa")] <-"racemosa subsp. racemosa"
+d$species_name[which(d$genus_name == "Syringa" & d$species_name == "reticulata var. amurensis")] <-"reticulata subsp. amurensis"
+d$species_name[which(d$genus_name == "Taxodium" & d$species_name == "ascendens")] <-"distichum var. imbricarium"
+d$species_name[which(d$genus_name == "Ribes" & d$species_name == "oxyacanthoides ssp. irriguum")] <-"oxyacanthoides var. irriguum"
+d$species_name[which(d$genus_name == "Ribes" & d$species_name == "rotundifolia")] <-"rotundifolium"
+d$species_name[which(d$genus_name == "Rubus" & d$species_name == "idaeust glen cova")] <-"idaeus"
+d$species_name[which(d$genus_name == "Rubus" & d$species_name == "chamemorus")] <-"chamaemorus"
+d$species_name[which(d$genus_name == "Quercus" & d$species_name == "durmosa")] <-"dumosa"
+d$species_name[which(d$genus_name == "Quercus" & d$species_name == "prinus")] <-"michauxii"
+d$species_name[which(d$genus_name == "Quercus" & d$species_name == "vaccinifolia")] <-"vacciniifolia"
+d$species_name[which(d$genus_name == "Quercus" & d$species_name == "wislizenii")] <-"wislizeni"
+d$species_name[which(d$genus_name == "Prunus" & d$species_name == "alleghaniensis")] <-"umbellata"
+d$species_name[which(d$genus_name == "Prunus" & d$species_name == "caroliana")] <-"caroliniana"
+d$species_name[which(d$genus_name == "Pinus" & d$species_name == "latifolia")] <-"engelmannii"
+d$species_name[which(d$genus_name == "Pinus" & d$species_name == "murrayana")] <-"contorta var. murrayana"
+d$species_name[which(d$genus_name == "Pinus" & d$species_name == "densa")] <-"elliottii var. densa"
+d$species_name[which(d$genus_name == "Pinus" & d$species_name == "elliotti")] <-"elliottii"
+d$species_name[which(d$genus_name == "Pinus" & d$species_name == "")] <-"sp."
+d$species_name[which(d$genus_name == "Pinus" & d$species_name == "thunbergiana")] <-"thunbergii"
+d$species_name[which(d$genus_name == "Pinus" & d$species_name == "scopulorum")] <-"scopulorum"
+d$species_name[which(d$genus_name == "Pseudotsuga" & d$species_name == "")] <-"sp."
+d$species_name[which(d$genus_name == "Pseudotsuga" & d$species_name == "glauca")] <-"menziesii var. glauca"
+d$genus_name[which(d$genus_name == "Prosopis" & d$species_name == "juliflora")] <-"Neltuma"
 
 # Giving each genus a unique number identifier
 unique(d$genus_name)
