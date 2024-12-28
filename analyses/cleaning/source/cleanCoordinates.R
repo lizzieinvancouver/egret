@@ -12,6 +12,7 @@ mapCode <- FALSE
 d$provenance.lat <- gsub("N/A", "NA", d$provenance.lat)
 d$provenance.long <- gsub("N/A", "NA", d$provenance.long)
 
+unique(d$provenance.long)
 ### ### ### ### ### ### ### ### ###
 # Fix or add source.population 
 ### ### ### ### ### ### ### ### ###
@@ -37,11 +38,11 @@ d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == 
 d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == "Arbor, Kornicke, Pozman")] <- "Arbor, Kornicke"
 #tylkowski91: adding "," to one of the entry that should have one
 d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == "Arbor Kornicke")] <- "Arbor, Kornicke"
-
 # barnhill82: adding missing source.population
 d$source.population[which(d$datasetID == "barnhill82")] <- "Morgan County, Tennessee, USA"
 # lai03: adding missing source.population
 d$source.population[which(d$datasetID == "lai03")] <- "Ninshan County, China"
+
 
 ### ### ### ### ### ### ### ### ### ###
 # Adding missing lat/long as stated 
@@ -588,7 +589,6 @@ d$provenance.long[which(d$datasetID == "edwards96" & d$provenance.long == "129.3
 d$provenance.lat[which(d$datasetID == "zhou08" & d$provenance.lat == "103.42")] <- "32"
 d$provenance.long[which(d$datasetID == "zhou08" & d$provenance.long == "32")] <- "103.42"
 # brandel05: 54 DOTHIS : 2005 too
-# d$provenance.long[which(d$datasetID == "brandel05" & d$provenance.long == "10")] <- "10.00"
 # yeom21: lat 39 and long 129.
 # they give a location that isn't precise and searching the institute doesn't give anything conclusive. It's in North Korea... It's not the source population also, it's a crop research institute. My opinion: exclude these locations from the coordinates. DOTHIS: no reply in the git issue
 # zardari19: # given location had no decimals. A central point in the town indicated in the article was taken. 
@@ -632,14 +632,11 @@ d$provenance.long[which(d$datasetID == "guo20" & d$provenance.long == "~105.5-10
 # ren15: Took the central latitude betweeen the two points provided in the article
 d$provenance.lat[which(d$datasetID == "ren15" & d$provenance.lat == "33.825278 - 34.136389")] <- "33.98" 
 d$provenance.long[which(d$datasetID == "ren15" & d$provenance.long == "107.373333 - 107.861389")] <- "107.62"
-# olmez07:41.83, 41.87, 41.85. # need to spend time redoing that whole scrapping. Very clearly were the locations given in the article with distinct provenance names and coordinates. DOTHIS: CHECK ISSUE IT SHOULD BE SOLVED
-# olmez09 DOTHIS: check issue
+# olmez09 DOTHIS: altitude still off for one location
 # yang08
 d$provenance.long[which(d$datasetID == "yang08" & d$provenance.long == "121.3")] <- "121.50" 
 # zhang21
 d$provenance.long[which(d$datasetID == "zhang21" & d$provenance.long == "124.9")] <- "124.90" 
-# beikmohammadi12:55.8 DOTHIS :check for lat
-d$provenance.long[which(d$datasetID == "beikmohammadi12" & d$provenance.long == "55.8")] <- "55.80"
 # alptekin02: 39.5 DOTHIS ? why did it change to 2002? Amini did that too
 d$provenance.long[which(d$datasetID == "alptekin02" & d$provenance.long == "39.5")] <- "39.50" #DOTHIS it check all these locations including lat because negative value was added above.
 # mulaudzi09
@@ -652,58 +649,59 @@ d$provenance.long[which(d$datasetID == "pliszko18" & d$provenance.long == "21")]
 d$provenance.long[which(d$datasetID == "yang18" & d$provenance.long == "121.5")] <- "121.50"
 # yin09:
 d$provenance.long[which(d$datasetID == "yin09" & d$provenance.long == "117.4")] <- "117.40"
-
-# necajeva13: 21.416667-21.05: DOTHIS
-# yeom21 :they give location that isn't precise and searching the institute does't give anything conclusive. It's in North Korea... It's not the source population also, it's a crop research institute. My opinion: exclude these locations from the coordinates.DOTHIS
-# esmaeili09: Location provided: Marais poitevin which is a 120 000ha wetland. Not sure what to do with this.  DOTHIS
-
+# necajeva13: 21.416667-21.05: DOTHIS from some treatments, the seeds were mixed, for others they were not
+# olmez09: fixing altitude. 
+d$provenance.altitude[which(d$datasetID == "olmez09" & d$source.population == "Derinkoy, Koprubasi, Salkimli")] <- "NA"
+d$provenance.altitude[which(d$datasetID == "olmez09" & d$provenance.altitude == "212, 550, 860" & d$source.population == "Derinkoy")] <- "860"
+d$provenance.altitude[which(d$datasetID == "olmez09" & d$provenance.altitude == "212, 550, 860" & d$source.population == "Koprubasi, Artvin, Turkey")] <- "212"
+d$provenance.altitude[which(d$datasetID == "olmez09" & d$provenance.altitude == "212, 550, 860" & d$source.population == "Salkimli")] <- "550"
 
 ############################################################################
-## fixing continent points ... this needs to BE CHECKED! DOTHIS
+##### Fixing Continents Points #####
 ############################################################################
+# dehgan84
+d$continent[which(d$continent == "USA" & d$datasetID == "dehgan84")] <- "North America"
+# cousins10
+d$continent[which(d$continent == "USA" & d$datasetID == "cousins10")] <- "North America"
+# roh08
+d$continent[which(d$continent == "America" & d$datasetID == "roh08")] <- "North America"
+# romero05
+d$continent[which(d$continent == "America" & d$datasetID == "romero05")] <- "North America"
+# rubin18
+d$continent[which(d$continent == "America" & d$datasetID == "rubin18")] <- "North America"
+# wytsalucy21
+d$continent[which(d$continent == "America" & d$datasetID == "wytsalucy21")] <- "North America"
+# yang16_2
+d$continent[which(d$continent == "America" & d$datasetID == "yang16_2")] <- "North America"
+# barnhill82
+d$continent[which(d$continent == "America" & d$datasetID == "barnhill82")] <- "North America"
+# shahi-gharahlar12
+d$continent[which(d$continent == "NA, possibly Asia" & d$datasetID == "shahi-gharahlar12")] <- "Asia"
+# wickens01
+d$continent[which(d$continent == "South Africa" & d$datasetID == "wickens01")] <- "Africa"
+# ma18
+d$continent[which(d$continent == "Australia" & d$datasetID == "ma18")] <- "Oceania"
+# middleton96
+d$continent[which(d$continent == "Australia" & d$datasetID == "middleton96")] <- "Oceania"
+# battaglia97
+d$continent[which(d$continent == "Australia" & d$datasetID == "battaglia97")] <- "Oceania"
+# statton17
+d$continent[which(d$continent == "Australia" & d$datasetID == "statton17")] <- "Oceania"
+# bibby53
+d$continent[which(d$continent == "Zealandia" & d$datasetID == "bibby53")] <- "Oceania"
+# madeiras07
+d$continent[which(d$continent == "North Ameria" & d$datasetID == "madeiras07")] <- "North America"
+# okay11
+d$continent[which(d$continent == "Europe " & d$datasetID == "okay11")] <- "Europe"
+# olmez09
+d$continent[which(d$continent == "Europe " & d$datasetID == "olmez09")] <- "Europe"
+# nkomo09
+d$continent[which(d$continent == "Africa " & d$datasetID == "nkomo09")] <- "Africa"
 
-d$continent[which(d$continent == "USA")] <- "North America"
-
-North_America <- d[which(d$continent == "North America"),]
-
-d$provenance.long[which(d$continent == "North America" & d$provenance.long == "83.826")] <- "-83.826"
-d$provenance.long[which(d$continent == "North America" & d$provenance.long == "94.69")] <- "-94.69"
-d$provenance.long[which(d$continent == "North America" & d$provenance.long == "-10.452")] <- "10.452"
-
-d$continent[which(d$continent == "North America" & d$source.population == "Germany")] <- "Europe"
-d$provenance.long[which(d$continent == "Europe" & d$provenance.long < -27 & d$provenance.lat > 37)] <- "25.497"
-d$provenance.long[which(d$continent == "Europe" & d$provenance.long == "-39.5")] <- "39.5"
-d$provenance.long[which(d$continent == "Europe" & d$provenance.long == "-36.39")] <- "36.39"
-d$provenance.long[which(d$continent == "Europe" & d$provenance.long == "-36.39")] <- "36.39"
-d$provenance.long[which(d$continent == "Europe" & d$provenance.long == "15.5474")]  <- "-15.5474"
-d$provenance.long[which(d$continent == "Europe" & d$provenance.long == "16.6291")]  <- "-16.6291"
-
-d$provenance.long[which(d$continent == "South America" & d$provenance.long == "60.56")]  <- "-60.56"
-d$provenance.lat[which(d$continent == "South America" & d$provenance.lat == "31.26")]  <- "-31.26"
-
-d$provenance.long[which(d$continent == "Asia" & d$provenance.long == "-79.73")] <- "79.73"
-d$provenance.long[which(d$continent == "Asia" & d$provenance.long == "-79.05")] <- "79.05"
-d$provenance.long[which(d$continent == "Asia" & d$provenance.long == "-121.186944")] <- "121.186944"
-d$provenance.long[which(d$continent == "Asia" & d$provenance.long == "-121.117")] <- "121.117"
-d$provenance.long[which(d$continent == "Asia" & d$provenance.long == "-50.133333333333297")] <- "50.133333333333297"
-
-d$provenance.lat[which(d$continent == "Asia" & d$provenance.long == "124.549")] <- "133.9198"
-d$provenance.long[which(d$continent == "Asia" & d$provenance.lat == "34.831")] <- "34.656"
-
-d$provenance.lat[which(d$continent == "Africa" & d$provenance.lat == "-39.983333")] <- "-33.988"
-
-
-# Create two new columns. DOTHIS Check with Lizzie if I should keep the ones below. 
-# d$provenance.Lat <- as.numeric(d$provenance.lat)
-# d$provenance.Long <- as.numeric(d$provenance.long)
-# d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
-# d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
-
-
+#### MAP ####
 if(mapCode){
   library(plotly)
   library(dplyr)
-#### MAP ####
 ### Available locations
 no.na.values <- d[complete.cases(d["provenance.lat"]),]
 
@@ -717,7 +715,7 @@ head(df.4.map)
 occurence <- df.4.map %>%
   group_by(continent) %>%
   summarize(continent = first(continent), count = n())
-head(occurence)
+
 # map
 plot_geo(occurence) %>%
   layout(
@@ -753,6 +751,6 @@ add_trace(
   )
 ) 
 # save figure
-#save_image(topath)
+save_image(topath)
 }
 

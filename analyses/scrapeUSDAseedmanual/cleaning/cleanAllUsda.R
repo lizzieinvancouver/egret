@@ -10,7 +10,7 @@ library(ggplot2)
 library(tidyverse)
 library(xlsx)
 library(tibble)
-library(taxize)
+library(WorldFlora)
 
 if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
   setwd("~/Documents/github/egret/analyses")
