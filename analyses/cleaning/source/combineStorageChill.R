@@ -6,11 +6,11 @@
 library(stringr)
 
 length(which(d$storage.humidity != 0 & !is.na(d$storage.humidity))) #3364
-length(which(is.na(d$storage.humidity))) # 27571
+length(which(is.na(d$storage.humidity))) # 27411
 length(which(d$storage.humidity == 0)) # 2
 
-length(which(!is.na(d$storage.temp))) #18858
-length(which(!is.na(d$storage.time) & !is.na(d$storage.temp))) #12430
+length(which(!is.na(d$storage.temp))) #18698
+length(which(!is.na(d$storage.time) & !is.na(d$storage.temp))) #12398
 
 d$dormancyTemp <- NA
 d$dormancyDuration <- NA
@@ -39,6 +39,7 @@ check_short <- subset(check, select = c("datasetID", "study", "species",
 
 for(i in 1:nrow(d)){
   #creating list to be appended with suitable conditions
+ 
   dormancyTemp <- list()
   dormancyDuration <- list()
   dormancyCond <- 0
@@ -84,4 +85,8 @@ for(i in 1:nrow(d)){
     d$dormancyDuration[i] <- 0
   }
 }
+
+
 print("These `NAs introduced by coercion' errors happen because we shift between string and numeric types when checking whether each temperature condition is within the acceptable range of -20degC to 10degC")
+
+

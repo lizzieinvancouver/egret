@@ -133,31 +133,19 @@ d$storageType[which(d$storageType == "na (control)")] <- "NA"
 d$storageType[which(d$storageType == "na")] <- NA
 
 # Weird ones
-# library(tidyverse)
-
-# d %>% filter(storageType == "moisutre controlled") 
-# yang08 Litsea coreana
-# yang08 <- d %>% filter(datasetID == "yang08")
-# The seeds were desiccated to varying degrees during storage
 d$storageType[which(d$storageType == "moisutre controlled")] <- "moisture-controlled"
-
-# d %>% filter(storageType == "dry + cold/dry")
 # washitani85 Geranium carolinianum
 # ALL seeds were in DRY ROOM storage
 # ALL Seeds EXCEPT destined for stratification were then placed into DRY COLD
-# washitani <- d %>% filter(datasetID == "Washitani85")
 
 d$storageType[which(d$storageType == "dry + cold/dry" & d$treatment == "dry-chilling pretreatment")] <- "dry/cold"
 d$storageType[which(d$storageType == "dry + cold/dry" & d$treatment == "moist-chilling pretreatment")] <- "dry/cold"
 d$storageType[which(d$storageType == "dry + cold/dry")] <- "dry/cold"
 
-# d %>% filter(storageType == "cold start")
 # li17 Distylium chinense
-# li17 <- d %>% filter(datasetID == "li17" & genus == "Distylium")
 # It's a typo from cold strat but the actual storage conditions were just cold
 
 d$storageType[which(d$storageType == "cold start")] <- "cold"
-d$storageDetails[which(d$storageType == "cold start")] <- "cold"
 
 sort(unique(d$storageType))
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -165,11 +153,14 @@ sort(unique(d$storageType))
 
 unique(d$storageDetails)
 
+d$storageDetails[which(d$storageDetails == "cold start")] <- "cold"
+
 # Just dry
 d$storageDetails[which(d$storageDetails == "air dry")] <- "air-dry"
 d$storageDetails[which(d$storageDetails == "sun dry")] <- "sun-dry"
 d$storageDetails[which(d$storageDetails == "dry, airy")] <- "air-dry"
 d$storageDetails[which(d$storageDetails == "dry, in paper bags")] <- "air-dry/paper"
+d$storageDetails[which(d$storageDetails == "air dried at 25+/-2c for 7 days, then brown paper bags")] <- "air-dry/paper"
 
 # Dry cold
 d$storageDetails[which(d$storageDetails == "freeze/dry")] <- "dry/frozen"
@@ -214,8 +205,6 @@ d$storageDetails[which(d$storageDetails == "damp")] <- "moist"
 d$storageDetails[which(d$storageDetails == "wet")] <- "moist"
 d$storageDetails[which(d$storageDetails == "wet sand")] <- "moist sand"
 
-
-
 # Just cold
 d$storageDetails[which(d$storageDetails == "vapor of liquid nitrogen")] <- "liquid nitrogen"
 d$storageDetails[which(d$storageDetails == "in liquid nitrogen")] <- "liquid nitrogen"
@@ -237,7 +226,7 @@ d$storageDetails[which(d$storageDetails == "moist, in light/dark at 12/12h")] <-
 
 # dry NA dark
 d$storageDetails[which(d$storageDetails == "silica gel, dark")] <- "dark/silica gel"
-d$storageDetails[which(d$storageDetails == "dry, in dark")] <- "dry/dark"
+d$storageDetails[which(d$storageDetails == "dry, in dark")] <- "dark/dry"
 d$storageDetails[which(d$storageDetails == "dry shade")] <- "dry/shade"
 
 # NA cold dark
@@ -255,12 +244,12 @@ d$storageDetails[which(d$storageDetails == "plastic bag")] <- "plastic"
 d$storageDetails[which(d$storageDetails == "sealed glass bottle")] <- "glass container"
 d$storageDetails[which(d$storageDetails == "glass container")] <- "glass container"
 d$storageDetails[which(d$storageDetails == "sealed containers")] <- "container"
-d$storageDetails[which(d$storageDetails == "plastic bags")] <- "plastic bag"
-d$storageDetails[which(d$storageDetails == "plastic bag")] <- "plastic bag"
-d$storageDetails[which(d$storageDetails == "airtight plastic bags ")] <- "plastic bag"
+d$storageDetails[which(d$storageDetails == "plastic bags")] <- "plastic"
+d$storageDetails[which(d$storageDetails == "plastic bag")] <- "plastic"
+d$storageDetails[which(d$storageDetails == "airtight plastic bags ")] <- "plastic"
 d$storageDetails[which(d$storageDetails == "glass bottles, laboratory conditions")] <- "room/glass container"
 d$storageDetails[which(d$storageDetails == "air-tight containers")] <- "container"
-d$storageDetails[which(d$storageDetails == "airtight polyethylene bags")] <- "plastic bag"
+d$storageDetails[which(d$storageDetails == "airtight polyethylene bags")] <- "plastic"
 
 # airflow
 d$storageDetails[which(d$storageDetails == "air-flow")] <- "air-flow"
@@ -280,10 +269,10 @@ d$storageDetails[which(d$storageDetails == "dry first then dry/cold later" & d$d
 d$storageTemp <- d$storage.temp
 d$storageDuration <- d$storage.time
 
-unique(d$storage.temp)
-unique(d$storage.time)
-unique(d$storageTemp)
-unique(d$storageDuration)
+# unique(d$storage.temp)
+# unique(d$storage.time)
+# unique(d$storageTemp)
+# unique(d$storageDuration)
 
 idx <- which(d$storageDuration == unique(d$storageDuration)[56])
 check <- d[idx,]
@@ -364,7 +353,7 @@ d$storageDuration[which(d$datasetID == "washitani89")] <- 75
 d$storageDuration[which(d$datasetID == "zulfiqar15")] <- 91
 
 #bibby53 - 14-28, paper pending
-#d$storageDuration[which(d$datasetID == "bibby53" & d$storage.time == "14-28")] <- 21
+d$storageDuration[which(d$datasetID == "bibby53" & d$storage.time == "14-28")] <- 21
 
 #ren08 - 30-31
 d$storageDuration[which(d$datasetID == "ren08")] <- 30
@@ -388,12 +377,12 @@ d$storageDuration[which(d$storage.time == "didn't mention" |
 ##cleaned storage temp
 d$storageTemp[d$storage.temp == "3-5"] <- 4
 
-#acosta12 - 18-20
-d$storageTemp[which(d$datasetID == "acosta12")] <- 19
-d$storageDuration[which(d$datasetID == "acosta12")] <- 120
+#acosta13 - 18-20
+d$storageTemp[which(d$datasetID == "acosta13")] <- 19
+d$storageDuration[which(d$datasetID == "acosta13")] <- 120
 
 #brandel2005 - 15-20
-d$storageTemp[which(d$datasetID == "brandel2005")] <- 17.5
+d$storageTemp[which(d$datasetID == "brandel05")] <- 17.5
 
 #vahdati12 - 15-20
 d$storageTemp[which(d$datasetID == "vahdati12")] <- 17.5
@@ -540,7 +529,7 @@ d$storageDuration[which(d$datasetID == "kolodziejek18" & !is.na(d$chill.temp))] 
 d$storageTemp[which(d$datasetID == "ahola99" & d$species == "pendula")] <- "-18 then NA"
 d$storageTemp[which(d$datasetID == "ahola99" & d$species == "abies")] <- "-3 then NA"
 d$storageTemp[which(d$datasetID == "ahola99" & d$species == "sylvestris")] <- "-3 then NA"
-d$storageDuration[which(d$datasetID == "ahola99")] <- "NA then NA"
+d$storageDuration[which(d$datasetID == "ahola99")] <- "NA"
 
 #veatch-blohm11 - 21-25
 d$storageTemp[which(d$datasetID == "veatch-blohm11")] <- 23
@@ -549,12 +538,10 @@ d$storageTemp[which(d$datasetID == "veatch-blohm11")] <- 23
 d$storageTemp[which(d$datasetID == "veiga-barbosa14")] <- 23
 d$storageDuration[which(d$datasetID == "veiga-barbosa14")] <- 123
 
-# to double check:
-# "-18 then NA"
-#"-196" 
-# "-3 then NA" 
-#"16 then 4"
-# "NA then 4"
-# multiple
+
+sort(unique(d$storageTemp))
+sort(unique(d$storageDuration))
+
+
 
 source("cleaning/source/combineStorageChill.R")

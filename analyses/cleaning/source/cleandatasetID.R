@@ -4,7 +4,6 @@
 # Needs to be sourced in cleanall.R
 
 # Fix ones with incorrect years
-d$datasetID[which(d$entered.by == "DMB")] <- "veiga-barbosa14"
 d$datasetID[which(d$datasetID == "Acosta12")] <- "acosta13"
 d$datasetID[which(d$datasetID == "Brandel2005")] <- "brandel05"
 d$datasetID[which(d$datasetID == "airi2009")] <- "airi09"
