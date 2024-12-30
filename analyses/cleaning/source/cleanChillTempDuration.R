@@ -110,10 +110,10 @@ d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill
 d$chillDuration[which(d$datasetID == "mattana16" & is.na(d$chill.temp))] <- 0
 #chill durations seems to be germ duration
 
-#Nin17 - 15;30;60;90
+#Nin17 - 15;30;60;90---average across all treatments
 d$chillTemp[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 4
 d$chillDuration[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 0
-d$chillDuration[which(d$chill.duration == "15;30;60;90")] <- "ave"
+d$chillDuration[which(d$chill.duration == "15;30;60;90")] <- NA # average across all treatments
 
 #nurse08 - 1 month, 2 months, 3 months
 d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == "1 month")] <- 30
@@ -123,12 +123,12 @@ d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == "3 months")
 #okay11 - 90, 120, 150
 d$chillTemp[which(d$datasetID == "okay11" & d$treatment == "Control")] <- 0
 d$chillDuration[which(d$datasetID == "okay11" & d$treatment == "Control")] <- 0
-d$chillDuration[which(d$chill.duration == "90, 120, 150")] <- "ave"
+d$chillDuration[which(d$chill.duration == "90, 120, 150")] <- NA
 #seems to be the average among treatments
 
 #tang21 - 0, 15, 30, 60
 d$chillTempUnc[which(d$datasetID == "okay11" & !is.na(d$chill.temp))] <- 1
-d$chillDuration[which(d$chill.duration == "0, 15, 30, 60")] <- "ave"
+d$chillDuration[which(d$chill.duration == "0, 15, 30, 60")] <- NA
 #seems to be the average among treatments
 #stratification not indicated, possibly not differentiated
 
@@ -631,27 +631,29 @@ d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "water stress")] 
 #warm + cold + incubation (but no duration)
 #should incubation be included
 
-#yang08 - 30/20 warm, cold strat
-d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 and 20 then 4"
-d$chillTempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "NA then NA"
-d$chillLightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
-temp <- c("60 then 60", "60 then 90", "60 then 120", "60 then 150", "60 then 180",
-         "90 then 60", "90 then 90", "90 then 120", "90 then 150", "90 then 180",
-         "120 then 60", "120 then 90", "120 then 120", "120 then 150", "120 then 180",
-         "150 then 60", "150 then 90", "150 then 120", "150 then 150", "150 then 180",
-         "180 then 60", "180 then 90", "180 then 120", "180 then 150", "180 then 180",
-         "60 then 60", "60 then 90", "60 then 120", "60 then 150", "60 then 180",
-         "90 then 60", "90 then 90", "90 then 120", "90 then 150", "90 then 180",
-         "120 then 60", "120 then 90", "120 then 120", "120 then 150", "120 then 180",
-         "150 then 60", "150 then 90", "150 then 120", "150 then 150", "150 then 180",
-         "180 then 60", "180 then 90", "180 then 120", "180 then 150", "180 then 180")
-d$chillDuration[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- temp
-d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
-d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
-d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
-d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
-d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
-d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
+#yang08 - 30/20 warm, cold strat---it is a day night alternating temp regime for 12 weeks
+d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- 23.33
+
+# d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 and 20 then 4"
+ d$chillTempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 then 20"
+ d$chillLightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
+# temp <- c("60 then 60", "60 then 90", "60 then 120", "60 then 150", "60 then 180",
+#          "90 then 60", "90 then 90", "90 then 120", "90 then 150", "90 then 180",
+#          "120 then 60", "120 then 90", "120 then 120", "120 then 150", "120 then 180",
+#          "150 then 60", "150 then 90", "150 then 120", "150 then 150", "150 then 180",
+#          "180 then 60", "180 then 90", "180 then 120", "180 then 150", "180 then 180",
+#          "60 then 60", "60 then 90", "60 then 120", "60 then 150", "60 then 180",
+#          "90 then 60", "90 then 90", "90 then 120", "90 then 150", "90 then 180",
+#          "120 then 60", "120 then 90", "120 then 120", "120 then 150", "120 then 180",
+#          "150 then 60", "150 then 90", "150 then 120", "150 then 150", "150 then 180",
+#          "180 then 60", "180 then 90", "180 then 120", "180 then 150", "180 then 180")
+# d$chillDuration[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- temp
+# d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
+# d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
+# d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
+# d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
+# d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
+# d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
 #chilling seems to be warm + cold
 #should I change the treatment and photoperiod, since they don't seem to correspond with the results
 
@@ -662,9 +664,9 @@ d$chillTempUnc[which(d$chill.temp == "4 +/- 2 ")] <- 2
 #battaglia97 
 #missing chill duration
 
-#fulbright86 - 30/7 moist heat, moist prechill
+#fulbright86 - 30 for one week 7 for two moist heat, moist prechill
 d$chillTemp[which(d$chill.temp == "30/7")] <- "30 then 7"
-d$chillDuration[which(d$chill.temp == "30/7")] <- "3 then 14"
+d$chillDuration[which(d$chill.temp == "30/7")] <- "7 then 14"
 
 #gianni19 - 2+-0.1 dark
 d$chillTemp[which(d$chill.temp == "2+-0.1")] <- 2
