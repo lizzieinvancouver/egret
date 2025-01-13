@@ -52,6 +52,7 @@ source("cleaning/source/cleanChemical.R") # 30777 55
 # 9. Clean storage type
 source("cleaning/source/cleanStorage.R") # 30937 70  
 # ALERT! Need to potentially add source/combineStorageChill.R here, see issue #39
+# DLedit: currently sourced at end of cleanStorage
 
 # 10. Clean response variables and response
 source("cleaning/source/cleanResponseVar.R") # 
@@ -62,8 +63,8 @@ source("cleaning/source/cleanPhotoperiod.R") # 30777    77
 # 12. Clean coordinates seed provenance
 #source("cleaning/source/cleanCoordinates.R") # commented it until the code is cleaned
 
-# 13. Clean storage conditions that are chilling (ie. cold and wet)
-# source("cleaning/source/combineStorageChill.R") # currently sourced in cleanStorage
+# 13. Clean treatment column
+# source("cleaning/source/cleanTreatments.R") 
 
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
