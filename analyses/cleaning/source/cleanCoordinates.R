@@ -42,14 +42,14 @@ d$source.population[which(d$datasetID == "tylkowski91" & d$source.population == 
 d$source.population[which(d$datasetID == "barnhill82")] <- "Morgan County, Tennessee, USA"
 # lai03: adding missing source.population
 d$source.population[which(d$datasetID == "lai03")] <- "Ninshan County, China"
+# werner13: Changing source.population name that's wrong. Git issue #21
+d$source.population[which(d$datasetID == "werner13")] <- "MS Foundation"
 
 
 ### ### ### ### ### ### ### ### ### ###
 # Adding missing lat/long as stated 
 # Looked back into the papers       
 ### ### ### ### ### ### ### ### ### ###
-
-na.coords <- d[which(is.na(d$provenance.lat)),] # ASK LIZZIE: should I keep this line? DOTHIS
 # chuanren04
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "chuanren04")] <- "56.13"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "chuanren04")] <- "-106.347"
@@ -68,7 +68,7 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bhatt00" & d$
 # boscagli01: location should be Rosellae, Grosseto, Italy
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "boscagli01")] <- "42.83"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "boscagli01")] <- "11.16"
-# aldridge1992 DOTHIS, seeds collected at Sussex (England) from plants from the philippines
+# aldridge1992: location taken from Sussex (England)
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1992")] <- "46.73" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1992")] <- "94.69"
 # amini2018
@@ -82,9 +82,9 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "cho18" & d$so
 # crank92
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "crank92")] <- "26.973"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "crank92")] <- "-99.101"
-# cuena-Lombrana18: localities cannot be found on google earth DOTHIS
-d$provenance.lat[which(d$datasetID == "cuena-lombrana18" & d$source.population == "Gennargentu Massif, Sardinia, Trainu Murcunieddu")] <-"40"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "cuena-lombrana18")] <- "9.32"
+# cuena-Lombrana18: general location of the Gennargentu Massif because the two localities mentioned cannot be found
+d$provenance.lat[which(d$datasetID == "cuena-lombrana18")] <-"40.02"
+d$provenance.long[which(d$datasetID == "cuena-lombrana18")] <-"9.33"
 # dehgan84
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "dehgan84")] <- "29.65"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "dehgan84")] <- "-82.324"
@@ -366,10 +366,10 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "tylkowski09" 
 # yuan21: lat long extracted from source pop on google earth
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "yuan21")] <- "34.61" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "yuan21")] <- "127.28" 
-# yusefi-tanha19: seeds provided by an agriculture company... put the location of the company for now DOTHIS
+# yusefi-tanha19
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "yusefi-tanha19")] <- "32.68"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "yusefi-tanha19")] <- "51.65"
-# zadeh15 seed also from company DOTHIS
+# zadeh15 seed potentially from a crop DOTHIS
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "zadeh15")] <- "32.54"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "zadeh15")] <- "51.69"
 # carpenter92
@@ -440,7 +440,7 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "li11" | d$dat
 # alhelal96
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "alhelal96")] <- "24.71" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "alhelal96")] <- "46.68"
-# bibby53: paper not in folder DOTHIS
+# bibby53
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "bibby53")] <- "-40.90" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bibby53")] <- "174.89"
 # fulbright86: seeds from 3 locations mixed, a point between these 3 locations was selected on google earth
@@ -478,7 +478,7 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kulkarni06")]
 # lee21
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "lee21")] <- "35.62" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "lee21")] <- "129.00"
-# lai03: the paper is in Mandarin, and instead of Qinling China, the seeds were collected from Ninshan County (near Qinling) DOTHIS
+# lai03: the paper is in Mandarin, and instead of Qinling China, the seeds were collected from Ninshan County (near Qinling) 
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "lai03")] <- "33.31" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "lai03")] <- "108.31"
 # langlois17
@@ -493,7 +493,9 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "harrington09"
 # herron01
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "herron01")] <- "40.39" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "herron01")] <- "175.61"
-# irvani12,13,14 couldn't find Fozveh research station in Google Earth, coordinates were in a weird form in the paper: Lat: 361 270 N; Lon: 591 630 E. Therefore, NA DOTHIS
+# irvani12 Coordinates were in a weird form in the paper: Lat: 361 270 N; Lon: 591 630 E. Coordinates of the same research station in appropriate format found here: https://www.sciencedirect.com/science/article/pii/S2405844018347832)
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "irvani12")] <- "32.6"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "irvani12")] <- "51.43"
 
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -546,10 +548,11 @@ d$provenance.long[which(d$datasetID == "harrison14" & d$provenance.long == "145.
 d$provenance.long[which(d$datasetID == "harrison14" & d$provenance.long == "145.2676 E")] <- "145.2676"
 
 
+
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 ##### Fix locations. Changing negative to positive when necessary #####
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# alptekin02: DOTHIS ? DOESNT EXIST?
+# alptekin02
 d$provenance.long[which(d$datasetID == "alptekin02" & d$provenance.long == "-43.74")] <- "43.74" 
 # veiga-barbosa16: checked in article. Entry was good, but missing a negative
 d$provenance.long[which(d$datasetID == "veiga-barbosa16" & d$provenance.long == "3.5667")] <- "-3.5667"
@@ -588,16 +591,13 @@ d$provenance.long[which(d$datasetID == "edwards96" & d$provenance.long == "129.3
 # zhou08 wasn't flagged until I saw its longitude. Lat and long were switched.
 d$provenance.lat[which(d$datasetID == "zhou08" & d$provenance.lat == "103.42")] <- "32"
 d$provenance.long[which(d$datasetID == "zhou08" & d$provenance.long == "32")] <- "103.42"
-# brandel05: 54 DOTHIS : 2005 too
-# yeom21: lat 39 and long 129.
-# they give a location that isn't precise and searching the institute doesn't give anything conclusive. It's in North Korea... It's not the source population also, it's a crop research institute. My opinion: exclude these locations from the coordinates. DOTHIS: no reply in the git issue
 # zardari19: # given location had no decimals. A central point in the town indicated in the article was taken. 
 d$provenance.lat[which(d$datasetID == "zardari19" & d$provenance.lat == "35")] <- "35.58" 
 d$provenance.long[which(d$datasetID == "zardari19" & d$provenance.long == "53")] <- "53.39" 
 # zare11: missing a .
 d$provenance.lat[which(d$datasetID == "zare11" & d$provenance.lat == "3147")] <- "31.47" 
 d$provenance.long[which(d$datasetID == "zare11" & d$provenance.long == "5352")] <- "53.52"
-# esmaeili09: 48. Location provided: Marais poitevin which is a 120 000ha wetland. Not sure what to do with this. DOTHIS: go back in git issue and see what was decided
+# esmaeili09: Central point of the locations taken and extracted from google earth
 # seng20: 103.3. # Central location of Forest Restoration and Development “Banteay Srei” Cambodia extracted from google earth. Long ok
 d$provenance.lat[which(d$datasetID == "seng20" & d$provenance.lat == "103.3")] <- "13.60" 
 # zlesak07: Dragging error in Excel. It goes from 46 N to 62 N. Location confirmed in article.
@@ -632,29 +632,28 @@ d$provenance.long[which(d$datasetID == "guo20" & d$provenance.long == "~105.5-10
 # ren15: Took the central latitude betweeen the two points provided in the article
 d$provenance.lat[which(d$datasetID == "ren15" & d$provenance.lat == "33.825278 - 34.136389")] <- "33.98" 
 d$provenance.long[which(d$datasetID == "ren15" & d$provenance.long == "107.373333 - 107.861389")] <- "107.62"
-# olmez09 DOTHIS: altitude still off for one location
 # yang08
 d$provenance.long[which(d$datasetID == "yang08" & d$provenance.long == "121.3")] <- "121.50" 
 # zhang21
 d$provenance.long[which(d$datasetID == "zhang21" & d$provenance.long == "124.9")] <- "124.90" 
-# alptekin02: 39.5 DOTHIS ? why did it change to 2002? Amini did that too
-d$provenance.long[which(d$datasetID == "alptekin02" & d$provenance.long == "39.5")] <- "39.50" #DOTHIS it check all these locations including lat because negative value was added above.
 # mulaudzi09
 d$provenance.long[which(d$datasetID == "mulaudzi09" & d$provenance.long == "27.5")] <- "27.50"
 # middleton96
 d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "142.5")] <- "142.50"
 # pliszko18
 d$provenance.long[which(d$datasetID == "pliszko18" & d$provenance.long == "21")] <- "21.00"
-# yang18: DOTHIS : should become yang18_1 or _2?
-d$provenance.long[which(d$datasetID == "yang18" & d$provenance.long == "121.5")] <- "121.50"
 # yin09:
 d$provenance.long[which(d$datasetID == "yin09" & d$provenance.long == "117.4")] <- "117.40"
-# necajeva13: 21.416667-21.05: DOTHIS from some treatments, the seeds were mixed, for others they were not
 # olmez09: fixing altitude. 
 d$provenance.altitude[which(d$datasetID == "olmez09" & d$source.population == "Derinkoy, Koprubasi, Salkimli")] <- "NA"
 d$provenance.altitude[which(d$datasetID == "olmez09" & d$provenance.altitude == "212, 550, 860" & d$source.population == "Derinkoy")] <- "860"
 d$provenance.altitude[which(d$datasetID == "olmez09" & d$provenance.altitude == "212, 550, 860" & d$source.population == "Koprubasi, Artvin, Turkey")] <- "212"
 d$provenance.altitude[which(d$datasetID == "olmez09" & d$provenance.altitude == "212, 550, 860" & d$source.population == "Salkimli")] <- "550"
+# cuena-Lombrana18: the mean of the altitude range mentionned in the paper was calculated
+d$provenance.altitude[which(d$datasetID == "cuena-Lombrana18" & d$source.population == "Gennargentu Massif, Sardinia, Trainu Murcunieddu
+")] <- "1348"
+d$provenance.altitude[which(d$datasetID == "cuena-Lombrana18" & d$source.population == "Gennargentu Massif, Sardinia, Is Terre Molentes
+")] <- "1483"
 
 ############################################################################
 ##### Fixing Continents Points #####
