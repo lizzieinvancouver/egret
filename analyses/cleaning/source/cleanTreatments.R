@@ -9,7 +9,7 @@ d$Treatment <- d$treatment ### could potentially change that name
 # Unique by treatments
 subby <- d[!duplicated(d$treatment), ]
 # Vector of all unique treatments
-vec.treat <- subby$treatment
+vec.treat <- sort(subby$treatment)
 head(vec.treat)
 
 ### checking validity
