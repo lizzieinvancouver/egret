@@ -478,7 +478,7 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "kulkarni06")]
 # lee21
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "lee21")] <- "35.62" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "lee21")] <- "129.00"
-# lai03: the paper is in Mandarin, and instead of Qinling China, the seeds were collected from Ninshan County (near Qinling) 
+# lai03: location converted to decimals
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "lai03")] <- "33.31" 
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "lai03")] <- "108.31"
 # langlois17
