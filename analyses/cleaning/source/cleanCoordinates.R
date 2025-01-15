@@ -43,7 +43,7 @@ d$source.population[which(d$datasetID == "barnhill82")] <- "Morgan County, Tenne
 # lai03: adding missing source.population
 d$source.population[which(d$datasetID == "lai03")] <- "Ninshan County, China"
 # werner13: Changing source.population name that's wrong. Git issue #21
-d$source.population[which(d$datasetID == "werner13")] <- "MS Foundation"
+d$source.population[which(d$datasetID == "werner13")] <- "MS Foundation,Maracujá, Serrolandia, Bahia, Brazil"
 
 
 ### ### ### ### ### ### ### ### ### ###
@@ -369,9 +369,6 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "yuan21")] <- 
 # yusefi-tanha19
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "yusefi-tanha19")] <- "32.68"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "yusefi-tanha19")] <- "51.65"
-# zadeh15 seed potentially from a crop DOTHIS
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "zadeh15")] <- "32.54"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "zadeh15")] <- "51.69"
 # carpenter92
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "carpenter92")] <- "27.66"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "carpenter92")] <- "-81.51"
