@@ -40,6 +40,6 @@ dark_row2 <- which(d$photoperiod == 0)
 dark_rows <- unique(c(dark_row1, dark_row2))
 
 # Make an extra column recording light/dark data
-d$lightDark <- NA
-d$lightDark[light_rows] <- "light"
-d$lightDark[dark_rows] <- "dark"
+d$photoperiodCor <- NA
+d$photoperiodCor[light_rows] <- "light"
+d$photoperiodCor[dark_rows] <- "dark"
