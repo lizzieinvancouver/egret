@@ -58,7 +58,7 @@ d$Treatment[which(d$datasetID =="yan16" & d$treatment == "control ")] <- "contro
 ##### 1.2. Stratification #####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><<><><><><><><><>
 #### Scrap-Subset for double checking -- will be deleted
-unique(d$treatment[grep("strat", d$treatment)])
+unique(d$Treatment[grep("strat", d$treatment)])
 
 subb<-subset(sub, treatment == "stratification")
 unique(subb$datasetID)
