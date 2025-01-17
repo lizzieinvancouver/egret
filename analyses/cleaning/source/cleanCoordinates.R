@@ -68,9 +68,12 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "bhatt00" & d$
 # boscagli01: location should be Rosellae, Grosseto, Italy
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "boscagli01")] <- "42.83"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "boscagli01")] <- "11.16"
-# aldridge1992: location taken from Sussex (England)
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1992")] <- "46.73" 
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1992")] <- "94.69"
+# aldridge1992: location taken from Sussex (England) and University of Minesota USA
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge92" & d$source.population == "Sussex, England" )] <- "50.8679" 
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge92"& d$source.population == "Sussex, England")] <- "-0.0875"
+d$source.population[which(is.na(d$provenance.lat) & d$datasetID == "aldridge92" & d$source.population == "Minnesota, USA" )] <- "University of Minnesota, USA" 
+d$provenance.lat[which(is.na(d$provenance.long) & d$datasetID == "aldridge92"& d$source.population == "University of Minnesota, USA")] <- "44.9742"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge92"& d$source.population == "University of Minnesota, USA")] <- "-93.2268"
 # amini2018
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "amini2018")] <- "36.812"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "amini2018")] <- "54.945"
@@ -287,8 +290,8 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "morozowska02"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "morozowska02" & d$source.population == "Konin, Poland")] <- "52.22"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "morozowska02" & d$source.population == "Konin, Poland")] <- "18.25"
 # aldridge1993
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1993")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1993")] <- "94.69"
+d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1993")] <- "50.8679"
+d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1993")] <- "-0.0875"
 # aldridge1994
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1994")] <- "46.73"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1994")] <- "-94.69"
