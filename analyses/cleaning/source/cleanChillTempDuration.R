@@ -209,9 +209,9 @@ temp <- c(rep(seq(0, 120, 30), 8), 120, 120, 120, 90, 90, 60, 60, 30, 120, 120, 
 d$chillDuration[which(d$datasetID == "pipinis12" & d$treatment == "chemical")] <- temp
 #one data point potentially missing
 
-#Acosta12 - 25/15
-d$chillTemp[which(d$datasetID == "acosta12")] <- NA
-d$chillDuration[which(d$datasetID == "acosta12")] <- NA
+#Acosta13 - 25/15
+d$chillTemp[which(d$datasetID == "acosta13")] <- NA
+d$chillDuration[which(d$datasetID == "acosta13")] <- NA
 #possible need to distinguish temperature effects and germ temp
 
 #Brandel2005 - 5/25
@@ -443,10 +443,10 @@ temp <- c(rep(5, 5), rep(25, 5))
 d$chillTemp[which(d$datasetID == "yeom21" & d$respvar != "per.germ")] <- temp
 
 #song20 - 5, 10, 15, 20
-temp <- c(rep(5, 5), rep(10, 4), rep(15, 3), rep(20, 2))
+temp <- c(rep("5", 5), rep("5 then 10", 4), rep("5 then 10 then 15", 3), rep("5 then 10 then 15 then 20", 2))
 d$chillTemp[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("NA then ", temp)
-d$chillDuration[which(d$other.treatment == "cold stratification for 6 months")] <-
-  paste0("186 then ", d$chillDuration[which(d$other.treatment == "cold stratification for 6 months")])
+temp <- c("31", "62", "93", "124", "155", "31 then 31", "31 then 62", "31 then 93", "31 then 124", "31 then 31 then 31", "31 then 31 then 62", "31 then 31 then 93", "31 then 31 then 31 then 31", "31 then 31 then 31 then 62")
+d$chillDuration[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("186 then ", temp)
 
 #schutz02 - 22/10
 #recommend to double check response variable and values and germ temp

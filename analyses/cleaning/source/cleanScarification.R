@@ -18,8 +18,6 @@ unique(d$scarif.type)
 # fix typos and re-organizing 
 d$scarifType <- d$scarif.type
 unique(d$scarifType)
-# fix typos and re-organizing 
-d$scarifType <- d$scarif.type
 
 d$scarifType[which(d$datasetID == "rizwan18" & d$scarif.type == "Y")] <- NA
 d$scarifType[which(d$scarifType == "partial scarification of seed coat")] <- "partially scarified"
@@ -174,37 +172,3 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 70°C hot water")] <- "so
 d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 90°C hot water")] <- "soaking - 90°C hot water"
 
 unique(d$scarifTypeSpe)
-
-#fixing treatment names 
-d$treatmentFixed <- d$treatment
-#controls 
-d$treatmentFixed[which(d$scarifType == "H2SO4.98per.0min" | d$scarifType == "hot.water.0min")] <- "control"
-
-# Al-Absi10
-# they see GA3 as scarifcation too but in our cleaning we put GA3 in a separate column, hence NA for GA3 scarifications
-d$other.treatment[which((d$datasetID == "Al-Absi10" | 
-                           d$datasetID == "al-absi10") & 
-                          d$scarifTypeGen == "soaking")] <- d$scarifType[which((d$datasetID == "Al-Absi10" | 
-                                                                                   d$datasetID == "al-absi10") & 
-                                                                                  d$scarifTypeGen == "soaking")]
-d$treatmentFixed[which(d$datasetID == "al-absi10" & d$scarifTypeGen == "soaking")] <- "hot water scarification"
-
-# prknova15
-# both seed coat removal and soaking
-d$other.treatment[which((d$datasetID == "prknova15") & 
-                          d$scarifTypeGen == "soaking")] <- d$scarifType[which((d$datasetID == "prknova15") & 
-                                                                                  d$scarifTypeGen == "soaking")]
-d$treatmentFixed[which((d$datasetID == "prknova15") & d$scarifTypeGen == "soaking")] <- "seed coat removal, soaking in water"
-
-# rouhi13
-d$other.treatment[which((d$datasetID == "rouhi13") & 
-                          d$scarifTypeGen == "soaking")] <- d$scarifType[which((d$datasetID == "rouhi13") & 
-                                                                                  d$scarifTypeGen == "soaking")]
-# Wickens01
-d$treatmentFixed[which((d$datasetID == "Wickens01") & 
-                    d$scarif.type == "hot water 70C")] <- "hot water 70C"
-d$treatmentFixed[which((d$datasetID == "Wickens01") & 
-                    d$other.treatment == "soaking")] <- "soaking"
-
-
-print(d$treatmentFixed[which(d$scarifTypeGen == "soaking")])

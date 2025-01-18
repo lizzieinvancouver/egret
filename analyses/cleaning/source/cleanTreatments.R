@@ -4,19 +4,112 @@
 # Code to clean the treatment categories 
 
 # Create new column of treatment category of cleaned treatments
-d$Treatment <- d$treatment ### could potentially change that name
+d$treatmentCor <- d$treatment
+d$treatmentDetails <- NA
 
-# Unique by treatments
-subby <- d[!duplicated(d$treatment), ]
-# Vector of all unique treatments
-vec.treat <- sort(subby$treatment)
-head(vec.treat)
+#unique(d$treatment)
+#unique(d$treatmentCor)
+#unique(d$treatmentDetails)
 
-### checking validity
-subby.check <- d[!duplicated(d$Treatment), ]
-# Vector of all unique treatments
-vec.treatcheck <- subby.check$Treatment
+# Find data points
+idx <- which(d$treatment == unique(d$treatment)[1])
+check <- d[idx,]
+check_short <- subset(check, select = c("datasetID", "study", "treatment", "other.treatment",
+                                        "treatmentCor", "treatmentDetails",
+                                        "storageType", "storageDetails", "storageTemp", "storageDuration",
+                                        "chillTemp", "chillDuration", "chillTempCycle", "chillLightCycle",
+                                        "germTemp", "germDuration", "photoperiodCopy",
+                                        "scarification", "scarifType", "scarifTypeGen", "scarifTypeSpe",
+                                        "soaking", "soaked.in", "soaking.duration",
+                                        "chemicalCor", "trt.duration",
+                                        "respvar", "response", "figure"))
+idx <- which(d$datasetID == sort(unique(d$datasetID))[179])
+check <- d[idx,]
+check_short <- subset(check, select = c("datasetID", "study", "species", "treatment", "other.treatment",
+                                        "treatmentCor", "treatmentDetails",
+                                        "storageType", "storageDetails", "storageTemp", "storageDuration",
+                                        "chillTemp", "chillDuration", "chillTempCycle", "chillLightCycle",
+                                        "germTemp", "germDuration", "photoperiodCopy",
+                                        "scarification", "scarifType", "scarifTypeGen", "scarifTypeSpe",
+                                        "soaking", "soaked.in", "soaking.duration",
+                                        "chemicalCor", "trt.duration",
+                                        "respvar", "response", "figure"))
 
+#acosta13
+d$treatmentCor[which(d$datasetID == "acosta13" & d$treatment == "temperature")] <- "germination temperature"
+d$treatmentDetails[which(d$datasetID == "acosta13" & d$study == "exp1")] <- "constant"
+d$treatmentDetails[which(d$datasetID == "acosta13" & d$study == "exp2")] <- "alternating"
+
+temp <- c(0, -0.3, -0.4, -0.6, -0.9, -1.3)
+d$treatmentDetails[which(d$datasetID == "acosta13" & d$treatment == "osmotic potential")] <- paste0(temp, " MPa")
+
+temp <- c("dark", "light")
+d$treatmentCor[which(d$datasetID == "acosta13" & d$treatment == "dry storage")] <- "storage x photoperiod"
+d$treatmentDetails[which(d$datasetID == "acosta13" & d$treatment == "dry storage")] <- temp
+
+#ahola99
+d$treatmentCor[which(d$datasetID == "ahola99")] <- "light x chilling x germination temperature"
+d$treatmentDetails[which(d$datasetID == "ahola99")] <- "red / far red x moist x constant"
+d$treatmentDetails[which(d$datasetID == "ahola99" & d$treatment == "control")] <- "no chilling"
+d$treatmentDetails[which(d$datasetID == "ahola99" & d$treatment == "dark/moist chill")] <- "dark, moist chilling"
+
+#aiello07
+#possible missing data on gibberelic acid treatments in Table 3 and Table 4
+
+
+#airi09
+d$treatmentCor[which(d$datasetID == "airi09" & d$treatment %in% c("GA3", "KNO3", "Thiourea"))] <- "chemical"
+d$treatmentDetails[which(d$datasetID == "airi09" & d$treatment %in% c("GA3", "KNO3", "Thiourea"))] <- 
+  d$treatment[which(d$datasetID == "airi09" & d$treatment %in% c("GA3", "KNO3", "Thiourea"))]
+
+#al-absi10
+d$treatmentCor[which(d$datasetID == "al-absi10")] <- "cold stratification x scarification"
+d$treatmentDetails[which(d$datasetID == "al-absi10" &
+                           d$treatment == "stratification.hotwater")] <-
+  "hot water"
+d$treatmentDetails[which(d$datasetID == "al-absi10" &
+                           d$treatment == "stratification.H2SO4")] <-
+  "H2SO4"
+d$treatmentDetails[which(d$datasetID == "al-absi10" &
+                           d$treatment == "stratification.GA")] <-
+  "GA"
+d$treatmentDetails[which(d$datasetID == "al-absi10" & is.na(d$scarifType) & is.na(d$chemicalCor))] <- "control"
+#soaking duration needs to be cleaned, maybe include soaking in chemical column
+
+#albrecht20, weird mixed data in different figures and discussed as different experiments
+
+#aldridge92, paper pending
+
+#prknova15 - 163
+d$treatmentCor[which(d$datasetID == "prknova15")] <- "stratification x seed coat"
+d$treatmentCor
+
+#rouhi13 - 179
+#wickens01 - 220
+
+
+#fixing treatment names 
+d$treatmentFixed <- d$treatment
+
+# prknova15
+# both seed coat removal and soaking
+d$other.treatment[which((d$datasetID == "prknova15") & 
+                          d$scarifTypeGen == "soaking")] <- d$scarifType[which((d$datasetID == "prknova15") & 
+                                                                                 d$scarifTypeGen == "soaking")]
+d$treatmentFixed[which((d$datasetID == "prknova15") & d$scarifTypeGen == "soaking")] <- "seed coat removal, soaking in water"
+
+# rouhi13
+d$other.treatment[which((d$datasetID == "rouhi13") & 
+                          d$scarifTypeGen == "soaking")] <- d$scarifType[which((d$datasetID == "rouhi13") & 
+                                                                                 d$scarifTypeGen == "soaking")]
+# Wickens01
+d$treatmentFixed[which((d$datasetID == "Wickens01") & 
+                         d$scarif.type == "hot water 70C")] <- "hot water 70C"
+d$treatmentFixed[which((d$datasetID == "Wickens01") & 
+                         d$other.treatment == "soaking")] <- "soaking"
+
+
+print(d$treatmentFixed[which(d$scarifTypeGen == "soaking")])
 
 ### === ### === ### === ### === ### === ### === ### === ### === ### === 
 #### Easy cleaning of main treatments ####
@@ -58,7 +151,7 @@ d$Treatment[which(d$datasetID =="yan16" & d$treatment == "control ")] <- "contro
 ##### 1.2. Stratification #####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><<><><><><><><><>
 #### Scrap-Subset for double checking -- will be deleted
-unique(d$Treatment[grep("strat", d$treatment)])
+unique(d$treatment[grep("strat", d$treatment)])
 
 subb<-subset(sub, treatment == "stratification")
 unique(subb$datasetID)

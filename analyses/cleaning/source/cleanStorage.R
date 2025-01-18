@@ -378,8 +378,8 @@ d$storageDuration[which(d$storage.time == "didn't mention" |
 d$storageTemp[d$storage.temp == "3-5"] <- 4
 
 #acosta13 - 18-20
-d$storageTemp[which(d$datasetID == "acosta13")] <- 19
-d$storageDuration[which(d$datasetID == "acosta13")] <- 120
+d$storageTemp[which(d$datasetID == "acosta13" & d$study != "exp4")] <- 19
+d$storageDuration[which(d$datasetID == "acosta13" & d$study != "exp4")] <- 120
 
 #brandel2005 - 15-20
 d$storageTemp[which(d$datasetID == "brandel05")] <- 17.5
