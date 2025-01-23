@@ -28,6 +28,9 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd('~/projects/egret/analyses')
 } 
 
+# load some functions
+source("studyDesign/functions/timeline_plot.R")
+
 # 0. Get the cleaned data
 d <- read.csv('output/egretclean.csv')
 cols <- c('datasetID', 
@@ -90,7 +93,7 @@ table(d[grepl("dry", d$storageType), "storageDuration"], useNA = "always")
 nrow(d[grepl("dry", d$storageType) & is.na(d$storageDuration), ])/nrow(d[grepl("dry", d$storageType), ]) # 38% (of the rows) have no duration specified
 
 
-## 2. Simplifying and plotting variables ## ----
+## 2. Simplifying variables ## ----
 # 2.1.  Storage-related variables ----
 
 ## 2.1.1. Storage humidity ----
@@ -131,31 +134,31 @@ d %>%
   summarise(n_distinct(datasetID))
 ## Most of the remaining studies do not specify storage conditions at all, BUT sometimes they do specify a storage duration!
 ## Have a quick look:
-dataplot <-
-  d %>%
-  dplyr::select('datasetID', 'storageType', 'storageDuration', 'storageTemp', 'storageDetails') %>%
-  unique() %>%
-  dplyr::mutate(storageHumidity = if_else(grepl("dry", storageType), "dry", if_else(grepl("moist", storageType), "moist", if_else(grepl("ambient|room", storageType),"dry", NA)))) %>% # first simplification
-  dplyr::mutate(storageHumidity = if_else(!is.na(storageHumidity),storageHumidity,if_else(grepl("naked|paper|airtight|plastic", storageType),"dry", NA))) %>% # second simplification (category A)
-  dplyr::mutate(storageHumidity = if_else(!is.na(storageHumidity),storageHumidity,if_else(grepl("nitrogen|paper|oven", storageDetails),"dry", NA))) %>%
-  dplyr::filter(!is.na(storageDuration) & !is.na(storageType) & !grepl("then", storageDuration)) %>% # quick test where we remove the sample with duration "X then Y" 
-  dplyr::mutate(storageDuration = as.numeric(storageDuration)) %>%
-  dplyr::group_by(datasetID) %>%
-  dplyr::mutate(uniqueID = paste0(datasetID, "_", dplyr::row_number()))
-ggplot() +
-  geom_segment(
-    data = dataplot %>% dplyr::mutate(storageDuration = if_else(storageDuration > 300, 300, storageDuration)),
-    aes(y = uniqueID, yend = uniqueID, x = -storageDuration, xend = 0, 
-        color = storageHumidity), 
-    linewidth = 0.5) +
-  geom_segment(
-    data = dataplot %>% dplyr::filter(storageDuration > 300),
-    aes(y = uniqueID, yend = uniqueID, x = -storageDuration, xend = -300,  color = storageHumidity), 
-    linewidth = 0.5, linetype = "dotted") +
-  coord_cartesian(xlim = c(-350,0)) +
-  scale_x_continuous(breaks = seq(0, -300, -60)) +
-  theme_minimal() + 
-  theme(axis.text.y = element_blank(), panel.grid = element_blank())
+# dataplot <-
+#   d %>%
+#   dplyr::select('datasetID', 'storageType', 'storageDuration', 'storageTemp', 'storageDetails') %>%
+#   unique() %>%
+#   dplyr::mutate(storageHumidity = if_else(grepl("dry", storageType), "dry", if_else(grepl("moist", storageType), "moist", if_else(grepl("ambient|room", storageType),"dry", NA)))) %>% # first simplification
+#   dplyr::mutate(storageHumidity = if_else(!is.na(storageHumidity),storageHumidity,if_else(grepl("naked|paper|airtight|plastic", storageType),"dry", NA))) %>% # second simplification (category A)
+#   dplyr::mutate(storageHumidity = if_else(!is.na(storageHumidity),storageHumidity,if_else(grepl("nitrogen|paper|oven", storageDetails),"dry", NA))) %>%
+#   dplyr::filter(!is.na(storageDuration) & !is.na(storageType) & !grepl("then", storageDuration)) %>% # quick test where we remove the sample with duration "X then Y" 
+#   dplyr::mutate(storageDuration = as.numeric(storageDuration)) %>%
+#   dplyr::group_by(datasetID) %>%
+#   dplyr::mutate(uniqueID = paste0(datasetID, "_", dplyr::row_number()))
+# ggplot() +
+#   geom_segment(
+#     data = dataplot %>% dplyr::mutate(storageDuration = if_else(storageDuration > 300, 300, storageDuration)),
+#     aes(y = uniqueID, yend = uniqueID, x = -storageDuration, xend = 0, 
+#         color = storageHumidity), 
+#     linewidth = 0.5) +
+#   geom_segment(
+#     data = dataplot %>% dplyr::filter(storageDuration > 300),
+#     aes(y = uniqueID, yend = uniqueID, x = -storageDuration, xend = -300,  color = storageHumidity), 
+#     linewidth = 0.5, linetype = "dotted") +
+#   coord_cartesian(xlim = c(-350,0)) +
+#   scale_x_continuous(breaks = seq(0, -300, -60)) +
+#   theme_minimal() + 
+#   theme(axis.text.y = element_blank(), panel.grid = element_blank())
 
 ## 2.1.2. Storage temperature ----
 d %>%
@@ -245,13 +248,13 @@ storageTimeline <- ggplot() +
         axis.title.x = element_text(size = 3), axis.text.x = element_text(size = 3),
         legend.key.width =  unit(0.2, 'cm'), legend.margin = margin(b = -15, t = -5),
         plot.margin = margin(t=0, r = 2, b = 1))
-ggsave(storageTimeline, filename = 'figures/storageTimeline_temperature.pdf',
-       width = 40, height = 350, units = "mm")
+# ggsave(storageTimeline, filename = 'figures/storageTimeline_temperature.pdf',
+#        width = 40, height = 350, units = "mm")
 ## Notes: 
 ## - only two warm storages, including alptekin02 at 105°C (to check?) and 
 ## - some studies have a storageDuration = 0, but still a lot of details regarding storage conditions? seems odd
 
-# 2.2.  Scarification-related variables ----
+# 2.2. Scarification-related variables ----
 d %>%
   dplyr::select('datasetID', 'treatmentFixed', 'scarifType', 'scarifTypeGen', 'scarifTypeSpe', 'chemicalCor') %>%
   unique()
@@ -266,7 +269,8 @@ d %>%
 ## - langlois17: scarifTypeGen = "mechanical with 220 grit sandpaper", should be "mechanical"?
 d[d$datasetID %in% c("prknova15") & d$treatmentFixed %in% c("seed coat removal, soaking in water"), "scarifType"] <- d[d$datasetID %in% c("prknova15") & d$treatmentFixed %in% c("seed coat removal, soaking in water"), "scarifTypeGen"] <- "mechanical"
 d[d$datasetID %in% c("veiga-barbosa14") & d$scarifTypeGen %in% c("Demucilagation"), "scarifTypeGen"] <- "mechanical"
-d[d$datasetID %in% c("airi09") & d$scarifType %in% c("cold"),c("scarifTypeGen")] <- d[d$datasetID %in% c("airi09") & d$scarifType %in% c("cold"),c("scarifType")] <- NA
+d[d$datasetID %in% c("airi09") & d$scarifType %in% c("cold"),c("scarifTypeGen")]  <- NA
+d[d$datasetID %in% c("airi09") & d$scarifType %in% c("cold"),c("scarifType")] <- NA
 d[d$datasetID %in% c("langlois17") & d$scarifTypeGen %in% c("mechanical with 220 grit sandpaper"), "scarifTypeGen"] <- "mechanical"
 d %>%
   dplyr::select('datasetID', 'scarifTypeGen', 'scarifTypeSpe') %>%
@@ -283,10 +287,71 @@ d %>%
   unique() %>%
   dplyr::group_by(scarifTypeGenSimplified) %>%
   summarise(n_distinct(datasetID))
-## Let's visualize!
+
+
+# 2.3. Soaking-related variables (not cleaned?) ----
+d %>%
+  dplyr::select('datasetID', "soaking", "soaked.in", "soaking.duration") %>%
+  unique()
+## Notes: 
+## - soaking in hot water is sometimes scarification, sometimes imbibition?
+## - soaking still looks messy...
+# 2.4. Stratification-related variables ----
+d %>%
+  dplyr::select('datasetID', "treatmentFixed", "chillTemp", "chillDuration", "chillTempUnc", "chillTempCycle", "chillLightCycle") %>%
+  unique()
+## Notes: why is it called chill?? There are some "heat stratification"
+## Quite messy, a simple first exploration could be just to look at chillDuration (that I'm going to rename stratDuration for now)
+## Let's define a function to summarize the duration (and in particular to transform all the "X then Y")
+sum_duration <- function(x, na.repl = 0){
+  xplus <- sapply(strsplit(x, 'then|-'), function(x){
+    x <- ifelse(x %in% c(" NA", " NA ", "NA "), na.repl, x)
+    paste(x, collapse = '+')}) # transform "X then Y" to "X + Y"
+  xnum <- eval(parse(text=xplus)) # compute the sum! i.e. we evaluate the "X + Y"
+  return(as.numeric(xnum))
+}
+sum_duration("15 then NA then 78 then NA")
+d %>%
+  dplyr::select('datasetID', "chillDuration") %>%
+  dplyr::filter(!(chillDuration %in% c("ave"))) %>%
+  dplyr::mutate(stratDuration = mapply(sum_duration, chillDuration))
+## Let's now look at both chillTemp and chillDuration, and make a function that will simplify plotting things
+## The aim is to transform the "then", "and" into different parts
+vectorize_chilling <- function(temp, period, duration, na.repl = NA, period.default = 12){
+  perioddec <- sapply(strsplit(period, 'then'), function(x){
+    x <- ifelse(x %in% c(" NA", " NA ", "NA "), na.repl, x)})
+  tempdec <- sapply(strsplit(temp, 'then'), function(x){
+    x <- ifelse(x %in% c(" NA", " NA ", "NA "), na.repl, x)})
+  durdec <- sapply(strsplit(duration, 'then'), function(x){
+    x <- ifelse(x %in% c(" NA", " NA ", "NA "), na.repl, x)})
+  ## if there is an "and", that's mean there is an alternating temp (day/night)
+  ## but what if we do not know the period?
+  for(i in 1:length(tempdec)){
+    if(grepl("and", tempdec[i])){
+      if(is.na(as.numeric(perioddec[i]))){
+        perioddec[i] <- period.default
+        cat("Using default period!\n")}
+      tempdec[i] <- sum(as.numeric(unlist(strsplit(tempdec[i], 'and')))*c(as.numeric(perioddec[i]), 24-as.numeric(perioddec[i])))/24
+    }
+  }
+  return(list(temp = as.numeric(tempdec), duration = as.numeric(durdec)))
+}
+## Test of the function
+# test <- d %>%
+#   dplyr::select('datasetID', "chillDuration", "chillTemp", "chillLightCycle") %>%
+#   unique() 
+# test$chillTempPer4 <- test$chillTempPer3 <- test$chillTempPer2 <- test$chillTempPer1 <- NA
+# test$chillDurPer4 <- test$chillDurPer3 <- test$chillDurPer2 <- test$chillDurPer1 <- NA
+# for(i in 1:nrow(test)){
+#   vectChilling <- vectorize_chilling(test[i, "chillTemp"], test[i, "chillLightCycle"], test[i, "chillDuration"])
+#   test[i, paste0("chillTempPer",1:4)] <- vectChilling$temp[1:4]
+#   test[i, paste0("chillDurPer",1:4)] <- vectChilling$duration[1:4]
+# }
+
+## 3. Let's visualize! ----
 dataplot <-
   d %>%
-  dplyr::select('datasetID', 'storageType', 'storageDuration', 'storageTemp', 'scarifTypeGen') %>%
+  dplyr::select('datasetID', 'storageType', 'storageDuration', 'storageTemp', 'scarifTypeGen', "chillTemp", "chillDuration", "chillLightCycle") %>%
   unique() %>%
   # storage-related part
   dplyr::mutate(storageTempSimplified = if_else(grepl("cold", storageType), "cold", if_else(grepl("warm", storageType), "warm", if_else(grepl("room|ambient", storageType), "ambient", NA)))) %>% 
@@ -298,69 +363,26 @@ dataplot <-
   # scarification-related part
   dplyr::mutate(scarifTypeGenSimplified = if_else(grepl("soaking", scarifTypeGen), "hot water", scarifTypeGen)) %>%
   dplyr::mutate(scarifTypeGenSimplified = if_else(scarifTypeGen %in% c("partially scarified"), "mechanical", scarifTypeGenSimplified)) %>% 
+  # stratification-related part
+  dplyr::filter(!(chillDuration %in% c("ave"))) %>%
+  dplyr::mutate(stratDuration = mapply(sum_duration, chillDuration)) %>%
   
   dplyr::group_by(datasetID) %>%
   dplyr::mutate(uniqueID = paste0(datasetID, "_", dplyr::row_number())) %>%
-  ungroup()
+  ungroup() %>% as.data.frame()
 
-studyTimeline <- ggplot() +
-  # storage duration is unknown
-  geom_point(
-    data = dataplot %>% dplyr::filter(is.na(storageDuration)),
-    aes(y = uniqueID, x = -1, color = storageTempSimplified),
-    size = 0.1) +
-  geom_text(
-    data = dataplot %>% dplyr::filter(is.na(storageDuration)),
-    aes(y = uniqueID, x = -1, color = storageTempSimplified, label = "?"),
-    size = 0.6, color = "white") + 
-  # storage duration is 0
-  geom_text(
-    data = dataplot %>% dplyr::filter(storageDuration == 0),
-    aes(y = uniqueID, x = -1, color = storageTempSimplified, label = "0"),
-    size = 0.6) +
-  # storage duration is known...
-  geom_segment(
-    data = dataplot %>% dplyr::filter(!is.na(storageDuration)) %>% dplyr::mutate(storageDuration = if_else(storageDuration > 300, 300, storageDuration)),
-    aes(y = uniqueID, yend = uniqueID, x = -storageDuration, xend = 0, 
-        color = storageTempSimplified), 
-    linewidth = 0.55) +
-  # ... and longer than 300 days
-  geom_segment(
-    data = dataplot %>% dplyr::filter(storageDuration > 300),
-    aes(y = uniqueID, yend = uniqueID, x = -360, xend = -300,  color = storageTempSimplified), 
-    linewidth = 0.4, linetype = "dotted") +
-  scale_color_manual(
-    name = "storage",
-    values = c("#3B6790", "#67903b", "#EFB036"), breaks = c("cold", "ambient", "warm"), na.value = "grey80") + 
-  
-  ggnewscale::new_scale_color() +
-  geom_segment(
-    data = dataplot %>% dplyr::filter(!is.na(scarifTypeGenSimplified)),
-    aes(y = uniqueID, yend = uniqueID, x = 2, xend = 18, 
-        color = scarifTypeGenSimplified), 
-    linewidth = 0.55) +
-  geom_text(
-    data = dataplot %>% dplyr::filter(is.na(scarifTypeGenSimplified)),
-    aes(y = uniqueID, x = 10, label = "-"),
-    size = 0.6) +
-  scale_color_manual(
-    name = "scarification",
-    values = c("#90643b", "#d38783", "#903b67"), breaks = c("mechanical", "hot water", "chemical"), na.value = "grey80") + 
-  coord_cartesian(xlim = c(-350,20)) +
-  scale_x_continuous(breaks = seq(0, -270, -90), expand = c(0,2.5),
-                     labels = c("0", "3", "6", "9"), name = "Storage duration (months)") +
-  scale_y_discrete(expand = c(0.001,-00), position = "right") +
-  theme_minimal() + 
-  theme(axis.text.y = element_blank(), 
-        axis.title.y = element_blank(),
-        panel.grid = element_blank(), axis.ticks.y = element_blank(),
-        axis.ticks.x = element_line(linewidth= 0.1), axis.line.x = element_line(linewidth= 0.2),
-        legend.position = 'top', legend.title = element_text(size = 3, hjust = 0.5, margin = margin(t=2,b=-5), face="bold"), legend.title.position = "top",
-        legend.text = element_text(size = 3, margin = margin()), legend.spacing.x = unit(2, 'cm'),
-        axis.title.x = element_text(size = 3), axis.text.x = element_text(size = 3),
-        legend.key.width =  unit(0.2, 'cm'), legend.margin = margin(b = -15, t = 0),
-        plot.margin = margin(t=0, r = 2, b = 1, l = 1))
+# transform stratification temperatures/periods
+dataplot$chillTempPer4 <- dataplot$chillTempPer3 <- dataplot$chillTempPer2 <- dataplot$chillTempPer1 <- NA
+dataplot$chillDurPer4 <- dataplot$chillDurPer3 <- dataplot$chillDurPer2 <- dataplot$chillDurPer1 <- NA
+for(i in 1:nrow(dataplot)){
+  vectChilling <- vectorize_chilling(dataplot[i, "chillTemp"], dataplot[i, "chillLightCycle"], dataplot[i, "chillDuration"])
+  dataplot[i, paste0("chillTempPer",1:4)] <- vectChilling$temp[1:4]
+  dataplot[i, paste0("chillDurPer",1:4)] <- vectChilling$duration[1:4]
+}
+
+studyTimeline <- timeline_plot(dataplot, add.names = TRUE)
+
 ggsave(studyTimeline, filename = 'figures/studyTimeline.pdf',
-       width = 80, height = 370, units = "mm")
+       width = 80, height = 1200, units = "mm")
 
 
