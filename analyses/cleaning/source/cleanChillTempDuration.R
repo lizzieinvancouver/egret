@@ -1,6 +1,7 @@
 ## Started 30 January 2024 ##
 ## By Deirdre to begin ##
 ## Updated by Ken SM and Lizzie in summer 2024 ##
+## Looked at by CRD on 28 January 2025
 
 ## This contains code to clean chill duration and temperature ##
 ## Original code taken from file called cleaningDL.R ##
@@ -44,7 +45,7 @@ check_short <- subset(check, select = c("datasetID", "study", "entered.by",
                                         "treatment", "chill.temp", "chill.duration",
                                         "germ.temp", "germ.duration", "other.treatment",
                                         "photoperiod", "respvar", "response"))
-idx <- which(d$datasetID == "airi2009")
+idx <- which(d$datasetID == "airi09")
 check <- d[idx,]
 check_short <- subset(check, select = c("datasetID", "study", "species", "entered.by",
                                         "treatment", "chill.temp", "chill.duration",
@@ -214,12 +215,12 @@ d$chillTemp[which(d$datasetID == "acosta13")] <- NA
 d$chillDuration[which(d$datasetID == "acosta13")] <- NA
 #possible need to distinguish temperature effects and germ temp
 
-#Brandel2005 - 5/25
+#Brandel05 - 5/25
 temp <- c(NA, NA, 5, 5, 11, 11, 13, 13, 15, 15)
-d$chillTemp[which(d$datasetID == "brandel2005" & d$other.treatment == "primary dormant")] <- temp
+d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "primary dormant")] <- temp
 temp <- c("", "", 5, 5, 11, 11, 13, 13, 15, 15)
-d$chillTemp[which(d$datasetID == "brandel2005" & d$other.treatment == "secondary dormant")] <- paste0("5 then 25 then ",  temp)
-d$chillTemp[which(d$datasetID == "brandel2005" & d$other.treatment == "secondary dormant")] <- "4 then 4 then 4"
+d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "secondary dormant")] <- paste0("5 then 25 then ",  temp)
+d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "secondary dormant")] <- "4 then 4 then 4"
 
 #Boscagli01 - 5-7
 d$chillTemp[which(d$datasetID == "boscagli01" & d$chill.temp == "5-7")] <- 6
@@ -664,7 +665,8 @@ d$chillTempUnc[which(d$chill.temp == "4 +/- 2 ")] <- 2
 #battaglia97 
 #missing chill duration
 
-#fulbright86 - 30 for one week 7 for two moist heat, moist prechill
+#fulbright86 - 30 for one week 7 for two moist heat, moist prechill 
+# tocheck
 d$chillTemp[which(d$chill.temp == "30/7")] <- "30 then 7"
 d$chillDuration[which(d$chill.temp == "30/7")] <- "7 then 14"
 

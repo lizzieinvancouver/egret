@@ -73,6 +73,7 @@ d$datasetIDstudy <- paste(d$datasetID,d$study, sep = "")
 # Get a latin binomial
 d$latbi <- paste(d$genus, d$species, sep = "_")
 
+
 # Get a population or provenance ID ...
 # there are a couple studies where altitude is unqiue (review in cleanCoordinates.R) so...
 # best to use provLatLonAlt to get unique populations
