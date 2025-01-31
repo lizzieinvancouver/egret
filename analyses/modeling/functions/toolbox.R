@@ -24,8 +24,8 @@ simulate_data <- function(spetree, nind_species, params,
   dfhere$yhat <- plogis(dfhere$intercepts + dfhere$x * dfhere$slopes, location = location, scale = scale)
   
   
-  dfhere$shape_alpha = dfhere$yhat * exp(params$gamma)
-  dfhere$shape_beta = (1.0-dfhere$yhat) * exp(params$gamma)
+  dfhere$shape_alpha = dfhere$yhat * params$phi
+  dfhere$shape_beta = (1.0-dfhere$yhat) * params$phi
   dfhere$y = rbeta(n = nrow(dfhere), shape1 = dfhere$shape_alpha, shape2 = dfhere$shape_beta)
   dfhere$y <- pmin(pmax(dfhere$y, 1e-6), 1 - 1e-6) # small trick (yeeeek)
   
@@ -121,7 +121,7 @@ plot_slopes <- function(estimates, observed, params){
   axis(1, las = 1, cex.axis = 0.7, tck=-0.02, labels=FALSE)
   axis(2, las = 2, cex.axis = 0.7, tck=-0.02, labels=FALSE)
   title(paste0("a_z=", simulated_data[[i]]$params$a_z, ", l_a=", simulated_data[[i]]$params$lambda_a, ", s_a=", simulated_data[[i]]$params$sigma_a, "\n",
-               "b_z=", simulated_data[[i]]$params$b_z, ", l_b=", simulated_data[[i]]$params$lambda_b, ", s_b=", simulated_data[[i]]$params$sigma_b, ", g=", simulated_data[[i]]$params$gamma), 
+               "b_z=", simulated_data[[i]]$params$b_z, ", l_b=", simulated_data[[i]]$params$lambda_b, ", s_b=", simulated_data[[i]]$params$sigma_b, ", g=", simulated_data[[i]]$params$phi), 
         adj=0, cex.main = 0.5)
 
 }
