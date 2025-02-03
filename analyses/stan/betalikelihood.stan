@@ -27,7 +27,7 @@ parameters {
   real<lower=0, upper=1> lambda_b;  // phylogenetic structure        
   real<lower=0> sigma_b; // overall rate of change (brownian motion?)
   
-  real gamma; // others sources of error (intercept of dispersion parameter)
+  real<lower=0> phi; // others sources of error (dispersion parameter)
   
 }
 
@@ -46,7 +46,6 @@ transformed parameters{
   real<lower=0, upper = 1> mu[N];
   real<lower=0> shape_alpha[N];
   real<lower=0> shape_beta[N];
-  real<lower=0> phi_y = exp(gamma);
   
   for(i in 1:N){
     
@@ -55,8 +54,9 @@ transformed parameters{
     // print(a[sp[i]], " ", b[sp[i]], " ");
     // print(a_z, " ", b_z, " ", mu[i]);
     // print("-----");
-    shape_alpha[i] = mu[i]  * phi_y;
-    shape_beta[i] = (1.0 - mu[i] ) * phi_y;
+    shape_alpha[i] = mu[i]  * phi;
+    shape_beta[i] = (1.0 - mu[i] ) * phi;
+    
   }
                                                                                          
 }
@@ -72,13 +72,13 @@ model {
   a_z ~ normal(0, 1.5); 
   b_z ~ normal(0.5, 1); 
   
-  lambda_a ~ beta(1, 1);
+  lambda_a ~ beta(1.5, 1.5);
   sigma_a ~ normal(0, 1);
   
-  lambda_b ~ beta(1, 1);
+  lambda_b ~ beta(1.5, 1.5);
   sigma_b ~ normal(0, 1);
   
-  gamma ~ cauchy(0, 3); 
+  phi ~ gamma(4, 0.1); 
   
 }
 
