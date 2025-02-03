@@ -68,95 +68,92 @@ simulated_data <- lapply(1:nplots, function(i){
                  b_z = rnorm(1,0.5,1), # root value trait1 slope
                  lambda_b = rbeta(1,1.5,1.5), # lambda trait1
                  sigma_b = abs(rnorm(1,0,1)), # rate of evolution trait1
-                 # phi = abs(rcauchy(1,0,3)) # dispersion parameter
-                 phi = rgamma(1,4,0.1)
+                 ntrials = 20
   )
   params <- lapply(params, round, 2)
-  list(data = simulate_data(spetree, nind_species, params), spetree = spetree, params = params)
+  list(data = simulate_data_binomial(spetree, nind_species, params), spetree = spetree, params = params)
   
 })
 
 # fit models
 if(run_models){
-  sm <- stan_model("stan/betalikelihood.stan")
+  sm <- stan_model("stan/binomiallikelihood.stan")
   plan(multisession, workers = 4) # here we use 4x4 = 16 cores (i.e. nested parallelization)
   datafit <- with_progress({
     p <- progressor(along = 1:nplots)
     future_lapply(simulated_data, function(simulated){
-    
-    mdl.data <- list(y = simulated$data$y,
-                     N = nrow(simulated$data),
-                     Nsp = nspecies,
-                     sp = simulated$data$sp,
-                     x = simulated$data$x,
-                     Vphy= vcv(simulated$spetree, corr = TRUE))
-    
-    # fit <- stan("beta.stan",
-    #             data = mdl.data,
-    #             iter = 4000,
-    #             warmup = 3000,
-    #             chains = 4,
-    #             cores = 4)
-    
-    fit <- sampling(sm, mdl.data, 
-                    iter = 4000, warmup = 3000,
-                    chains = 4, cores = 4)
-    
-    summ <- data.frame(summary(fit)[["summary"]])
-    
-    sampler_params  <- get_sampler_params(fit, inc_warmup = FALSE)
-    diagnostics <- list(
-      max_treedepth= max(sapply(sampler_params, function(x) max(x[, "treedepth__"]))),
-      max_divergence = max(sapply(sampler_params, function(x) sum(x[, "divergent__"]))),
-      max_rhat = max(summ$Rhat, na.rm = TRUE),
-      min_ess = min(summ$n_eff, na.rm = TRUE)
-    )
-    
-    estimates <- data.frame(phi.mean = summ["phi" , "mean"],
-                            phi.q2.5 = summ["phi" , "X2.5."],
-                            phi.q97.5 = summ["phi" , "X97.5."],
-                            lambda_a.mean = summ["lambda_a" , "mean"],
-                            lambda_a.q2.5 = summ["lambda_a" , "X2.5."],
-                            lambda_a.q97.5  = summ["lambda_a" , "X97.5."],
-                            sigma_a.mean = summ["sigma_a" , "mean"],
-                            sigma_a.q2.5 = summ["sigma_a" , "X2.5."],
-                            sigma_a.q97.5  = summ["sigma_a" , "X97.5."],
-                            lambda_b.mean = summ["lambda_b" , "mean"],
-                            lambda_b.q2.5 = summ["lambda_b" , "X2.5."],
-                            lambda_b.q97.5  = summ["lambda_b" , "X97.5."],
-                            sigma_b.mean = summ["sigma_b" , "mean"],
-                            sigma_b.q2.5 = summ["sigma_b" , "X2.5."],
-                            sigma_b.q97.5  = summ["sigma_b" , "X97.5."],
-                            slopes.mean = summ[paste0("b[", 1:nspecies, "]"), "mean"],
-                            slopes.q2.5 = summ[paste0("b[", 1:nspecies, "]"), "X2.5."],
-                            slopes.q97.5 = summ[paste0("b[", 1:nspecies, "]"), "X97.5."],
-                            intercepts.mean = summ[paste0("a[", 1:nspecies, "]"), "mean"],
-                            intercepts.q2.5 = summ[paste0("a[", 1:nspecies, "]"), "X2.5."],
-                            intercepts.q97.5 = summ[paste0("a[", 1:nspecies, "]"), "X97.5."],
-                            a_z.mean = summ["a_z", "mean"],
-                            a_z.q2.5 = summ["a_z", "X2.5."],
-                            a_z.q97.5 = summ["a_z", "X97.5."],
-                            b_z.mean = summ["b_z", "mean"],
-                            b_z.q2.5 = summ["b_z", "X2.5."],
-                            b_z.q97.5 = summ["b_z", "X97.5."])
-    
-    posteriors <- c(extract(fit, pars = c("lambda_a", "lambda_b")), chain = list(rep(1:4, each = 1000)), limits = list(c(0,1)))
-    
-    observed <- data.frame(unique(simulated$data[c("sp", "slopes", "intercepts")]), par1 = simulated$params$lambda_a, par2 = simulated$params$lambda_b)
-    
-    p()
-    
-    return(list(sim = simulated$data, 
-                obs = observed, 
-                est = estimates,
-                post = posteriors,
-                par = simulated$params,
-                diag = diagnostics))
-  }, future.seed=TRUE)})
+      
+      mdl.data <- list(y = simulated$data$y,
+                       N = nrow(simulated$data),
+                       Nsp = nspecies,
+                       sp = simulated$data$sp,
+                       x = simulated$data$x,
+                       Ntrial = rep(simulated$params$ntrials, nrow(simulated$data)),
+                       Vphy= vcv(simulated$spetree, corr = TRUE))
+      
+      # fit <- stan("beta.stan",
+      #             data = mdl.data,
+      #             iter = 4000,
+      #             warmup = 3000,
+      #             chains = 4,
+      #             cores = 4)
+      
+      fit <- sampling(sm, mdl.data, 
+                      iter = 4000, warmup = 3000,
+                      chains = 4, cores = 4)
+      
+      summ <- data.frame(summary(fit)[["summary"]])
+      
+      sampler_params  <- get_sampler_params(fit, inc_warmup = FALSE)
+      diagnostics <- list(
+        max_treedepth= max(sapply(sampler_params, function(x) max(x[, "treedepth__"]))),
+        max_divergence = max(sapply(sampler_params, function(x) sum(x[, "divergent__"]))),
+        max_rhat = max(summ$Rhat, na.rm = TRUE),
+        min_ess = min(summ$n_eff, na.rm = TRUE)
+      )
+      
+      estimates <- data.frame(lambda_a.mean = summ["lambda_a" , "mean"],
+                              lambda_a.q2.5 = summ["lambda_a" , "X2.5."],
+                              lambda_a.q97.5  = summ["lambda_a" , "X97.5."],
+                              sigma_a.mean = summ["sigma_a" , "mean"],
+                              sigma_a.q2.5 = summ["sigma_a" , "X2.5."],
+                              sigma_a.q97.5  = summ["sigma_a" , "X97.5."],
+                              lambda_b.mean = summ["lambda_b" , "mean"],
+                              lambda_b.q2.5 = summ["lambda_b" , "X2.5."],
+                              lambda_b.q97.5  = summ["lambda_b" , "X97.5."],
+                              sigma_b.mean = summ["sigma_b" , "mean"],
+                              sigma_b.q2.5 = summ["sigma_b" , "X2.5."],
+                              sigma_b.q97.5  = summ["sigma_b" , "X97.5."],
+                              slopes.mean = summ[paste0("b[", 1:nspecies, "]"), "mean"],
+                              slopes.q2.5 = summ[paste0("b[", 1:nspecies, "]"), "X2.5."],
+                              slopes.q97.5 = summ[paste0("b[", 1:nspecies, "]"), "X97.5."],
+                              intercepts.mean = summ[paste0("a[", 1:nspecies, "]"), "mean"],
+                              intercepts.q2.5 = summ[paste0("a[", 1:nspecies, "]"), "X2.5."],
+                              intercepts.q97.5 = summ[paste0("a[", 1:nspecies, "]"), "X97.5."],
+                              a_z.mean = summ["a_z", "mean"],
+                              a_z.q2.5 = summ["a_z", "X2.5."],
+                              a_z.q97.5 = summ["a_z", "X97.5."],
+                              b_z.mean = summ["b_z", "mean"],
+                              b_z.q2.5 = summ["b_z", "X2.5."],
+                              b_z.q97.5 = summ["b_z", "X97.5."])
+      
+      posteriors <- c(extract(fit, pars = c("lambda_a", "lambda_b")), chain = list(rep(1:4, each = 1000)), limits = list(c(0,1)))
+      
+      observed <- data.frame(unique(simulated$data[c("sp", "slopes", "intercepts")]), par1 = simulated$params$lambda_a, par2 = simulated$params$lambda_b)
+      
+      p()
+      
+      return(list(sim = simulated$data, 
+                  obs = observed, 
+                  est = estimates,
+                  post = posteriors,
+                  par = simulated$params,
+                  diag = diagnostics))
+    }, future.seed=TRUE)})
   plan(sequential);gc()
-  saveRDS(datafit, file = "output/models_simulateddata_frompriors.rds")
+  saveRDS(datafit, file = "output/binomial/model_simulateddata_frompriors.rds")
 }else{
-  datafit <- readRDS(file = "output/models_simulateddata_frompriors.rds")
+  datafit <- readRDS(file = "output/bionomial/model_simulateddata_frompriors.rds")
 }
 
 # order next plots by phi values
@@ -165,7 +162,7 @@ if(run_models){
 sigmasb <- sapply(1:nplots, function(i) datafit[[i]][["par"]]$sigma_b)
 
 # plot simulated data
-pdf(file=paste0("figures/priors_check.pdf"), height = 15, width = 18)
+pdf(file=paste0("figures/binomial/priors_check.pdf"), height = 15, width = 18)
 par(mfrow = c(11,11), mar=c(1,0,0,0)+1)
 for(i in order(sigmasb)){
   
@@ -173,7 +170,7 @@ for(i in order(sigmasb)){
   warning <- (diagnostics$max_treedepth >= 10 | diagnostics$max_divergence > 0 | diagnostics$max_rhat >= 1.04 | diagnostics$min_ess <= 100)
   
   plot.new()
-  plot.window(xlim = c(-3,3), ylim = c(0,1))
+  plot.window(xlim = c(-3,3), ylim = c(0,10))
   if(warning){
     rect(par("usr")[1], par("usr")[3],
          par("usr")[2], par("usr")[4],
@@ -194,7 +191,7 @@ for(i in order(sigmasb)){
 dev.off()
 
 # plot estimated intercepts
-pdf(file=paste0("figures/priors_check_wfitintercept.pdf"), height = 15, width = 18)
+pdf(file=paste0("figures/binomial/priors_check_wfitintercept.pdf"), height = 15, width = 18)
 par(mfrow = c(11,11), mar=c(1,0,0,0)+1)
 for(i in order(sigmasb)){
   
@@ -239,7 +236,7 @@ for(i in order(sigmasb)){
 dev.off()
 
 # plot estimated slopes
-pdf(file=paste0("figures/priors_check_wfitslopes.pdf"), height = 15, width = 18)
+pdf(file=paste0("figures/binomial/priors_check_wfitslopes.pdf"), height = 15, width = 18)
 par(mfrow = c(11,11), mar=c(1,0,0,0)+1)
 for(i in order(sigmasb)){
   
@@ -283,12 +280,33 @@ for(i in order(sigmasb)){
 }
 dev.off()
 
+# Compute mean/std of priors (to scale estimates in the following)
+priors <- list(a_z = rnorm(1e6,0,1.5), # root value intercept
+               lambda_a = rbeta(1e6,1.5,1.5), # lambda intercept
+               sigma_a = abs(rnorm(1e6,0,1)), # rate of evolution intercept
+               b_z = rnorm(1e6,0.5,1), # root value trait1 slope
+               lambda_b = rbeta(1e6,1.5,1.5), # lambda trait1
+               sigma_b = abs(rnorm(1e6,0,1)) # rate of evolution trait1
+)
+priors_df <- data.frame(t(rbind(lapply(priors, mean), lapply(priors, sd))))
+colnames(priors_df) <- c("mean", "sd")
 
-pdf(file=paste0("figures/priors_check_wglobalparams.pdf"), height = 15, width = 18)
+# plot other estimated parameters
+pdf(file=paste0("figures/binomial/priors_check_wglobalparams.pdf"), height = 15, width = 18)
 par(mfrow = c(11,11), mar=c(1.4,0,0,0)+0.7, mgp=c(0,0.5,0))
 for(i in order(sigmasb)){
   
-  estimates <- datafit[[i]][["est"]]
+  est_df <- data.frame(
+    mean = as.numeric(unique(datafit[[i]][["est"]][paste0(rownames(priors_df), c(".mean"))])),
+    q2.5 = as.numeric(unique(datafit[[i]][["est"]][paste0(rownames(priors_df), c(".q2.5"))])),
+    q97.5 = as.numeric(unique(datafit[[i]][["est"]][paste0(rownames(priors_df), c(".q97.5"))])))
+  # scale estimates (by prior mean/std)
+  for(r in 1:nrow(est_df)){
+    est_df[r,] <- (est_df[r,] - priors_df[r, "mean"])/priors_df[r, "sd"]
+  }
+  rownames(est_df) <- rownames(priors_df)
+  est_df$x <- 1:6
+  
   observed <- datafit[[i]][["obs"]]
   params <- datafit[[i]][["par"]]
   diagnostics <- datafit[[i]][["diag"]]
@@ -297,7 +315,7 @@ for(i in order(sigmasb)){
   
   plot.new()
   limits <- c(1-0.25,7+0.25)
-  plot.window(xlim = limits, ylim = c(-5,5))
+  plot.window(xlim = limits, ylim = c(-3.5,3.5+.2))
   if(warning){
     rect(par("usr")[1], par("usr")[3],
          par("usr")[2], par("usr")[4],
@@ -305,25 +323,12 @@ for(i in order(sigmasb)){
   }
   grid()
   
-  # phi, mean and std of prior (hack here...)
-  mphi <- mean(rgamma(10000,4,0.1))
-  stdphi <- sd(rgamma(10000,4,0.1))
-  
-  # root intercept
-  est_df <- 
-    data.frame(mean = c(estimates$a_z.mean[1], estimates$lambda_a.mean[1], estimates$sigma_a.mean[1], 
-                        estimates$b_z.mean[1], estimates$lambda_b.mean[1], estimates$sigma_b.mean[1], (estimates$phi.mean[1]-mphi)/stdphi),
-               q2.5 = c(estimates$a_z.q2.5[1], estimates$lambda_a.q2.5[1], estimates$sigma_a.q2.5[1], 
-                        estimates$b_z.q2.5[1], estimates$lambda_b.q2.5[1], estimates$sigma_b.q2.5[1], (estimates$phi.q2.5[1]-mphi)/stdphi), 
-               q97.5 = c(estimates$a_z.q97.5[1], estimates$lambda_a.q97.5[1], estimates$sigma_a.q97.5[1],
-                         estimates$b_z.q97.5[1], estimates$lambda_b.q97.5[1], estimates$sigma_b.q97.5[1], (estimates$phi.q97.5[1]-mphi)/stdphi),
-               x = c(1:7))
   labs <- c(expression(a [root]), expression(lambda  [a]), expression(sigma  [a]),
-            expression(b [root]), expression(lambda  [b]), expression(sigma  [b]), expression(phi [scaled]))
+            expression(b [root]), expression(lambda  [b]), expression(sigma  [b]))
   
   param_df <- 
-    data.frame(mean = c(params$a_z, params$lambda_a, params$sigma_a, params$b_z, params$lambda_b, params$sigma_b, (params$phi-mphi)/stdphi), 
-               x= c(1:7))
+    data.frame(mean = c(params$a_z, params$lambda_a, params$sigma_a, params$b_z, params$lambda_b, params$sigma_b), 
+               x= c(1:6))
   
   segments(y0 = param_df$mean, x0 = param_df$x-0.25, 
            y1 = param_df$mean, x1 = param_df$x+0.25,
@@ -333,18 +338,18 @@ for(i in order(sigmasb)){
            col = palette)
   points(x = est_df$x, y =  est_df$mean, 
          pch = 19, cex = 0.5, col = palette)
-  axis(1, las = 2, cex.axis = 0.7, tck=-0.02, at = 1:7, labels = labs)
+  axis(1, las = 2, cex.axis = 0.7, tck=-0.02, at = 1:6, labels = labs)
   axis(2, cex.axis = 0.7, tck=-0.02, labels=FALSE)
   # title(paste0("a_z=", params$a_z, ", l_a=", params$lambda_a, ", s_a=", params$sigma_a, "\n",
   #              "b_z=", params$b_z, ", l_b=", params$lambda_b, ", s_b=", params$sigma_b, ", g=", params$gamma), 
   #       adj=0, cex.main = 0.5)
-  text(x = 0.7, y = 4.5, label = paste("max_tdeepth=", diagnostics$max_treedepth), cex = 0.45, 
+  text(x = 0.7, y = 3.5+.2, label = paste("max_tdeepth=", diagnostics$max_treedepth), cex = 0.45, 
        col = ifelse(diagnostics$max_treedepth < 10, "grey40", "darkred"), adj=0) 
-  text(x = 0.7, y = 4, label = paste("max_dvg=", diagnostics$max_divergence), cex = 0.45, 
+  text(x = 0.7, y = 3+.2, label = paste("max_dvg=", diagnostics$max_divergence), cex = 0.45, 
        col = ifelse(diagnostics$max_divergence == 0, "grey40", "darkred"), adj=0) 
-  text(x = 0.7, y = 3.5, label = paste("max_rhat=", round(diagnostics$max_rhat,2)), cex = 0.45, 
+  text(x = 0.7, y = 2.5+.2, label = paste("max_rhat=", round(diagnostics$max_rhat,2)), cex = 0.45, 
        col = ifelse(diagnostics$max_rhat < 1.04, "grey40", "darkred"), adj=0) 
-  text(x = 0.7, y = 3, label = paste("min_ess=", round(diagnostics$min_ess),1), cex = 0.45, 
+  text(x = 0.7, y = 2+.2, label = paste("min_ess=", round(diagnostics$min_ess),1), cex = 0.45, 
        col = ifelse(diagnostics$min_ess > 400, "grey40", "darkred"), adj=0) 
   
 }
