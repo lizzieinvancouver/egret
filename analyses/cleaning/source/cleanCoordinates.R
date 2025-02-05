@@ -17,6 +17,9 @@ unique(d$provenance.long)
 # Fix or add source.population 
 ### ### ### ### ### ### ### ### ###
 # bhatt00: source.population in wrong column
+# Lizzie notes: These first couple of lines don't do anything ...
+# but it looks like Deirdre may have updated these data for other reasons, so assuming okay and ...
+# Leaving this code just to be safe for now (found a number of instances of code below that does nothing)
 d$source.population[which(d$datasetID == "bhatt00" & d$other.treatment == "Kalika - population")] <- "Kalika, Kumaun, Himalaya"
 d$source.population[which(d$datasetID == "bhatt00" & d$other.treatment == "Jalna - population")] <- "Jalna, Kumaun, Himalaya"
 d$source.population[which(d$datasetID == "bhatt00" & d$other.treatment == "Binsar - population")] <- "Binsar, Kumaun, Himalaya"
