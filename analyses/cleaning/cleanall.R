@@ -65,6 +65,7 @@ source("cleaning/source/cleanCoordinates.R") # 30777    76
 # 13. Clean treatment column
 # source("cleaning/source/cleanTreatments.R") 
 
+# And ... some final cleaning
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
 d$datasetIDstudy <- paste(d$datasetID,d$study, sep = "")
@@ -72,12 +73,12 @@ d$datasetIDstudy <- paste(d$datasetID,d$study, sep = "")
 # Get a latin binomial
 d$latbi <- paste(d$genus, d$species, sep = "_")
 
-
 # Get a population or provenance ID ...
 # there are a couple studies where altitude is unqiue (review in cleanCoordinates.R) so...
 # best to use provLatLonAlt to get unique populations
 d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
 d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
+
 
 # checking sizing ..
 dim(d) # dim on 9 October 2024: 82 and 30937 
