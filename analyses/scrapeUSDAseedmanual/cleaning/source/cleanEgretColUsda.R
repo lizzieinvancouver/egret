@@ -6,7 +6,7 @@
 # Changing column names to better fit EGRET 
 
 # Replacing all blanks with NA
-d <- d %>% mutate_all(~ na_if(.x, ""))
+d[d==""] <- NA
 
 # Removing redundant columns
 d <- subset(d, select = -X) 
