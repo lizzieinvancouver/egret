@@ -2,25 +2,6 @@
 ## By Lizzie and Deirdre ##
 ## Then mostly by CRD #
 
-
-length(unique(d[["provenance.lat"]]))
-length(unique(as.numeric(d[["provenance.lat"]])))
-length(unique(d[["provenance.long"]]))
-length(unique(as.numeric(d[["provenance.long"]])))
-
-
-na_indices <- which(is.na(as.numeric(vec)))
-na_entries <- vec[na_indices]
-na_entries
-# Print the problematic entries
-na_entries
-vecwithoutspaces <-trimws(vec) 
-as.numeric(length(unique(vec)))
-as.numeric(length(unique(vecwithoutspaces)))
-
-
-
-
 # Read in the data by running cleanall.R
 # Don't run the map code for now
 mapCode <- FALSE
@@ -687,7 +668,7 @@ d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "59 N")] 
 d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "60 N")] <- "45.00" 
 d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "61 N")] <- "45.00" 
 d$provenance.lat[which(d$datasetID == "zlesak07" & d$provenance.lat == "62 N")] <- "45.00" 
-d$provenance.long[which(d$datasetID == "zlesak07" & d$provenance.long == "93.16667 W")] <- "-93.16667" 
+d$provenance.long[which(d$datasetID == "zlesak07" & d$provenance.long == "93.16667 W ")] <- "-93.16667" 
 # skordilis95: long extracted from source pop on google earth. lat middle location taken 38.43
 d$provenance.lat[which(d$datasetID == "skordilis95" & d$source.population == "Istiaia, Euboea Island and Attica")] <- "38.43"
 d$provenance.long[which(d$datasetID == "skordilis95" & d$source.population == "Soufli, Thrace, Greece")] <- "26.30" 
@@ -720,6 +701,13 @@ d$provenance.altitude[which(d$datasetID == "olmez09" & d$provenance.altitude == 
 # cuena-Lombrana18: the mean of the altitude range mentionned in the paper was calculated
 d$provenance.altitude[which(d$datasetID == "cuena-lombrana18" & d$source.population == "Gennargentu Massif, Sardinia, Trainu Murcunieddu")] <- "1348"
 d$provenance.altitude[which(d$datasetID == "cuena-lombrana18" & d$source.population == "Gennargentu Massif, Sardinia, Is Terre Molentes")] <- "1483"
+# gremer20: replacing unicode dash to -
+d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Table Mountain, USA")] <- "-121.551"
+d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Iowa Hill, USA")] <- "-120.921"
+d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Drum Powerhouse Road, USA")] <- "-120.815"
+d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Wrights Lake, USA")] <- "-120.252"
+d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Yosemite, USA")] <- "-119.566"
+d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Lassen Volcanic, USA")] <- "-121.505"
 
 ############################################################################
 ##### Fixing Continents Points #####
