@@ -24,11 +24,40 @@ if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
 }
 
+# 1. Read in the data
 d <- read_csv("scrapeUSDAseedmanual/cleaning/germPreCleanedMasterSheet.csv", na = c("", "NA"))
 
-source("scrapeUSDAseedmanual/cleaning/source/cleanAllUsda_JNVER.R") ### this is Justin's cleaning code
+# 2. Clean miscellaneous
+source("scrapeUSDAseedmanual/cleaning/source/cleanGeneralUsda.R")
 
+# 3. Clean species names
+source("scrapeUSDAseedmanual/cleaning/source/cleanSpeciesUsda.R")
 
-source("scrapeUSDAseedmanual/cleaning/source/cleaningUSDA_ForDan.R") ### this is Justin's cleaning code
+# 4. Clean seed type
+source("scrapeUSDAseedmanual/cleaning/source/cleanSeedTypeUsda.R")
 
-write.csv(usda_new,"input/usdaGerminationCleaned.csv")
+# 5. Clean temperature data
+source("scrapeUSDAseedmanual/cleaning/source/cleanTempUsda.R")
+
+# 6. Clean pretreatment
+source("scrapeUSDAseedmanual/cleaning/source/cleanPreTrtUsda.R")
+
+# 7. Clean germination related data
+source("scrapeUSDAseedmanual/cleaning/source/cleanGermUsda.R")
+
+# 8. Clean light data
+source("scrapeUSDAseedmanual/cleaning/source/cleanLightUsda.R")
+
+# 9. Clean response variables
+source("scrapeUSDAseedmanual/cleaning/source/cleanResponseUsda.R")
+
+# 10. Calculate mean of columns with ranges data
+source("scrapeUSDAseedmanual/cleaning/source/cleanMeanUsda.R")
+
+# 11. Clean chill data
+source("scrapeUSDAseedmanual/cleaning/source/cleanChillUsda.R")
+
+# 12. Change the column names to fit egret dataset
+source("scrapeUSDAseedmanual/cleaning/source/cleanEgretColUsda.R")
+
+write.csv(d,"input/usdaGerminationCleaned.csv")
