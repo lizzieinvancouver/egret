@@ -47,7 +47,8 @@ d$source.population[which(d$datasetID == "lai03")] <- "Ninshan County, China"
 # werner13: Changing source.population name that's wrong. Git issue #21
 d$source.population[which(d$datasetID == "werner13")] <- "MS Foundation,Maracujá, Serrolandia, Bahia, Brazil"
 # ahola99: Adding missing source pop 
-d$source.population[which(d$datasetID == "ahola99" & d$species == "pendula")] # missing one species and lat long are probably wrong.TO CHECK
+d$source.population[which(d$datasetID == "ahola99" & d$species == "pendula")] <- "Patama"
+d$source.population[which(d$datasetID == "ahola99" & d$species == "abies")] <- "Palvaanjärvi"
 # shahi-gharahlar12: missing source pop
 d$source.population[which(d$datasetID == "shahi-gharahlar12")] <- "Department of Horticultural Science, University of Tehran, Iran"
 # pritchard93: adding source pop precision
@@ -532,6 +533,11 @@ d$provenance.long[which(d$datasetID == "yang16_1" & d$source.population =="Tiens
 # jang22
 d$provenance.lat[which(d$datasetID == "jang22" & d$source.population =="Andong National University, South Korea")] <- "36.54"
 d$provenance.long[which(d$datasetID == "jang22" & d$source.population =="Andong National University, South Korea")] <- "128.80"
+# ahola99: location give in paper and patama seed extraction plant found online
+d$provenance.lat[which(d$datasetID == "ahola99" & d$source.population =="Patama")] <- "62.71"
+d$provenance.long[which(d$datasetID == "ahola99" & d$source.population =="Patama")] <- "25.26"
+d$provenance.lat[which(d$datasetID == "ahola99" & d$source.population =="Palvaanjärvi")] <- "60.85"
+d$provenance.long[which(d$datasetID == "ahola99" & d$source.population =="Palvaanjärvi")] <- "27.48"
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 ##### Fix locations have lat long in same entry AND entries with N or S in the coordinate #####
