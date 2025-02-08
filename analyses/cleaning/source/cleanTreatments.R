@@ -34,7 +34,7 @@ check_short <- subset(check, select = c("datasetID", "study", "species", "treatm
                                         "soaking", "soaked.in", "soaking.duration",
                                         "chemicalCor", "trt.duration",
                                         "respvar", "response", "figure"))
-
+check_short$treatment
 #acosta13
 d$treatmentCor[which(d$datasetID == "acosta13" & d$treatment == "temperature")] <- "germination temperature"
 d$treatmentDetails[which(d$datasetID == "acosta13" & d$study == "exp1")] <- "constant"
