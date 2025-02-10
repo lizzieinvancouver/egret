@@ -43,3 +43,7 @@ dark_rows <- unique(c(dark_row1, dark_row2))
 d$photoperiodCor <- NA
 d$photoperiodCor[light_rows] <- "light"
 d$photoperiodCor[dark_rows] <- "dark"
+
+# Justin: taken from cleanGerminationTempDuration "These weren't actually light treatments, it was just when the researchers wanted to check for germination
+# Not really photoperiod"
+d$photoperiodCor[which(d$photoperiodCor == "light")] <- "dark"

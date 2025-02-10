@@ -42,22 +42,25 @@ source("scrapeUSDAseedmanual/cleaning/source/cleanTempUsda.R")
 # 6. Clean pretreatment
 source("scrapeUSDAseedmanual/cleaning/source/cleanPreTrtUsda.R")
 
-# 7. Clean germination related data
+# 7. Clean Scarification
+source("scrapeUSDAseedmanual/cleaning/source/cleanScarificationUsda.R")
+
+# 8. Clean germination related data
 source("scrapeUSDAseedmanual/cleaning/source/cleanGermUsda.R")
 
-# 8. Clean light data
+# 9. Clean light data
 source("scrapeUSDAseedmanual/cleaning/source/cleanLightUsda.R")
 
-# 9. Clean response variables
+# 10. Clean response variables
 source("scrapeUSDAseedmanual/cleaning/source/cleanResponseUsda.R")
 
-# 10. Calculate mean of columns with ranges data
+# 11. Calculate mean of columns with ranges data
 source("scrapeUSDAseedmanual/cleaning/source/cleanMeanUsda.R")
 
-# 11. Clean chill data
+# 12. Clean chill data
 source("scrapeUSDAseedmanual/cleaning/source/cleanChillUsda.R")
 
-# 12. Change the column names to fit egret dataset
+# 13. Change the column names to fit egret dataset
 source("scrapeUSDAseedmanual/cleaning/source/cleanEgretColUsda.R")
 
 write.csv(d,"input/usdaGerminationCleaned.csv")
