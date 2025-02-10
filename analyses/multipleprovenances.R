@@ -21,25 +21,7 @@ count <- ggplot(suby, aes(x = provLatLon)) +
   theme_minimal()
 count
 
-# maps
-world_coordinates <- map_data("world")
-multipleprovenancesmap <- ggplot() + 
-  geom_map(data = world_coordinates, map = world_coordinates,
-           aes(map_id = region), 
-           color = "white", fill = "lightgray", size = 0.1) +
-  expand_limits(x = world_coordinates$long, y = world_coordinates$lat) +
-  labs(title = "Position of papers with multiple provenances", x = "Longitude", y = "Latitude")+ 
-  geom_point(
-    data = dformapcut,
-    aes(provenance.long, provenance.lat), color="red", # darkblue
-    alpha = 0.7
-  ) +
-  theme_bw() + 
-  theme(legend.position="none")
-multipleprovenancesmap
-
-
-# make map with color subsetting by treatment
+# make map with color subsetting by most common treatments
 
 # quick check of which treatment happens the most often (for now need to run clean treatments!)
 treatment_counts <- table(d$treatment)
