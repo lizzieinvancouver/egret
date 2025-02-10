@@ -15,6 +15,7 @@ unique(d$chill.duration)
 # "Continuous cold stratification" kept in cold whole experiment? How long was experiment?
 # is 0 a true zero? 
 
+
 temp_vals <- unique(d$chill.temp)
 neg_temp <- c(3, 4, 5, 6, 9, 43, 50, 97)
 dash <- grep("-", temp_vals)
@@ -55,7 +56,7 @@ check_short <- subset(check, select = c("datasetID", "study", "species", "entere
 d$chill.duration[which(d$chill.duration == "unknown ")] <- NA
 d$chill.duration[which(d$chill.duration == "NA")] <- NA
 
-#no values like "n/a" and "N/A" so far though
+# no values like "n/a" and "N/A" so far though
 d$chill.temp[which(d$chill.temp == "n/a")] <- "NA"
 d$chill.temp[which(d$chill.temp == "N/A")] <- "NA"
 
@@ -68,36 +69,37 @@ d$chillLightCycle <- NA
 
 ##additional cleaning
 
-#vahdati12
+#vahdati12: changing weeks to days
 d$chillDuration[which(d$datasetID == "vahdati12")] <- as.numeric(d$chill.duration[which(d$datasetID == "vahdati12")]) * 7
 
-#lee21
+#lee21: changing weeks to days
 d$chillDuration[which(d$datasetID == "lee21")] <- as.numeric(d$chill.duration[which(d$datasetID == "lee21")]) * 7
 
-#airi2009 - 0
+#airi2009: Changing temp of 0 to NA
 d$chillTemp[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA
 d$chillDuration[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA
 
-##clean remaining chill duration
-
-#nkomo09
+# === === === === === === === === === === === === === === === === === === ===
+## Clean remaining chill duration
+# === === === === === === === === === === === === === === === === === === ===
+#nkomo09 : rounding up to 4 days.
 d$chillDuration[which(d$datasetID == "nkomo09" & d$chill.duration == 3.5)] <- 4
 
 #sundaramoorthy93
 d$chillDuration[which(d$datasetID == "sundaramoorthy93" & d$chill.temp == 4)] <-
   round(as.numeric(d$chillDuration[which(d$datasetID == "sundaramoorthy93" & d$chill.temp == 4)]))
 
-#chien09
+#chien09: Changing temp of 0 to NA and fixing chilling duration
 d$chillTemp[which(d$datasetID == "chien09" & d$chill.temp == 0)] <- NA
 d$chillDuration[which(d$datasetID == "chien09" & d$chill.temp == 0)] <- 0
 d$chillDuration[which(d$datasetID == "chien09" & d$chill.temp == 4)] <-
   round(as.numeric(d$chillDuration[which(d$datasetID == "chien09" & d$chill.temp == 4)]))
 
-#jensen97
+#jensen97: round up the number of days
 d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)] <-
   round(as.numeric(d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)]))
 
-#ma18 - 28 +28
+#ma18 - 28 +28 # TO CHECK : is that chilling if they were observing germination? Seems to be germ duration instead of chill duration.
 d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == 28)] <-
   NA
 d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == 28)] <-
@@ -107,36 +109,35 @@ d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.dur
 d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
   28
 
-#mattana16
+#mattana16: TO CHECK: chill durations seems to be germ duration. chill temp and duration should be NAs
 d$chillDuration[which(d$datasetID == "mattana16" & is.na(d$chill.temp))] <- 0
-#chill durations seems to be germ duration
 
-#Nin17 - 15;30;60;90---average across all treatments
+
+#Nin17 - 15;30;60;90---average across all treatments. # To CHECK: I don't know what was done here. Right now, nin17 doesn't have chilling and I think that's wrong.
 d$chillTemp[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 4
 d$chillDuration[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 0
 d$chillDuration[which(d$chill.duration == "15;30;60;90")] <- NA # average across all treatments
 
-#nurse08 - 1 month, 2 months, 3 months
+#nurse08: changing months to days
 d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == "1 month")] <- 30
 d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == " 2 months")] <- 61
 d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == "3 months")] <- 91
 
-#okay11 - 90, 120, 150
-d$chillTemp[which(d$datasetID == "okay11" & d$treatment == "Control")] <- 0
+# okay11: averaged resp var of the 3 different chilling treatments. Converting to NA.90, 120, 150
+d$chillTemp[which(d$datasetID == "okay11" & d$treatment == "Control")] <- NA
 d$chillDuration[which(d$datasetID == "okay11" & d$treatment == "Control")] <- 0
 d$chillDuration[which(d$chill.duration == "90, 120, 150")] <- NA
-#seems to be the average among treatments
-
-#tang21 - 0, 15, 30, 60
 d$chillTempUnc[which(d$datasetID == "okay11" & !is.na(d$chill.temp))] <- 1
+
+#tang21: figure 1 was not a chilling treatment, so there is no chilling here. thus NA.
+d$chillTemp[which(d$chill.duration == "0, 15, 30, 60")] <- NA
 d$chillDuration[which(d$chill.duration == "0, 15, 30, 60")] <- NA
-#seems to be the average among treatments
-#stratification not indicated, possibly not differentiated
 
-#bibby53 - 14-28 paper pending
+#bibby53 - 14-28 paper pending TO CHECK
 
-
-##cleaned chill temp
+# === === === === === === === === === === === === === === === === === === ===
+## Standardize chillTemp and Duration formats
+# === === === === === === === === === === === === === === === === === === ===
 
 #zhang21 - -5/5/25/15
 d$chillTemp[which(d$datasetID == "zhang21")] <- gsub("/", " then ", d$chill.temp[which(d$datasetID == "zhang21")])
@@ -144,7 +145,7 @@ d$chillDuration[which(d$datasetID == "zhang21" & d$chill.temp == "-5/5")] <- "50
 d$chillDuration[which(d$datasetID == "zhang21" & d$chill.temp == "-5/5/25")] <- "50 then 50 then 50"
 d$chillDuration[which(d$datasetID == "zhang21" & d$chill.temp == "-5/5/25/15")] <- "50 then 50 then 50 then 50"
 
-#tilki07 - 4/20
+#tilki07: standardize temp and duration
 d$chillTemp[which(d$datasetID == "tilki07" & d$chill.temp == "4/20")] <- "20 then 4"
 d$chillTempUnc[which(d$datasetID == "tilki07" & d$chill.temp != "4/20")] <- 1
 d$chillTempUnc[which(d$datasetID == "tilki07" & d$chill.temp == "4/20")] <- "1 then 1"
@@ -152,38 +153,34 @@ temp <- c(0, 30, 61, 91, "61 then 61", "30 then 61", "30 then 30", 0, "30 then 3
           30, "30 then 30", 0, 0, "30 then 30", 0, 0, 30, 30)
 d$chillDuration[which(d$datasetID == "tilki07")] <- temp
 
-#ochuodho08 - 5-10
+#ochuodho08: mean of 5 and 10 and adding uncertainty
 d$chillTemp[which(d$datasetID == "ochuodho08" & d$chill.temp == "5-10")] <- 7.5
 d$chillTempUnc[which(d$datasetID == "ochuodho08" & d$chill.temp == "5-10")] <- 2.5
 
-#morozowska02 - 5-10
+#morozowska02: mean of 5 and 10 and adding uncertainty
 d$chillTemp[which(d$datasetID == "morozowska02" & d$chill.temp == "5-10")] <- 7.5
 d$chillTempUnc[which(d$datasetID == "morozowska02" & d$chill.temp == "5-10")] <- 2.5
 
-#al-absi10 or Al-Absi10 - 4-5
+#al-absi10: mean of 4 and 5 and adding uncertainty
 d$chillTemp[which(d$datasetID == "al-absi10" & d$chill.temp == "4-5")] <- 4.5
 d$chillTempUnc[which(d$datasetID == "al-absi10" & d$chill.temp == "4-5")] <- 0.5
-d$chillTemp[which(d$datasetID == "Al-Absi10" & d$chill.temp == "4-5")] <- 4.5
-d$chillTempUnc[which(d$datasetID == "Al-Absi10" & d$chill.temp == "4-5")] <- 0.5
-#scraping repeated
 
-#rizwan18 - 4-5
+#rizwan18: mean of 4 and 5 and adding uncertainty
 d$chillTemp[which(d$datasetID == "rizwan18" & d$chill.temp == "4-5")] <- 4.5
 d$chillTempUnc[which(d$datasetID == "rizwan18" & d$chill.temp == "4-5")] <- 0.5
 
-#Shahi-gharahlar12 - 4-5
+#shahi-gharahlar12: mean of 4 and 5 and adding uncertainty
 d$chillTemp[which(d$datasetID == "shahi-gharahlar12" & d$chill.temp == "4-5")] <- 4.5
 d$chillTempUnc[which(d$datasetID == "shahi-gharahlar12" & d$chill.temp == "4-5")] <- 0.5
 
-#markovic20 - 3-5
+#markovic20: mean of 3 and 5 and adding uncertainty. Plus 168 days is the number of months of alternating temperature regime TO CHECK.
 d$chillTemp[which(d$datasetID == "markovic20" & d$chill.temp == "3-5")] <- 4
 d$chillTempUnc[which(d$datasetID == "markovic20" & d$chill.temp == "3-5")] <- 1
 d$chillTemp[which(d$datasetID == "markovic20" & d$chill.temp == "3/12")] <- "3 and 12"
-#"alternating each week"
 d$chillTempCycle[which(d$datasetID == "markovic20" & d$chill.temp == "3/12")] <- "168 and 168"
 d$chillDuration[which(d$datasetID == "markovic20")] <- round(as.numeric(d$chill.duration[which(d$datasetID == "markovic20")]))
 
-#pipinis20 - 3-5
+#pipinis20: mean of 4 and 1 and adding uncertainty. 
 d$chillTemp[which(d$datasetID == "pipinis20" & d$treatment == "Cold stratification")] <- 4
 d$chillTempUnc[which(d$datasetID == "pipinis20" & d$chill.temp == "3-5")] <- 1
 temp <- c(rep(4, 4), rep("22.5 then 4", 6))

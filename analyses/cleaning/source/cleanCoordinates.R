@@ -5,11 +5,7 @@
 # Read in the data by running cleanall.R
 # Don't run the map code for now
 mapCode <- FALSE
-options(digits=6)
-length(unique(d$provenance.lat))
-length(unique(as.numeric(d$provenance.lat)))
-length(unique(d$provenance.long))
-length(unique(as.numeric(d$provenance.long)))
+
 ### ### ### ### ### ### ### ### ###
 # Standardize NA format in lat/long
 ### ### ### ### ### ### ### ### ###
@@ -19,9 +15,6 @@ d$provenance.long <- gsub("N/A", NA, d$provenance.long)
 ### ### ### ### ### ### ### ### ###
 # Fix or add source.population 
 ### ### ### ### ### ### ### ### ###
-# Lizzie notes: These first couple of lines don't do anything ...
-# but it looks like Deirdre may have updated these data for other reasons, so assuming okay and ...
-# Leaving this code just to be safe for now (found a number of instances of code below that does nothing)
 # bhatt00: source.population in wrong column
 d$source.population[which(d$datasetID == "bhatt00" & d$other.treatment == "Kalika -population")] <- "Kalika, Kumaun, Himalaya"
 d$source.population[which(d$datasetID == "bhatt00" & d$other.treatment == "Jalna -population")] <- "Jalna, Kumaun, Himalaya"
@@ -52,7 +45,7 @@ d$source.population[which(d$datasetID == "ahola99" & d$species == "abies")] <- "
 # shahi-gharahlar12: missing source pop
 d$source.population[which(d$datasetID == "shahi-gharahlar12")] <- "Department of Horticultural Science, University of Tehran, Iran"
 # pritchard93: adding source pop precision
-d$source.population[which(d$datasetID == "pritchard93")] <- "Wakehurst Place, Ardingly, West Sussex"
+d$source.population[which(d$datasetID == "pritchard93")] <- "Wakehurs2t Place, Ardingly, West Sussex"
 # romero05: source pop provided by species in the paper #TO CHECK
 # kolodziejek18: location of where the seeds were grown. Assuming this as provenance
 d$source.population[which(d$datasetID == "kolodziejek18")] <- "University of Lodz, Faculty of Biology and Environmental Protection"
