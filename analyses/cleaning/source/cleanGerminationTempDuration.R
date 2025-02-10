@@ -87,7 +87,8 @@ d$germTemp[which(d$germTemp == "3-20")] <- "20/3"
 # According to the paper, it's 30/20 day/night
 d$germTemp[which(d$datasetID == "yang08" & d$genus == "Litsea")] <- "30/20"
 
-# yang18_1 - "chill and germination data for Figures 4 and 5 is complicated because some germination data were taken during stratification so the stratification conditions should actually be the germination data; I think cleaning these columns together would be easier than separately"
+# yang18_1 - "chill and germination data for Figures 4 and 5 is complicated because some germination data were taken during stratification so the stratification conditions should actually be the germination data; 
+#I think cleaning these columns together would be easier than separately"
 
 # Making an empty column to give numeric values for just this subset of data
 d$yang18chill.duration <- NA
@@ -96,7 +97,7 @@ d$yang18germDuration <- NA
 
 # For figure 4
 for (i in c(1:nrow(d))) {
-  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18_1" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18_1" && d$figure[i] == "Figure 4") {
     d$yang18chill.duration[i] <- d$chill.duration[i]
     d$yang18germ.duration[i] <- d$germ.duration[i]
     d$yang18germDuration[i] <- d$germDuration[i]
@@ -227,8 +228,8 @@ d$germDuration[which(d$germDuration == "14(7)")] <- "14"
 d$germDuration[which(d$germDuration == "21(7)")] <- "21"
 d$germDuration[which(d$germDuration == "28(7)")] <- "28"
 
-d$germTemp <- sub("alternating temperature ",NA, d$germTemp)
-d$germTemp <- sub("alternating ",NA, d$germTemp)
+d$germTemp <- sub("alternating temperature ","", d$germTemp)
+d$germTemp <- sub("alternating ","", d$germTemp)
 
 d$tempClass[which(d$germTemp == "25/20/15")] <- "three levels"
 d$tempClass[which(d$germTemp == "22.2/20/29.4")] <- "three levels"
