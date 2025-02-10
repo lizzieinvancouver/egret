@@ -247,9 +247,6 @@ d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "martinik14")]
 # muller03
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "muller03")] <- "46.228"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "muller03")] <- "2.213"
-# na11
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "na11")] <- "45.757" # TO DELETE 
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "na11")] <- "124.642" # TO DELETE
 # ordonez-salanueva15
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "ordonez-salanueva15")] <- "18.182"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "ordonez-salanueva15")] <- "-97.479"
@@ -304,24 +301,6 @@ d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "morozowska02" &
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "morozowska02" & d$source.population == "Poznań, Poland")] <- "16.92"
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "morozowska02" & d$source.population == "Konin, Poland")] <- "52.22"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "morozowska02" & d$source.population == "Konin, Poland")] <- "18.25"
-# aldridge1993
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1993")] <- "50.8679"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1993")] <- "-0.0875" # TO DELETE
-# aldridge1994
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1994")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1994")] <- "-94.69" # TO DELETE
-# aldridge1995
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1995")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1995")] <- "-94.69" # TO DELETE
-# aldridge1996
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1996")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1996")] <- "-94.69" # TO DELETE
-# aldridge1997
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1997")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1997")] <- "-94.69" # TO DELETE
-# aldridge1998
-d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "aldridge1998")] <- "46.73"
-d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "aldridge1998")] <- "-94.69" # TO DELETE
 # lee06
 d$provenance.lat[which(is.na(d$provenance.lat) & d$datasetID == "lee06")] <- "37.90"
 d$provenance.long[which(is.na(d$provenance.long) & d$datasetID == "lee06")] <- "126.75"
