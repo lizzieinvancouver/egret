@@ -47,3 +47,6 @@ d$responseVarClean[d$responseVarClean == "percent.germ.15degC.incubated"] <- "pe
 #another two that are probably the same
 d$responseVarClean[d$responseVarClean == "mean.percent.germ.energy"] <- "percent.germ.energy"
 
+#replace the original response variable column with the cleaned one
+d$responseType <- d$responseVarClean
+
