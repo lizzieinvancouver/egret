@@ -8,8 +8,9 @@
 # Replacing all blanks with NA
 d[d==""] <- NA
 
+
 # Removing redundant columns
-d <- subset(d, select = -X) 
+d <- subset(d, select = -c(responseVarClean,X,pretreatmentFeces)) 
 
 colnames(d)
 colnames(d) <- c("speciesID",
@@ -31,11 +32,10 @@ colnames(d) <- c("speciesID",
                  "photoperiod",
                  "tempDay",
                  "tempNight",
-                 "darkRange",
+                 "tempUnspecified",
                  "germDuration",
                  "samples",
                  "latbi",
-                 "pretreatmentFeces",
                  "chilling",
                  "chillDuration",
                  "scarifType",
@@ -67,4 +67,5 @@ colnames(d) <- c("speciesID",
                  "tempDayAvg",
                  "tempNightAvg",
                  "germDurationAvg",
-                 "samplesAvg")
+                 "samplesAvg",
+                 "chillDurationAvg")

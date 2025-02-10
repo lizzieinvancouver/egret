@@ -76,6 +76,10 @@ d$scarifTypeGen[which(d$scarifTypeGen == "manual with needle at the cotyledon en
 d$scarifTypeGen[which(d$scarifTypeGen == "partly scarified")] <- "mechanical" #seed coat was partly removed 
 d$scarifTypeGen[which(d$scarifTypeGen == "seed coat removal")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "Seed coat removed")] <- "mechanical"
+d$scarifTypeGen[which(d$scarifTypeGen == "mechanical with 220 grit sandpaper")] <- "mechanical"
+d$scarifTypeGen[which(d$scarifTypeGen == "Demucilagation")] <- "mechanical"
+d$scarifTypeGen[which(d$scarifTypeGen == "soaking - 70°C hot water")] <- "soaking"
+d$scarifTypeGen[which(d$scarifTypeGen == "soaking - 90°C hot water")] <- "soaking"
 
 # chemical
 d$scarifTypeGen[which(d$scarifTypeGen == "Chemical")] <- "chemical"
@@ -124,6 +128,7 @@ d$scarifTypeSpe <- d$scarifType
 d$scarifTypeSpe[which(d$scarifTypeSpe == "sandpaper")] <- "mechanical - sandpaper"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "sand paper (Np. 150)")] <- "mechanical - sandpaper"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "sand paper")] <- "mechanical - sandpaper"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical with 220 grit sandpaper")] <- "mechanical - sandpaper"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical with sandpaper")] <- "mechanical - sandpaper"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical with razor")] <- "mechanical - razor"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "coat removal")] <- "mechanical - seed coat removal"
@@ -135,6 +140,7 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "trimmed pappus")] <- "mechanical - tri
 d$scarifTypeSpe[which(d$scarifTypeSpe == "pelleted")] <- "mechanical - pelleted"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "seed coat removed")] <- "mechanical - seed coat removal"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "Seed coat removed")] <- "mechanical - seed coat removal"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "Demucilagation")] <- "mechanical - demucilagation"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "burned")] <- "mechanical - burned"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "scapel")] <- "mechanical - scapel"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "scalpel on lenticular side")] <- "mechanical - scalpel"

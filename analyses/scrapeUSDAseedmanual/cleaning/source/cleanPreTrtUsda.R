@@ -28,6 +28,7 @@ d$pretreatmentChill[!grepl("chill|stratification", d$pretreatmentChill)] <- NA
 d$pretreatmentChillDuration[!grepl("chill|stratification", d$pretreatmentChillDuration)] <- NA
 d$pretreatmentScarifType[!grepl("scarification|Scarification", d$pretreatmentScarifType)] <- NA
 d$pretreatmentScarifTypeGen[!grepl("scarification|Scarification", d$pretreatmentScarifTypeGen)] <- NA
+d$pretreatment[!is.na(d$pregermination_treatment_hot_water_soak_C)] <- "Hot water"
 
 d$pretreatmentChill[which(grepl("chill|stratification",d$pretreatmentChill))] <- "Y"
 d$pretreatmentChill[which(!grepl("chill|stratification",d$pretreatment))] <- "N"
