@@ -24,7 +24,7 @@ check_short <- subset(check, select = c("datasetID", "study", "species", "treatm
                                         "chemicalCor", "trt.duration",
                                         "respvar", "response", "figure"))
 
-g#acosta13
+#acosta13
 d$treatmentCor[which(d$datasetID == "acosta13" & d$treatment == "temperature")] <- "germination temperature"
 temp <- c(0, -0.3, -0.4, -0.6, -0.9, -1.3)
 d$treatmentDetails[which(d$datasetID == "acosta13" & d$treatment == "osmotic potential")] <- paste0(temp, " MPa")

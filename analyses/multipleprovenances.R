@@ -7,6 +7,7 @@ library(ggplot2)
 
 
 # how many provenances per study
+nrow(subset(d, is.na(provenance.lat)))
 provenance_count <- aggregate(provLatLon  ~ datasetID, data = d, function(x) length(unique(x)))
 # how many have more than one provenances
 suby <- subset(provenance_count, provLatLon > 1)
