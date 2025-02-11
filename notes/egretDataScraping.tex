@@ -180,7 +180,12 @@ Following our first egret retreat in November 2023, we realized that the egret d
 \item For scarifTypeGen, we have four types: soaking, chemical, mechanical and unknowScarification
 \item For scarifTypeSpe, we first include the general scarification type, followed by the specific scarification method if that information is available.
 \end{itemize}
-
+\item \textbf{cleanPreTrtUsda.R}
+\begin{itemize}
+\item In the pretreatment column, we subsetted all treatment might be related to chilling into a new column.
+\item We select all rows with non-NA values in the column pregermination treatment hot water soak temperature and assigned 'Hot water' treatment to these rows.
+\end{itemize}
+\item \textbf{cleanEgretColUsda.R}: We updated the names of all columns to better fit with egret
 \end{itemize}
 
 \end{document}
