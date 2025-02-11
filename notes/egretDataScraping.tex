@@ -136,6 +136,15 @@ Now here's what to do:
 \end{itemize}
 \item \textbf{cleanMisc.R}: In this code we are removing redundant data that was reported in both tables and figures of studies, and studies for which we can not use the data (treatments are not properly described). Here we also clean minor columns, such as seed.mass. 
 \end{itemize}
+\begin{itemize}
+\item\textbf{Manual removal of crops}
+\begin{itemize}
+\item While we we tried to avoid crops in our datascaping, we double checked manually.
+\item Dan inspected the list of species, looking up the latin binomials of any unfamiliar species to see if they were crops.
+\item The \emph{criteria} for being removed as a crop were species that a) have a long history of domestication and therefore likely to have had artificial selection on germination or b) a cultivar.
+\item Species used in agriculture (i.e., cover crops) were not dropped, as we do not expect there is likely to be extensive artificial selection on germination behavior.
+\end{itemize}
+\end{itemize}
 \end{enumerate}
 
 \section*{Scraping the USDA Seed Manual: }
