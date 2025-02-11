@@ -1,11 +1,6 @@
 ## Started 8 July 2024 by Mao##
+## Updated 10 Feb. 2025 by Mao ##
 
-
-library("taxize")
-library("stringr")
-
-
-setwd("C:/PhD/Project/egret/analyses")
 # General chekcs:
 #1. fix typos and minor issues:
 ### Clean Species ##############################
@@ -13,15 +8,19 @@ baskin <- read.csv("input/Baskin_Dormancy_Database.csv", skip=2)
 baskin$X1 <- NULL
 # Substitute the underscore with space
 baskin$Genus_species <- sub("_", " ", baskin$Genus_species)
-# Use taxize package to inspect whether names are correct
-ref <- gnr_datasources() # Full list of databases available
+# Use worldFlora package to inspect whether names are correct
+runworldflora <- TRUE
+if(runworldflora){	
+  library("stringr")
+  library("WorldFlora")
+  # Read in the backbone dataset
+  backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
+   checks<-WFO.match(spec.data=baskin$Genus_species, WFO.data=backbone, counter=1, verbose=TRUE)
+  d_species_fix <- unique(checks$scientificName)
+  names_changed <- setdiff(d_species, d_species_fix)
+  names_changed
+}
 
-# Couldn't get it working if use the whole column. 1. There might be some problematic rows, 2. The dataframe is too big.
-# Find problematic rows
-# baskinnew <- baskin$Genus_species[1:10]
-# fix_names <- gnr_resolve(sci = baskinnew, with_canonical_ranks = T)
-# Repeat this until you run all the rows.
-# Get rid of problematic rows
 baskinnew <- baskin[baskin$Genus_species != c("Crataegus x sinaica","Manilkara zapota","Ulmus minor"), ]
 
 # Break down the big dataframe into smaller sections: 1:3000, 3001:6000, 6001:9000, 9001:12000, 12001:14250
