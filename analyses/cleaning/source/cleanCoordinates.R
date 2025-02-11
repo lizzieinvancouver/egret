@@ -511,6 +511,7 @@ d$provenance.long[which(d$datasetID == "ahola99" & d$source.population =="Patama
 d$provenance.lat[which(d$datasetID == "ahola99" & d$source.population =="Palvaanjärvi")] <- "60.85"
 d$provenance.long[which(d$datasetID == "ahola99" & d$source.population =="Palvaanjärvi")] <- "27.48"
 
+
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 ##### Fix locations have lat long in same entry AND entries with N or S in the coordinate #####
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -665,6 +666,20 @@ d$provenance.long[which(d$datasetID == "zhang21" & d$provenance.long == "124.9")
 d$provenance.long[which(d$datasetID == "mulaudzi09" & d$provenance.long == "27.5")] <- "27.50"
 # middleton96
 d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "142.5")] <- "142.50"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "147.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "148.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "149.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "150.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "151.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "152.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "153.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "154.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "155.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "156.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "157.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "158.3833")] <- "146.3833"
+d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "159.3833")] <- "146.3833"
+
 # pliszko18
 d$provenance.long[which(d$datasetID == "pliszko18" & d$provenance.long == "21")] <- "21.00"
 # yin09:
