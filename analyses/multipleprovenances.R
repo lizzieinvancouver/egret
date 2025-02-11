@@ -4,7 +4,8 @@
 # goal of this scrip is to check how many studies have more than one provenance
 # Package
 library(ggplot2)
-
+library(plotly)
+library(RColorBrewer)
 
 # how many provenances per study
 nrow(subset(d, is.na(provenance.lat)))
@@ -22,7 +23,7 @@ count <- ggplot(suby, aes(x = provLatLon)) +
   theme_minimal()
 count
 
-# make map with color subsetting by most common treatments
+#### make map with color subsetting by most common treatments ####
 
 # quick check of which treatment happens the most often (for now need to run clean treatments!)
 treatment_counts <- table(d$treatment)
@@ -46,8 +47,6 @@ vecr <- respvar_df$respvar[1:8]
 subbyrespvar <- subbytreat[subbytreat$responseVar %in% vecr, ]
 
 # map! 
-library(plotly)
-library(RColorBrewer)
 
 # transform lat long to numeric (will be deleted once clean coordinate is finished)
 subbyrespvar$provenance.lat <- as.numeric(subbyrespvar$provenance.lat)
@@ -58,8 +57,7 @@ no.na.values <- subbyrespvar[!is.na(subbyrespvar$provenance.lat), ]
 df.4.map <- no.na.values[!duplicated(no.na.values$provenance.lat), ]
 # clean columns not necessary
 df.4.map <- df.4.map[, c("datasetID", "provenance.lat", "provenance.long", "continent", "responseVar", "treatment")]
-head(df.4.map)
-dput(df.4.map)
+
 
 # set color
 colors <- c("#66C2A5", "#E5C494", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#FC8D62", "#B3B3B3")
@@ -87,5 +85,49 @@ fig <- fig %>% layout(
 )
 fig
 
+#### Make a map and color code by perc germ ####
+# subset down to studies with perc germ 
+PG_lang <- subset(d, responseVar == "percent.germ")
+
+# remove rows with provenance lat NA
+PG_lang2 <- PG_lang[!is.na(PG_lang$provenance.lat), ]
+
+# aggregate by paperstudyID + Species
+PG_lang$responseValue <- as.numeric(PG_lang$responseValue)
+PG_langag <- aggregate(x=PG_lang$responseValue, 
+                 by=list(PG_lang$datasetIDstudy, PG_lang$species, 
+                         PG_lang$provenance.lat, PG_lang$provenance.long), 
+                 FUN=mean, na.action=na.omit)
+# change colnames
+colnames(PG_langag) <- c("datasetIDstudy", "species", "provenance.lat", "provenance.long","responseValue")
+# remove NAs 
+PG_langag2map <- PG_langag[!is.na(c(PG_langag$responseValue, PG_langag$provenance.lat)), ] # to check not sure if that works
+
+# problem with acosta13, so ill just remove all values >100
+subset(PG_langag2map, responseValue>100)
+PG_langag2map<- PG_langag2map[!PG_langag2map$responseValue>101,]
 
 
+fig <- plot_ly(
+  data = PG_langag2map,
+  type = 'scattergeo', 
+  mode = 'markers',
+  lat = ~provenance.lat,
+  lon = ~provenance.long,
+  marker = list(size = 5, opacity = 0.8),
+  color = ~responseValue,
+  colors = "Oranges",
+  text = ~paste("DatasetIDStudy:", datasetIDstudy, "<br>ResponseValue:", responseValue),
+  hoverinfo = "text"
+)
+
+# Set map layout
+fig <- fig %>% layout(
+  title = "Locations of study color coded by responsVar",
+  geo = list(
+    projection = list(type = "natural earth"),
+    showland = TRUE,
+    landcolor = "rgb(243, 243, 243)"
+  )
+)
+fig
