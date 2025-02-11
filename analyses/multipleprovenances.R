@@ -107,7 +107,11 @@ PG_langag2map <- PG_langag[!is.na(c(PG_langag$responseValue, PG_langag$provenanc
 subset(PG_langag2map, responseValue>100)
 PG_langag2map<- PG_langag2map[!PG_langag2map$responseValue>101,]
 
+# add only datasetID
+PG_langag2map$datasetID <- sub("exp\\d+", "", PG_langag2map$datasetIDstudy)
 
+str(PG_langag2map)
+unique(PG_langag2map$datasetID)
 fig <- plot_ly(
   data = PG_langag2map,
   type = 'scattergeo', 
