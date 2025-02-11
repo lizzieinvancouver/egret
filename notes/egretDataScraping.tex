@@ -135,6 +135,7 @@ Now here's what to do:
 \item For germination curves, we extracted the maximum percent.germination reported for each study.
 \end{itemize}
 \item \textbf{cleanMisc.R}: In this code we are removing redundant data that was reported in both tables and figures of studies, and studies for which we can not use the data (treatments are not properly described). Here we also clean minor columns, such as seed.mass. 
+\item \textbf{cleanSpecies.R}: We cleaned the species name using WorldFlora package.
 \end{itemize}
 \begin{itemize}
 \item\textbf{Manual removal of crops}
@@ -162,12 +163,24 @@ Following our first egret retreat in November 2023, we realized that the egret d
 
 \subsection*{Data cleaning and decisions}
 \begin{itemize}
-\item Our goal is to format the data in such as way it can be merged with the egret data
-\item for response variable we coverted  "percent.germ.total", "percent.germ","germ.capacity","mean.germ.capacity" and "percent.germ.15degC.incubated" to "perc.standard"
-\item We combined chilling and cold stratification entries into a new class of columns called: chill.dur.Min and chill.dur.Max.comb, and chill.dur.Avg.comb
-\item We converted entries with a range of chilling durations (e.g. 6 to 12 weeks went into the chill.dur.Min.comb, chill.dur.Max.comb, And chill.dur.Avg.comb. 
-\item Entries with only one original value for chilling end up in chill.dur.Avg.comb. 
-\item The same as above was done for response variables.
+\item Our goal is to format the data in such as way it can be merged with the egret data, following outlines some of the more complex cleaning decisions:
+\item \textbf{cleanSpeciesUsda.R}: We cleaned the species name using WorldFlora package.
+\item \textbf{cleanMeanUsda.R}: We converted entries with a range of numeric values into three columns (min, max and avg), these columns include:  pretreatment, coldStratDur, photoperiod, tempDay, tempNight, germDuration, samples, chillDuration and responseValue.
+\item \textbf{cleanResponseUsda.R}: for response variable we coverted  "percent.germ.total", "percent.germ","germ.capacity",
+"mean.germ.capacity" and "percent.germ.15degC.incubated" to "perc.standard"
+\item \textbf{cleanChillUsda.R}:
+\begin{itemize}
+\item We created a new column called chilling with 'Y/N' data, this includes both original pretreatment chill and cold stratification.
+\item We combined chilling and cold stratification entries into a new class of columns called: chill.dur.Min and chill.dur.Max, and chill.dur.Avg
+\item Entries with only one original value for chilling end up in chill.dur.Avg. 
+\end{itemize}
+\item \textbf{cleanScarificationUsda.R}:
+\begin{itemize}
+\item We selected treatments that we believe are scarification in the pretreatment column (including acid, soaking, mechanical, etc.) and made two columns: one (scarifTypeGen) for the general type of scarification, and the other (scarifTypeSpe) for the specific scarification details.
+\item For scarifTypeGen, we have four types: soaking, chemical, mechanical and unknowScarification
+\item For scarifTypeSpe, we first include the general scarification type, followed by the specific scarification method if that information is available.
+\end{itemize}
+
 \end{itemize}
 
 \end{document}
