@@ -23,16 +23,19 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
 } else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
   setwd("/Users/christophe_rouleau-desrochers/github/egret/analyses")
+} else if(length(grep("victor", getwd())) > 0){
+  setwd('~/projects/egret/analyses')
 } 
 
+
 # 1. Get the data (reads in a dataframe called `egret')
-source("cleaning/source/mergedata.R") # 32801 rows, 45 columns
+source("cleaning/source/mergeData.R") # 32801 rows, 45 columns
 
 # 2. Clean up datasetID issues
 source("cleaning/source/cleandatasetID.R") 
 
 # 3. Clean species names
-source("cleaning/source/cleanspecies.R")
+source("cleaning/source/cleanSpecies.R")
 
 # 4. Clean miscellaneous -- removing redundant data between tables and fig, studies we can't trust data quality after reviewing pdf's again.
 source("cleaning/source/cleanMisc.R") # 30777

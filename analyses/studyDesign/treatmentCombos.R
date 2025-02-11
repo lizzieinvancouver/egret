@@ -34,7 +34,7 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 # 0. Get the cleaned data
 d <- read.csv('output/egretclean.csv')
-cols <- c('datasetID', 'study',
+treats <- c('datasetID', 'study',
           'genus', 'species', 'variety',
           
           "treatment", # I guess it's a summary?
@@ -44,7 +44,8 @@ cols <- c('datasetID', 'study',
           
           # SCARIFICATION-RELATED
           "scarifType", "scarifTypeGen", "scarifTypeSpe", 
-          "chemicalCor", # is the chemical treatment always related to scarification?
+          
+          "chemicalCor", 
           
           # SOAKING-RELATED (IMBIBITION)
           "soaking", "soaked.in", "soaking.duration", # I guess it's not cleaned?
@@ -53,63 +54,109 @@ cols <- c('datasetID', 'study',
           "chillTemp", "chillDuration", "chillTempUnc", "chillTempCycle", "chillLightCycle",
           
           # GERMINATION-RELATED
-          "germTempGen", "germTemp", "germDuration", "tempClass", "tempDay", "tempNight", "germDurComment",
-          "photoperiodNote", "photoperiodCopy", "photoperiodCopyDay", "photoperiodCopyNight", # why variables such as tempDay or photoperiod do not have the prefix germ?
+          "germTempGen", "germTemp", "germDuration", "tempClass", "tempDay", "tempNight",
+          "germPhotoperiod", "germPhotoperiodDay", "germPhotoperiodNight", 
           
-          # UNSURE
-          "dormancyTemp", "dormancyDuration"
+          # MISC (e.g. sowing depth)
+          "other.treatment"
           
 )
-d <- d[,cols]
 
+# RESPONSE
+resp <- c("responseVar", "responseValue")
 
-d$genus <- gsub(" ", "", d$genus, fixed = TRUE)
-d$species <- tolower(d$species)
+# unique treatments per study
+dtreat <- unique(d[,treats])
+dtreat$uniqueID <- 1:nrow(dtreat)
+
+d <- unique(d[, c(treats, resp)])
+d <- merge(x = d, y = dtreat, by = treats, all = TRUE)
 d$genusspecies <- paste0(d$genus, '_', d$species)
 
+# here we can set which response variable we want to prioritize (if we have multiple options...)
+priority <- c("percent.germ") # just as an example
+d <- d[order(d$uniqueID, match(d$responseVar, priority)), ]
+d <- d[!duplicated(d$uniqueID), ]
 
+
+# Baskin database
 baskin <- read.csv('output/baskinclean.csv')
 names(baskin)[2] <- 'genusspecies'
+baskin <- baskin[c('Corrected.Genus', 'genusspecies', 'Dormancy.Class')]
 # several species have multipe dormancy class
 baskin %>%
   dplyr::group_by(genusspecies) %>%
   dplyr::summarise(nclass = n_distinct(Dormancy.Class)) %>%
   dplyr::filter(nclass > 1)
-# test <- baskin %>%
-#   dplyr::group_by(genusspecies) %>%
-#   dplyr::reframe(newclass = paste(Dormancy.Class, collapse=''))
+
+baskin.simplified <- baskin %>%
+  dplyr::group_by(genusspecies) %>%
+  dplyr::reframe(newclass = paste(Dormancy.Class, collapse=''),
+                 physicaldorm = grepl("PY", newclass)) %>%
+  dplyr::select(genusspecies, newclass, physicaldorm)
+
+baskin.genus <- baskin %>%
+  dplyr::add_count(Corrected.Genus, Dormancy.Class) %>%
+  dplyr::group_by(Corrected.Genus) %>%
+  summarise(newclass = Dormancy.Class[n == max(n)][1]) %>% # most frequent per Genus
+  mutate(physicaldorm = grepl("PY", newclass)) %>%
+  dplyr::select(Corrected.Genus, physicaldorm)
+names(baskin.genus) <- c('genus', 'genusphysicaldorm')
 
 
-# 1. First look at the number of distinct treatments per study/species
+# 1. First look at scarication treatment
 unitreat <- d %>%
-  dplyr::group_by(datasetID, study, genusspecies) %>%
-  dplyr::reframe(nstorage = n_distinct(c(storageType, storageTemp, storageDuration, storageDetails)),
-          nscarif = n_distinct(c(scarifType, scarifTypeGen, scarifTypeSpe, chemicalCor)),
-          nstrat = n_distinct(c(chillTemp, chillDuration, chillTempUnc, chillTempCycle, chillLightCycle)),
-          ngerm = n_distinct(c(germTempGen, germTemp, germDuration, tempClass, tempDay, tempNight, germDurComment,
-                               photoperiodNote, photoperiodCopy, photoperiodCopyDay, photoperiodCopyNight))) 
-  dplyr::left_join(baskin[c('Genus_species', 'Dormancy.Class')], by = c('genusspecies' = 'Genus_species'))
+  dplyr::group_by(datasetID, study, genus, genusspecies) %>%
+  dplyr::reframe(
+    nstorage = n_distinct(storageType, storageTemp, storageDuration, storageDetails),
+    nscarif = n_distinct(scarifType, scarifTypeGen, scarifTypeSpe),
+    nchem = n_distinct(chemicalCor),
+    nstrat = n_distinct(chillTemp, chillDuration, chillTempUnc, chillTempCycle, chillLightCycle),
+    ngerm = n_distinct(germTempGen, germTemp, germDuration, tempClass, tempDay, tempNight,
+                               germPhotoperiod, germPhotoperiodDay, germPhotoperiodNight)) %>%
+  # merge with Baskin dormancy classes
+  dplyr::left_join(baskin.simplified, by = c('genusspecies')) %>%
+  # if we don't have the info for the species, what is the most frequent in the genus?
+  dplyr::left_join(baskin.genus, by="genus") %>%
+  dplyr::mutate(physicalDormExtrapolate=if_else(is.na(physicaldorm), genusphysicaldorm, physicaldorm)) %>%
+  as.data.frame()
+
+facetlabels = labeller(
+  physicalDormExtrapolate = 
+    c("FALSE" = "No physical dorm.","TRUE" = "Some physical dorm."))
 
 all <- ggplot(data = unitreat) +
-  facet_wrap(~ nscarif > 1) +
+  facet_wrap(~ physicalDormExtrapolate, labeller = facetlabels) +
   geom_point(aes(x = ngerm, y = nstrat, size = nstorage, color = nscarif > 1), shape = 1) +
-  annotate('rect', xmin = 0, xmax = 30, ymin = 0, ymax = 10, fill = NA, color = 'black') +
-  scale_color_manual(values = c('#67903b', "#3B6790")) + 
+  annotate('rect', xmin = -3, xmax = 30, ymin = -0.5, ymax = 10.5, fill = NA, color = 'black') +
+  scale_color_manual(values = c('#67903b', "#903b67")) + 
   theme_bw() +
-  labs(x = '', y = 'Number of distinct strat. treatments',
-       size = 'Number of distinct\nstorage treatments', color = "Varying scarification") +
+  labs(x = '', y = 'No of distinct strat. treatments',
+       size = 'No. of distinct\nstorage treatments', color = "Varying scarification") +
   theme(panel.grid.minor = element_blank(),
-        strip.text = element_blank())
+        strip.background = element_blank())
 
 zoom <- ggplot(data = unitreat %>% dplyr::filter(nstrat <= 10 & ngerm <= 25)) +
-  facet_wrap(~ nscarif > 1) +
+  facet_wrap(~ physicalDormExtrapolate) +
   geom_point(aes(x = ngerm, y = nstrat, size = nstorage, color = nscarif > 1), shape = 1) +
-  scale_color_manual(values = c('#67903b', "#3B6790"), guide = FALSE) + 
+  scale_color_manual(values = c('#67903b', "#903b67"), guide = FALSE) + 
   theme_bw() +
-  labs(x = 'Number of distinct germ. treatments', y = '',
-       size = 'Number of distinct\nstorage treatments', color = "Varying scarification") +
-  coord_cartesian(ylim = c(0.5, 10), xlim = c(0.5, 30), expand = FALSE) +
+  labs(x = 'No. of distinct germ. treatments', y = '',
+       size = 'No.of distinct\nstorage treatments', color = "Varying scarification") +
+  coord_cartesian(ylim = c(0.5, 10.5), xlim = c(0.5, 30), expand = FALSE) +
   theme(panel.grid.minor = element_blank(),
         strip.text = element_blank())
 
-all+zoom+plot_layout(ncol=1)
+ggsave(all+zoom+plot_layout(ncol=1), filename = 'figures/studyDesign/scarificationDormancy.pdf',
+       width = 300, height = 150, units = "mm")
+
+scarifStudies <- unitreat[unitreat$nscarif > 1, c('datasetID', 'study')]
+
+scarifd <- d %>%
+  dplyr::filter(datasetID %in% scarifStudies$datasetID & study %in% scarifStudies$study) %>%
+  dplyr::group_by(datasetID, study, genusspecies) %>%
+  dplyr::reframe(nstorage = n_distinct(storageType, storageTemp, storageDuration, storageDetails),
+                 nscarif = n_distinct(scarifType, scarifTypeGen, scarifTypeSpe),
+                 nstrat = n_distinct(chillTemp, chillDuration, chillTempUnc, chillTempCycle, chillLightCycle),
+                 ngerm = n_distinct(germTempGen, germDuration))
+  
