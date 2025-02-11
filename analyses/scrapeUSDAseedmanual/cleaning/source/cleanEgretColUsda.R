@@ -10,7 +10,7 @@ d[d==""] <- NA
 
 
 # Removing redundant columns
-d <- subset(d, select = -c(responseVarClean,X,pretreatmentFeces)) 
+d <- subset(d, select = -c(responseVarClean,X)) 
 
 colnames(d)
 colnames(d) <- c("speciesID",

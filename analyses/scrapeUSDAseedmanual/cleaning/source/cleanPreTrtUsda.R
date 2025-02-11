@@ -17,11 +17,9 @@ d$pretreatment <- gsub("-mon"," month",d$pretreatment)
 d$pretreatment <- gsub("-"," to ",d$pretreatment)
 
 # Making new columns for pretreatment
-d$pretreatmentFeces <- d$pretreatment
 d$pretreatmentChill <- d$pretreatment
 d$pretreatmentChillDuration <- d$pretreatment
 
-d$pretreatmentFeces[!grepl("feces", d$pretreatmentFeces)] <- NA
 d$pretreatmentChill[!grepl("chill|stratification", d$pretreatmentChill)] <- NA
 d$pretreatmentChillDuration[!grepl("chill|stratification", d$pretreatmentChillDuration)] <- NA
 d$pretreatment[!is.na(d$pregermination_treatment_hot_water_soak_C)] <- "Hot water"
