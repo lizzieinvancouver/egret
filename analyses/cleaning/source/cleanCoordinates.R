@@ -2,6 +2,8 @@
 ## By Lizzie and Deirdre ##
 ## Then mostly by CRD #
 
+# Note: less detailed locations were not input in a separate column, instead I commented if a less location was given for each paper. 
+
 # Read in the data by running cleanall.R
 # Don't run the map code for now
 mapCode <- FALSE
