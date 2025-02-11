@@ -56,6 +56,10 @@ d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Working on figuring the data for the papers that Ken listed as problematic
 
+# 
+d$germTemp[which( d$datasetID == "boscagli01")] <- "20/10"
+d$photoperiod[which( d$datasetID == "boscagli01")] <- "12/12"
+
 # Acosta13 - "germination temp missing from Figure 3 data"
 d$germTemp[which(d$datasetID == "acosta13" & d$figure == "Fig 3")] <- "25/15"
 
