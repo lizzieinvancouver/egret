@@ -591,19 +591,11 @@ d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "water stress")] 
 d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- 23.33
 
 # d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 and 20 then 4"
- d$chillTempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 then 20"
- d$chillLightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
-# temp <- c("60 then 60", "60 then 90", "60 then 120", "60 then 150", "60 then 180",
-#          "90 then 60", "90 then 90", "90 then 120", "90 then 150", "90 then 180",
-#          "120 then 60", "120 then 90", "120 then 120", "120 then 150", "120 then 180",
-#          "150 then 60", "150 then 90", "150 then 120", "150 then 150", "150 then 180",
-#          "180 then 60", "180 then 90", "180 then 120", "180 then 150", "180 then 180",
-#          "60 then 60", "60 then 90", "60 then 120", "60 then 150", "60 then 180",
-#          "90 then 60", "90 then 90", "90 then 120", "90 then 150", "90 then 180",
-#          "120 then 60", "120 then 90", "120 then 120", "120 then 150", "120 then 180",
-#          "150 then 60", "150 then 90", "150 then 120", "150 then 150", "150 then 180",
-#          "180 then 60", "180 then 90", "180 then 120", "180 then 150", "180 then 180")
-# d$chillDuration[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- temp
+d$chillTempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 then 20"
+d$chillLightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
+temp1 <- rep(c(60, 90, 120, 150, 180), each = 5)
+temp2 <- rep(c(60, 90, 120, 150, 180), 5)
+d$chillDuration[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- paste0(temp1, " then ", temp2)
 # d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
 # d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
 # d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA

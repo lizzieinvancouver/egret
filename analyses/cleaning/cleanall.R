@@ -66,7 +66,7 @@ source("cleaning/source/cleanPhotoperiod.R") # 30777    76
 source("cleaning/source/cleanCoordinates.R") # 30777    76
 
 # 13. Clean treatment column
-# source("cleaning/source/cleanTreatments.R") 
+source("cleaning/source/cleanTreatments.R") 
 
 # And ... some final cleaning
 # Cleaning experiment number, if missing a value add "exp1"

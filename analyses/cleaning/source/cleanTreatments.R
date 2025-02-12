@@ -96,8 +96,27 @@ d$treatmentCor[which(d$datasetID == "battaglia93" & d$figure == "Figure 8")] <- 
 d$treatmentCor[which(d$datasetID == "battaglia97")] <- "seedlot x stratification x germination temperature"
 
 #beikmohammadi12, various
+temp <- c("control", "soaking", "soaking (hot water)", rep("acid", 3),
+          rep("soaking (hormone)", 3), rep("cold stratification", 2),
+          rep("acid x soaking (hormone)", 4))
+d$treatmentCor[which(d$datasetID == "beikmohammadi12")] <- temp
 
 #bhatt00, various
+temp <- c("control", "soaking", "soaking (hot water)", "acid", "scarification",
+          "hormone", "prechilling")
+d$treatmentCor[which(d$datasetID == "bhatt00" & d$figure == "Figure 1")] <- temp
+d$treatmentCor[which(d$datasetID == "bhatt00" & d$figure == "Table3")] <-
+  "soaking x population"
+d$treatmentCor[which(d$datasetID == "bhatt00" & d$figure == "Table4")] <-
+  "soaking (hot water) x population"
+d$treatmentCor[which(d$datasetID == "bhatt00" & d$figure == "Table5")] <-
+  "acid x population"
+d$treatmentCor[which(d$datasetID == "bhatt00" & d$figure == "Table6")] <-
+  "scarification x population"
+d$treatmentCor[which(d$datasetID == "bhatt00" & d$figure == "Table7")] <-
+  "hormone x scarification x population"
+d$treatmentCor[which(d$datasetID == "bhatt00" & d$figure == "Table8")] <-
+  "prechilling x population"
 
 #bibby53, supposed to be removed
 
@@ -105,19 +124,30 @@ d$treatmentCor[which(d$datasetID == "battaglia97")] <- "seedlot x stratification
 d$treatmentCor[which(d$datasetID == "borghetti86")] <- "seedlot x cold-moist stratification"
 
 #boscagli01, various
+temp <- c("control", rep("ultrasound", 2))
+d$treatmentCor[which(d$datasetID == "boscagli01" & d$figure == "Fig 1")] <- temp
+temp <- c("control", rep("prechilling x piercing", 3))
+d$treatmentCor[which(d$datasetID == "boscagli01" & d$figure == "Fig 2")] <- temp
+temp <- c("control", rep("soaking x piercing", 4))
+d$treatmentCor[which(d$datasetID == "boscagli01" & d$figure == "Fig 3")] <- temp
 
+temp <- c("control", "scarification", rep("acid", 4), "piercing", "dry heat")
+d$treatmentCor[which(d$datasetID == "boscagli01" & d$figure == "Table 1")] <- temp
+temp <- rep(c("hormone", "piercing x hormone", "soaking x hormone"), each = 3)
+
+d$treatmentCor[which(d$datasetID == "boscagli01" & d$figure == "Table 2")] <- temp
+d$treatmentCor[which(d$datasetID == "boscagli01" & d$figure == "Table 3")] <-
+  "soaking (oxidant)"
 
 #brandel05
 d$treatmentCor[which(d$datasetID == "brandel05")] <- "dormancy x stratification x germination chemical"
 
 #brenchley98
-
 #eelgrass
 
 #budisavljevic21
 d$treatmentCor[which(d$datasetID == "budisavljevic21")] <-
   "stratification x germination temperature x photoperiod"
-
 #chill temp for table 2e should be 23
 
 #bungard97
