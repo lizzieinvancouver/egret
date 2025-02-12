@@ -73,7 +73,7 @@ Now here's what to do:
 \begin{itemize}
 \item We are trying to use camel case where possible for both script names and column names. 
 \item Adding a column for the rare cases where studies start measuring germination day relative to the day of first germination and not the day they start monitoring germination (i.e. day of germination temperatures, imbibing etc)
-\item Excluding papers not in english unless the person scraping the data could read the language fluently %CRD26Setp2024 I think we decided to drop all papers that are not in english in the end, right?
+\item Excluding papers not in english unless the person scraping the data could read the language fluently 
 \item Decided to just add seed mass as a yes/no for now, we will have to go back and scrape it some day if we want it
 \item When dealing with error, enter it as zero if bars are not distinguishable from the points, or as "indistinguishable" if multiple overlapping points have overlapping error bars that can not be scraped with certainty (see issue of a visual example of this).
 \end{itemize}
@@ -90,13 +90,13 @@ Now here's what to do:
 \end{itemize}
 \item \textbf{cleanCoordinates.R}: 
 \begin{itemize}
-\item For 123 studies there was no specific lat and longs given, but we still try to get a general one where possible. 
+\item For 123 studies there was no specific lat and longs given, but we still estimated one based on the location textually described the paper. 
 \item We are only interested in source population locations, not where studies were conducted. 
 \item To infer the coordinates for these studies, we used Google Earth to drop a pin in the centre of the named region (county, city, etc) and get a general value for these studies. 
-\item We added an additional column to denote when we needed to take these less specific site locations. 
-\item To check that coordinates seem right we plotted them on a map. 
+\item We added an additional column to denote when we needed to take these less specific site locations. I didn't change the columns but made detailed notes in the script. 
+\item To check that coordinates seem right we plotted them on a map and assess one by one if the locations made sens according to their source.population
 \item See issue \#21 for cleaning coordinates, \#48 on number of studies with multiple provenances, \#47 mapping code.
-\item If available we kept a minimum of two decimals per lat/long, but in some cases, vague coordinates of a region were provided with no decimals and we kept those indicating a less specific site location. % CRD24Sept2024 not sure if necessary here, but thought I mentioned it. If we want to keep, I could check if that is the case that we actually mentioned something in the column about non specific location. 
+\item If available we kept a minimum of two decimals per lat/long, but in some cases, vague coordinates of a region were provided with no decimals and we kept those indicating a less specific site location. 
 \end{itemize}
 \item \textbf{cleanGerminationTempDuration.R}: 
 \begin{itemize} 
@@ -110,14 +110,20 @@ Now here's what to do:
 \end{itemize}
 \item \textbf{cleanChillTempDuration.R}: 
 \begin{itemize}
-\item Some studies have alternating day and night temps, so we created unique columns for alternating temps and daylength. 
-\item Some studies include warm temperatures as a chilling level, but this is relatively uncommon. 
+\item Some studies have alternating day and night temps, so we created unique columns for alternating temps and daylength. %CRD11Feb2025: is that so? I thought we denoted these alternating temps by e.g. "20 then 10"
+\item Some studies include warm temperatures as a chilling level. Sometimes, when it was a chilling treatment following a warm stratification, we entered it in chillTemp and its corresponding chillDuration. E.g.  "61 days at 20 C then 61 days at 5C". 
 \item There are 30 studies that are missing chilling temperature and durations. These pdf's were manually checked and notes made to check whether this is true or improperly entered data. It was discovered that in some of these studies, there are no chilling treatments, but there is moderately cold storage temperatures. 
 \item We discussed whether this storage could function as chilling, but decided that it depended on 1. whether the storage is wet, which would allow the seeds to be imbibed, 2. storage is between -20 and 10 degree C. 
 \item Option 1: Create new columns that include cold and wet storage in our chilling calculations for all studies, not just those that have no reported chilling treatments.
 \item Option 2: Combine the chilling and storage columns: \url{https://github.com/lizzieinvancouver/egret/tree/main/analyses/analyseSeedCues/cleaningSeedCues}
 \item Code to calculate chilling units is in analysesSeedCues
 \item See issue \#23, or \#44 to check papers without chilling for which storage temps may be cold. See issue \#39 for details on storage
+\item chillTemp: denotes the temperature of the chilling treatment. If it was alternating, we denoted it as X then Y
+\item chillDuration: same as for chillTemp, but for the number of days
+\item chillTempUnc: uncertainty of temperature when given in the article. E.g 5±1Celsius. 5 would be the chillTemp and 1 would be the chillTempUnc
+\item chillTempCycle: - period of each alternating cycle for the entire chillDuration of that chilling condition
+Example: a chillTemp of "10 and 20" with a chillTempCycle of "16 and 8" and a chillDuration of "14" means 16 hours at 10°C then 8 hours at 20°C and so on for 14 days; or, a chillTempCycle of "168 and 168" with a corresponding chillTemp of "4 and 22" and chillDuration of "112" means 168 hours (or 7 days) at 4°C then 168 hours at 22°C for 112 days
+\item chillLightCycle : (hours/day) - daily light. Example: "12 then 12 then 0" means 12 hours of light for the first and second chilling conditions, and the third chilling condition is implemented in the dark
 \end{itemize}
 \item \textbf{cleanPhotoperiod.R}: 
 \begin{itemize}
