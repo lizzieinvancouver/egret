@@ -7,9 +7,9 @@
 
 # Worldflora runs slow and requires you have a backbone dataset ...
 # Set below to TRUE if you want to run it ##
+library("stringr")
 runworldflora <- FALSE
 if(runworldflora){	
-	library("stringr")
 	library("WorldFlora")
 	# Read in the backbone dataset
 	backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
