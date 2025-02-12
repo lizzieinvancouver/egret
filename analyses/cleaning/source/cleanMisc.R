@@ -29,6 +29,7 @@ d <- d[-which(d$datasetID == "yusefi-tanha19" & d$entered.by == "JS"),]#40
 corrected <- c("batlla03","chen15","jang22","langlois17", "lo19", "nurse08","olmez07","olmez09", "redondo-gomez11", "zhou08")     
 
 d <- d[-which(d$datasetID == "chen15" & d$entered.by == "TA"),] #11
+d <- d[-which(d$datasetID == "jang22" & d$entered.by == "SC"),] #11
 d <- d[-which(d$datasetID == "airi09" & d$entered.by == "TA"),] # 90
 d <- d[-which(d$datasetID == "langlois17" & d$entered.by == "AZ"),] #322
 d <- d[-which(d$datasetID == "lo19" & d$entered.by == "SC"),] #95
@@ -42,10 +43,15 @@ d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figu
 d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.D"),]  #43
 d <- d[-which(d$datasetID == "song20" & d$entered.by == "DM"),]  #43
 d <- d[-which(d$datasetID == "pritchard93" & d$entered.by == "MN" & d$figure == "Table 3"),]  #6 
+d <- d[-which(d$datasetID == "pritchard93" & d$figure == "Figure 2"),]  #6 
 
 # momonoki79: issue #65 these two tables switch the seeds to lettuce---a crop
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table20")),] # 4
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table21")),] # 4
+
+
+# chen08 vs chen09 or chien09? both the same species
+#jang22
 
 if(FALSE){
 ##	
