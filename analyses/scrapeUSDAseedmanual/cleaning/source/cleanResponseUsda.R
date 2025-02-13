@@ -2,7 +2,7 @@
 ## By Dan, continued by Justin ##
 
 
-## Updated 4 fEB 2025 by Mao ##
+## Updated 4 Feb 2025 by Mao ##
 
 # Converting integer to character for pivot_longer()
 d$germinative_capacity <- as.character(d$germinative_capacity)
@@ -14,7 +14,7 @@ d <- d %>%
   group_by(species_name) %>%
   pivot_longer(cols = c("germination_time_days","total_germination_percent","avg_germination_percent","germination_rate","avg_germinative_energy_percent","germinative_energy_percent","avg_germinative_capacity","germinative_capacity","percent_germination_15degC_incubated","percent_germination_20degC_incubated"),
                names_to = "responseType",
-               values_to = "responseValue")
+               values_to = "responseValue") %>% drop_na(responseValue)
 
 
 # Cleaning response variables names
