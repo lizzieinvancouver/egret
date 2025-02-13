@@ -425,10 +425,10 @@ temp <- c(rep(5, 5), rep(25, 5))
 d$chillTemp[which(d$datasetID == "yeom21" & d$respvar != "per.germ")] <- temp
 
 #song20 - 5, 10, 15, 20 # TOCHECK: been rescraped
-temp <- c(rep("5", 5), rep("5 then 10", 4), rep("5 then 10 then 15", 3), rep("5 then 10 then 15 then 20", 2))
-d$chillTemp[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("NA then ", temp)
-temp <- c("31", "62", "93", "124", "155", "31 then 31", "31 then 62", "31 then 93", "31 then 124", "31 then 31 then 31", "31 then 31 then 62", "31 then 31 then 93", "31 then 31 then 31 then 31", "31 then 31 then 31 then 62")
-d$chillDuration[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("186 then ", temp)
+# temp <- c(rep("5", 5), rep("5 then 10", 4), rep("5 then 10 then 15", 3), rep("5 then 10 then 15 then 20", 2))
+# d$chillTemp[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("NA then ", temp)
+# temp <- c("31", "62", "93", "124", "155", "31 then 31", "31 then 62", "31 then 93", "31 then 124", "31 then 31 then 31", "31 then 31 then 62", "31 then 31 then 93", "31 then 31 then 31 then 31", "31 then 31 then 31 then 62")
+# d$chillDuration[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("186 then ", temp)
 
 #schutz02: formatting duration and temp
 #recommend to double check response variable and values and germ temp
@@ -586,7 +586,8 @@ d$chillDuration[which(d$datasetID == "zhou03")] <- 112
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- 5
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "stratification" & is.na(d$chill.temp))] <- 84
 d$chillTemp[which(d$chill.temp == "20,10")] <- "25 then 5"
-d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- c(24, 24, 0, 0, "24 then 24", "24 then 24")
+# d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- c(24, 24, 0, 0, "24 then 24", "24 then 24") # broken here because it's missing one row of data. will be fixed soon TO CHECK
+d$figure[which(d$datasetID == "zhou08" & d$treatment == "stratification")] 
 d$chillDuration[which(d$chill.temp == "20,10")] <- "28 then 56"
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "25 then 5"
 d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "24 then 24"
