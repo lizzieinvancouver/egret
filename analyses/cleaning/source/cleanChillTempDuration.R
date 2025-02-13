@@ -99,15 +99,26 @@ d$chillDuration[which(d$datasetID == "chien09" & d$chill.temp == 4)] <-
 d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)] <-
   round(as.numeric(d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)]))
 
-#ma18 - 28 +28 # TO CHECK : is that chilling if they were observing germination? Seems to be germ duration instead of chill duration.
-d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == 28)] <-
-  NA
-d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == 28)] <-
-  0
-d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
-  c(5, 10, 25)
-d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
-  28
+#ma18 : removing chill temp and duration for figure 1, as there was no chilling
+d$chillTemp[which(d$datasetID == "ma18" & d$figure =="Figure 1")] <- NA
+d$chillDuration[which(d$datasetID == "ma18" & d$figure =="Figure 1")] <- NA
+# fixing table 1
+# germ temp at 5 no chilling
+# germ temp at 10 no chilling
+# germ temp at 15 no chilling
+# germ temp at 20 no chilling
+# germ temp at 25 no chilling
+# germ temp at 10/20 no chilling
+# germ temp at 15/20 no chilling
+
+# 5->15 so 5C for chill.temp and 28 days for duration
+# 10 -> 15, so 10 for chilling
+# 25 -> 15, so 25 for chilling
+
+# d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
+#   c(5, 10, 25)
+# d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
+#   28
 
 #mattana16: TO CHECK: chill durations seems to be germ duration. chill temp and duration should be NAs
 d$chillDuration[which(d$datasetID == "mattana16" & is.na(d$chill.temp))] <- 0
@@ -414,10 +425,10 @@ temp <- c(rep(5, 5), rep(25, 5))
 d$chillTemp[which(d$datasetID == "yeom21" & d$respvar != "per.germ")] <- temp
 
 #song20 - 5, 10, 15, 20 # TOCHECK: been rescraped
-temp <- c(rep("5", 5), rep("5 then 10", 4), rep("5 then 10 then 15", 3), rep("5 then 10 then 15 then 20", 2))
-d$chillTemp[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("NA then ", temp)
-temp <- c("31", "62", "93", "124", "155", "31 then 31", "31 then 62", "31 then 93", "31 then 124", "31 then 31 then 31", "31 then 31 then 62", "31 then 31 then 93", "31 then 31 then 31 then 31", "31 then 31 then 31 then 62")
-d$chillDuration[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("186 then ", temp)
+# temp <- c(rep("5", 5), rep("5 then 10", 4), rep("5 then 10 then 15", 3), rep("5 then 10 then 15 then 20", 2))
+# d$chillTemp[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("NA then ", temp)
+# temp <- c("31", "62", "93", "124", "155", "31 then 31", "31 then 62", "31 then 93", "31 then 124", "31 then 31 then 31", "31 then 31 then 62", "31 then 31 then 93", "31 then 31 then 31 then 31", "31 then 31 then 31 then 62")
+# d$chillDuration[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("186 then ", temp)
 
 #schutz02: formatting duration and temp
 #recommend to double check response variable and values and germ temp
@@ -575,7 +586,8 @@ d$chillDuration[which(d$datasetID == "zhou03")] <- 112
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- 5
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "stratification" & is.na(d$chill.temp))] <- 84
 d$chillTemp[which(d$chill.temp == "20,10")] <- "25 then 5"
-d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- c(24, 24, 0, 0, "24 then 24", "24 then 24")
+# d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- c(24, 24, 0, 0, "24 then 24", "24 then 24") # broken here because it's missing one row of data. will be fixed soon TO CHECK
+d$figure[which(d$datasetID == "zhou08" & d$treatment == "stratification")] 
 d$chillDuration[which(d$chill.temp == "20,10")] <- "28 then 56"
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "25 then 5"
 d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "24 then 24"
@@ -609,7 +621,7 @@ d$chillDuration[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- pas
 d$chillTemp[which(d$chill.temp == "4 +/- 2 ")] <- 4
 d$chillTempUnc[which(d$chill.temp == "4 +/- 2 ")] <- 2
 
-#battaglia97 : missing chill duration TOCHECK
+#battaglia97 : missing chill duration in the figure
 
 #fulbright86: standardize format
 d$chillTemp[which(d$chill.temp == "30/7")] <- "30 then 7"
