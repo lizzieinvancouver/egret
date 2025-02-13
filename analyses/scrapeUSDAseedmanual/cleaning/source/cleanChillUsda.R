@@ -14,10 +14,7 @@ d$pretrtChillDurMax<-ifelse(!is.na(d$coldStratDurMax),d$coldStratDurMax,d$pretrt
 d$pretrtChillDurAvg<-ifelse(!is.na(d$coldStratDurAvg),d$coldStratDurAvg,d$pretrtChillDurAvg)
 d$pretreatmentChillDuration<-ifelse(!is.na(d$cold_stratification_days),d$cold_stratification_days,d$pretreatmentChillDuration)
 
-# Make the chill duration to be numetric and get rid of weird values
-unique(d$pretrtChillDurAvg)
 
-d <- subset(d, pretrtChillDurAvg != c("Variable","Stratification and germination as a continuum under the same conditions"))
 
 ############
 
@@ -40,3 +37,7 @@ spec_X <- filtered_rows$latbi
 
 # Remove all filtered rows from the original data frame
 d <- d[!d$X %in% tmp_X, ]
+
+# Get rid of weird values
+unique(d$pretrtChillDurAvg)
+d <- subset(d, !(pretrtChillDurAvg %in% c("Variable","Stratification and germination as a continuum under the same conditions")))
