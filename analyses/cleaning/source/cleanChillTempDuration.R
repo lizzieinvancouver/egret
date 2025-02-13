@@ -10,10 +10,8 @@
 unique(d$chill.temp)
 unique(d$chill.duration)
 
-# Check unusual values:
-# what does "90/30/90" mean
-# "Continuous cold stratification" kept in cold whole experiment? How long was experiment?
-# is 0 a true zero? 
+# "Continuous cold stratification" kept in cold whole experiment? How long was experiment? # CHECK : add in scraping notes that if duration of chilling wasn't provided, we input NA for duration, but we kept the temperature.
+
 
 
 temp_vals <- unique(d$chill.temp)
