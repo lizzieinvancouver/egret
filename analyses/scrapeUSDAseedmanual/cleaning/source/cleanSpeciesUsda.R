@@ -104,3 +104,5 @@ d$genus_name[which(d$genus_name == "Prosopis" & d$species_name == "juliflora")] 
 
 # make a new column "spec" to combine genus and species
 d$latbi <- paste(d$genus_name, d$species_name, sep = "_")
+unique(d$latbi)
+# There are 324 unique species in USDA
