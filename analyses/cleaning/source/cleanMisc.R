@@ -63,6 +63,11 @@ d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 1")] <- "Figure 2
 
 d <- d[-which(d$datasetID == "chien09"),]  #6 
 
+# issue with alhelal96, other.treatment = N (1 row)
+# looks weird, all other rows (=27) have other.treatment = NA (note: I did not check the original paper) - V.V.
+d[which(d$datasetID == "alhelal96" & d$other.treatment == "N"), 'other.treatment']  <- NA
+
+
 
 if(FALSE){
 ##	
@@ -79,3 +84,4 @@ d$seed.mass.given[which(d$seed.mass.given == "FALSE")] <- "N"
 
 
 }
+
