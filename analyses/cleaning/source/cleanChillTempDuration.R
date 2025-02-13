@@ -122,7 +122,8 @@ d$chillDuration[which(d$datasetID == "ma18" & d$figure =="Figure 1")] <- NA
 d$chillDuration[which(d$datasetID == "mattana16" & is.na(d$chill.temp))] <- 0
 
 
-#Nin17 - 15;30;60;90---average across all treatments. # To CHECK: I don't know what was done here. Right now, nin17 doesn't have chilling and I think that's wrong.
+#nin17 TO CHECK: mean values of stratification accross 4 different durations
+dur <- c(15, 30, 60, 90)
 d$chillTemp[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 4
 d$chillDuration[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 0
 d$chillDuration[which(d$chill.duration == "15;30;60;90")] <- NA # average across all treatments
@@ -142,8 +143,9 @@ d$chillTempUnc[which(d$datasetID == "okay11" & !is.na(d$chill.temp))] <- 1
 d$chillTemp[which(d$chill.duration == "0, 15, 30, 60")] <- NA
 d$chillDuration[which(d$chill.duration == "0, 15, 30, 60")] <- NA
 
-#bibby53 - 14-28 paper pending TO CHECK
-
+#bibby53: paper NA so setting chill treatments to na
+d$chillTemp[which(d$datasetID == "bibby53")] <- NA
+d$chillDuration[which(d$datasetID == "bibby53")] <- NA
 # === === === === === === === === === === === === === === === === === === ===
 ## Standardize chillTemp and Duration formats
 # === === === === === === === === === === === === === === === === === === ===
@@ -297,10 +299,8 @@ for(i in temp){
     d$chillDuration[i] <- NA
   }
 }
-### editing the germ temp and duration from here will be easier I think than separately
 d$chillTemp[which(d$datasetID == "yang18_1" & is.na(d$chill.duration) & d$figure == "Figure 5")] <- 4
 d$chillDuration[which(d$datasetID == "yang18_1" & is.na(d$chill.duration) & d$figure == "Figure 5")] <- 0
-#data from figure 4 and 5 seems have germination during strat TO CHECK
 temp <- which(d$datasetID == "yang18_1" & !is.na(d$chill.duration) & d$figure == "Figure 5")
 for(i in temp){
   if(d$chill.duration[i] >= d$germ.duration[i]){
@@ -310,6 +310,7 @@ for(i in temp){
 }
 
 #yang18_2 - glabra: figure numbers seem to be mismatched, will clean later once fixed TO CHECK
+
 
 #yang18_3
 d$chillDuration[which(d$datasetID == "yang18_3" & d$figure == "Figure 3")] <-
@@ -369,10 +370,6 @@ d$chillLightCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25
 d$figure[which(d$datasetID == "cousins10" & d$response == "30.769")] <- "Figure 3"
 d$chillTemp[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(5, 10, 15, rep("ave", 3))
 d$chillDuration[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(rep("ave", 3), 28, 56, 84)
-
-#yang10: TOCHECK not entered in either chilling nor storage.
-d$chillTemp[which(d$datasetID == "yang10")]  <- NA
-d$chillDuration[which(d$datasetID == "yang10")]  <- NA
 
 #zadeh15 - 5
 d$chillTemp[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- 5
@@ -474,12 +471,10 @@ temp <- c(364, "14 then 350", "28 then 336", "42 then 322", "56 then 308",
           "0 then 52", "0 then 52", "0 then 52", "0 then 52", "0 then 52", 52)
 d$chillDuration[grep("6°C", d$chill.duration)] <- temp
 d$chillTemp[which(d$datasetID == "pritchard93" & d$chillDuration == 52)] <- c(16, 6)
-
 d$chillTemp[grep("5°C", d$chill.duration)] <- "25 then 5"
 temp <- c(84, "14 then 84", "21 then 84", "28 then 84", "42 then 84", "63 then 84")
 d$chillDuration[grep("5°C", d$chill.duration)] <- temp
 d$chillTemp[which(d$datasetID == "pritchard93" & d$chillDuration == 84)] <- 5
-
 d$chillLightCycle[which(d$datasetID == "pritchard93" & !is.na(d$chill.temp))] <- 0
 
 #tylkowski91: standardize cycles for temp and duration
@@ -549,14 +544,7 @@ d$chillTempUnc[which(d$chill.temp == "15 - 25")] <- 5
 d$chillTemp[which(d$chill.temp == "3 - 5")] <- 4
 d$chillTempUnc[which(d$chill.temp == "3 - 5")] <- 1
 
-#mamut20: standardize format TOCHECK: #germination set at same time of stratification. 
-d$chillTemp[which(d$chill.temp == "alternating 5/2")] <- "5 and 2"
-d$chillTemp[which(d$chill.temp == "alternating 25/15")] <- "25 and 15"
-d$chillLightCycle[which(d$other.treatment == "cold strat during germ" & !d$photoperiod == 0)] <- 24
-d$chillLightCycle[which(d$other.treatment == "cold strat during germ" & d$photoperiod == 0)] <- 0
-d$chillLightCycle[22079:(22079+21)] <- 24
-d$chillLightCycle[22101:(22101+21)] <- 0
-d$chillDuration[which(d$chill.duration == "0 (control)")] <- 0
+#mamut20: chill temp and duration are input in storage as stated in the paper
 
 #wang09: standardize format
 d$chillTemp[which(d$chill.temp == "alternating 15/5")] <- "15 and 5"
@@ -580,7 +568,7 @@ d$chillTempCycle[which(d$chill.temp == "4,22,4,22,4,22,4,22")] <- "336 and 336"
 d$chillTempCycle[which(d$chill.temp == "4,22,4,22,4,22,4,22,4,22,4,22,4,22,4,22")] <- "168 and 168"
 d$chillDuration[which(d$datasetID == "zhou03")] <- 112
 
-#zhou08 - 20,10 & 5,15 & 10,20 &, 15,25 & 20,30 TO CHECK
+#zhou08 - 20,10 & 5,15 & 10,20 &, 15,25 & 20,30 TO CHECK. Missing 
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- 5
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "stratification" & is.na(d$chill.temp))] <- 84
 d$chillTemp[which(d$chill.temp == "20,10")] <- "25 then 5"
@@ -600,7 +588,6 @@ d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "water stress")] 
 #yang08 - 30/20 warm, cold strat---it is a day night alternating temp regime for 12 weeks # TO CHECK AND ASK KEN
 d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- 23.33
 
-# d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 and 20 then 4"
 d$chillTempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 then 20"
 d$chillLightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
 temp1 <- rep(c(60, 90, 120, 150, 180), each = 5)
@@ -642,6 +629,9 @@ d$chillLightCycle[which(d$chill.temp == "4.5-5.1")] <- 0
 #amooaghaie09: average temp and add uncertainty
 d$chillTemp[which(d$chill.temp == "4-6")] <- 5
 d$chillTempUnc[which(d$chill.temp == "4-6")] <- 1
+
+# boscagli01: wrong format TO CHECK
+# borghetti86: wrong format TO CHECK
 
 #check
 unique(d$chillTemp)
