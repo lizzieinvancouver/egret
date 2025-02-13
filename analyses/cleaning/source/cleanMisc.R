@@ -50,8 +50,11 @@ d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table20")),] # 4
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table21")),] # 4
 
 
-# chen08 vs chen09 or chien09? both the same species
-#jang22
+# chen08 vs chien09? This is the same paper, but one is the original journal article (chen08) and the other is from the
+# Taiwan Forestry Research Institute Data Catalog, but under a different first author so it got a unique dataset ID (chien09)
+
+d <- d[-which(d$datasetID == "chien09"),]  #6 
+
 
 if(FALSE){
 ##	
