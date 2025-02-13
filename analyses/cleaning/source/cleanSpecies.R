@@ -105,3 +105,6 @@ if(runworldflora){
 	names_changed <- setdiff(d_species, d_species_fix)
 	names_changed
 }
+
+unique(paste(d$genus, d$species))
+# There are 337 unique species in egret
