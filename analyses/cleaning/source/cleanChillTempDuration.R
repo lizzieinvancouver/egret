@@ -631,7 +631,11 @@ d$chillTemp[which(d$chill.temp == "4-6")] <- 5
 d$chillTempUnc[which(d$chill.temp == "4-6")] <- 1
 
 # boscagli01: wrong format TO CHECK
+
 # borghetti86: wrong format TO CHECK
+
+# subsetting for high values
+subby <- subset(d, chillTemp == c("41", "43", "45"))
 
 #check
 unique(d$chillTemp)
