@@ -99,15 +99,26 @@ d$chillDuration[which(d$datasetID == "chien09" & d$chill.temp == 4)] <-
 d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)] <-
   round(as.numeric(d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)]))
 
-#ma18 - 28 +28 # TO CHECK : is that chilling if they were observing germination? Seems to be germ duration instead of chill duration.
-d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == 28)] <-
-  NA
-d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == 28)] <-
-  0
-d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
-  c(5, 10, 25)
-d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
-  28
+#ma18 : removing chill temp and duration for figure 1, as there was no chilling
+d$chillTemp[which(d$datasetID == "ma18" & d$figure =="Figure 1")] <- NA
+d$chillDuration[which(d$datasetID == "ma18" & d$figure =="Figure 1")] <- NA
+# fixing table 1
+# germ temp at 5 no chilling
+# germ temp at 10 no chilling
+# germ temp at 15 no chilling
+# germ temp at 20 no chilling
+# germ temp at 25 no chilling
+# germ temp at 10/20 no chilling
+# germ temp at 15/20 no chilling
+
+# 5->15 so 5C for chill.temp and 28 days for duration
+# 10 -> 15, so 10 for chilling
+# 25 -> 15, so 25 for chilling
+
+# d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
+#   c(5, 10, 25)
+# d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
+#   28
 
 #mattana16: TO CHECK: chill durations seems to be germ duration. chill temp and duration should be NAs
 d$chillDuration[which(d$datasetID == "mattana16" & is.na(d$chill.temp))] <- 0
@@ -609,7 +620,7 @@ d$chillDuration[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- pas
 d$chillTemp[which(d$chill.temp == "4 +/- 2 ")] <- 4
 d$chillTempUnc[which(d$chill.temp == "4 +/- 2 ")] <- 2
 
-#battaglia97 : missing chill duration TOCHECK
+#battaglia97 : missing chill duration in the figure
 
 #fulbright86: standardize format
 d$chillTemp[which(d$chill.temp == "30/7")] <- "30 then 7"
