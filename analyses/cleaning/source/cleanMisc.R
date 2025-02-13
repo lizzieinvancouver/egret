@@ -55,6 +55,11 @@ d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table21")),] # 4
 
 d <- d[-which(d$datasetID == "chien09"),]  #6 
 
+# issue with alhelal96, other.treatment = N (1 row)
+# looks weird, all other rows (=27) have other.treatment = NA (note: I did not check the original paper) - V.V.
+d[which(d$datasetID == "alhelal96" & d$other.treatment == "N"), 'other.treatment']  <- NA
+
+
 
 if(FALSE){
 ##	
