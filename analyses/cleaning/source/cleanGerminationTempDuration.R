@@ -286,7 +286,7 @@ d$germDuration[which(d$datasetID == "schutz02" & d$germ.duration == "30-50")] <-
 #d[, 'germDurComment'] = NA
 d$Notes[which(d$datasetID == "schutz02" & d$germDuration == "50")] <- "Paper says 30-50 as germDuration due to end of germination = 1 week since last observed germinant"
 d$Notes[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- "Looked into the paper and found nothing except for germination counted every 3 days"
-
+d$germDuration[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- NA
 # Fixing the mamut20 issue here that Ken raised in ISSUE 14
 # I'm certain that all values should be 30 days incubation...the 24, 56, 84 are referring to to cold/warm stratification, not germination
 # Table 2 has mixed warm and cold stratification, so we need to transfer the data on stratification out of germTemp and into the chill or other.treatment columns
