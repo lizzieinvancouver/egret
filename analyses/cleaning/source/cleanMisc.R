@@ -49,12 +49,22 @@ d <- d[-which(d$datasetID == "pritchard93" & d$figure == "Figure 2"),]  #6
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table20")),] # 4
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table21")),] # 4
 
+# yang18_2: changing figure labels. 
+d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 3")] <- "Figure 4"
+d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 2")] <- "Figure 3"
+d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 1")] <- "Figure 2"
 
 # chen08 vs chien09? This is the same paper, but one is the original journal article (chen08) and the other is from the
 # Taiwan Forestry Research Institute Data Catalog, but under a different first author so it got a unique dataset ID (chien09)
 
 d <- d[-which(d$datasetID == "chien09"),]  #6 
 
+# issue with alhelal96, other.treatment = N (1 row)
+# looks weird, all other rows (=27) have other.treatment = NA (note: I did not check the original paper) - V.V.
+d[which(d$datasetID == "alhelal96" & d$other.treatment == "N"), 'other.treatment']  <- NA
+
+# missing other.treatment
+d[which(d$datasetID == "downie98" & is.na(d$other.treatment)), "other.treatment"] <- d[which(d$datasetID == "downie98" & is.na(d$other.treatment)), "treatment"]
 
 if(FALSE){
 ##	
@@ -71,3 +81,4 @@ d$seed.mass.given[which(d$seed.mass.given == "FALSE")] <- "N"
 
 
 }
+

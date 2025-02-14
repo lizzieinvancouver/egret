@@ -45,13 +45,17 @@ treats <- c('datasetID', 'study',
           # SCARIFICATION-RELATED
           "scarifType", "scarifTypeGen", "scarifTypeSpe", 
           
-          "chemicalCor", 
+          # CHEMICAL-RELATED (warning: concentration not cleaned)
+          "chemicalCor", "chemical.concent",
           
           # SOAKING-RELATED (IMBIBITION)
           "soaking", "soaked.in", "soaking.duration", # I guess it's not cleaned?
           
           # STRATIFICATION-RELATED
           "chillTemp", "chillDuration", "chillTempUnc", "chillTempCycle", "chillLightCycle",
+          
+          # STRAT + STORAGE
+          "dormancyTemp", "dormancyDuration",
           
           # GERMINATION-RELATED
           "germTempGen", "germTemp", "germDuration", "tempClass", "tempDay", "tempNight",
