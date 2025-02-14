@@ -98,20 +98,14 @@ d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)] <-
   round(as.numeric(d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)]))
 
 #ma18 : removing chill temp and duration for figure 1, as there was no chilling
-d$chillTemp[which(d$datasetID == "ma18" & d$figure =="Figure 1")] <- NA
-d$chillDuration[which(d$datasetID == "ma18" & d$figure =="Figure 1")] <- NA
-# fixing table 1
-# germ temp at 5 no chilling
-# germ temp at 10 no chilling
-# germ temp at 15 no chilling
-# germ temp at 20 no chilling
-# germ temp at 25 no chilling
-# germ temp at 10/20 no chilling
-# germ temp at 15/20 no chilling
-
-# 5->15 so 5C for chill.temp and 28 days for duration
-# 10 -> 15, so 10 for chilling
-# 25 -> 15, so 25 for chilling
+d$chillDuration[which(d$datasetID == "ma18" & d$chill.duration =="28")] <- 0
+d$chillDuration[which(d$datasetID == "ma18" & d$chill.duration =="28 +28")] <- 28
+d$chillTemp[which(d$datasetID == "ma18" & d$germ.temp =="5 to 15")] <- 5
+d$chillTemp[which(d$datasetID == "ma18" & d$germ.temp =="10 to 15")] <- 10
+d$chillTemp[which(d$datasetID == "ma18" & d$germ.temp =="25 to 15")] <- 25
+# 1.28--> 0
+# 2. 28+ 28 --> 28.
+# chill temp need to be updated. everything that have a /15 in germ temp has a chill temp. *double check everything that doesnt have a /15 doesnt have a chilling. 5, 10 and 25 are chill temp and respctive germtemp of 15. 
 
 # d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
 #   c(5, 10, 25)
