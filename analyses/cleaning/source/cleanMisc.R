@@ -67,7 +67,8 @@ d <- d[-which(d$datasetID == "chien09"),]  #6
 # looks weird, all other rows (=27) have other.treatment = NA (note: I did not check the original paper) - V.V.
 d[which(d$datasetID == "alhelal96" & d$other.treatment == "N"), 'other.treatment']  <- NA
 
-
+# missing other.treatment
+d[which(d$datasetID == "downie98" & is.na(d$other.treatment)), "other.treatment"] <- d[which(d$datasetID == "downie98" & is.na(d$other.treatment)), "treatment"]
 
 if(FALSE){
 ##	
