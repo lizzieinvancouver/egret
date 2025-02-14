@@ -1,49 +1,116 @@
+# Started Feb 10, 2025
+# by Victor
 
+library(dplyr) # oops
+library(ggplot2)
+library(ggsankey) # devtools::install_github("davidsjoberg/ggsankey")
+library(patchwork)
 
-particularStudies <- unitreat[unitreat$nscarif > 1 | unitreat$nchem > 1, c('datasetID', 'study', 'genusspecies')]
+# housekeeping
+rm(list=ls()) 
+options(stringsAsFactors = FALSE)
 
-chem.toremove <- unique(d[grepl('GA|BAP|ABA|hormone|regulator|kinetin|fertilizer|probiotic|herbicide|fungicide|captan|PEG|KNO3|IBA|thiourea|benzyladenine|Tween', 
-                                          d$chemicalCor),'chemicalCor'])
-chem.notremoved <- unique(d[!grepl('GA|BAP|ABA|hormone|regulator|kinetin|fertilizer|probiotic|herbicide|fungicide|captan|PEG|KNO3|IBA|thiourea|benzyladenine|Tween', 
-                                             d$chemicalCor),'chemicalCor'])
-chem.notremoved
+if(length(grep("deirdre", getwd()) > 0)) {
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
+} else if(length(grep("sapph", getwd()) > 0)) {
+  setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
+} else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
+  setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses")
+} else if(length(grep("Xiaomao", getwd()) > 0)) {
+  setwd("C:/PhD/Project/egret/analyses")
+} else if(length(grep("britanywuuu", getwd()) > 0)) {
+  setwd("/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
+} else if(length(grep("Ken", getwd())) > 0){
+  setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
+} else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
+  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+} else if(length(grep("victor", getwd())) > 0){
+  setwd('~/projects/egret/analyses')
+} 
 
+# 0. Get the cleaned data
+d <- read.csv('output/egretclean.csv')
+treats <- c('datasetID', 'study',
+            'genus', 'species', 'variety',
+            
+            "treatment", # I guess it's a summary?
+            
+            # STORAGE-RELATED
+            'storageType', 'storageTemp', "storageDuration", "storageDetails",
+            
+            # SCARIFICATION-RELATED
+            "scarifType", "scarifTypeGen", "scarifTypeSpe", 
+            
+            # CHEMICAL-RELATED (warning: concentration not cleaned)
+            "chemicalCor", "chemical.concent",
+            
+            # SOAKING-RELATED (IMBIBITION)
+            "soaking", "soaked.in", "soaking.duration", # I guess it's not cleaned?
+            
+            # STRATIFICATION-RELATED
+            "chillTemp", "chillDuration", "chillTempUnc", "chillTempCycle", "chillLightCycle",
+            
+            # STRAT + STORAGE
+            "dormancyTemp", "dormancyDuration",
+            
+            # GERMINATION-RELATED
+            "germTempGen", "germTemp", "germDuration", "tempClass", "tempDay", "tempNight",
+            "germPhotoperiod", "germPhotoperiodDay", "germPhotoperiodNight", "photoperiodCor",
+            
+            # MISC (e.g. sowing depth)
+            "other.treatment"
+            
+)
+
+# RESPONSE
+resp <- c("responseVar", "responseValue")
+
+# Unique treatments per study
+dtreat <- unique(d[,treats])
+dtreat$uniqueID <- 1:nrow(dtreat)
+d <- unique(d[, c(treats, resp)])
+d <- merge(x = d, y = dtreat, by = treats, all = TRUE)
+d$genusspecies <- paste0(d$genus, '_', d$species)
+
+# First veto: response variable
+priority <- c("percent.germ") # here, just in case, we could set several responses variables we want to prioritize
+d <- d[order(d$uniqueID, match(d$responseVar, priority)), ]
+d <- d[!duplicated(d$uniqueID), ]
+filteredd <- d[d$responseVar == 'percent.germ',]
+
+# Second veto: chemical we absolutely want to remove
+vetochems <- 'GA|BAP|ABA|hormone|regulator|kinetin|fertilizer|probiotic|herbicide|fungicide|captan|PEG|KNO3|IBA|thiourea|benzyladenine|Tween'
+chem.toremove <- unique(d[grepl(vetochems, d$chemicalCor),'chemicalCor'])
+# chem.notremoved <- unique(d[!grepl(vetochems, d$chemicalCor),'chemicalCor'])
+# chem.notremoved
+filteredd <- filteredd[!(filteredd$chemicalCor %in% chem.toremove),]
+
+# Third veto: misc. treatment we absolutely want to remove
 misc.toremove <- unique(d[grepl('stress', d$other.treatment),'other.treatment'])
+filteredd <- filteredd[!(filteredd$chemicalCor %in% misc.toremove),]
+
+# Fourth veto: no info on germination temperature
+filteredd <- filteredd[!is.na(filteredd$germTempGen),]
+
+filteredd$responseValue <- as.numeric(filteredd$responseValue)
 
 
-particulard <- d %>%
-  # dplyr::filter(paste0(datasetID,study,genusspecies) %in% paste0(particularStudies$datasetID,particularStudies$study,particularStudies$genusspecies)) %>%
-  dplyr::filter(responseVar == 'percent.germ' & !(chemicalCor %in% chem.toremove) & !(other.treatment %in% misc.toremove)) %>%
-  dplyr::filter(!is.na(germTempGen))
-
-particulard$responseValue <- as.numeric(particulard$responseValue)
-
-singularities <- particulard %>%
-  dplyr::group_by(datasetID, study, genusspecies) %>%
-  dplyr::reframe(nstorage = n_distinct(storageType, storageTemp, storageDuration, storageDetails),
-                 nscarif = n_distinct(scarifType, scarifTypeGen, scarifTypeSpe),
-                 nchem = n_distinct(chemicalCor),
-                 nother = n_distinct(other.treatment),
-                 nstrat = n_distinct(dormancyTemp, dormancyDuration),
-                 ngerm = n_distinct(germTempGen, germDuration)) %>%
-  as.data.frame()
  
-ids <- singularities[c('datasetID', 'study', 'genusspecies')]
 
-ids <- unique(particulard[c('datasetID', 'study', 'genusspecies')]) %>%
-  dplyr::filter(!(datasetID == 'forbes09' & study == 'exp20'))
+ids <- unique(filteredd[c('datasetID', 'study', 'genusspecies')])
+ids <- ids[!(ids$datasetID == 'forbes09' & ids$study == 'exp20'),]
+ids <- ids[!(ids$datasetID == 'kolodziejek19' & ids$study == 'exp0'),] # I don't understand photoperiodCor in this study, nor cleanPhotoperiod.R, so I don't want to make any mistake
 
-
-
-newd <- data.frame()
 ids$misc.tokeep <- ids$misc.check <- NA
 ids$scarif.tokeep <- ids$scarif.check <- NA
 ids$chem.tokeep <- ids$chem.check <- NA
 ids$stor.tokeep <- ids$stor.check <- NA
-
+ids$photo.tokeep <- ids$photo.check <- NA
 for(i in 1:nrow(ids)){
   
-  di <- particulard[paste0(particulard$datasetID,particulard$study,particulard$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
+  di <- filteredd[paste0(filteredd$datasetID,filteredd$study,filteredd$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
   cat(paste0("\nID: ", i, ' | ',paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ' '), "\n"))
   
   # MISC. TREATMENT
@@ -58,6 +125,15 @@ for(i in 1:nrow(ids)){
       dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
                      ngerm = n_distinct(germTempGen, germDuration),
                      ninterest = nstrat + ngerm) %>% as.data.frame()
+    
+    # Base R solution? but drop NA group, will look into it later
+    # ntreati <- aggregate(
+    #   list(nstrat = paste(di$dormancyTemp, di$dormancyDuration, sep = "_"), 
+    #        ngerm = paste(di$germTempGen, di$germDuration, sep = "_")),
+    #   by = list(other.treatment = di$other.treatment),
+    #   FUN = function(x) length(unique(x))
+    # )
+    # ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
     
     # we keep misc. with max. no. of chill/forc treatments
     treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'other.treatment'] 
@@ -137,6 +213,7 @@ for(i in 1:nrow(ids)){
                      nstrat = n_distinct(dormancyTemp, dormancyDuration),
                      ngerm = n_distinct(germTempGen, germDuration),
                      ninterest = nstrat + ngerm) %>% as.data.frame()
+    
     if(any(ntreati$nscarif > 1)){stop()} # check
     
     if(length(unique(ntreati$ninterest)) == 1){
@@ -148,17 +225,15 @@ for(i in 1:nrow(ids)){
         treat.tokeep <- unique(di$scarifType)[which(!is.na(unique(di$scarifType)))] # we keep scarified
         cat(paste0('   - Keeping: ', treat.tokeep,' (instead of control)\n'))
         
-        #newd <- rbind(newd, di[di$scarifType %in% treat.tokeep,])
         ids[i, 'scarif.tokeep'] <- treat.tokeep
         ids[i, 'scarif.check']  <- TRUE
         
         
       }else if(length(unique(di$scarifType)) > 2){
         
-        treat.tokeep <- unique(di[di$responseValue == max(di$responseValue ), 'scarifType']) # we keep scarif. with max. germ. rate
+        treat.tokeep <- unique(di[di$responseValue == max(di$responseValue), 'scarifType']) # we keep scarif. with max. germ. rate
         cat(paste0('   - Keeping: ', treat.tokeep,' (max. germ. rate observed)\n'))
         
-        # newd <- rbind(newd, di[di$scarifType %in% treat.tokeep,])
         ids[i, 'scarif.tokeep'] <- treat.tokeep
         ids[i, 'scarif.check']  <- TRUE
         
@@ -189,8 +264,7 @@ for(i in 1:nrow(ids)){
         cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
         
       }
-      
-      # newd <- rbind(newd, di[di$scarifType %in% treat.tokeep,])
+
       ids[i, 'scarif.tokeep'] <- treat.tokeep
       ids[i, 'scarif.check']  <- TRUE
       
@@ -346,14 +420,27 @@ for(i in 1:nrow(ids)){
       
       cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
       
-    }else if(length(treat.tokeep) > 1){
+    }else if(length(treat.tokeep) > 1){ # if not enough...
       
-      maxresp <- max(di[di$storConditions %in% treat.tokeep, 'responseValue'])
-      treat.tokeep <- unique(di[di$storConditions %in% treat.tokeep & di$responseValue == maxresp, 'storConditions']) 
+      maxresp <- max(di[di$storConditions %in% treat.tokeep, 'responseValue'], na.rm = TRUE)
+      treat.tokeep <- unique(di[di$storConditions %in% treat.tokeep & di$responseValue %in% maxresp, 'storConditions']) 
       cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
       
       if(length(treat.tokeep) > 1){
-        stop("Missing conditions")
+        
+        avgrespi <- di %>%
+          dplyr::group_by(storConditions) %>%
+          dplyr::filter(storConditions %in% treat.tokeep) %>%
+          dplyr::reframe(avgresp = mean(responseValue, na.rm = TRUE)) %>%
+          as.data.frame()
+        
+        treat.tokeep <- avgrespi[avgrespi$avgresp == max(avgrespi$avgresp), 'storConditions']
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + max. avg. resp.)\n'))
+        
+        if(length(treat.tokeep) > 1){
+          stop("Missing conditions") # check
+        }
+        
       }
       
     }else{
@@ -375,43 +462,179 @@ for(i in 1:nrow(ids)){
     stop("Missing conditions") # check
   }
   
+  # Summary
+  if(any(!ids$stor.check, na.rm = TRUE)){stop()} # check
+  nrow.before <- nrow(di)
+  di <- di[di$storConditions %in% ids[i, 'stor.tokeep'], ]
+  if(length(unique(di$storConditions)) > 1){stop()} # check
+  nrow.after <- nrow(di)
+  if(nrow.before!=nrow.after){
+    message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
+  }
+  
+  # PHOTOPERIOD
+  ids[i, 'photo.check']  <- FALSE
+  if(length(unique(di$germPhotoperiod)) > 1){
+    
+    cat(paste0(" > Number of photo. treat.: ", length(unique(di$germPhotoperiod)), "\n"))
+    cat('   - [');cat(paste(unique(di$germPhotoperiod)), sep = ', ');cat(']\n')
+    
+    ntreati <- di %>%
+      dplyr::group_by(germPhotoperiod) %>%
+      dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
+                     ngerm = n_distinct(germTempGen, germDuration),
+                     ninterest = nstrat + ngerm) %>% as.data.frame()
+    
+    # we keep misc. with max. no. of chill/forc treatments
+    treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'germPhotoperiod']
+    
+    if(length(treat.tokeep) == 1){
+      
+      cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
+      
+    }else if(length(treat.tokeep) > 1){ # if not enough...
+      
+      maxresp <- max(di[di$germPhotoperiod %in% treat.tokeep, 'responseValue'], na.rm = TRUE)
+      treat.tokeep <- unique(di[di$germPhotoperiod %in% treat.tokeep & di$responseValue %in% maxresp, 'germPhotoperiod']) 
+      
+      if(length(treat.tokeep) > 1){
+        
+        avgrespi <- di %>%
+          dplyr::group_by(germPhotoperiod) %>%
+          dplyr::filter(germPhotoperiod %in% treat.tokeep) %>%
+          dplyr::reframe(avgresp = mean(responseValue, na.rm = TRUE)) %>%
+          as.data.frame()
+        
+        treat.tokeep <- avgrespi[avgrespi$avgresp == max(avgrespi$avgresp), 'germPhotoperiod']
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + max. avg. resp.)\n'))
+        
+        if(length(treat.tokeep) > 1){
+          stop("Missing conditions") # check
+        }
+        
+      }else if(length(treat.tokeep) == 1){
+        
+        cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
+        
+      }else{
+        stop("Missing conditions") # check
+      }
+      
+    }else{
+      stop("Missing conditions") # check
+    }
+    
+    ids[i, 'photo.tokeep'] <- treat.tokeep
+    ids[i, 'photo.check'] <- TRUE
+    
+    
+  }else if(length(unique(di$germPhotoperiod)) == 1){
+    
+    cat(paste0(" > Only one photo. treat.\n"))
+    treat.tokeep <- unique(di$germPhotoperiod)
+    ids[i, 'photo.tokeep'] <- treat.tokeep
+    ids[i, 'photo.check'] <- TRUE
+    
+  }else{
+    stop("Missing conditions") # check
+  }
+  
+  # Summary
+  if(any(!ids$photo.check, na.rm = TRUE)){stop()} # check
+  nrow.before <- nrow(di)
+  di <- di[di$germPhotoperiod %in% ids[i, 'photo.tokeep'], ]
+  if(length(unique(di$germPhotoperiod)) > 1){stop()} # check
+  nrow.after <- nrow(di)
+  if(nrow.before!=nrow.after){
+    message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
+  }
   
 }
 
 newd <- data.frame()
 for(i in 1:nrow(ids)){
   
-  di <- particulard[paste0(particulard$datasetID,particulard$study,particulard$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
+  di <- filteredd[paste0(filteredd$datasetID,filteredd$study,filteredd$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
   di <- di[di$other.treatment %in% ids[i, 'misc.tokeep'], ]
   di <- di[di$scarifType %in% ids[i, 'scarif.tokeep'], ]
   di <- di[di$chemicalCor %in% ids[i, 'chem.tokeep'], ]
   di$storConditions <- paste(di$storageType, di$storageTemp, di$storageDuration)
   di <- di[di$storConditions %in% ids[i, 'stor.tokeep'], ]
+  di <- di[di$germPhotoperiod %in% ids[i, 'photo.tokeep'], ]
   newd <- rbind(newd, di)
   
 }
 
-newd$germTempGen <- as.numeric(newd$germTempGen)
-newd$germDuration <- as.numeric(newd$germDuration)
-newd$chillTemp <- as.numeric(newd$chillTemp)
-newd$chillDuration <- as.numeric(newd$chillDuration)
-ggplot(data = newd[newd$datasetID == 'raisi13',]) +
-  geom_point(aes(x = germTempGen*germDuration , y = responseValue, col = chillTemp*chillDuration))+
-  geom_line(aes(x = germTempGen*germDuration , y = responseValue, col = chillTemp*chillDuration, group = paste0(datasetID,study,genusspecies, chillTemp))) +
-  theme(legend.position = 'none')
-
-
-singularities <- newd %>%
+ntreats <- newd %>%
+  dplyr::filter(!is.na(germDuration) & !is.na(germTemp)) %>%
   dplyr::group_by(datasetID, study, genusspecies) %>%
-  dplyr::reframe(nstorage = n_distinct(storageType, storageTemp, storageDuration, storageDetails),
-                 nscarif = n_distinct(scarifType, scarifTypeGen, scarifTypeSpe),
-                 nchem = n_distinct(chemicalCor),
-                 nother = n_distinct(other.treatment),
-                 nstrat = n_distinct(dormancyTemp, dormancyDuration),
-                 ngerm = n_distinct(germTempGen, germDuration)) %>%
-  dplyr::filter(nstrat > 1 | ngerm > 1) %>%
-  as.data.frame() 
+  dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
+                 ngerm = n_distinct(germTempGen, germDuration)) %>% 
+  as.data.frame()
+newids <- unique(ntreats[c('datasetID', 'study', 'genusspecies')])
 
+newids_chill <- unique(ntreats[ntreats$nstrat > ntreats$ngerm, c('datasetID', 'study', 'genusspecies')])
+newids_forc <- unique(ntreats[ntreats$ngerm >= ntreats$nstrat, c('datasetID', 'study', 'genusspecies')])
 
+pdf(file=paste0("figures/studyDesign/chillhours.pdf"), height = 15, width = 18)
+par(mfrow = c(11,13), mar=c(1.4,0,0,0)+0.7, mgp=c(0,0.5,0))
+for(i in 1:nrow(newids_chill)){
+  print(i)
+  di <- newd[paste0(newd$datasetID,newd$study,newd$genusspecies) == 
+               paste0(newids_chill[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),
+             c('dormancyDuration', 'dormancyTemp', 
+               'germTempGen', 'germDuration', 'germPhotoperiod',
+               'responseValue')]
+  
+  di$chillhours <- as.numeric(di$dormancyDuration) * 24 * as.numeric(as.numeric(di$dormancyTemp) < 10 & as.numeric(di$dormancyTemp) > -20)
+  di$forc <- as.numeric(di$germDuration) * as.numeric(di$germTempGen)
+  
+  plot.new()
+  limits <- c(min(di$chillhours, na.rm = T), max(di$chillhours, na.rm = T))
+  plot.window(xlim = limits, ylim = c(0,100))
+  grid()
+  
+  points(di$responseValue ~ di$chillhours, pch = 19, col = '#498ba7', cex = 0.5)
+  # for(f in unique(paste0(di$germTempGen, di$germDuration))){
+  #   subi <- di[paste0(di$germTempGen, di$germDuration) == f, ]
+  #   lines(subi$responseValue ~ subi$chillhours, col = '#498ba7')
+  # }
+  
+  title(ylab = "Germ. perc.", cex.lab = 0.5)
+  title(xlab = "Chill hours", cex.lab = 0.5, line = -0.1)
+  title(paste("ID", i, paste(newids_chill[i,c('datasetID', 'study', 'genusspecies')], collapse = '|')), adj=0, cex.main = 0.5)
+  
+}
+dev.off()
 
-
+pdf(file=paste0("figures/studyDesign/forcingtime.pdf"), height = 15, width = 18)
+par(mfrow = c(11,13), mar=c(1.4,0,0,0)+0.7, mgp=c(0,0.5,0))
+for(i in 1:nrow(newids_forc)){
+  print(i)
+  di <- newd[paste0(newd$datasetID,newd$study,newd$genusspecies) == 
+               paste0(newids_forc[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),
+             c('dormancyDuration', 'dormancyTemp', 
+               'germTempGen', 'germDuration', 'germPhotoperiod',
+               'responseValue')]
+  
+  di$chillhours <- as.numeric(di$dormancyDuration) * 24 * as.numeric(as.numeric(di$dormancyTemp) < 10 & as.numeric(di$dormancyTemp) > -20)
+  di$forc <- as.numeric(di$germTempGen)
+  di$t <- as.numeric(di$germDuration)
+  
+  plot.new()
+  limits <- c(min(di$t, na.rm = T), max(di$t, na.rm = T))
+  plot.window(xlim = limits, ylim = c(0,100))
+  grid()
+  
+  points(di$responseValue ~ di$t, pch = 19, col = '#498ba7', cex = 0.5)
+  # for(f in unique(paste0(di$germTempGen, di$germDuration))){
+  #   subi <- di[paste0(di$germTempGen, di$germDuration) == f, ]
+  #   lines(subi$responseValue ~ subi$chillhours, col = '#498ba7')
+  # }
+  
+  title(ylab = "Germ. perc.", cex.lab = 0.5)
+  title(xlab = "Time", cex.lab = 0.5, line = -0.1)
+  title(paste("ID", i, paste(newids_forc[i,c('datasetID', 'study', 'genusspecies')], collapse = '|')), adj=0, cex.main = 0.5)
+  
+}
+dev.off()
