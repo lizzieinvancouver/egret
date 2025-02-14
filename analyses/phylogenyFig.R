@@ -27,7 +27,6 @@ usda <- read.csv("analyses/scrapeUSDAseedmanual/output/usdaGerminationData.csv")
 egret$latbi <- paste(egret$genus, egret$species, sep = "_")
 usda$latbi <- paste(usda$genus, usda$species, sep = "_")
 
-e
 sps.list <- sort(unique(egret$latbi))
 genus.list=sort(unique(egret$genus))
 
