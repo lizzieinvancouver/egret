@@ -23,64 +23,50 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 }
 
 # Get the datasets
-egret <- read.csv("output/egretclean.csv")
+egret <- read.csv("output/egretclean.csv", header = TRUE)
+egret$latbi <- paste(egret$genus, egret$species, sep = " ")
 
-ospree <- read.csv("input/ospree_clean_withchill.csv")
-ospree$latbi <- paste(ospree$genus, ospree$species, sep = "_")
 
-USDA <- read.csv("input/usdaGerminationCleaned.csv")
+ospree <- read.csv("output/ospreeEgretCleaned.csv", header = TRUE)
+ospree$latbi <- paste(ospree$genus, ospree$species, sep = " ")
 
-bb <- read.csv("output/baskinclean.csv", header =T) 
+USDA <- read.csv("output/usdaGerminationCleaned.csv", header = TRUE)
+USDA$latbi <- paste(USDA$genus, USDA$species, sep = " ")
 
-egret$latbi <- str_trim(egret$latbi)
-ospree$latbi  <- str_trim(ospree$latbi)
-USDA$latbi <- str_trim(USDA$latbi)
-bb$latbi <- str_trim(bb$latbi)
+
+bbegret <- read.csv("output/baskinegretclean.csv", header = TRUE) 
+bbusda <- read.csv("output/baskinusdaclean.csv", header = TRUE)
+
 
 ospreeSp <- unique(ospree$latbi)
 egretSp <- unique(egret$latbi)
 usdaSp <- unique(USDA$latbi)
-bbSp <- unique(bb$latbi)
-
+bbegretSp <- unique(bbegret$Genus_species)
+bbusdaSp <- unique(bbusda$Genus_species)
 
 # Compare OSPREE x EGRET
 intersect_eo <- intersect(egretSp, ospreeSp)
-length(intersect_eo)# 18 sp
+length(intersect_eo)# 8 sp
 
 # Compare OSPREE x USDA
 intersect_ou <- intersect(ospreeSp, usdaSp)
-length(intersect_ou)# 60 sp
+length(intersect_ou)# 41 sp
 
 # Compare EGRET x USDA (for fun!)
 intersect_eu <- intersect(egretSp, usdaSp)
-length(intersect_eu)# 14 sp
+length(intersect_eu)# 16 sp
 
 # Compare Baskin x EGRET
-intersect_be <- intersect(bbSp, egretSp)
-length(intersect_be)# 178 sp
+intersect_be <- intersect(bbegretSp, egretSp)
+length(intersect_be)# 207 sp
 
 # Compare Baskin x USDA
-intersect_bu <- intersect(bbSp, usdaSp)
-length(intersect_bu)# 202 sp
+intersect_bu <- intersect(bbusdaSp, usdaSp)
+length(intersect_bu)# 172 sp
 
 # Combine egret and USDA
 egretusda <- data.frame(latbi = c(egretSp, usdaSp))
 
 # Compare OSPREE x (EGRET + USDA)
 intersect_o_eu <- intersect(ospreeSp, egretusda$latbi)
-length(intersect_o_eu)# 72 sp
-
-# Compare Baskin x (EGRET + USDA)
-intersect_b_eu <- intersect(bbSp, egretusda$latbi)
-length(intersect_b_eu)# 366 sp
-
-# Egret x Ospree x USDA x Baskin
-ospreeSp <- unique(ospree$latbi)
-egretSp <- unique(egret$latbi)
-usdaSp <- unique(USDA$latbi)
-bbSp <- unique(bb$latbi)
-egretSub <- egret[egret$latbi %in% ospreeSp,]
-egretSub <- egretSub[egretSub$latbi %in% usdaSp,]
-egretSub <- egretSub[egretSub$latbi %in% bbSp,]
-
-sort(unique(egretSub$latbi))# 6 sp
+length(intersect_o_eu)# 48 sp
