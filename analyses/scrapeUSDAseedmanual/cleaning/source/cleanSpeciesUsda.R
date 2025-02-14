@@ -72,7 +72,7 @@ d$species_name[which(d$genus_name == "Pseudotsuga" & d$species_name == "menziesi
 d$species_name[which(d$genus_name == "Pseudotsuga" & d$species_name == "" & d$medium == "Vermiculite" & d$samples =="20")] <-"menziesii var. menziesii"
 d$species_name[which(d$genus_name == "Pseudotsuga" & d$species_name == "" & d$samples =="129")] <-"menziesii var. menziesii"
 # Read in the backbone dataset
-runworldflora <- TRUE
+runworldflora <- FALSE
 if(runworldflora){
   backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
   d$species_name <- tolower(d$species_name)
