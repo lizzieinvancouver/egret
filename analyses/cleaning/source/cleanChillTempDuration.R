@@ -170,7 +170,7 @@ d$chillTempUnc[which(d$datasetID == "rizwan18" & d$chill.temp == "4-5")] <- 0.5
 d$chillTemp[which(d$datasetID == "shahi-gharahlar12" & d$chill.temp == "4-5")] <- 4.5
 d$chillTempUnc[which(d$datasetID == "shahi-gharahlar12" & d$chill.temp == "4-5")] <- 0.5
 
-#markovic20: mean of 3 and 5 and adding uncertainty. Plus 168 days is the number of months of alternating temperature regime TO CHECK.
+#markovic20: fixing cycle and adjusting temperature
 d$chillTemp[which(d$datasetID == "markovic20" & d$chill.temp == "3-5")] <- 4
 d$chillTempUnc[which(d$datasetID == "markovic20" & d$chill.temp == "3-5")] <- 1
 d$chillTemp[which(d$datasetID == "markovic20" & d$chill.temp == "3/12")] <- "3 and 12"
@@ -295,11 +295,6 @@ for(i in temp){
   }
 }
 
-#yang18_2 - glabra: figure numbers seem to be mismatched, will clean later once fixed TO CHECK
-### figure 5 is fine
-### figure 6 is input as storage
-### figure 7 is input as storage
-
 #yang18_3
 d$chillDuration[which(d$datasetID == "yang18_3" & d$figure == "Figure 3")] <-
   round(as.numeric(d$chill.duration[which(d$datasetID == "yang18_3" & d$figure == "Figure 3")]))
@@ -355,7 +350,14 @@ d$chillTempCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/
 d$chillLightCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/10)/5/0")] <- "12 then 12 then 0"
 
 #cousins10: changing one entry that is in figure 3 instead table 5. TOCHECK should we keep it? They did chill temp X duration treatments and then pool across treatments to look each factor for their perc germination. that's whats presented in table 5 where ave is
-d$figure[which(d$datasetID == "cousins10" & d$response == "30.769")] <- "Figure 3"
+d$chill.duration[which(d$datasetID == "cousins10" & d$response == "71.3")] <- "28/56/64"
+d$chill.duration[which(d$datasetID == "cousins10" & d$response == "81")] <- "28/56/64"
+d$chill.duration[which(d$datasetID == "cousins10" & d$response == "69.4")] <- "28/56/64"
+
+d$chill.temp[which(d$datasetID == "cousins10" & d$response == "76.4")] <- "5/10/15"
+d$chill.temp[which(d$datasetID == "cousins10" & d$response == "76.9")] <- "5/10/15"
+d$chill.temp[which(d$datasetID == "cousins10" & d$response == "68.5")] <- "5/10/15"
+
 d$chillTemp[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(5, 10, 15, rep("ave", 3))
 d$chillDuration[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(rep("ave", 3), 28, 56, 84)
 
@@ -402,11 +404,30 @@ d$chillDuration[which(d$datasetID == "yeom21" & d$figure == "Figure 6")] <- 56
 d$chillTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 7")] <- 5
 d$chillDuration[which(d$datasetID == "yeom21" & d$figure == "Figure 7")] <- 56
 
-#song20 - 5, 10, 15, 20 # TOCHECK: been rescraped
-# temp <- c(rep("5", 5), rep("5 then 10", 4), rep("5 then 10 then 15", 3), rep("5 then 10 then 15 then 20", 2))
-# d$chillTemp[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("NA then ", temp)
-# temp <- c("31", "62", "93", "124", "155", "31 then 31", "31 then 62", "31 then 93", "31 then 124", "31 then 31 then 31", "31 then 31 then 62", "31 then 31 then 93", "31 then 31 then 31 then 31", "31 then 31 then 31 then 62")
-# d$chillDuration[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("186 then ", temp)
+#song20: standardize format
+tempfig <- c("5", "5 then 10", "5 then 10 then 15", "5 then 10 then 15 then 20", "5 then 10 then 15 then 20 then 25")
+durfig <- c("31", "31 then 30", "31 then 30 then 31", "31 then 30 then 31 then 30", "31 then 30 then 31 then 30 then 31")
+
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 3a")] <- tempfig
+d$chillDuration[which(d$datasetID == "song20" & d$figure == "Figure 3a")] <- durfig
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 3b")] <- 5
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 3c")] <- 10
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 3d")] <- 15
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 3e")] <- 20
+
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 4a")] <- tempfig
+d$chillDuration[which(d$datasetID == "song20" & d$figure == "Figure 4a")] <- durfig
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 4b")] <- 5
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 4c")] <- 10
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 4d")] <- 15
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 4e")] <- 20
+
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 5a")] <- tempfig
+d$chillDuration[which(d$datasetID == "song20" & d$figure == "Figure 5a")] <- durfig
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 5b")] <- 5
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 5c")] <- 10
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 5d")] <- 15
+d$chillTemp[which(d$datasetID == "song20" & d$figure == "Figure 5e")] <- 20
 
 #schutz02: formatting duration and temp
 d$chillTemp[which(d$datasetID == "schutz02")] <- 1.5
@@ -550,12 +571,11 @@ d$chillTempCycle[which(d$chill.temp == "4,22,4,22,4,22,4,22")] <- "336 and 336"
 d$chillTempCycle[which(d$chill.temp == "4,22,4,22,4,22,4,22,4,22,4,22,4,22,4,22")] <- "168 and 168"
 d$chillDuration[which(d$datasetID == "zhou03")] <- 112
 
-#zhou08 - 20,10 & 5,15 & 10,20 &, 15,25 & 20,30 TO CHECK. Missing 
+#zhou08: standardize format
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- 5
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "stratification" & is.na(d$chill.temp))] <- 84
 d$chillTemp[which(d$chill.temp == "20,10")] <- "25 then 5"
 d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- c(24, 24, 0, 0, "24 then 24", "24 then 24") 
-d$figure[which(d$datasetID == "zhou08" & d$treatment == "stratification")] 
 d$chillDuration[which(d$chill.temp == "20,10")] <- "28 then 56"
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "25 then 5"
 d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "24 then 24"
@@ -609,12 +629,13 @@ d$chillLightCycle[which(d$chill.temp == "4.5-5.1")] <- 0
 d$chillTemp[which(d$chill.temp == "4-6")] <- 5
 d$chillTempUnc[which(d$chill.temp == "4-6")] <- 1
 
-# boscagli01: wrong format TO CHECK
+# boscagli01: fixing format and added chillTempUnc
+d$chillTemp[which(d$chill.temp == "07-May")] <- 6
+d$chillTempUnc[which(d$chill.temp == "07-May")] <- 1
 
-# borghetti86: wrong format TO CHECK
-
-# subsetting for high values
-subby <- subset(d, chillTemp == c("41", "43", "45"))
+# borghetti86: fixing format and added chillTempUnc
+d$chillTemp[which(d$chill.temp == "03-Feb")] <- 2.5
+d$chillTempUnc[which(d$chill.temp == "03-Feb")] <- 0.5
 
 #check
 unique(d$chillTemp)
