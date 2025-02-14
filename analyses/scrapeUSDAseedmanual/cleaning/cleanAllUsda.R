@@ -63,4 +63,4 @@ source("scrapeUSDAseedmanual/cleaning/source/cleanChillUsda.R")
 # 13. Change the column names to fit egret dataset
 source("scrapeUSDAseedmanual/cleaning/source/cleanEgretColUsda.R")
 
-write.csv(d,"input/usdaGerminationCleaned.csv")
+write.csv(d,"output/usdaGerminationCleaned.csv",row.names = FALSE)
