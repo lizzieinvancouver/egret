@@ -26,43 +26,81 @@ library(phytools)
 library(caper)
 library(pez)
 
+if(FALSE){
 ###read in ospree
-d<-read.csv("input/ospreeforegret.csv")
+osp<-read.csv("input/ospreeforegret.csv")
 
 
 phylo <- read.tree("input/ospreeforegret.tre")
-
+todrop<-setdiff(egr$latbi,osp$spps)
+phyloegr<-drop.tip(phylo,todrop)
 
 
 #plot(phylo, cex=0.7)
 VCVPHY <- vcv.phylo(phylo,corr=TRUE)
-nspecies <- max(d$sppnum)
+nspecies <- max(osp$sppnum)
 
 
 
 
 
 fit <- stan("stan/uber_threeslopeintercept_modified_cholesky_updatedpriors.stan",
-            data=list(N=nrow(d),
+            data=list(N=nrow(osp),
                       n_sp=nspecies,
-                      sp=d$sppnum,
-                      x1=d$force.z,
-                      x2 = d$chill.z,
-                      x3=d$photo.z,
-                      y=d$resp,
+                      sp=osp$sppnum,
+                      x1=osp$force.z,
+                      x2 = osp$chill.z,
+                      x3=osp$photo.z,
+                      y=osp$resp,
                       Vphy=vcv(phylo, corr = TRUE)),
             iter = 4000,
             warmup = 2000, # half the iter as warmp is default, but leaving in case we want to change
             chains = 4,
             seed = 117 
 )
-
+}
 ##next steps
 ###run phylogeny model on ospree and extract posteriors
 
 #####run phylogeny model on egret+ 
 
+egr<-read.csv("input/usdaGerminationCleaned.csv")
+table(egr$responseVar)
+egr<-dplyr::filter(egr,responseVar=="perc.standard")
+sort(unique(egr$latbi))
 
+
+###
+class(egr$tempDayAvg)
+class(egr$responseValueAvg)
+egr$chillDurationAvg<-as.numeric(egr$chillDurationAvg)
+
+if(FALSE){#there are only 4 rows of data with Min and max values in predictor and response
+egr.mm<-filter(egr,!is.na(egr$responseValueMin) & !is.na(egr$responseValueMax) & !is.na(egr$tempDayMin) & !is.na(egr$tempDayMax))
+egr.mm2<-filter(egr,!is.na(egr$responseValueMin) & !is.na(egr$responseValueMax) & !is.na(egr$chillDurationMin) & !is.na(egr$chillDurationMax))
+egr.mm2<-filter(egr, !is.na(egr$chillDurationMin) & !is.na(egr$chillDurationMax))
+}
+quantile(egr$tempDayAvg,na.rm=TRUE)
+quantile(egr$chillDurationAvg,na.rm=TRUE)
+
+ggplot(egr,aes(tempDayAvg))+geom_histogram()
+ggplot(egr,aes(chillDurationAvg))+geom_histogram()
+
+
+
+table(is.na(egr$responseValueAvg))
+table(is.na(egr$responseValue))
+library(ggplot2)
+
+egr$force.z<-(egr$tempDayAvg-mean(egr$tempDayAvg,na.rm=TRUE))/sd(egr$tempDayAvg,na.rm=TRUE)
+egr$chill.z<-(egr$chillDurationAvg-mean(egr$chillDurationAvg,na.rm=TRUE))/sd(egr$chillDurationAvg,na.rm=TRUE)
+
+egrt<-filter(egr,!is.na(tempDayAvg))
+quantile(egrt$chillDurationAvg,na.rm=TRUE)
+
+
+ggplot2::ggplot(egrt,aes(force.z,responseValueAvg))+geom_point(aes(color=chill.z))+facet_wrap(~latbi)
+ 
 
 
 
