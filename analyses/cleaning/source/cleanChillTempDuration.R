@@ -97,24 +97,16 @@ d$chillDuration[which(d$datasetID == "chien09" & d$chill.temp == 4)] <-
 d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)] <-
   round(as.numeric(d$chillDuration[which(d$datasetID == "jensen97" & d$chill.temp == 4)]))
 
-#ma18 : removing chill temp and duration for figure 1, as there was no chilling
+#ma18 : chill temp for the seeds that were moved to an germ temp of 15C
 d$chillDuration[which(d$datasetID == "ma18" & d$chill.duration =="28")] <- 0
 d$chillDuration[which(d$datasetID == "ma18" & d$chill.duration =="28 +28")] <- 28
 d$chillTemp[which(d$datasetID == "ma18" & d$germ.temp =="5 to 15")] <- 5
 d$chillTemp[which(d$datasetID == "ma18" & d$germ.temp =="10 to 15")] <- 10
 d$chillTemp[which(d$datasetID == "ma18" & d$germ.temp =="25 to 15")] <- 25
-# 1.28--> 0
-# 2. 28+ 28 --> 28.
-# chill temp need to be updated. everything that have a /15 in germ temp has a chill temp. *double check everything that doesnt have a /15 doesnt have a chilling. 5, 10 and 25 are chill temp and respctive germtemp of 15. 
 
-# d$chillTemp[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
-#   c(5, 10, 25)
-# d$chillDuration[which(d$datasetID == "ma18" & d$treatment == "control" & d$chill.duration == "28 +28")] <-
-#   28
-
-#mattana16: TO CHECK: chill durations seems to be germ duration. chill temp and duration should be NAs
-d$chillDuration[which(d$datasetID == "mattana16" & is.na(d$chill.temp))] <- 0
-
+#mattana16: observed germination during strat, so considering it as a germination temperature from 5C to 10C.
+d$chillTemp[which(d$datasetID == "mattana16")] <- NA
+d$chillDuration[which(d$datasetID == "mattana16")] <- 0
 
 #nin17 TO CHECK: mean values of stratification accross 4 different durations
 dur <- c(15, 30, 60, 90)

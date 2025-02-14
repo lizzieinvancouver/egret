@@ -49,11 +49,7 @@ d <- d[-which(d$datasetID == "pritchard93" & d$figure == "Figure 2"),]  #6
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table20")),] # 4
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table21")),] # 4
 
-# yang18_2: changing figure labels 
-d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 7")] <- "Figure 8"
-d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 6")] <- "Figure 7"
-d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 5")] <- "Figure 6"
-d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 4")] <- "Figure 5"
+# yang18_2: changing figure labels. 
 d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 3")] <- "Figure 4"
 d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 2")] <- "Figure 3"
 d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 1")] <- "Figure 2"
