@@ -501,9 +501,22 @@ d$storageTemp[which(d$datasetID == "zhou08" & d$storage.temp != "room temp")] <-
 d$storageDuration[which(d$datasetID == "zhou08" & d$storage.temp != "room temp")] <- NA
 
 #yang08 - 4:65, 30/20, 4
+#Tables 3, 4 with stratification treatment
+d$storageTemp[which(d$datasetID == "yang08" & d$figure %in% c("Table 3", "Table 4"))] <- NA
+d$storageDuration[which(d$datasetID == "yang08" & d$figure %in% c("Table 3", "Table 4"))] <- NA
+
+#Figure 3 with moist storage
 d$storageTemp[which(d$datasetID == "yang08" & d$figure == "Figure 3")] <- 4
-d$storageTemp[which(d$datasetID == "yang08" & d$storage.temp == "30/20, 4")] <- NA
-d$storageDuration[which(d$datasetID == "yang08" & d$storage.temp == "30/20, 4")] <- NA
+d$storageDuration[which(d$datasetID == "yang08" & d$figure == "Figure 3")] <-
+  d$storage.time[which(d$datasetID == "yang08" & d$figure == "Figure 3")]
+
+#Figures 2, 4, 5 with dry storage
+d$storageTemp[which(d$datasetID == "yang08" & d$figure %in% c("Figure 2", "Figure 4", "Figure 5"))] <-
+  paste0("15 then 4 then ",
+         d$chill.temp[which(d$datasetID == "yang08" & d$figure %in% c("Figure 2", "Figure 4", "Figure 5"))])
+d$storageDuration[which(d$datasetID == "yang08" & d$figure %in% c("Figure 2", "Figure 4", "Figure 5"))] <-
+  paste0("NA then 5 then ",
+         d$chill.duration[which(d$datasetID == "yang08" & d$figure %in% c("Figure 2", "Figure 4", "Figure 5"))])
 
 #li17 - avg17, avg18, paper pending
 #d$storageTemp[which(d$storage.temp == "avg 17")] <- 17

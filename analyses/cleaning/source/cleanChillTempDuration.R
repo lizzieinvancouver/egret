@@ -12,6 +12,48 @@ unique(d$chill.duration)
 
 # "Continuous cold stratification" kept in cold whole experiment? How long was experiment? # CHECK : add in scraping notes that if duration of chilling wasn't provided, we input NA for duration, but we kept the temperature.
 
+
+
+temp_vals <- unique(d$chill.temp)
+neg_temp <- c(3, 4, 5, 6, 9, 43, 50, 97)
+dash <- grep("-", temp_vals)
+unc <- setdiff(dash, neg_temp)
+
+slash_unc <- grep("/-", temp_vals)
+slash <- grep("/", temp_vals)
+altern <- setdiff(slash, slash_unc)
+altern <- setdiff(altern, neg_temp)
+
+comb <- c(grep(",", temp_vals), grep(">", temp_vals))
+comb <- comb[order(comb)]
+
+papers_with_unc <- unique(d$datasetID[d$chill.temp %in% temp_vals[unc]])
+papers_with_altern <- unique(d$datasetID[d$chill.temp %in% temp_vals[altern]])
+papers_with_comb <- unique(d$datasetID[d$chill.temp %in% temp_vals[comb]])
+papers_with_na <- unique(d$datasetID[is.na(d$chill.temp)])
+
+data_points_with_chill <- nrow(d[!is.na(d$chill.temp),])
+data_points_with_unc <- nrow(d[d$chill.temp %in% temp_vals[unc],])
+data_points_with_altern <- nrow(d[d$chill.temp %in% temp_vals[altern],])
+data_points_with_comb <- nrow(d[d$chill.temp %in% temp_vals[comb],])
+
+#find data points
+idx <- which(d$chillTemp == unique(d$chillTemp)[15])
+check <- d[idx,]
+check_short <- subset(check, select = c("datasetID", "study", "entered.by",
+                                        "treatment", "chill.temp", "chill.duration",
+                                        "germ.temp", "germ.duration", "other.treatment",
+                                        "photoperiod", "respvar", "response"))
+idx <- which(d$datasetID == "airi09")
+check <- d[idx,]
+check_short <- subset(check, select = c("datasetID", "study", "species", "entered.by",
+                                        "treatment", "chill.temp", "chill.duration",
+                                        "germ.temp", "germ.duration", "other.treatment",
+                                        "photoperiod", "respvar", "response", "figure"))
+
+d$chill.duration[which(d$chill.duration == "unknown ")] <- NA
+d$chill.duration[which(d$chill.duration == "NA")] <- NA
+
 # no values like "n/a" and "N/A" so far though
 d$chill.temp[which(d$chill.temp == "n/a")] <- "NA"
 d$chill.temp[which(d$chill.temp == "N/A")] <- "NA"
@@ -66,11 +108,11 @@ d$chillTemp[which(d$datasetID == "ma18" & d$germ.temp =="25 to 15")] <- 25
 d$chillTemp[which(d$datasetID == "mattana16")] <- NA
 d$chillDuration[which(d$datasetID == "mattana16")] <- 0
 
-#nin17: mean values of stratification accross 4 different durations
+#nin17 TO CHECK: mean values of stratification accross 4 different durations
+dur <- c(15, 30, 60, 90)
 d$chillTemp[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 4
 d$chillDuration[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 0
-d$chillTemp[which(d$datasetID == "nin17" & d$treatment == "stratified")] <- 4
-d$chillDuration[which(d$datasetID == "nin17" & d$treatment == "stratified")] <- 49
+d$chillDuration[which(d$chill.duration == "15;30;60;90")] <- NA # average across all treatments
 
 #nurse08: changing months to days
 d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == "1 month")] <- 30
@@ -307,20 +349,17 @@ d$chillDuration[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/1
 d$chillTempCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/10)/5/0")] <- "NA then NA then NA"
 d$chillLightCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/10)/5/0")] <- "12 then 12 then 0"
 
-#cousins10: average temperature and duration accross treatments
-d$chill.duration[which(d$datasetID == "cousins10" & d$response == "71.3")] <- "28/56/84"
-d$chill.duration[which(d$datasetID == "cousins10" & d$response == "81")] <- "28/56/84"
-d$chill.duration[which(d$datasetID == "cousins10" & d$response == "69.4")] <- "28/56/84"
+#cousins10: changing one entry that is in figure 3 instead table 5. TOCHECK should we keep it? They did chill temp X duration treatments and then pool across treatments to look each factor for their perc germination. that's whats presented in table 5 where ave is
+d$chill.duration[which(d$datasetID == "cousins10" & d$response == "71.3")] <- "28/56/64"
+d$chill.duration[which(d$datasetID == "cousins10" & d$response == "81")] <- "28/56/64"
+d$chill.duration[which(d$datasetID == "cousins10" & d$response == "69.4")] <- "28/56/64"
+
 d$chill.temp[which(d$datasetID == "cousins10" & d$response == "76.4")] <- "5/10/15"
 d$chill.temp[which(d$datasetID == "cousins10" & d$response == "76.9")] <- "5/10/15"
 d$chill.temp[which(d$datasetID == "cousins10" & d$response == "68.5")] <- "5/10/15"
 
-d$chillDuration[which(d$datasetID == "cousins10" & d$chill.duration == "28/56/84")] <- "56"
-d$chillDuration[which(d$datasetID == "cousins10" & d$chill.duration == "28/56/84")] <- "56"
-d$chillDuration[which(d$datasetID == "cousins10" & d$chill.duration == "28/56/84")] <- "56"
-d$chillTemp[which(d$datasetID == "cousins10" & d$chill.temp == "5/10/15")] <- "10"
-d$chillTemp[which(d$datasetID == "cousins10" & d$chill.temp == "5/10/15")] <- "10"
-d$chillTemp[which(d$datasetID == "cousins10" & d$chill.temp == "5/10/15")] <- "10"
+d$chillTemp[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(5, 10, 15, rep("ave", 3))
+d$chillDuration[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(rep("ave", 3), 28, 56, 84)
 
 #zadeh15 - 5
 d$chillTemp[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- 5
@@ -546,19 +585,19 @@ d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "water stress")
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "28 then 56"
 
 #yang08 - 30/20 warm, cold strat---it is a day night alternating temp regime for 12 weeks # TO CHECK AND ASK KEN
-d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- 23.33
+d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "23.33 then 4"
 
 d$chillTempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 then 20"
 d$chillLightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
 temp1 <- rep(c(60, 90, 120, 150, 180), each = 5)
 temp2 <- rep(c(60, 90, 120, 150, 180), 5)
 d$chillDuration[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- paste0(temp1, " then ", temp2)
-# d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
-# d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
-# d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
-# d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
-# d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
-# d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
+d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
+d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
+d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
+d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
+d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
+d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
 #chilling seems to be warm + cold
 #should I change the treatment and photoperiod, since they don't seem to correspond with the results
 
@@ -597,28 +636,6 @@ d$chillTempUnc[which(d$chill.temp == "07-May")] <- 1
 # borghetti86: fixing format and added chillTempUnc
 d$chillTemp[which(d$chill.temp == "03-Feb")] <- 2.5
 d$chillTempUnc[which(d$chill.temp == "03-Feb")] <- 0.5
-
-# airi09: adding missing stratification duration and temperature
-dur <- c(rep(15, 5), rep(30, 5), rep(60, 5))
-d$chillDuration[which(d$datasetID == "airi09" & d$treatment == "stratification" & d$figure == "Table 2")] <- dur
-d$chillDuration[which(d$datasetID == "airi09" & d$treatment == "stratification" & d$figure == "Table 3")] <- 30
-d$chillTemp[which(d$datasetID == "airi09" & d$treatment == "stratification")] <- 4
-
-# barnhill82: adding chill temperature
-d$chillTemp[which(d$datasetID == "barnhill82" & d$chill.duration == "21")] <- 3
-d$chillTemp[which(d$datasetID == "barnhill82" & d$chill.duration == "56")] <- 3
-
-# budisavljevic21: fixing temperature for table 2e
-d$chillTemp[which(d$datasetID == "budisavljevic21" & d$figure == "Table2e")] <- 23
-
-# dehgan84: adding chilling combos
-d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "34.66")] <- "4 then 30"
-d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "34.66")] <- "42 then 42"
-d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "14.33")] <-  "30 then 4"
-d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "14.33")] <-  "42 then 42"
-d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "9")] <- 30
-d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "0.33")] <- 30
-d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "0" & d$chemical == "GA3")] <- 30
 
 #check
 unique(d$chillTemp)
