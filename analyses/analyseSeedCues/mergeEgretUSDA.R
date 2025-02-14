@@ -29,10 +29,13 @@ d <- read.csv("output/egretclean.csv")
 
 
 rmCol <- c("speciesID", "filePath", "pdfPageNumber", "scrapedTableNumber","pdfTableNumber", "medium", "pretreatment", 
-           "pretreatmentDuration", "pretreatmentHotWaterTemp", "photoperiod", "")
+           "pretreatmentDuration", "pretreatmentHotWaterTemp", "")
 
 # seedType: includes endocarp removed ---seems like scarification
 # what is tempunspecified?
+# what is samples?
+# clean responseVar to match cleaning done in egret: "perc.standard" mostly
+
 
 
 
