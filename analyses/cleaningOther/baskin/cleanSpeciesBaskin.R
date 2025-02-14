@@ -37,9 +37,11 @@ baskin_sp_overlap <- intersect(shared_sp_list$spec.name.ORIG, baskin$Genus_speci
 baskin_sp_overlap
 
 # I don't want to change them manually, let's see if we can use the code to help
+# Check the overlapping species
 baskin_egret <- baskin[baskin$Genus_species %in% baskin_sp_overlap, ]
 shared_sp_list$Genus_species <- shared_sp_list$spec.name.ORIG
 shared_sp_list <- unique(shared_sp_list)
+# Can we just merge them together and assign the column with correct names to the original column
 sp_name_changed <- merge(baskin_egret,shared_sp_list, by = "Genus_species", all.x = TRUE)
 # This could work, but I realized that there are some species with multiple accepted names, which needs decisions, so I will do it manually anyway...
 names_changed <- setdiff(sp_name_changed$Genus_species, sp_name_changed$scientificName)
@@ -96,6 +98,7 @@ write.csv(baskin_egret,"output/baskinegretclean.csv", row.names = FALSE)
 
 #Only correct species names appears in USDA dataset
 
+checks <- read.csv("cleaningOther/baskin/checksFull.csv", header = T)
 d <- read_csv("scrapeUSDAseedmanual/cleaning/germPreCleanedMasterSheet.csv", na = c("", "NA"))
 source("scrapeUSDAseedmanual/cleaning/source/cleanGeneralUsda.R")
 source("scrapeUSDAseedmanual/cleaning/source/cleanSpeciesUsda.R")
