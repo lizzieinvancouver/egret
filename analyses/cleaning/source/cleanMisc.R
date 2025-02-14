@@ -12,6 +12,9 @@ d <- d[-(which(d$datasetID == "lee21" & d$figure %in% c("Figure 1c", "Figure 1b"
 #na11: the description of the treatments vary between the methods and the results, so we are removing this study
 d <- d[-(which(d$datasetID == "na11")),] #12 rows
 
+# zhou08: one entry is mislabbeled figure 1.A but is for Table two 
+d$figure[which(d$datasetID == "zhou08" & d$response =="8.4")] <- "table 2"
+
 # datasets that were entered my multiple people to check for data consistency, but keeping only one
 d <- d[-(which(d$datasetID == "batlla03" & d$entered.by == "DM")),] #34
 d <- d[-(which(d$datasetID == "chen15" & d$entered.by == "AZ")),] #257

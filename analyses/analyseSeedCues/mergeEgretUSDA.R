@@ -28,23 +28,15 @@ u <- read.csv("input/usdaGerminationCleaned.csv")
 d <- read.csv("output/egretclean.csv")
 
 
-rmCol <- c("speciesID", "filePath", "pdfPageNumber", "scrapedTableNumber","pdfTableNumber", "medium", "")
+rmCol <- c("speciesID", "filePath", "pdfPageNumber", "scrapedTableNumber","pdfTableNumber", "medium", "pretreatment", 
+           "pretreatmentDuration", "pretreatmentHotWaterTemp", "")
 
 # seedType: includes endocarp removed ---seems like scarification
-# pretreatment: 
-# usda <- u[, c("genus", "species", "seedType", "source.population", "medium", "pretreatmentDuration",
-#               "stratificationTemp", "warmStratDuration", "coldStratDuration","chillDurationAvg", "germDurationAvg",  "photoperiodAvg", "responseValueAvg" 
-#               
-#               "tempDay"                  "tempNight"               
-# [21] "tempUnspecified"          "germDuration"             "samples"                  "latbi"                   
-# [25] "chilling"                 "chillDuration"            "scarifTypeGen"            "scarifTypeSpe"           
-# [29] "responseVar"              "responseValue"            "pretreatmentMin"          "pretreatmentMax"         
-# [33] "coldStratDurMin"          "coldStratDurMax"                  
-# [37] "tempDayMin"               "tempDayMax"               "tempNightMin"             "tempNightMax"            
-# [41] "germDurationMin"          "germDurationMax"          "samplesMin"               "samplesMax"              
-# [45] "chillDurationMin"         "chillDurationMax"             "pretreatmentAvg"          "coldStratDurAvg"            
-# [53] "tempDayAvg"               "tempNightAvg"             "germDurationAvg"          "samplesAvg"              
-# [57] "chillDurationAvg"        )]
+# what is tempunspecified?
+# what is samples?
+# clean responseVar to match cleaning done in egret: "perc.standard" mostly
+
+
 
 
 
