@@ -39,6 +39,7 @@ Inside each of these folders exist more folders that further dive in into the ex
 For example, 800-900/wo_ah727-19-1203-801-900-71-80.zip specifies that the data tables within this folder are from pages 871-880.
 
 2) output: where the cleaned data is located.
+UPDATE on 14 Feb 2025: the main USDA file we probably want is now in: analyses/output/usdaGerminationCleaned.csv
 
 Within this folder is a master spreadsheet containing the relevant data. Within this spreadsheet exists a data dictionary explaining the acronyms,
 a page for phenology data, a page for germination data, and a page for seedcrop data. This spreadsheet currently needs heavy revisions.
@@ -50,7 +51,7 @@ a page for phenology data, a page for germination data, and a page for seedcrop 
 UPDATES 13 June 2024
 _______________________
 
-- 2 scripts have been completed: 'rename_relevant_data_tables_script.R' goes through every single CSV file in all of the input folders and checks if they are a phenology, germination, or seed data table (and renames them if they are). The second script, 'count_data_table_types_script.R' was run after to count the number of data tables per each type (phenology, germination, or seed).
+- 2 scripts have been completed: 'renameRelevantDataTablesScript.R' goes through every single CSV file in all of the input folders and checks if they are a phenology, germination, or seed data table (and renames them if they are). The second script, 'countDataTableTypesScript.R' was run after to count the number of data tables per each type (phenology, germination, or seed).
 
 - The counts are as follows:
 1) Phenology tables: 50
