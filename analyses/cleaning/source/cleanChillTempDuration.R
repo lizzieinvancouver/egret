@@ -349,19 +349,21 @@ d$chillDuration[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/1
 d$chillTempCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/10)/5/0")] <- "NA then NA then NA"
 d$chillLightCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/10)/5/0")] <- "12 then 12 then 0"
 
-#cousins10: changing one entry that is in figure 3 instead table 5. TOCHECK should we keep it? They did chill temp X duration treatments and then pool across treatments to look each factor for their perc germination. that's whats presented in table 5 where ave is
+#cousins10: taking the mean of duration when pooled accross 3 temp and vice versa
 d$chill.duration[which(d$datasetID == "cousins10" & d$response == "71.3")] <- "28/56/64"
 d$chill.duration[which(d$datasetID == "cousins10" & d$response == "81")] <- "28/56/64"
 d$chill.duration[which(d$datasetID == "cousins10" & d$response == "69.4")] <- "28/56/64"
-
+d$chillDuration[which(d$datasetID == "cousins10" & d$response == "71.3")] <- 56
+d$chillDuration[which(d$datasetID == "cousins10" & d$response == "81")] <- 56
+d$chillDuration[which(d$datasetID == "cousins10" & d$response == "69.4")] <- 56
 d$chill.temp[which(d$datasetID == "cousins10" & d$response == "76.4")] <- "5/10/15"
 d$chill.temp[which(d$datasetID == "cousins10" & d$response == "76.9")] <- "5/10/15"
 d$chill.temp[which(d$datasetID == "cousins10" & d$response == "68.5")] <- "5/10/15"
+d$chillTemp[which(d$datasetID == "cousins10" & d$response == "76.4")] <- 10
+d$chillTemp[which(d$datasetID == "cousins10" & d$response == "76.9")] <- 10
+d$chillTemp[which(d$datasetID == "cousins10" & d$response == "68.5")] <- 10
 
-d$chillTemp[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(5, 10, 15, rep("ave", 3))
-d$chillDuration[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(rep("ave", 3), 28, 56, 84)
-
-#zadeh15 - 5
+#zadeh15
 d$chillTemp[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- 5
 d$chillDuration[which(d$datasetID == "zadeh15" & is.na(d$chill.duration))] <- 0
 d$chillDuration[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- c(5, 10, 15)
