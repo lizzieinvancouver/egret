@@ -34,4 +34,4 @@ d$genus[which(d$genus == "Spirea" & d$species == "alba")] <- "Spiraea"
 d$species[which(d$genus == "Stachyurus" & d$species == "sinensis")] <- "chinensis"
 
 
-
+write.csv(d,"output/ospreeEgretCleaned.csv",row.names = FALSE)
