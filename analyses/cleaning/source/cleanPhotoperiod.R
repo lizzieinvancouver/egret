@@ -46,4 +46,4 @@ d$photoperiodCor[dark_rows] <- "dark"
 
 # Justin: taken from cleanGerminationTempDuration "These weren't actually light treatments, it was just when the researchers wanted to check for germination
 # Not really photoperiod"
-d$photoperiodCor[which(d$photoperiodCor == "light")] <- "dark"
+#d$photoperiodCor[which(d$photoperiodCor == "light")] <- "dark"
