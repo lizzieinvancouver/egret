@@ -22,12 +22,11 @@ rm(list = ls()) # Clear whatever is already in R's memory
 options(stringsAsFactors=FALSE)# Make sure words are read in as characters rather than factors
 
 egret <- read.csv("analyses/output/egretclean.csv")
-usda <- read.csv("analyses/scrapeUSDAseedmanual/output/usdaGerminationData.csv")
+usda <- read.csv("analyses/output/usdaGerminationCleaned.csv")
 
 egret$latbi <- paste(egret$genus, egret$species, sep = "_")
 usda$latbi <- paste(usda$genus, usda$species, sep = "_")
 
-e
 sps.list <- sort(unique(egret$latbi))
 genus.list=sort(unique(egret$genus))
 

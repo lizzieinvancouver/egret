@@ -131,7 +131,7 @@ d$treatmentCor[which(d$datasetID == "boscagli01" & d$figure == "Fig 2")] <- temp
 temp <- c("control", rep("soaking x piercing", 4))
 d$treatmentCor[which(d$datasetID == "boscagli01" & d$figure == "Fig 3")] <- temp
 
-temp <- c("control", "scarification", rep("acid", 4), "piercing", "dry heat")
+temp <- c("control", "scarification", rep("acid", 4), "piercing", rep("dry heat", 2))
 d$treatmentCor[which(d$datasetID == "boscagli01" & d$figure == "Table 1")] <- temp
 temp <- rep(c("hormone", "piercing x hormone", "soaking x hormone"), each = 3)
 

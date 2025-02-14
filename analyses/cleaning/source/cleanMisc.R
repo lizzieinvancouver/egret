@@ -52,6 +52,10 @@ d <- d[-which(d$datasetID == "pritchard93" & d$figure == "Figure 2"),]  #6
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table20")),] # 4
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table21")),] # 4
 
+# Washitani85 values greater than 100 bc the x-axis values were entered as
+d <- d[-(which(d$datasetID == "washitani85" & d$entered.by == "HHN" & d$figure == "Figure 5")),] 
+
+"Figure 5"
 # yang18_2: changing figure labels. 
 d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 3")] <- "Figure 4"
 d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 2")] <- "Figure 3"

@@ -286,13 +286,15 @@ d$germDuration[which(d$datasetID == "schutz02" & d$germ.duration == "30-50")] <-
 #d[, 'germDurComment'] = NA
 d$Notes[which(d$datasetID == "schutz02" & d$germDuration == "50")] <- "Paper says 30-50 as germDuration due to end of germination = 1 week since last observed germinant"
 d$Notes[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- "Looked into the paper and found nothing except for germination counted every 3 days"
-
+d$germDuration[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- NA
 # Fixing the mamut20 issue here that Ken raised in ISSUE 14
 # I'm certain that all values should be 30 days incubation...the 24, 56, 84 are referring to to cold/warm stratification, not germination
 # Table 2 has mixed warm and cold stratification, so we need to transfer the data on stratification out of germTemp and into the chill or other.treatment columns
+# CRD 14Feb2025: fixed in chillTemp duration. DL told me to consider warm strat as chilling and 5/2C as germ temp
 d$germDuration[which(d$datasetID == "mamut20")] <- "30"
-d$germDuration[which(d$germ.duration == "9 months")] <- "274"
-d$germDuration[which(d$germ.duration == "6 montns")] <- "274" # 183 
+d$germTemp[which(d$datasetID == "mamut20" & d$figure == "table 2")] <- "5/2"
+dur <- c(rep(c(28, 56, 84), 4))
+d$germDuration[which(d$datasetID == "mamut20" & d$figure == "table 2")] <- dur
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -467,6 +469,7 @@ d$germPhotoperiod[which(d$photoperiod == "0/24 ")] <- "0/24"
 d$germPhotoperiod[which(d$photoperiod == "white 24h")] <- "24/0"
 d$germPhotoperiod[which(d$photoperiod == "not.specified")] <- NA
 
+
 # Figuring out the papers that these weird photoperiod values came from
 # d$datasetID[which(d$photoperiod == "0/16")] #gianni19 and goggans74
 #   # it's just 16/8 for both
@@ -585,6 +588,10 @@ for(i in 1:nrow(d)){
     d$germTempGen[i] <- d$germTemp[i]
   }
 }
+
+d$germTempGen[which(d$germTempGen == "15/5" & d$datasetID == "kolodziejek19")] <- "10.8333333333333"
+d$germTempGen[which(d$germTempGen == "20/10" & d$datasetID == "kolodziejek19")] <- "15.8333333333333"
+d$germTempGen[which(d$germTempGen == "25/15" & d$datasetID == "kolodziejek19")] <- "20.8333333333333"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 

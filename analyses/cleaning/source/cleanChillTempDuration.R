@@ -349,19 +349,21 @@ d$chillDuration[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/1
 d$chillTempCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/10)/5/0")] <- "NA then NA then NA"
 d$chillLightCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/10)/5/0")] <- "12 then 12 then 0"
 
-#cousins10: changing one entry that is in figure 3 instead table 5. TOCHECK should we keep it? They did chill temp X duration treatments and then pool across treatments to look each factor for their perc germination. that's whats presented in table 5 where ave is
+#cousins10: taking the mean of duration when pooled accross 3 temp and vice versa
 d$chill.duration[which(d$datasetID == "cousins10" & d$response == "71.3")] <- "28/56/64"
 d$chill.duration[which(d$datasetID == "cousins10" & d$response == "81")] <- "28/56/64"
 d$chill.duration[which(d$datasetID == "cousins10" & d$response == "69.4")] <- "28/56/64"
-
+d$chillDuration[which(d$datasetID == "cousins10" & d$response == "71.3")] <- 56
+d$chillDuration[which(d$datasetID == "cousins10" & d$response == "81")] <- 56
+d$chillDuration[which(d$datasetID == "cousins10" & d$response == "69.4")] <- 56
 d$chill.temp[which(d$datasetID == "cousins10" & d$response == "76.4")] <- "5/10/15"
 d$chill.temp[which(d$datasetID == "cousins10" & d$response == "76.9")] <- "5/10/15"
 d$chill.temp[which(d$datasetID == "cousins10" & d$response == "68.5")] <- "5/10/15"
+d$chillTemp[which(d$datasetID == "cousins10" & d$response == "76.4")] <- 10
+d$chillTemp[which(d$datasetID == "cousins10" & d$response == "76.9")] <- 10
+d$chillTemp[which(d$datasetID == "cousins10" & d$response == "68.5")] <- 10
 
-d$chillTemp[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(5, 10, 15, rep("ave", 3))
-d$chillDuration[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(rep("ave", 3), 28, 56, 84)
-
-#zadeh15 - 5
+#zadeh15
 d$chillTemp[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- 5
 d$chillDuration[which(d$datasetID == "zadeh15" & is.na(d$chill.duration))] <- 0
 d$chillDuration[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- c(5, 10, 15)
@@ -547,7 +549,16 @@ d$chillTempUnc[which(d$chill.temp == "15 - 25")] <- 5
 d$chillTemp[which(d$chill.temp == "3 - 5")] <- 4
 d$chillTempUnc[which(d$chill.temp == "3 - 5")] <- 1
 
-#mamut20: chill temp and duration are input in storage as stated in the paper
+#mamut20: standardize format and now i need to 
+# 1. change germ duration
+# 2. change photoperiodCor
+d$chillDuration[which(d$datasetID == "mamut20" & d$chill.duration == "0 (control)")] <- NA
+d$chillTemp[which(d$datasetID == "mamut20" & d$figure =="figure 3" & d$treatment =="cold strat")] <- "5 and 2"
+d$chillTemp[which(d$datasetID == "mamut20" & d$figure =="figure 3" & d$treatment =="warm strat")] <- "25 and 15"
+temp <- c(rep("25 and 15", 6))
+dur <- c(rep(28, 3), rep(56, 3), rep(28, 3), rep(56, 3))
+d$chillTemp[which(d$datasetID == "mamut20" & d$figure =="table 2")] <- temp 
+d$chillDuration[which(d$datasetID == "mamut20" & d$figure =="table 2")] <- dur
 
 #wang09: standardize format
 d$chillTemp[which(d$chill.temp == "alternating 15/5")] <- "15 and 5"
@@ -585,19 +596,19 @@ d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "water stress")
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "28 then 56"
 
 #yang08 - 30/20 warm, cold strat---it is a day night alternating temp regime for 12 weeks # TO CHECK AND ASK KEN
-d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- 23.33
+d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "23.33 then 4"
 
 d$chillTempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 then 20"
 d$chillLightCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "8 then NA"
 temp1 <- rep(c(60, 90, 120, 150, 180), each = 5)
 temp2 <- rep(c(60, 90, 120, 150, 180), 5)
 d$chillDuration[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- paste0(temp1, " then ", temp2)
-# d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
-# d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
-# d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
-# d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
-# d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
-# d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
+d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
+d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
+d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
+d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
+d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
+d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
 #chilling seems to be warm + cold
 #should I change the treatment and photoperiod, since they don't seem to correspond with the results
 
