@@ -290,9 +290,11 @@ d$germDuration[which(d$datasetID == "kato11" & d$germDuration == "unknown")] <- 
 # Fixing the mamut20 issue here that Ken raised in ISSUE 14
 # I'm certain that all values should be 30 days incubation...the 24, 56, 84 are referring to to cold/warm stratification, not germination
 # Table 2 has mixed warm and cold stratification, so we need to transfer the data on stratification out of germTemp and into the chill or other.treatment columns
+# CRD 14Feb2025: fixed in chillTemp duration. DL told me to consider warm strat as chilling and 5/2C as germ temp
 d$germDuration[which(d$datasetID == "mamut20")] <- "30"
-d$germDuration[which(d$germ.duration == "9 months")] <- "274"
-d$germDuration[which(d$germ.duration == "6 montns")] <- "274" # 183 
+d$germTemp[which(d$datasetID == "mamut20" & d$figure == "table 2")] <- "5/2"
+dur <- c(rep(c(28, 56, 84), 4))
+d$germDuration[which(d$datasetID == "mamut20" & d$figure == "table 2")] <- dur
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 

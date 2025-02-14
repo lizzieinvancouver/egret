@@ -547,7 +547,16 @@ d$chillTempUnc[which(d$chill.temp == "15 - 25")] <- 5
 d$chillTemp[which(d$chill.temp == "3 - 5")] <- 4
 d$chillTempUnc[which(d$chill.temp == "3 - 5")] <- 1
 
-#mamut20: chill temp and duration are input in storage as stated in the paper
+#mamut20: standardize format and now i need to 
+# 1. change germ duration
+# 2. change photoperiodCor
+d$chillDuration[which(d$datasetID == "mamut20" & d$chill.duration == "0 (control)")] <- NA
+d$chillTemp[which(d$datasetID == "mamut20" & d$figure =="figure 3" & d$treatment =="cold strat")] <- "5 and 2"
+d$chillTemp[which(d$datasetID == "mamut20" & d$figure =="figure 3" & d$treatment =="warm strat")] <- "25 and 15"
+temp <- c(rep("25 and 15", 6))
+dur <- c(rep(28, 3), rep(56, 3), rep(28, 3), rep(56, 3))
+d$chillTemp[which(d$datasetID == "mamut20" & d$figure =="table 2")] <- temp 
+d$chillDuration[which(d$datasetID == "mamut20" & d$figure =="table 2")] <- dur
 
 #wang09: standardize format
 d$chillTemp[which(d$chill.temp == "alternating 15/5")] <- "15 and 5"
