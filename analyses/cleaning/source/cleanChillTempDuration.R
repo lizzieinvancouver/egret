@@ -296,7 +296,9 @@ for(i in temp){
 }
 
 #yang18_2 - glabra: figure numbers seem to be mismatched, will clean later once fixed TO CHECK
-
+### figure 5 is fine
+### figure 6 is input as storage
+### figure 7 is input as storage
 
 #yang18_3
 d$chillDuration[which(d$datasetID == "yang18_3" & d$figure == "Figure 3")] <-
@@ -352,7 +354,7 @@ d$chillDuration[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/1
 d$chillTempCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/10)/5/0")] <- "NA then NA then NA"
 d$chillLightCycle[which(d$datasetID == "cuena-lombrana18" & d$chill.temp == "(25/10)/5/0")] <- "12 then 12 then 0"
 
-#cousins10: changing one entry that is in figure 3 instead table 5. TOCHECK what does ave mean?
+#cousins10: changing one entry that is in figure 3 instead table 5. TOCHECK should we keep it? They did chill temp X duration treatments and then pool across treatments to look each factor for their perc germination. that's whats presented in table 5 where ave is
 d$figure[which(d$datasetID == "cousins10" & d$response == "30.769")] <- "Figure 3"
 d$chillTemp[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(5, 10, 15, rep("ave", 3))
 d$chillDuration[which(d$datasetID == "cousins10" & d$germ.duration == 56 & d$figure == "Table 5")] <- c(rep("ave", 3), 28, 56, 84)
@@ -392,18 +394,13 @@ d$chillTempUnc[which(d$datasetID == "maithani90" & d$chill.temp == "2-4")] <- 1
 #nawrot-chorabik21
 d$chillLightCycle[which(d$datasetID == "nawrot-chorabik21" & !is.na(d$chill.temp))] <- 0
 
-#yeom21 - 5, 10, 15, 20, 25: TO CHECK
-#chill temp data seem to be for germ temp
-#notes on mgt and T50 for 25degC air temp for without pericarp may be mislabeled
-d$chillTemp[which(d$datasetID == "yeom21" & d$chill.duration == 35)] <- "5 then 25"
-d$chillDuration[which(d$datasetID == "yeom21" & d$chill.duration == 35)] <- "35 then 42"
-
-d$chillTemp[which(d$datasetID == "yeom21" & d$treatment == "cold stratification" & d$photoperiod == "16/8")] <-
-  5
-d$chillDuration[which(d$datasetID == "yeom21" & d$treatment == "cold stratification" & d$photoperiod == "16/8")] <-
-  56
-temp <- c(rep(5, 5), rep(25, 5))
-d$chillTemp[which(d$datasetID == "yeom21" & d$respvar != "per.germ")] <- temp
+#yeom21: cold strat is 5C for 8 weeks (56 days)
+d$chillTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 5")] <- 5
+d$chillDuration[which(d$datasetID == "yeom21" & d$figure == "Figure 5")] <- 56
+d$chillTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 6")] <- 5
+d$chillDuration[which(d$datasetID == "yeom21" & d$figure == "Figure 6")] <- 56
+d$chillTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 7")] <- 5
+d$chillDuration[which(d$datasetID == "yeom21" & d$figure == "Figure 7")] <- 56
 
 #song20 - 5, 10, 15, 20 # TOCHECK: been rescraped
 # temp <- c(rep("5", 5), rep("5 then 10", 4), rep("5 then 10 then 15", 3), rep("5 then 10 then 15 then 20", 2))
@@ -412,7 +409,6 @@ d$chillTemp[which(d$datasetID == "yeom21" & d$respvar != "per.germ")] <- temp
 # d$chillDuration[which(d$other.treatment == "cold stratification for 6 months")] <- paste0("186 then ", temp)
 
 #schutz02: formatting duration and temp
-#recommend to double check response variable and values and germ temp
 d$chillTemp[which(d$datasetID == "schutz02")] <- 1.5
 d$chillTempUnc[which(d$datasetID == "schutz02")] <- 1.5
 temp <- c(0, 0, 0, 0, 30, 30, 30, 30, 60, 60, 60, 60, 91, 91, 91, 91, 183, 183, 183, 183)
@@ -558,7 +554,7 @@ d$chillDuration[which(d$datasetID == "zhou03")] <- 112
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- 5
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "stratification" & is.na(d$chill.temp))] <- 84
 d$chillTemp[which(d$chill.temp == "20,10")] <- "25 then 5"
-# d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- c(24, 24, 0, 0, "24 then 24", "24 then 24") # broken here because it's missing one row of data. will be fixed soon TO CHECK
+d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "stratification")] <- c(24, 24, 0, 0, "24 then 24", "24 then 24") 
 d$figure[which(d$datasetID == "zhou08" & d$treatment == "stratification")] 
 d$chillDuration[which(d$chill.temp == "20,10")] <- "28 then 56"
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <- "25 then 5"
@@ -567,9 +563,6 @@ d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "temperature")] <
 d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "25 then 5"
 d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "24 then 24"
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "28 then 56"
-#data seems to be for germination temp instead
-#warm + cold + incubation (but no duration)
-#should incubation be included
 
 #yang08 - 30/20 warm, cold strat---it is a day night alternating temp regime for 12 weeks # TO CHECK AND ASK KEN
 d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- 23.33
