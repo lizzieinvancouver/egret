@@ -51,6 +51,11 @@ d$germTemp[which(d$germTemp == "open air")] <- "ambient"
 d$germTemp[which(d$germTemp == "open field")] <- "ambient"
 d$germTemp[which(d$germTemp == "unregulated: 6-27")] <- "ambient"
 
+# ma18: fixing germ temperature for moved seeds after changing its chill temp and duration
+d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "5 to 15")] <- 15
+d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "10 to 15")] <- 15
+d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "25 to 15")] <- 15
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -396,6 +401,8 @@ d$tempNight[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")] <- d$tempDayC
 d$tempDay[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")] <- d$tempNightCopy[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")]
 d$tempNight[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")] <- d$tempDayCopy[which(d$datasetID == "zhou08" & d$figure == "Fig 1d")]
 d$tempDay[which(d$datasetID == "zhou08" & d$figure == "Fig 1b")] <- d$tempNightCopy[which(d$datasetID == "zhou08" & d$figure == "Fig 1d")]
+
+
 
 # Deleting the template columns
 d <- d[, -which(names(d) == "tempNightCopy")]
