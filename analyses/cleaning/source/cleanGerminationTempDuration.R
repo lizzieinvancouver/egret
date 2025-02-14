@@ -467,6 +467,7 @@ d$germPhotoperiod[which(d$photoperiod == "0/24 ")] <- "0/24"
 d$germPhotoperiod[which(d$photoperiod == "white 24h")] <- "24/0"
 d$germPhotoperiod[which(d$photoperiod == "not.specified")] <- NA
 
+
 # Figuring out the papers that these weird photoperiod values came from
 # d$datasetID[which(d$photoperiod == "0/16")] #gianni19 and goggans74
 #   # it's just 16/8 for both
@@ -585,6 +586,10 @@ for(i in 1:nrow(d)){
     d$germTempGen[i] <- d$germTemp[i]
   }
 }
+
+d$germTempGen[which(d$germTempGen == "15/5" & d$datasetID == "kolodziejek19")] <- "10.8333333333333"
+d$germTempGen[which(d$germTempGen == "20/10" & d$datasetID == "kolodziejek19")] <- "15.8333333333333"
+d$germTempGen[which(d$germTempGen == "25/15" & d$datasetID == "kolodziejek19")] <- "20.8333333333333"
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
