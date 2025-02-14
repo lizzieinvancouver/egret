@@ -163,4 +163,6 @@ scarifd <- d %>%
                  nscarif = n_distinct(scarifType, scarifTypeGen, scarifTypeSpe),
                  nstrat = n_distinct(chillTemp, chillDuration, chillTempUnc, chillTempCycle, chillLightCycle),
                  ngerm = n_distinct(germTempGen, germDuration))
+
+
   
