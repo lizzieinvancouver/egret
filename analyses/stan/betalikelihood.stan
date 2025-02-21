@@ -39,7 +39,7 @@ transformed parameters{
   corr_matrix[Nsp] C_b = lambda_b * Vphy;
   C_b = C_b - diag_matrix(diagonal(C_b)) + diag_matrix(diagonal(Vphy));
   
-  // more numerically stable and more efficient to use pre-factored covariance matrices (i.e. multi_normal_cholesky in the following
+  // more numerically stable and more efficient to use pre-factored covariance matrices (i.e. multi_normal_cholesky in the following)
   matrix[Nsp,Nsp] L_a = cholesky_decompose(sigma_a^2*C_a);
   matrix[Nsp,Nsp] L_b =  cholesky_decompose(sigma_b^2*C_b); 
  
@@ -50,12 +50,8 @@ transformed parameters{
   for(i in 1:N){
     
     mu[i] = inv_logit(a[sp[i]] + b[sp[i]] * x[i]);
-    // print("-----");
-    // print(a[sp[i]], " ", b[sp[i]], " ");
-    // print(a_z, " ", b_z, " ", mu[i]);
-    // print("-----");
     shape_alpha[i] = mu[i]  * phi;
-    shape_beta[i] = (1.0 - mu[i] ) * phi;
+    shape_beta[i] = (1.0 - mu[i]) * phi;
     
   }
                                                                                          
