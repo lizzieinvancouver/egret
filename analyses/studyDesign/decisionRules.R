@@ -3,7 +3,6 @@
 
 library(dplyr) # oops
 library(ggplot2)
-library(ggsankey) # devtools::install_github("davidsjoberg/ggsankey")
 library(patchwork)
 
 # housekeeping
@@ -74,11 +73,15 @@ d <- unique(d[, c(treats, resp)])
 d <- merge(x = d, y = dtreat, by = treats, all = TRUE)
 d$genusspecies <- paste0(d$genus, '_', d$species)
 
+# Save initial number of unique dataset*experiment*species
+oldids <- unique(d[c('datasetID', 'study', 'genusspecies')])
+
 # First veto: response variable
 priority <- c("percent.germ") # here, just in case, we could set several responses variables we want to prioritize
 d <- d[order(d$uniqueID, match(d$responseVar, priority)), ]
 d <- d[!duplicated(d$uniqueID), ]
 filteredd <- d[d$responseVar == 'percent.germ',]
+filteredd$responseValue <- as.numeric(filteredd$responseValue)
 
 # Second veto: chemical we absolutely want to remove
 vetochems <- 'GA|BAP|ABA|hormone|regulator|kinetin|fertilizer|probiotic|herbicide|fungicide|captan|PEG|KNO3|IBA|thiourea|benzyladenine|Tween'
@@ -93,11 +96,6 @@ filteredd <- filteredd[!(filteredd$chemicalCor %in% misc.toremove),]
 
 # Fourth veto: no info on germination temperature
 filteredd <- filteredd[!is.na(filteredd$germTempGen),]
-
-filteredd$responseValue <- as.numeric(filteredd$responseValue)
-
-
- 
 
 ids <- unique(filteredd[c('datasetID', 'study', 'genusspecies')])
 ids <- ids[!(ids$datasetID == 'forbes09' & ids$study == 'exp20'),]
@@ -551,6 +549,7 @@ for(i in 1:nrow(ids)){
   
 }
 
+# Create the new dataset
 newd <- data.frame()
 for(i in 1:nrow(ids)){
   
@@ -558,6 +557,16 @@ for(i in 1:nrow(ids)){
   di <- di[di$other.treatment %in% ids[i, 'misc.tokeep'], ]
   di <- di[di$scarifType %in% ids[i, 'scarif.tokeep'], ]
   di <- di[di$chemicalCor %in% ids[i, 'chem.tokeep'], ]
+  
+  # some storage conditions may correspond to chilling (moist + cold)
+  for(s in 1:nrow(di)){
+    # between -20 and 10 => we consider these as chilling, not storage
+    if(di[s, 'storageType']  %in% c("moist", "moist/cold") & !is.na(as.numeric(di[s, 'storageTemp'])) &
+       as.numeric(di[s, 'storageTemp']) <= 10 & as.numeric(di[s, 'storageTemp']) >= - 20){
+      di[s, 'storageType'] <- di[s, 'storageTemp'] <- di[s, 'storageDuration'] <- NA
+    }
+  }
+  
   di$storConditions <- paste(di$storageType, di$storageTemp, di$storageDuration)
   di <- di[di$storConditions %in% ids[i, 'stor.tokeep'], ]
   di <- di[di$germPhotoperiod %in% ids[i, 'photo.tokeep'], ]
