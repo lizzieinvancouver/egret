@@ -606,3 +606,183 @@ d.summarized <- aggregate(. ~ datasetID, data = d.filtered, FUN = function(x) un
 # d.summarized <- unique(d.filtered$datasetID)
 # write.csv(d.summarized,"cleaning/checks/AlternatingTempPaperList.csv")
 
+
+# Added by V. VdM, Feb. 20 2025:
+# Checking and correcting some issue with photoperiod and germTempGen...
+# Note that in most cases, I understand why there was a problem --- but in some cases, I don't understand how it appeared 
+# (e.g. see meyer95 below)
+
+# First, we look only at studies with a germTemp, but where germTempGen == NA and germPhotoperiodDay == NA
+# note: we expect to get some warnings, because of as.numeric
+suppressWarnings(temp <- d[which(!(d$germTemp %in% c(NA, 'NA')) & as.numeric(d$germTempGen) %in% c(NA, 'NA') & d$germPhotoperiodDay %in% c(NA, 'NA')),
+                           c('datasetID', 'study', 'genus', 'species', 'treatment', 'germTemp', 
+                             'germTempGen', 'germPhotoperiod', 'germPhotoperiodDay', 'germPhotoperiodNight')])
+
+ids <- unique(temp[c('datasetID', 'study', 'genus', 'species')])
+ids$row <- 1:nrow(ids)
+ids$corrected <- NA
+counter <- 0
+for(i in 1:nrow(ids)){
+  di <- d[which(d$datasetID == ids[i, 'datasetID'] & d$study == ids[i, 'study'] &
+                  d$genus == ids[i, 'genus'] & d$species == ids[i, 'species']), ]
+  
+  phototreats <- unique(di[c('germPhotoperiod', 'germPhotoperiodDay', 'germPhotoperiodNight')])
+  
+  # if we don't have any info on photoperiod for the entire study, we cannot do anything
+  if(all((phototreats$germPhotoperiod %in% c(NA, 'NA', 'ambient')))){
+    ids[i, 'corrected'] <- FALSE
+    next
+  }
+  
+  # if we have only two treatments, this is straigthforward
+  if(nrow(phototreats) == 2){
+    # and one is NA, but still with alternating temperature
+    if(any(!(phototreats$germPhotoperiodDay %in% c(NA, 'NA')))){
+      # if we have something to replace, go for it
+      if(length(di[di$germPhotoperiodDay %in% c(NA, 'NA') & di$tempClass %in% 'alternating', 'germPhotoperiodDay']) > 0 &
+         length(unique(di[which(!(di$germPhotoperiodNight %in% c(NA, 'NA')) & di$tempClass %in% 'alternating'), 'germPhotoperiodNight'])) > 0){
+        di[di$germPhotoperiodDay %in% c(NA, 'NA') & di$tempClass %in% 'alternating', 'germPhotoperiod'] <- 
+          unique(di[which(!(di$germPhotoperiodDay %in% c(NA, 'NA')) & di$tempClass %in% 'alternating'), 'germPhotoperiod'])
+        di[di$germPhotoperiodDay %in% c(NA, 'NA') & di$tempClass %in% 'alternating', 'germPhotoperiodDay'] <- 
+          unique(di[which(!(di$germPhotoperiodDay %in% c(NA, 'NA')) & di$tempClass %in% 'alternating'), 'germPhotoperiodDay'])
+        di[di$germPhotoperiodNight %in% c(NA, 'NA') & di$tempClass %in% 'alternating', 'germPhotoperiodNight'] <- 
+          unique(di[which(!(di$germPhotoperiodNight %in% c(NA, 'NA')) & di$tempClass %in% 'alternating'), 'germPhotoperiodNight'])
+        counter <- counter + 1
+        ids[i, 'corrected'] <- TRUE
+        d[which(d$datasetID == ids[i, 'datasetID'] & d$study == ids[i, 'study'] &
+                  d$genus == ids[i, 'genus'] & d$species == ids[i, 'species']), ] <- di
+        next
+      }else if(ids[i, 'datasetID'] == "chen15"){
+        # quite explicit in the paper: "at the alternating temperature regimes, the high and low temperature was given for 12h each day"
+        ind <- which(di$germPhotoperiodDay %in% c(NA, 'NA') & di$tempClass %in% 'alternating')
+        di[ind, 'germPhotoperiod'] <- '12/12'
+        di[ind, 'germPhotoperiodDay'] <- '12'
+        di[ind, 'germPhotoperiodNight'] <- '12'
+        counter <- counter + 1
+        ids[i, 'corrected'] <- TRUE
+        d[which(d$datasetID == ids[i, 'datasetID'] & d$study == ids[i, 'study'] &
+                  d$genus == ids[i, 'genus'] & d$species == ids[i, 'species']), ] <- di
+        next
+      }
+    }
+  }else if(nrow(phototreats) > 2){
+    if(nrow(di[di$Notes %in% c('temperatures alternate 12/12'), ]) > 0){
+      # notes were not reported
+      di[di$Notes %in% c('temperatures alternate 12/12'), 'germPhotoperiod'] <- '12/12'
+      di[di$Notes %in% c('temperatures alternate 12/12'), 'germPhotoperiodDay'] <- '12'
+      di[di$Notes %in% c('temperatures alternate 12/12'), 'germPhotoperiodNight'] <- '12'
+      counter <- counter + 1
+      ids[i, 'corrected'] <- TRUE
+      d[which(d$datasetID == ids[i, 'datasetID'] & d$study == ids[i, 'study'] &
+                d$genus == ids[i, 'genus'] & d$species == ids[i, 'species']), ] <- di
+      next
+    }else if(ids[i, 'datasetID'] == 'battaglia93'){
+      # from the paper: "10/20 (14h photoperiod) and 15/20°C (18h photoperiod) alternating temperature"
+      # but very quick check, someone else should double check
+      ind <- which(di$germPhotoperiod %in% c(NA, "NA") & di$tempDay %in% '20' & di$tempNight %in% '10')
+      di[ind, 'germPhotoperiod'] <- '14/10'
+      di[ind, 'germPhotoperiodDay'] <- '14'
+      di[ind, 'germPhotoperiodNight'] <- '10'
+      ind <- which(di$germPhotoperiod %in% c(NA, "NA") & di$tempDay %in% '20' & di$tempNight %in% '15')
+      di[ind, 'germPhotoperiod'] <-'18/6'
+      di[ind, 'germPhotoperiodDay'] <-'18'
+      di[ind, 'germPhotoperiodNight'] <-'6'
+      counter <- counter + 1
+      ids[i, 'corrected'] <- TRUE
+      d[which(d$datasetID == ids[i, 'datasetID'] & d$study == ids[i, 'study'] &
+                d$genus == ids[i, 'genus'] & d$species == ids[i, 'species']), ] <- di
+      next
+    }
+  }else if(nrow(phototreats) == 1){
+    if(nrow(di[di$germPhotoperiod %in% c('14-Oct'), ]) > 0){
+      ind <- which(di$germPhotoperiod %in% c('14-Oct'))
+      di[ind, 'germPhotoperiod'] <- '14/10'
+      di[ind, 'germPhotoperiodDay'] <- '14'
+      di[ind, 'germPhotoperiodNight'] <- '10'
+      counter <- counter + 1
+      ids[i, 'corrected'] <- TRUE
+      d[which(d$datasetID == ids[i, 'datasetID'] & d$study == ids[i, 'study'] &
+                d$genus == ids[i, 'genus'] & d$species == ids[i, 'species']), ] <- di
+      next
+    }
+  }
+}
+
+# We can then correct germTempGen in the studies where we found an issue
+# note: we expect to see some warnings, but not an issue (NA are created)
+idscorrected <- ids[ids$corrected, ]
+suppressWarnings(for(i in 1:nrow(idscorrected)){
+  di <- d[which(d$datasetID == idscorrected[i, 'datasetID'] & d$study == idscorrected[i, 'study'] &
+                  d$genus == idscorrected[i, 'genus'] & d$species == idscorrected[i, 'species'] &
+                  is.na(as.numeric(d$germTempGen)) & d$tempClass %in% c('alternating')), ]
+  di$germTempGen <- (as.numeric(di$tempDay)*as.numeric(di$germPhotoperiodDay)+as.numeric(di$tempNight)*as.numeric(di$germPhotoperiodNight))/24
+  d[which(d$datasetID == idscorrected[i, 'datasetID'] & d$study == idscorrected[i, 'study'] &
+            d$genus == idscorrected[i, 'genus'] & d$species == idscorrected[i, 'species'] &
+            is.na(as.numeric(d$germTempGen)) & d$tempClass %in% c('alternating')), ] <- di
+})
+
+
+# Then, we look only at studies with a germTemp, but where germTempGen == NA and germPhotoperiodDay != NA
+# note: we expect to get some warnings, because of as.numeric
+suppressWarnings(temp <- d[which(!(d$germTemp %in% c(NA, 'NA')) & as.numeric(d$germTempGen) %in% c(NA, 'NA') & !(d$germPhotoperiodDay %in% c(NA, 'NA'))),
+                           c('datasetID', 'study', 'genus', 'species', 'treatment', 'germTemp', 'germTempGen', 
+                             'germPhotoperiod', 'tempDay', 'germPhotoperiodDay', 'germPhotoperiodNight')])
+ids2 <- unique(temp[c('datasetID', 'study', 'genus', 'species')])
+ids2$row <- 1:nrow(ids2)
+ids2$corrected <- NA
+for(i in 1:nrow(ids2)){
+  di <- d[which(d$datasetID == ids2[i, 'datasetID'] & d$study == ids2[i, 'study'] &
+                  d$genus == ids2[i, 'genus'] & d$species == ids2[i, 'species']), ]
+  
+  if(nrow(di[which(!is.na(di$germPhotoperiodDay) & is.na(di$germPhotoperiodNight)),]) > 0){
+    # in some case we only have photoperiodDay...
+    di[which(!is.na(di$germPhotoperiodDay) & is.na(di$germPhotoperiodNight)), 'germPhotoperiodNight'] <-
+      24 - as.numeric(di[which(!is.na(di$germPhotoperiodDay) & is.na(di$germPhotoperiodNight)), 'germPhotoperiodDay'])
+    counter <- counter + 1
+    ids2[i, 'corrected'] <- TRUE
+    d[which(d$datasetID == ids2[i, 'datasetID'] & d$study == ids2[i, 'study'] &
+              d$genus == ids2[i, 'genus'] & d$species == ids2[i, 'species']), ] <- di
+    next
+  }else if(any(di$tempClass %in% "three levels")){ 
+    # nothing much to do here I guess? 
+    # but it will be good to check goggans74 again, unclear to me in the paper, I don't see a three level temp. treatment
+    ids2[i, 'corrected'] <- FALSE
+    next
+  }else if(all(is.na(di$tempDay))){
+    ids2[i, 'corrected'] <- FALSE
+    next
+  }else if(ids2[i, 'datasetID'] == 'nurse08'){
+    # not much to do because, because data are pooled across three temperature regimes in the figure
+    ids2[i, 'corrected'] <- FALSE
+    next
+  }else if(ids2[i, 'datasetID'] == 'meyer95'){
+    # nothing to change here, but germTemp will be recomputed later on (I don't know why it was not computed before?)
+    ids2[i, 'corrected'] <- TRUE
+    next
+  }
+  
+  phototreats <- unique(di[c('germPhotoperiod', 'germPhotoperiodDay', 'germPhotoperiodNight')])
+  
+}
+
+# We can then correct germTempGen in the studies where we found an issue
+# note: we expect to see some warnings, but not an issue (NA are created)
+idscorrected <- ids2[ids2$corrected, ]
+suppressWarnings(for(i in 1:nrow(idscorrected)){
+  di <- d[which(d$datasetID == idscorrected[i, 'datasetID'] & d$study == idscorrected[i, 'study'] &
+                  d$genus == idscorrected[i, 'genus'] & d$species == idscorrected[i, 'species'] &
+                  is.na(as.numeric(d$germTempGen)) & d$tempClass %in% c('alternating')), ]
+  di$germTempGen <- (as.numeric(di$tempDay)*as.numeric(di$germPhotoperiodDay)+as.numeric(di$tempNight)*as.numeric(di$germPhotoperiodNight))/24
+  d[which(d$datasetID == idscorrected[i, 'datasetID'] & d$study == idscorrected[i, 'study'] &
+            d$genus == idscorrected[i, 'genus'] & d$species == idscorrected[i, 'species'] &
+            is.na(as.numeric(d$germTempGen)) & d$tempClass %in% c('alternating')), ] <- di
+})
+
+rm(temp, di, ids, ids2, idscorrected, phototreats)
+message(paste0("Corrected germTempGen-related colums for ", counter,' studies!'))
+
+
+
+
+
+
