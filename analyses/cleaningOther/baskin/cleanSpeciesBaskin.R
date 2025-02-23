@@ -92,9 +92,10 @@ baskin_egret$Genus_species[which(baskin_egret$Genus_species == "Sorbus domestica
 baskin_egret$Genus_species[which(baskin_egret$Genus_species == "Tsuga heterophyllad")] <- "Tsuga heterophylla"
 baskin_egret$Genus_species[which(baskin_egret$Genus_species == "Zannichellia palustrisi")] <- "Zannichellia palustris"
 baskin_egret$Genus_species[which(baskin_egret$Genus_species == "Zannichellia pedunculata")] <- "Ruppia maritima"
-baskin_egret <- unique(baskin_egret)
+baskin_unique <- unique(baskin_egret[, c("Genus_species", "Dormancy.Class")])
 
-write.csv(baskin_egret,"output/baskinegretclean.csv", row.names = FALSE)
+
+write.csv(baskin_unique,"output/baskinegretclean.csv", row.names = FALSE)
 
 #Only correct species names appears in USDA dataset
 
@@ -171,7 +172,10 @@ baskin_usda$Genus_species[which(baskin_egret$Genus_species == "Sambucus glauca")
 baskin_usda$Genus_species[which(baskin_egret$Genus_species == "Syringa amurensis")] <- "Syringa reticulata subsp. amurensis"
 baskin_usda$Genus_species[which(baskin_egret$Genus_species == "Tsuga heterophyllad")] <- "Tsuga heterophylla"
 
-write.csv(baskin_usda,"output/baskinusdaclean.csv", row.names = FALSE)
+usda_unique <- unique(baskin_usda[, c("Genus_species", "Dormancy.Class")])
+
+
+write.csv(usda_unique,"output/baskinusdaclean.csv", row.names = FALSE)
 
 
 
