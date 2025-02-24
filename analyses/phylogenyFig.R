@@ -19,6 +19,7 @@ library(geiger)
 #library(pez)
 library(caper)
 library(phangorn)
+library(taxize)
 
 rm(list = ls()) # Clear whatever is already in R's memory
 options(stringsAsFactors=FALSE)# Make sure words are read in as characters rather than factors
@@ -46,6 +47,21 @@ egret.phenosp.genus.inphylo<-genus.list[which(!egret.genus%in%phy.genera.uniq)] 
 ## how many phenobc species are NOT in the phylogeny?
 egret.phenosp.sps.inphylo<-egret.sps[which(!egret.sps%in%phy.sps.uniqu)] #48 out of 335
 
+# check synonyms using 2 databases from the package taxize
+### remove Eucalyptus_pauciflora ,Aster_laevis, Carex_scoparia for now 
+# vec <- c("Aster_laevis", "Carex_scoparia", "Eucalyptus_pauciflora", "Eupatorium_maculatum", "Fagus_sylvatica", "Heliopsis_helianthoides", "NA_NA", "Penstemon_scariosus", "Penstemon_pachyphyllus", "Phlox_maculata", "Phlox_pilosa", "Potentilla_argentea", "Symphyotrichum_oolentangiense", "Verbesina_encelioides")
+# egret.phenosp.sps.inphylo <- egret.phenosp.sps.inphylo[!egret.phenosp.sps.inphylo %in% vec]
+# try with db itis first
+# Load the taxize package
+
+
+
+# Define your list of species
+
+# View results
+
+# Print the final decisions
+print(decisions)
 ## fix genus 
 # Chrysojasminum: according to wiki, it's a synonym of jasminum 
 # GIT ISSUE: lizzie will find out if there is a more official ressource for Jasminum 
@@ -92,7 +108,7 @@ phy.sps.uniqu[grep("Eucalyptus_delegatensis", phy.sps.uniqu)]
 # Eucalyptus_ovata
 phy.sps.uniqu[grep("Eucalyptus_ovata", phy.sps.uniqu)]
 # Eucalyptus_pauciflora
-phy.sps.uniqu[grep("Eucalyptus_pauciflora", phy.sps.uniqu)]
+phy.sps.uniqu[grep("Eucalyptus_pauciflora", phy.sps.uniqu)] # problem with taxise package where it finds multiple entries. Removed for now but will need to be fixed
 # Eucalyptus_pauciflora subsp. niphophila
 phy.sps.uniqu[grep("Eucalyptus_pauciflora subsp. niphophila", phy.sps.uniqu)]
 # Eucomis_autumnalis
