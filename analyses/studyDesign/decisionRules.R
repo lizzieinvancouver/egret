@@ -88,8 +88,8 @@ misc.toremove <- unique(d[grepl('stress', d$other.treatment),'other.treatment'])
 filteredd <- filteredd[!(filteredd$chemicalCor %in% misc.toremove),]
 
 # For Ken: id of studies remaining at this step
-# ids <- unique(filteredd[c('datasetID', 'study', 'genusspecies')])
-# saveRDS(ids, file.path('studyDesign', 'ids_for_ken', 'ids_after_step3.rds'))
+ids <- unique(filteredd[c('datasetID', 'study', 'genusspecies')])
+write.csv(ids, file.path('studyDesign', 'ids_for_ken', 'ids_after_step3.csv'))
 
 # Fourth veto: no info on germination temperature
 filteredd <- filteredd[!is.na(filteredd$germTempGen),]
