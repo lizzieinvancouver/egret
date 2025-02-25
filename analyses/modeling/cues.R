@@ -5,6 +5,7 @@ library(stringr)
 library(ape)
 library(phytools)
 library(rstan)
+library(dplyr) # oops
 
 # housekeeping
 rm(list=ls()) 
@@ -30,7 +31,7 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd('~/projects/egret/analyses')
 } 
 
-# Load data
+# Load data, discard some experiments following various decision rules
 source('studyDesign/decisionRules.R')
 
 # Prepare phylogeny
@@ -45,13 +46,16 @@ namesphy <- phylo$tip.label
 phylo <- phytools::force.ultrametric(phylo, method="extend")
 phylo$node.label <- seq(1,length(phylo$node.label),1)
 ape::is.ultrametric(phylo)
-plot(phylo, cex=0.7)
+# plot(phylo, cex=0.7)
 phylo <- ape::drop.tip(phylo, gymno) # exclude gymnosperms
-plot(phylo, cex=0.7)
+# plot(phylo, cex=0.7)
 cphy <- ape::vcv.phylo(phylo,corr=TRUE)
 rm(gymno)
 
 # Process data 
+# (removing rows where we do not have any info on covariates, i.e. chilling and forcing) 
+# (removing species not present in the phylo tree)
+# (computing chilling hours)
 modeld <- newd %>%
   dplyr::filter(!is.na(germDuration) & !is.na(germTempGen) & !is.na(dormancyDuration) & !is.na(dormancyTemp)) %>%
   dplyr::filter(germDuration != 'unknown') %>%
@@ -67,17 +71,29 @@ modeld <- newd %>%
                 germDuration = if_else(germDuration < 0, 0, germDuration),
                 time = scale(germDuration)[,1],
                 forcing = scale(germTempGen)[,1],
-                chillh = scale(dormancyDuration * 24 * as.numeric(dormancyTemp < 10 & dormancyTemp > -20))[,1]) %>%
+                chillh10 = scale(dormancyDuration * 24 * as.numeric(dormancyTemp < 10 & dormancyTemp > -20))[,1],
+                chillh5 = scale(dormancyDuration * 24 * as.numeric(dormancyTemp < 5 & dormancyTemp > -20))[,1]) %>%
   dplyr::filter(!is.na(germDuration) & !is.na(germTempGen) & !is.na(dormancyDuration) & !is.na(dormancyTemp))
 
-# Keep only needed data in phylo tree
+# Removing potential duplicates
+modeld_wodup <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValue', 'time', 'forcing', 'chillh10')]),]
+message(paste0("Removing ", nrow(modeld)-nrow(modeld_wodup), ' potential duplicates!'))# 17 rows 
+modeld <- modeld_wodup 
+rm(modeld_wodup)
+
+# # Other test for duplicate removal: does not change anything
+# modeld$responseValueRounded <- round(modeld$responseValue,2) # rounded to 2 digits, ie percentage with 0 digits (data scraping uncertainty...?)
+# test <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValueRounded', 'time', 'forcing', 'chillh')]),]
+# nrow(modeld)-nrow(test) # still 17!
+
+# Trim the phylo tree with species present in the dataset
 spp <-  unique(modeld$genusspecies)
 length(spp)
 length(phylo$node.label)
 phylo2 <- keep.tip(phylo, spp)
 cphy <- vcv.phylo(phylo2,corr=TRUE)
 
-# Prepare data for Stan
+# Prepare data for Stan - chilling hours between -20 and 10
 modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
 mdl.data <- list(N_degen = sum(modeld$responseValue %in% c(0,1)),
                  N_prop = sum(modeld$responseValue>0 & modeld$responseValue<1),
@@ -103,9 +119,9 @@ mdl.data <- list(N_degen = sum(modeld$responseValue %in% c(0,1)),
                  f_prop = array(modeld$forcing[modeld$responseValue>0 & modeld$responseValue<1],
                                 dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
                  
-                 c_degen = array(modeld$chillh[modeld$responseValue %in% c(0,1)],
+                 c_degen = array(modeld$chillh10[modeld$responseValue %in% c(0,1)],
                                  dim = sum(modeld$responseValue%in% c(0,1))),
-                 c_prop = array(modeld$chillh[modeld$responseValue>0 & modeld$responseValue<1],
+                 c_prop = array(modeld$chillh10[modeld$responseValue>0 & modeld$responseValue<1],
                                 dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
                  
                  Vphy = cphy)
@@ -123,9 +139,58 @@ diagnostics <- list(
   max_rhat = max(summ$Rhat, na.rm = TRUE),
   min_ess = min(summ$n_eff, na.rm = TRUE)
 )
-saveRDS(fit, file = 'modeling/output/3slopes/fit.rds')
-saveRDS(summ, file = 'modeling/output/3slopes/summary.rds')
-saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics.rds')
+saveRDS(fit, file = 'modeling/output/3slopes/fit_chillh10.rds')
+saveRDS(summ, file = 'modeling/output/3slopes/summary_chillh10.rds')
+saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics_chillh10.rds')
+
+# Prepare data for Stan - chilling hours between -20 and 5
+modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
+mdl.data <- list(N_degen = sum(modeld$responseValue %in% c(0,1)),
+                 N_prop = sum(modeld$responseValue>0 & modeld$responseValue<1),
+                 
+                 Nsp =  length(unique(modeld$numspp)),
+                 sp_degen = array(modeld$numspp[modeld$responseValue %in% c(0,1)],
+                                  dim = sum(modeld$responseValue%in% c(0,1))),
+                 sp_prop = array(modeld$numspp[modeld$responseValue>0 & modeld$responseValue<1],
+                                 dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 
+                 y_degen = array(modeld$responseValue[modeld$responseValue %in% c(0,1)],
+                                 dim = sum(modeld$responseValue%in% c(0,1))),
+                 y_prop = array(modeld$responseValue[modeld$responseValue>0 & modeld$responseValue<1],
+                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 
+                 t_degen = array(modeld$time[modeld$responseValue %in% c(0,1)],
+                                 dim = sum(modeld$responseValue%in% c(0,1))),
+                 t_prop = array(modeld$time[modeld$responseValue>0 & modeld$responseValue<1],
+                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 
+                 f_degen = array(modeld$forcing[modeld$responseValue %in% c(0,1)],
+                                 dim = sum(modeld$responseValue%in% c(0,1))),
+                 f_prop = array(modeld$forcing[modeld$responseValue>0 & modeld$responseValue<1],
+                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 
+                 c_degen = array(modeld$chillh5[modeld$responseValue %in% c(0,1)],
+                                 dim = sum(modeld$responseValue%in% c(0,1))),
+                 c_prop = array(modeld$chillh5[modeld$responseValue>0 & modeld$responseValue<1],
+                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 
+                 Vphy = cphy)
+
+# Run model
+fit <- sampling(smordbeta, mdl.data, 
+                iter = 4000, warmup = 3000,
+                chains = 4, cores = 4)
+summ <- data.frame(summary(fit)[["summary"]])
+sampler_params  <- get_sampler_params(fit, inc_warmup = FALSE)
+diagnostics <- list(
+  max_treedepth= max(sapply(sampler_params, function(x) max(x[, "treedepth__"]))),
+  max_divergence = max(sapply(sampler_params, function(x) sum(x[, "divergent__"]))),
+  max_rhat = max(summ$Rhat, na.rm = TRUE),
+  min_ess = min(summ$n_eff, na.rm = TRUE)
+)
+saveRDS(fit, file = 'modeling/output/3slopes/fit_chillh5.rds')
+saveRDS(summ, file = 'modeling/output/3slopes/summary_chillh5.rds')
+saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics_chillh5.rds')
 
 # Make some plots
 summ_df <- data.frame( bf.mean = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "mean"],
@@ -156,14 +221,16 @@ baskin.aggr <- baskin %>%
 summ_df <- merge(summ_df, baskin.aggr[c("species", "newclass")], all.x = TRUE)
 
 baskin.genus <- baskin %>%
-  dplyr::add_count(Corrected.Genus, Dormancy.Class) %>%
-  dplyr::group_by(Corrected.Genus) %>%
+  dplyr::mutate(Genus = gsub(" .*$", "", Genus_species)) %>%
+  dplyr::add_count(Genus, Dormancy.Class) %>%
+  dplyr::group_by(Genus) %>%
   summarise(newclass = Dormancy.Class[n == max(n)][1]) %>% # most frequent per Genus
-  dplyr::select(Corrected.Genus, newclass)
+  dplyr::select(Genus, newclass)
 names(baskin.genus) <- c('genus', 'newclass.genus')
 summ_df$genus <- gsub("_.*$", "", summ_df$species)
 summ_df <- merge(summ_df, baskin.genus[c("genus", "newclass.genus")], all.x = TRUE)
 summ_df$dormancyclass <- ifelse(!is.na(summ_df$newclass), summ_df$newclass, summ_df$newclass.genus)
+summ_df$dormancyclass.genusapprox <- ifelse(!is.na(summ_df$newclass), FALSE, ifelse(!is.na(summ_df$dormancyclass), TRUE, FALSE))
 
 summ_df$dormancyclass <- ifelse(summ_df$dormancyclass %in% c("PDPD"), "PD", summ_df$dormancyclass)
 summ_df$dormancyclass <- ifelse(summ_df$dormancyclass %in% c("MPDPD"), "MPD", summ_df$dormancyclass)
@@ -172,9 +239,9 @@ summ_df$dormancyclass <- ifelse(!(summ_df$dormancyclass %in% c("ND")) & grepl('N
 summ_df$dormancyclass <- ifelse(is.na(summ_df$dormancyclass), "Unknown", summ_df$dormancyclass)
 unique(summ_df$dormancyclass)
 
-summ_df$dormancyclass.simp <- ifelse(summ_df$dormancyclass %in% c("PD", "MD"), "Endogenous", 
+summ_df$dormancyclass.simp <- ifelse(summ_df$dormancyclass %in% c("PD", "MD", "MPD"), "Endogenous", 
                                      ifelse(summ_df$dormancyclass %in% c("PY"), "Exogenous", 
-                                            ifelse(summ_df$dormancyclass %in% c("MPD", "PYPD"), "Mixed", summ_df$dormancyclass))) 
+                                            ifelse(summ_df$dormancyclass %in% c("PYPD"), "Mixed", summ_df$dormancyclass))) 
 summ_df$dormancyclass.simp <- ifelse(summ_df$dormancyclass %in% c("ND"), "Non-dormant", summ_df$dormancyclass.simp)
 summ_df$dormancyclass.simp <- ifelse(summ_df$dormancyclass %in% c("Unknown", "Unclear"), "Unclear, unknown", summ_df$dormancyclass.simp)
 unique(summ_df$dormancyclass.simp)
@@ -197,7 +264,8 @@ forcingeffect <- ggplot(data = arrange(summ_df,desc(bf.mean))) +
         panel.grid.major.y = element_blank()) +
   labs(x = "Forcing effect")
 
-forcingeffect_baskin <- ggplot(data = arrange(summ_df,desc(bf.mean))) +
+forcingeffect_baskin <- 
+  ggplot(data = arrange(summ_df,desc(bf.mean))) +
   geom_vline(aes(xintercept = 0), col = "grey90", linetype = "dashed") +
   geom_pointrange(aes(xmin = bf.q25, xmax = bf.q75, x = bf.mean, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species),
                       col = dormancyclass.simp), 
@@ -205,10 +273,12 @@ forcingeffect_baskin <- ggplot(data = arrange(summ_df,desc(bf.mean))) +
   geom_pointrange(aes(xmin = bf.q2.5, xmax = bf.q97.5, x = bf.mean, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species),
                       col = dormancyclass.simp), 
                   size = 0.05, linewidth = 0.5, alpha = 0.5) +
-  geom_point(aes(x = bf.mean, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species),), col = 'white', size = 0.01) +
+  geom_point(aes(x = bf.mean, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species)), col = 'white', size = 0.01) +
+  geom_text(aes(x = -3.7, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species), label = ifelse(dormancyclass.genusapprox, "~", "")), size = 2) + 
   theme_bw() +
-  scale_color_manual(values = c('#7fa688', '#ddb166', '#D98B65', "#6B95B2", "grey"), breaks = c('Endogenous', "Mixed", "Exogenous", "Non-dormant", "Unclear, unknown")) +
-  scale_x_continuous(position = "top", limits = c(-3.6,3.6)) +
+  scale_color_manual(values = c('#7fa688', '#ddb166', '#D98B65', "#6B95B2", "grey70"), breaks = c('Endogenous', "Mixed", "Exogenous", "Non-dormant", "Unclear, unknown")) +
+  coord_cartesian(clip = "off", ylim = c(0,126), xlim = c(-3.6,3.6), expand = FALSE) +
+  scale_x_continuous(position = "top") +
   theme(axis.title.y = element_blank(), axis.text.y = element_text(size = 5),
         axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
         axis.title.x = element_text(size = 7), axis.text.x = element_text(size = 6),
@@ -221,9 +291,41 @@ forcingeffect_baskin <- ggplot(data = arrange(summ_df,desc(bf.mean))) +
     legend.text = element_text(size = 6.5, margin = margin(l = 1,  r = 1.5)),
     legend.position = "bottom", legend.margin = margin(t=0,b=0,l=0,r=0))+
   guides(col=guide_legend(nrow=2,byrow=FALSE)) +
-  labs(x = "Forcing effect")
+  labs(x = "Forcing effect") 
 
-ggsave(forcingeffect_baskin, filename = "modeling/figures/cues/forcingeffect_baskin.pdf", height = 9, width = 3.5)
+ggsave(forcingeffect_baskin, filename = "modeling/figures/cues/forcingeffect_baskin_chillh5.pdf", height = 9, width = 3.5)
+
+forcingeffect_baskin_endogenous <- ggplot(data = arrange(summ_df,desc(bf.mean)) %>% filter(dormancyclass.simp == "Endogenous")) +
+  geom_vline(aes(xintercept = 0), col = "grey90", linetype = "dashed") +
+  geom_pointrange(aes(xmin = bf.q25, xmax = bf.q75, x = bf.mean, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species),
+                      col = dormancyclass), 
+                  size = 0.07, linewidth = 0.7) +
+  geom_pointrange(aes(xmin = bf.q2.5, xmax = bf.q97.5, x = bf.mean, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species),
+                      col = dormancyclass), 
+                  size = 0.05, linewidth = 0.5, alpha = 0.5) +
+  geom_point(aes(x = bf.mean, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species),), col = 'white', size = 0.01) +
+  geom_text(aes(x = -3.7, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species), label = ifelse(dormancyclass.genusapprox, "~", "")), size = 2) + 
+  theme_bw() +
+  scale_color_manual(values = c('#7fa688', '#6d8fb7', '#a67f9d'), breaks = c('PD', "MPD", "MD"),
+                     labels = c("Physiological", "Morpho-physiological", "Morphological")) +
+  coord_cartesian(clip = "off", ylim = c(0,83), xlim = c(-3.6,3.6), expand = FALSE) +
+  scale_x_continuous(position = "top") +
+  theme(axis.title.y = element_blank(), axis.text.y = element_text(size = 5),
+        axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
+        axis.title.x = element_text(size = 7), axis.text.x = element_text(size = 6),
+        panel.grid = element_blank()) +
+  theme(
+    legend.title = element_blank(),
+    legend.key.height  = unit(5, "pt"),
+    legend.key.width  = unit(5, "pt"),
+    legend.key.spacing.x = unit(1, "pt"),
+    legend.text = element_text(size = 6.5, margin = margin(l = 1,  r = 1.5)),
+    legend.position = "bottom", legend.margin = margin(t=0,b=0,l=0,r=0))+
+  guides(col=guide_legend(nrow=1,byrow=FALSE)) +
+  labs(x = "Forcing effect") +
+  annotate("text", x = -7.2, y = 88, label = "Only endogenous, ordered by mean forcing effect", size = 1.8, hjust = 0)
+
+ggsave(forcingeffect_baskin_endogenous, filename = "modeling/figures/cues/forcingeffect_baskin_endogenous_chillh5.pdf", height = 6, width = 3.5)
 
 chillingeffect <- ggplot(data = summ_df) +
   geom_pointrange(aes(xmin = bc.q25, xmax = bc.q75, x = bc.mean, y = species,
@@ -250,9 +352,11 @@ chillingeffect_baskin <- ggplot(data = arrange(summ_df,desc(bc.mean))) +
                       col = dormancyclass.simp), 
                   size = 0.05, linewidth = 0.5, alpha = 0.5) +
   geom_point(aes(x = bc.mean, y = factor(species,level = arrange(summ_df,desc(bc.mean))$species),), col = 'white', size = 0.01) +
+  geom_text(aes(x = -6.6, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species), label = ifelse(dormancyclass.genusapprox, "~", "")), size = 2) + 
   theme_bw() +
-  scale_color_manual(values = c('#7fa688', '#ddb166', '#D98B65', "#6B95B2", "grey"), breaks = c('Endogenous', "Mixed", "Exogenous", "Non-dormant", "Unclear, unknown")) +
-  scale_x_continuous(position = "top", limits = c(-6,6)) +
+  scale_color_manual(values = c('#7fa688', '#ddb166', '#D98B65', "#6B95B2", "grey70"), breaks = c('Endogenous', "Mixed", "Exogenous", "Non-dormant", "Unclear, unknown")) +
+  coord_cartesian(clip = "off", ylim = c(0,126), xlim = c(-6.4,6.4), expand = FALSE) +
+  scale_x_continuous(position = "top") +
   theme(axis.title.y = element_blank(), axis.text.y = element_text(size = 5),
         axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
         axis.title.x = element_text(size = 7), axis.text.x = element_text(size = 6),
@@ -267,7 +371,39 @@ chillingeffect_baskin <- ggplot(data = arrange(summ_df,desc(bc.mean))) +
   guides(col=guide_legend(nrow=2,byrow=FALSE)) +
   labs(x = "Chilling effect")
 
-ggsave(chillingeffect_baskin, filename = "modeling/figures/cues/chillingeffect_baskin.pdf", height = 9, width = 3.5)
+ggsave(chillingeffect_baskin, filename = "modeling/figures/cues/chillingeffect_baskin_chillh5.pdf", height = 9, width = 3.5)
+
+chillingeffect_baskin_endogenous <- ggplot(data = arrange(summ_df,desc(bc.mean)) %>% filter(dormancyclass.simp == "Endogenous")) +
+  geom_vline(aes(xintercept = 0), col = "grey90", linetype = "dashed") +
+  geom_pointrange(aes(xmin = bc.q25, xmax = bc.q75, x = bc.mean, y = factor(species,level = arrange(summ_df,desc(bc.mean))$species),
+                      col = dormancyclass), 
+                  size = 0.07, linewidth = 0.7) +
+  geom_pointrange(aes(xmin = bc.q2.5, xmax = bc.q97.5, x = bc.mean, y = factor(species,level = arrange(summ_df,desc(bc.mean))$species),
+                      col = dormancyclass), 
+                  size = 0.05, linewidth = 0.5, alpha = 0.5) +
+  geom_point(aes(x = bc.mean, y = factor(species,level = arrange(summ_df,desc(bc.mean))$species),), col = 'white', size = 0.01) +
+  geom_text(aes(x = -6.6, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species), label = ifelse(dormancyclass.genusapprox, "~", "")), size = 2) + 
+  theme_bw() +
+  scale_color_manual(values = c('#7fa688', '#6d8fb7', '#a67f9d'), breaks = c('PD', "MPD", "MD"),
+                     labels = c("Physiological", "Morpho-physiological", "Morphological")) +
+  coord_cartesian(clip = "off", ylim = c(0,83), xlim = c(-6.4,6.4), expand = FALSE) +
+  scale_x_continuous(position = "top") +
+  theme(axis.title.y = element_blank(), axis.text.y = element_text(size = 5),
+        axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
+        axis.title.x = element_text(size = 7), axis.text.x = element_text(size = 6),
+        panel.grid = element_blank()) +
+  theme(
+    legend.title = element_blank(),
+    legend.key.height  = unit(5, "pt"),
+    legend.key.width  = unit(5, "pt"),
+    legend.key.spacing.x = unit(1, "pt"),
+    legend.text = element_text(size = 6.5, margin = margin(l = 1,  r = 1.5)),
+    legend.position = "bottom", legend.margin = margin(t=0,b=0,l=0,r=0))+
+  guides(col=guide_legend(nrow=1,byrow=FALSE)) +
+  labs(x = "Chilling effect") +
+  annotate("text", x = -11.5, y = 88, label = "Only endogenous, ordered by mean chilling effect", size = 1.8, hjust = 0)
+
+ggsave(chillingeffect_baskin_endogenous, filename = "modeling/figures/cues/chillingeffect_baskin_endogenous_chillh5.pdf", height = 6, width = 3.5)
 
 timeeffect <- ggplot(data = summ_df) +
   geom_pointrange(aes(xmin = bt.q25, xmax = bt.q75, x = bt.mean, y = species,
