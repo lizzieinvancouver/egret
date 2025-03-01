@@ -80,6 +80,14 @@ d$chillDuration[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA
 # === === === === === === === === === === === === === === === === === === ===
 ## Clean remaining chill duration
 # === === === === === === === === === === === === === === === === === === ===
+#chen08
+d$chillDuration[which(d$datasetID == "chen08" & d$figure == "Table1")] <-
+  as.numeric(d$chill.duration[which(d$datasetID == "chen08" & d$figure == "Table1")]) - 30
+
+#chen06
+temp <- rep(c(0, 30, 60, 90, 180, 270, 360), 2)
+d$chillDuration[which(d$datasetID == "chen06")] <- temp
+
 #nkomo09 : rounding up to 4 days.
 d$chillDuration[which(d$datasetID == "nkomo09" & d$chill.duration == 3.5)] <- 4
 
@@ -210,9 +218,13 @@ d$chillDuration[which(d$datasetID == "acosta13")] <- NA
 #brandel05: adding cycle
 temp <- c(NA, NA, 5, 5, 11, 11, 13, 13, 15, 15)
 d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "primary dormant")] <- temp
-temp <- c("", "", 5, 5, 11, 11, 13, 13, 15, 15)
-d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "secondary dormant")] <- paste0("5 then 25 then ",  temp)
-d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "secondary dormant")] <- "4 then 4 then 4"
+temp <- c(NA, NA, rep(28, 8))
+d$chillDuration[which(d$datasetID == "brandel05" & d$other.treatment == "primary dormant")] <- temp
+
+temp <- c("", "", paste0(" then ", c(5, 5, 11, 11, 13, 13, 15, 15)))
+d$chillTemp[which(d$datasetID == "brandel05" & d$other.treatment == "secondary dormant")] <- paste0("5 then 25",  temp)
+temp <- c("", "", rep(" then 28", 8))
+d$chillDuration[which(d$datasetID == "brandel05" & d$other.treatment == "secondary dormant")] <- paste0("28 then 28", temp)
 
 #Boscagli01: average temp and add uncertainty
 d$chillTemp[which(d$datasetID == "boscagli01" & d$chill.temp == "5-7")] <- 6
@@ -444,6 +456,8 @@ d$chillTempUnc[which(d$datasetID == "omar21" & !is.na(d$chill.temp))] <- 1
 
 #grose57: change every temp so it's 4.4 C instead of 3.3 to 5C
 d$chillTemp[which(d$chill.temp == 4.44 | d$chill.temp == "3.3-5")] <- 4.4
+d$chillTemp[which(d$datasetID == "grose57" & d$figure == "Text")] <- NA
+d$chillDuration[which(d$datasetID == "grose57" & d$figure == "Text")] <- NA
 
 #pipinis09: standardize format of duration, temp and cycle
 d$chillTemp[which(d$chill.temp == "20/25")] <- "20 and 25"
