@@ -73,6 +73,14 @@ d[which(d$datasetID == "alhelal96" & d$other.treatment == "N"), 'other.treatment
 # missing other.treatment
 d[which(d$datasetID == "downie98" & is.na(d$other.treatment)), "other.treatment"] <- d[which(d$datasetID == "downie98" & is.na(d$other.treatment)), "treatment"]
 
+# non-existent data in budisavljevic21
+d <- d[-which(d$datasetID == "budisavljevic21" &
+                d$treatment %in% c("warm stratification", "Warm stratification") &
+                d$figure != "Table2e"),]
+
+# fix grouping, fix study and figure some other time
+d$study[which(d$datasetID == "kulkarni06" & d$study == "exp3" & d$figure == "fiigure 3")] <- "exp2"
+
 if(FALSE){
 ##	
 ## From clean_other.R, Original file called coordinate_cleaning_JS.R
