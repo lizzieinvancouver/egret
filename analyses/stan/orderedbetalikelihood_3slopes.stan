@@ -92,24 +92,6 @@ parameters {
 
 transformed parameters {
   
-  corr_matrix[Nsp] C_a = lambda_a * Vphy;
-  C_a = C_a - diag_matrix(diagonal(C_a)) + diag_matrix(diagonal(Vphy));
-  
-  corr_matrix[Nsp] C_bt = lambda_bt * Vphy;
-  C_bt = C_bt - diag_matrix(diagonal(C_bt)) + diag_matrix(diagonal(Vphy));
-  
-  corr_matrix[Nsp] C_bf = lambda_bf * Vphy;
-  C_bf = C_bf - diag_matrix(diagonal(C_bf)) + diag_matrix(diagonal(Vphy));
-  
-  corr_matrix[Nsp] C_bc = lambda_bc * Vphy;
-  C_bc = C_bc - diag_matrix(diagonal(C_bc)) + diag_matrix(diagonal(Vphy));
-  
-  // more numerically stable and more efficient to use pre-factored covariance matrices (i.e. multi_normal_cholesky in the following
-  matrix[Nsp,Nsp] L_a = cholesky_decompose(sigma_a^2*C_a);
-  matrix[Nsp,Nsp] L_bt =  cholesky_decompose(sigma_bt^2*C_bt); 
-  matrix[Nsp,Nsp] L_bf =  cholesky_decompose(sigma_bf^2*C_bf); 
-  matrix[Nsp,Nsp] L_bc =  cholesky_decompose(sigma_bc^2*C_bc); 
-  
   real calc_degen[N_degen];
   real calc_prop[N_prop];
   
@@ -126,7 +108,26 @@ transformed parameters {
   }
 
 }
+
 model {
+  
+  matrix[Nsp,Nsp] C_a = lambda_a * Vphy;
+  C_a = C_a - diag_matrix(diagonal(C_a)) + diag_matrix(diagonal(Vphy));
+  
+  matrix[Nsp,Nsp]  C_bt = lambda_bt * Vphy;
+  C_bt = C_bt - diag_matrix(diagonal(C_bt)) + diag_matrix(diagonal(Vphy));
+  
+  matrix[Nsp,Nsp]  C_bf = lambda_bf * Vphy;
+  C_bf = C_bf - diag_matrix(diagonal(C_bf)) + diag_matrix(diagonal(Vphy));
+  
+  matrix[Nsp,Nsp]  C_bc = lambda_bc * Vphy;
+  C_bc = C_bc - diag_matrix(diagonal(C_bc)) + diag_matrix(diagonal(Vphy));
+  
+  // more numerically stable and more efficient to use pre-factored covariance matrices (i.e. multi_normal_cholesky in the following
+  matrix[Nsp,Nsp] L_a = cholesky_decompose(sigma_a^2*C_a);
+  matrix[Nsp,Nsp] L_bt =  cholesky_decompose(sigma_bt^2*C_bt); 
+  matrix[Nsp,Nsp] L_bf =  cholesky_decompose(sigma_bf^2*C_bf); 
+  matrix[Nsp,Nsp] L_bc =  cholesky_decompose(sigma_bc^2*C_bc); 
   
   a ~ multi_normal_cholesky(rep_vector(a_z,Nsp), L_a); 
   bt ~ multi_normal_cholesky(rep_vector(bt_z,Nsp), L_bt); 
