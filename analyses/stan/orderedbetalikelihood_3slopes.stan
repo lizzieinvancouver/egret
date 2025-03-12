@@ -42,11 +42,11 @@ data {
   int<lower=0> N_degen; // number of 0/1 observations
   
   int<lower=1> Nsp; // number of species
-  int<lower=1, upper=Nsp> sp_prop[N_prop]; // species ID for prop. observations
-  int<lower=1, upper=Nsp> sp_degen[N_degen]; // species ID for degen. observations
+  array[N_prop] int<lower=1, upper=Nsp> sp_prop; // species ID for prop. observations
+  array[N_degen] int<lower=1, upper=Nsp> sp_degen; // species ID for degen. observations
   
-  vector[N_prop] y_prop; // Y in (0,1)
-  int<lower=0,upper = 1> y_degen[N_degen]; // Y in {0,1}
+  array[N_prop] real y_prop; // Y in (0,1)
+  array[N_degen] int<lower=0, upper=1> y_degen; // Y in {0,1}
   
   vector[N_prop] t_prop; // covariate time for proportion outcome
   vector[N_degen] t_degen; // covariate time for degenerate (0,1) outcome
@@ -92,8 +92,8 @@ parameters {
 
 transformed parameters {
   
-  real calc_degen[N_degen];
-  real calc_prop[N_prop];
+  array[N_degen] real calc_degen;
+  array[N_prop] real calc_prop;
   
   if(N_degen>0) {
     for(i in 1:N_degen){
@@ -111,15 +111,13 @@ transformed parameters {
 
 model {
   
-  matrix[Nsp,Nsp] C_a = lambda_a * Vphy;
+  // move all corr/cov matrix to model block, to save RAM
+  matrix[Nsp,Nsp] C_a = lambda_a * Vphy; // previously defined as corr_matrix, but not working in model block?
   C_a = C_a - diag_matrix(diagonal(C_a)) + diag_matrix(diagonal(Vphy));
-  
   matrix[Nsp,Nsp]  C_bt = lambda_bt * Vphy;
   C_bt = C_bt - diag_matrix(diagonal(C_bt)) + diag_matrix(diagonal(Vphy));
-  
   matrix[Nsp,Nsp]  C_bf = lambda_bf * Vphy;
   C_bf = C_bf - diag_matrix(diagonal(C_bf)) + diag_matrix(diagonal(Vphy));
-  
   matrix[Nsp,Nsp]  C_bc = lambda_bc * Vphy;
   C_bc = C_bc - diag_matrix(diagonal(C_bc)) + diag_matrix(diagonal(Vphy));
   
@@ -153,7 +151,8 @@ model {
     // Pr(Y in (0,1))
     target += log(inv_logit(calc_prop[n] - cutpoints[1]) - inv_logit(calc_prop[n] - cutpoints[2]));
     // Pr(Y==x where x in (0,1))
-    y_prop[n] ~ beta_proportion(inv_logit(calc_prop[n]),kappa);
+    // y_prop[n] ~ beta_proportion(inv_logit(calc_prop[n]),kappa);
+    target += beta_proportion_lpdf(y_prop[n] | inv_logit(calc_prop[n]),kappa);
   }
   
   // priors
@@ -177,5 +176,47 @@ model {
   kappa ~ exponential(.1); // vague?
   
 }
+
+generated quantities {
+  
+  array[N_prop] real y_prop_gen;
+  array[N_degen] real y_degen_gen;
+  
+  real logisticvariate;
+  
+  if(N_degen>0) {
+    for(i in 1:N_degen) {
+      
+      logisticvariate = ordered_logistic_rng(calc_degen[i] ,cutpoints);
+       
+      if(logisticvariate==1) {
+        y_degen_gen[i] = 0;
+      } else if(logisticvariate==3) {
+        y_degen_gen[i] = 1;
+      } else {
+        y_degen_gen[i] = beta_proportion_rng(inv_logit(calc_degen[i]),kappa);
+      }
+    
+    }
+  }
+  for(i in 1:N_prop) {
+      
+    logisticvariate = ordered_logistic_rng(calc_prop[i] ,cutpoints);
+       
+    if(logisticvariate==1) {
+        y_prop_gen[i] = 0;
+    } else if(logisticvariate==3) {
+        y_prop_gen[i] = 1;
+    } else {
+        y_prop_gen[i] = beta_proportion_rng(inv_logit(calc_prop[i]),kappa);
+    }
+  }
+  
+  
+  
+} 
+  
+  
+  
 
 
