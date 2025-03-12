@@ -80,6 +80,8 @@ d <- d[-which(d$datasetID == "budisavljevic21" &
 
 # fix grouping, fix study and figure some other time
 d$study[which(d$datasetID == "kulkarni06" & d$study == "exp3" & d$figure == "fiigure 3")] <- "exp2"
+d$figure[which(d$datasetID == "pipinis20" & d$treatment == "Warm statification (0 months) + cold stratification (0 months)")] <-
+  "Table 2"
 
 if(FALSE){
 ##	

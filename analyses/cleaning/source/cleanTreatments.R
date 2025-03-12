@@ -517,9 +517,85 @@ d$treatmentDetails[which(d$datasetID == "meyer95" & d$treatment == "control")] <
   "control (no moist chilling)"
 
 #millaku12
+d$treatmentCor[which(d$datasetID == "millaku12")] <- "hormone x chemical x cold stratification"
+d$treatmentDetails[which(d$datasetID == "millaku12" & d$treatment != "GA3, KNO3")] <-
+  "control (no hormone, no chemical)"
+
+d$treatmentDetails[which(d$datasetID == "millaku12" & d$treatment == "control")] <-
+  "no stratification"
+d$treatmentDetails[which(d$datasetID == "millaku12" & d$treatment == "cold-stratification w/t filter paper")] <-
+  "cold stratification on filter paper"
+d$treatmentDetails[which(d$datasetID == "millaku12" & d$treatment == "cold-stratification w/t sand-soil")] <-
+  "cold stratification on sand-soil"
+
+#moradi12
+temp <- c("chilling", "acid", "chilling", rep("hormone", 10))
+d$treatmentCor[which(d$datasetID == "moradi12" & d$figure == "Table 1")] <-
+  temp
+d$treatmentCor[which(d$datasetID == "moradi12" & d$figure == "Table 2")] <-
+  "hormone"
+d$treatmentCor[which(d$datasetID == "moradi12" & d$figure == "Table 3")] <-
+  "hormone"
+
+#naseri18
+d$treatmentCor[which(d$datasetID == "naseri18" & d$study == "exp1")] <-
+  "cold stratification x mechanical scarification"
+d$treatmentCor[which(d$datasetID == "naseri18" & d$study == "exp2")] <-
+  "mechanical scarification x chemical"
+#germ conditions for ccs should be chilling conditions
+
+#nasri14
+d$treatmentCor[which(d$datasetID == "nasri14")] <-
+  "culture type x chilling x chemical"
+d$treatmentDetails[which(d$datasetID == "nasri14" & d$treatment == "control")] <-
+  "control (no chemical)"
+
+#naumovski15
+d$treatmentCor[which(d$datasetID == "naumovski15" & d$study == "exp1")] <-
+  "photoperiod"
+d$treatmentCor[which(d$datasetID == "naumovski15" & d$study == "exp2")] <-
+  "provenance"
+d$treatmentCor[which(d$datasetID == "naumovski15" & d$study == "exp3")] <-
+  "provenance x cold stratification x germination temperature"
+d$treatmentCor[which(d$datasetID == "naumovski15" & d$study == "exp4")] <-
+  "cold stratification x germination temperature"
+
+#nawrot-chorabik21
+d$treatmentCor[which(d$datasetID == "nawrot-chorabik21" & d$treatment == "control, no dormancy breaking treatment")] <-
+  "control"
+d$treatmentCor[which(d$datasetID == "nawrot-chorabik21" & d$treatment == "stratification/scarification")] <-
+  "stratification + mechanical scarification"
+d$treatmentCor[which(d$datasetID == "nawrot-chorabik21" & d$treatment == "growth regulators")] <-
+  "hormone"
+d$treatmentCor[which(d$datasetID == "nawrot-chorabik21" & d$treatment == "growth regulators; stratification/scarification")] <-
+  "(stratification + mechanical scarification) x hormone"
+#is seed pelleting scarification?
+
+#necajeva13
+d$treatmentCor[which(d$datasetID == "necajeva13" & d$treatment == "chemical")] <-
+  "hormone"
+d$treatmentCor[which(d$datasetID == "necajeva13")] <-
+  paste0("warm stratification x ", d$treatmentCor[which(d$datasetID == "necajeva13")])
+
+#nin17
+d$treatmentCor[which(d$datasetID == "nin17")] <-
+  "stratification x germination temperature x photoperiod"
+d$treatmentDetails[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <-
+  "control (no stratification)"
 
 #nurse08
 d$treatmentCor[which(d$datasetID == "nurse08")] <- "seed type x soil water content x cold stratification"
+
+#okay11
+d$treatmentCor[which(d$datasetID == "okay11")] <- "cold stratification x pH"
+d$treatmentDetails[which(d$datasetID == "okay11" & d$treatment == "Control")] <-
+  "control (no stratification)"
+d$treatmentDetails[which(d$datasetID == "okay11" & d$chillTemp == "0" & d$chillDuration == "NA")] <-
+  "average among stratification treatments"
+d$treatmentDetails[which(d$datasetID == "okay11" & d$chillTemp == "0" & d$chillDuration == "NA")] <-
+  "average among stratification treatments"
+d$treatmentDetails[which(d$datasetID == "okay11" & d$other.treatment == "pH = 6.5, 7.5, 8.5")] <-
+  "average among pH treatments"
 
 #olmez07
 temp <- rep(c(rep("provenance", 3), "control", "soaking", rep("cold stratification", 3), "soaking (hot water)", "acid"), 2)
@@ -528,12 +604,183 @@ d$treatmentCor[which(d$datasetID == "olmez07")] <-
 
 #olmez09
 temp <- c(rep(c("control", "soaking", rep("cold stratification", 3), "soaking (hot water)", "acid"), 2), rep("provenance", 6))
-d$treatmentCor[which(d$datasetID == "olmez09")] <-
+d$treatmentCor[which(d$datasetID == "olmez09")] <- temp
+
+#panayotova15
+temp <- c(rep("temperature", 3), "chilling", "soaking + temperature", "native soil")
+d$treatmentCor[which(d$datasetID == "panayotova15")] <- temp
+
+#paolini01
+d$treatmentCor[which(d$datasetID == "paolini01")] <-
+  "seed mass x seed color x prechilling x photoperiod"
+
+#phondani10
+d$treatmentCor[which(d$datasetID == "phondani10")] <-
+  "provenance x prechilling x germination temperature x photoperiod"
+d$treatmentDetails[which(d$datasetID == "phondani10" & d$treatment == "control")] <-
+  "control (no prechilling)"
+#maybe distinguish light (24) and light (16/8)
+
+#picciau17
+d$treatmentCor[which(d$datasetID == "picciau17" & d$treatment == "dry after-ripened")] <-
+  "drying after ripening"
+d$treatmentCor[which(d$datasetID == "picciau17" & d$treatment == "light control")] <-
+  "control"
+d$treatmentCor[which(d$datasetID == "picciau17" & d$treatment == "dark control")] <-
+  "control"
+d$treatmentCor[which(d$datasetID == "picciau17" & d$treatment == "chemical")] <-
+  "hormone"
+
+d$treatmentDetails[which(d$datasetID == "picciau17" & d$treatment == "light control")] <-
+  "12 l / 12 d photoperiod"
+d$treatmentDetails[which(d$datasetID == "picciau17" & d$treatment == "dark control")] <-
+  "24 d photoperiod"
+
+d$treatmentCor[which(d$datasetID == "picciau17")] <-
+  paste0(d$treatmentCor[which(d$datasetID == "picciau17")], " x germination temperature")
+
+#pipinis09
+d$treatmentCor[which(d$datasetID == "pipinis09")] <-
+  "warm stratification x cold stratification"
+d$treatmentDetails[which(d$datasetID == "pipinis09" & d$treatment == "control")] <-
+  "control (no warm stratification, no cold stratification)"
+
+#pipinis20
+d$treatmentCor[which(d$datasetID == "pipinis20" & d$figure == "Table 1")] <-
+  "moisture content x cold stratification"
+d$treatmentCor[which(d$datasetID == "pipinis20" & d$figure == "Table 2")] <-
+  "warm stratification x cold stratification"
+
+#rafiq21
+d$treatmentCor[which(d$datasetID == "rafiq21")] <- "culture type x chilling"
+d$treatmentDetails[which(d$datasetID == "rafiq21" & d$treatment == "control")] <-
+  "control (no chilling)"
+
+#rahnama-ghahfarokhi07
+temp <- c(rep("cold stratification", 3), rep("hormone", 3),
+          rep("cold stratification + hormone", 3), "control")
+d$treatmentCor[which(d$datasetID == "rahnama-ghahfarokhi07" & d$figure == "Table 1")] <-
+  temp
+temp <- c(rep("hot water", 2), rep("acid", 2), rep("chemical", 2), "control")
+d$treatmentCor[which(d$datasetID == "rahnama-ghahfarokhi07" & d$figure == "Table 2")] <-
   temp
 
 #redondo-gomez11
 d$treatmentCor[which(d$datasetID == "redondo-gomez11")] <-
   "salinity x cold stratification x burial depth"
+
+#ren04
+d$treatmentCor[which(d$datasetID == "ren04" & d$treatment == "cold")] <- "cold stratification"
+
+#ren15
+d$treatmentCor[which(d$datasetID == "ren15" & d$study == "exp1")] <-
+  "light x germination temperature"
+d$treatmentCor[which(d$datasetID == "ren15" & d$study == "exp2")] <-
+  "soil moisture x chilling"
+#storage conditions of exp2 should be chill conditions
+
+#rezvani14
+d$treatmentCor[which(d$datasetID == "rezvani14" & d$study == "exp1")] <-
+  "hormone x photoperiod"
+d$treatmentCor[which(d$datasetID == "rezvani14" & d$study == "exp2")] <-
+  "prechilling"
+d$treatmentCor[which(d$datasetID == "rezvani14" & d$study == "exp3")] <-
+  "germination temperature x photoperiod"
+
+d$treatmentDetails[which(d$datasetID == "rezvani14" & d$study == "exp2")] <-
+  d$treatment[which(d$datasetID == "rezvani14" & d$study == "exp2")]
+
+#romero05
+d$treatmentCor[which(d$datasetID == "romero05" & d$study == "exp2")] <-
+  "photoperiod"
+d$treatmentCor[which(d$datasetID == "romero05" & d$study == "exp3")] <-
+  "cold-moist stratification x light"
+d$treatmentDetails[which(d$datasetID == "romero05" & d$study == "exp3" & d$treatment == "control")] <-
+  "control (no cold-moist stratification)"
+#photoperiod in figure 2 should be constant 16l/8d
+
+#rouhi12
+d$treatmentCor[which(d$datasetID == "rouhi12")] <- "stratification x hormone"
+d$treatmentDetails[which(d$datasetID == "rouhi12")] <-
+  "control (no stratification, no hormone)"
+
+#rouhi13
+temp <- c("control", rep("acid", 3), rep("hot water", 4), rep("chemical", 3),
+          rep("stratification", 3))
+d$treatmentCor[which(d$datasetID == "rouhi13")] <- temp
+
+#rubin18
+d$treatmentCor[which(d$datasetID == "rouhi13")] <- "ecotype x stratification"
+# the range of values for figure 1, panels a and b seem to have a wrong y axis
+# i think it assumes the bottom of the figure is 0
+
+#saeed16
+d$treatmentCor[which(d$datasetID == "saeed16" & d$figure == "Figure 1")] <-
+  "provenance x germination temperature x photoperiod"
+d$treatmentCor[which(d$datasetID == "saeed16" & d$figure == "Figure 2")] <-
+  "storage x photoperiod"
+d$treatmentCor[which(d$datasetID == "saeed16" & d$figure == "Figure 3")] <-
+  "cold moist stratification x photoperiod"
+
+#santos19
+d$treatmentCor[which(d$datasetID == "santos19")] <-
+  "stratification x germination temperature"
+#fix table names
+
+#schutz02
+d$treatmentCor[which(d$datasetID == "schutz02" & d$figure == "Figure 1")] <-
+  "cold stratification x germination temperature x photoperiod"
+d$treatmentCor[which(d$datasetID == "schutz02" & d$figure == "Figure 2")] <-
+  "germination temperature"
+d$treatmentCor[which(d$datasetID == "schutz02" & d$figure == "Table 3")] <-
+  "cold stratification x germination temperature"
+
+#scocco98
+temp <- c("control", "soaking + chilling", "soaking (hormone)")
+d$treatmentCor[which(d$datasetID == "scocco98")] <- temp
+
+#seng20
+d$treatmentCor[which(d$datasetID == "seng20" &
+                       d$treatment == "soaking" &
+                       d$soaked.in == "hot water 70C")] <- "soaking (hot water)"
+d$treatmentCor[which(d$datasetID == "seng20" &
+                       d$treatment == "soaking" &
+                       d$soaked.in == "cold water")] <- "soaking (cold water)"
+d$treatmentCor[which(d$datasetID == "seng20" &
+                       d$treatment == "soaking" &
+                       d$chemicalCor == "NaClO")] <- "soaking (chemical)"
+d$treatmentCor[which(d$datasetID == "seng20" &
+                       d$treatment == "soaking" &
+                       d$chemicalCor == "GA3")] <- "soaking (hormone)"
+d$treatmentCor[which(d$datasetID == "seng20" &
+                       d$treatment == "soaking" &
+                       d$soaked.in == "hot water 70C" &
+                       d$chemicalCor == "GA3")] <- "soaking (hot water) + soaking (hormone)"
+d$treatmentCor[which(d$datasetID == "seng20" & d$treatment == "cold strat")] <-
+  "cold stratification"
+d$treatmentCor[which(d$datasetID == "seng20" & d$treatment == "scarification")] <-
+  "mechanical scarification"
+d$treatmentCor[which(d$datasetID == "seng20" &
+                       d$treatment == "scarification + soaking" &
+                       d$soaked.in == "hot water 50C")] <-
+  "mechanical scarification + soaking (hot water)"
+d$treatmentCor[which(d$datasetID == "seng20" &
+                       d$treatment == "scarification + soaking" &
+                       d$soaked.in == "water")] <-
+  "mechanical scarification + soaking (cold water)"
+
+#skordilis95
+d$treatmentCor[which(d$datasetID == "skordilis95" & d$study == "exp1")] <-
+  "provenance x germination temperature"
+d$treatmentCor[which(d$datasetID == "skordilis95" & d$study == "exp2")] <-
+  "provenance x stratification x germination temperature"
+d$treatmentCor[which(d$datasetID == "skordilis95" & d$study == "exp3")] <-
+  "provenance x germination temperature"
+d$treatmentCor[which(d$datasetID == "skordilis95" & d$study == "exp4")] <-
+  "stratification"
+d$treatmentCor[which(d$datasetID == "skordilis95" & d$study == "exp5")] <-
+  "stratification x light"
+#fix figure numbers
 
 #veiga-barbosa14
 d$treatmentCor[which(d$datasetID == "veiga-barbosa14" & d$study == "exp1")] <-
