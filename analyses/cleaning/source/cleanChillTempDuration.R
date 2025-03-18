@@ -67,6 +67,12 @@ d$chillLightCycle <- NA
 
 ##additional cleaning
 
+#budisavljevic21
+d$chillTemp[which(d$datasetID == "budisavljevic21" & d$figure == "Table2e")] <- 23
+
+#barnhill82
+d$chillTemp[which(d$datasetID == "barnhill82")] <- 3
+
 #vahdati12: changing weeks to days
 d$chillDuration[which(d$datasetID == "vahdati12")] <- as.numeric(d$chill.duration[which(d$datasetID == "vahdati12")]) * 7
 
@@ -458,6 +464,24 @@ d$chillTempUnc[which(d$datasetID == "omar21" & !is.na(d$chill.temp))] <- 1
 d$chillTemp[which(d$chill.temp == 4.44 | d$chill.temp == "3.3-5")] <- 4.4
 d$chillTemp[which(d$datasetID == "grose57" & d$figure == "Text")] <- NA
 d$chillDuration[which(d$datasetID == "grose57" & d$figure == "Text")] <- NA
+d$chillTemp[which(d$datasetID == "grose57" &
+                    d$treatment == "cold stratification" & 
+                    d$figure == "Table 3")] <-
+  paste0(d$germ.temp[which(d$datasetID == "grose57" &
+                             d$treatment == "strengthened dormancy " & 
+                             d$figure == "Table 3")],
+         " then ", d$chill.temp[which(d$datasetID == "grose57" &
+                                       d$treatment == "cold stratification" & 
+                                       d$figure == "Table 3")])
+d$chillDuration[which(d$datasetID == "grose57" &
+                    d$treatment == "cold stratification" & 
+                    d$figure == "Table 3")] <-
+  paste0(d$germ.duration[which(d$datasetID == "grose57" &
+                             d$treatment == "strengthened dormancy " & 
+                             d$figure == "Table 3")],
+         " then ", d$chill.duration[which(d$datasetID == "grose57" &
+                                       d$treatment == "cold stratification" & 
+                                       d$figure == "Table 3")])
 
 #pipinis09: standardize format of duration, temp and cycle
 d$chillTemp[which(d$chill.temp == "20/25")] <- "20 and 25"

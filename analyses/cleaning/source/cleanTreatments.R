@@ -77,11 +77,9 @@ d$treatmentCor[which(d$datasetID == "amooaghaie09")] <- "moist chilling x hormon
 #arslan11
 d$treatmentCor[which(d$datasetID == "arslan11")] <- "moist chilling x hormone x photoperiod x germination temperature"
 d$treatmentCor[which(d$datasetID == "arslan11" & d$figure == "table 1")]
-# i think the rest of table 1, except the one with scarification, should be removed
 
 #barnhill82
 d$treatmentCor[which(d$datasetID == "barnhill82")] <- "stratification x germination temperature x photoperiod"
-# add strat temp 3degC
 
 #barros12
 d$treatmentCor[which(d$datasetID == "barros12")] <- "stratification x hormone x germination temperature"
@@ -165,9 +163,6 @@ d$treatmentCor[which(d$datasetID == "brenchley98" & d$study == "exp5")] <- "sali
 #budisavljevic21
 d$treatmentCor[which(d$datasetID == "budisavljevic21")] <-
   "stratification x germination temperature x photoperiod"
-#chill temp for table 2e should be 23
-#non-existent warm stratification treatment data for figures panels a-d
-#photoperiod lacks dark treatments
 
 #bungard97
 d$treatmentCor[which(d$datasetID == "bungard97" & d$study == "exp1")] <- "chilling x chemical"
@@ -217,14 +212,14 @@ d$treatmentCor[which(d$datasetID == "chien11")] <- "germination temperature"
 #exp1 table 1 and fig 5, and exp 2 table 3 is from a
 temp <- c(rep(c("control", rep("soaking (hormone, before stratification)", 5)), 3),
           rep("soaking (hormone, after stratification)", 18))
-d$treatmentCor[which(d$datasetID == "cho18" & d$study == "exp1" & d$figure == "Table 1")] <- temp
-d$treatmentCor[which(d$datasetID == "cho18" & d$study == "exp1" & d$figure == "Figure 5")] <- "germination temperature x photoperiod"
-d$treatmentCor[which(d$datasetID == "cho18" & d$study == "exp2" & d$figure == "Table 3")] <- "soaking (chemical, before stratification)"
+d$treatmentCor[which(d$datasetID == "cho18a" & d$study == "exp1" & d$figure == "Table 1")] <- temp
+d$treatmentCor[which(d$datasetID == "cho18a" & d$study == "exp1" & d$figure == "Figure 5")] <- "germination temperature x photoperiod"
+d$treatmentCor[which(d$datasetID == "cho18a" & d$study == "exp2" & d$figure == "Table 3")] <- "soaking (chemical, before stratification)"
 
 #exp1 fig 3 and exp2 fig 5 is from b, wrong species
-d$treatmentCor[which(d$datasetID == "cho18" & d$study == "exp1" & d$figure == "Figure 3")] <-
+d$treatmentCor[which(d$datasetID == "cho18b" & d$study == "exp1" & d$figure == "Figure 3")] <-
   "mechanical scarification x cold moist stratification x photoperiod"
-d$treatmentCor[which(d$datasetID == "cho18" & d$study == "exp2" & d$figure == "Figure 5")] <- "germination temperature x photoperiod"
+d$treatmentCor[which(d$datasetID == "cho18b" & d$study == "exp2" & d$figure == "Figure 5")] <- "germination temperature x photoperiod"
 
 #chuanren04
 d$treatmentCor[which(d$datasetID == "chuanren04" & d$study == "exp1")] <- "mechanical scarification"
@@ -329,7 +324,6 @@ d$treatmentCor[which(d$datasetID == "grose57" & d$study == "exp2")] <- "stratifi
 d$treatmentCor[which(d$datasetID == "grose57" & d$study == "exp3")] <- "stratification x germination temperature"
 d$treatmentCor[which(d$datasetID == "grose57" & d$study == "exp4")] <- "stratification x germination temperature"
 d$treatmentCor[which(d$datasetID == "grose57" & d$study == "exp5")] <- "stratification"
-#chilling of table 3 column 3 should be "64F then 40F" with duration of "15 then varied"
 d$treatmentCor[which(d$datasetID == "grose57" & d$study == "exp6")] <- "seedlot x stratification x germination temperature"
 
 #guo20
@@ -348,7 +342,8 @@ d$treatmentCor[which(d$datasetID == "harrison14")] <- "provenance x altitude x c
 
 #hatzilazarou21
 d$treatmentCor[which(d$datasetID == "hatzilazarou21")] <- "cold stratification x germination temperature"
-#there are 4 controls
+d$treatmentDetails[which(d$datasetID == "hatzilazarou21" & d$treatment == "control")] <-
+  "control (no cold stratification)"
 
 #hawkins19
 d$treatmentCor[which(d$datasetID == "hawkins19")] <- "cold stratification x germination temperature"
@@ -394,14 +389,12 @@ d$treatmentCor[which(d$datasetID == "jensen97")] <- "moisture content x prechill
 
 #jiro10
 d$treatmentCor[which(d$datasetID == "jiro10")] <- "stratification x germination temperature"
-#species seems to be different than in paper
 
 #joshi03, various
 
 #jusung16
 d$treatmentCor[which(d$datasetID == "jusung16" & d$figure == "Figure 5")] <- "wet-chilling x germination temperature x photoperiod"
 d$treatmentCor[which(d$datasetID == "jusung16" & d$figure == "Table 1")] <- "hormone"
-#table 1 data is weird
 
 #kalimuthu95, various
 
@@ -478,9 +471,9 @@ d$treatmentCor[which(d$datasetID == "lee21")] <- "cold stratification x germinat
 #li11
 d$treatmentCor[which(d$datasetID == "li11" & d$study == "exp 1")] <-
   "cold stratification x salinity"
-d$treatmentCor[which(d$datasetID == "li11" & d$study == "exp2")] <-
+d$treatmentCor[which(d$datasetID == "li11" & d$study == "exp 2")] <-
   "mechanical scarification x salinity"
-d$treatmentCor[which(d$datasetID == "li11" & d$study == "exp1")] <-
+d$treatmentCor[which(d$datasetID == "li11" & d$study == "exp 3")] <-
   "hormone x salinity"
 
 #liu13
@@ -721,8 +714,6 @@ d$treatmentCor[which(d$datasetID == "rouhi13")] <- temp
 
 #rubin18
 d$treatmentCor[which(d$datasetID == "rouhi13")] <- "ecotype x stratification"
-# the range of values for figure 1, panels a and b seem to have a wrong y axis
-# i think it assumes the bottom of the figure is 0
 
 #saeed16
 d$treatmentCor[which(d$datasetID == "saeed16" & d$figure == "Figure 1")] <-
@@ -798,8 +789,6 @@ d$treatmentCor[which(d$datasetID == "song20" & d$study == "exp1")] <-
 d$treatmentCor[which(d$datasetID == "song20" & d$study == "exp2")] <-
   "cold stratification"
 
-#not all fig 2 data seems to have been scraped
-
 #sundaramoorthy93
 temp <- c("control", "storage", "dry heat", "chilling", "washing",
           "dry heat + chilling", "chilling + dry heat",
@@ -830,7 +819,7 @@ d$treatmentCor[which(d$datasetID == "tang10_1" & d$study == "exp5")] <-
   "(control, cold stratification, dry storage) x germination temperature"
 
 #tang10_2 paper in gdrive is for tang10_1
-#what does the 0, 40, and 60 days for control treatments???
+#what does the 0, 40, and 60 days mean for control treatments???
 
 #tang21
 d$treatmentCor[which(d$datasetID == "tang21" &

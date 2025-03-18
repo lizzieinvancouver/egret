@@ -77,11 +77,28 @@ d[which(d$datasetID == "downie98" & is.na(d$other.treatment)), "other.treatment"
 d <- d[-which(d$datasetID == "budisavljevic21" &
                 d$treatment %in% c("warm stratification", "Warm stratification") &
                 d$figure != "Table2e"),]
+d <- d[-which(d$datasetID == "budisavljevic21" & duplicated(d)), ]
+
+# two different papers were scraped as cho18
+#exp1 table 1 and fig 5, and exp 2 table 3 is from a
+d$datasetID[which(d$datasetID == "cho18" & d$study == "exp1" & d$figure == "Table 1")] <-
+  "cho18a"
+d$datasetID[which(d$datasetID == "cho18" & d$study == "exp1" & d$figure == "Figure 5")] <-
+  "cho18a"
+d$datasetID[which(d$datasetID == "cho18" & d$study == "exp2" & d$figure == "Table 3")] <-
+  "cho18a"
+
+#exp1 fig 3 and exp2 fig 5 is from b, wrong species
+d$datasetID[which(d$datasetID == "cho18" & d$study == "exp1" & d$figure == "Figure 3")] <-
+  "cho18b"
+d$datasetID[which(d$datasetID == "cho18" & d$study == "exp2" & d$figure == "Figure 5")] <-
+  "cho18b"
 
 # fix grouping, fix study and figure some other time
 d$study[which(d$datasetID == "kulkarni06" & d$study == "exp3" & d$figure == "fiigure 3")] <- "exp2"
 d$figure[which(d$datasetID == "pipinis20" & d$treatment == "Warm statification (0 months) + cold stratification (0 months)")] <-
   "Table 2"
+d$study[which(d$datasetID == "li11" & d$study == "exp 1 ")] <- "exp 1"
 
 if(FALSE){
 ##	
