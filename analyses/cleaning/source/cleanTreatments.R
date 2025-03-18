@@ -11,7 +11,7 @@ d$treatmentDetails <- NA
 #unique(d$treatmentCor)
 #unique(d$treatmentDetails)
 
-prio <- read.csv("studyDesign/ids_for_Ken/ids_after_allworkflow.csv")
+prio <- read.csv("studyDesign/ids_for_ken/ids_after_allworkflow.csv")
 prio <- prio[order(prio$datasetID, prio$study, prio$genusspecies),]
 
 # Find data points
