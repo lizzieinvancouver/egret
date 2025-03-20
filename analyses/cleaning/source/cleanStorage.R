@@ -1,4 +1,4 @@
-## Upded 30 January 2024 ##
+## Updated 20 Mar 2025 ##
 ## Started by Deirdre ##
 ## Followed by Justin's (Ngo) efforts
 ## Starting 1 May 2024
@@ -550,6 +550,9 @@ d$storageTemp[which(d$datasetID == "veatch-blohm11")] <- 23
 #veiga-barbosa14 - ambient
 d$storageTemp[which(d$datasetID == "veiga-barbosa14")] <- 23
 d$storageDuration[which(d$datasetID == "veiga-barbosa14")] <- 123
+
+# ren2015, -22 and -29 likely correspond to -7
+d[d$datasetID == 'ren15' & d$storageTemp %in% c("-22", "-29"), c("storageTemp")] <- "-7"
 
 
 sort(unique(d$storageTemp))
