@@ -87,14 +87,31 @@ wfovecno_ <- synno_$Old.name
 # check occurence of synonyms in tree
 matchesno_ <- wfovecno_[wfovecno_ %in% phy.sps.uniqu_] # 16 matches out of 48 still, so changing to no _ doens't make a difference
 # check with WFO.synonyms
-WFO.synonyms(egret.phenosp.sps.inphylo, WFO.file = NULL, WFO.data = wfodf)
+syno <- WFO.synonyms(egret.phenosp.sps.inphylo, WFO.file = NULL, WFO.data = wfodf)
 # check with WFO.synonyms with no _
 WFO.synonyms(egret.phenosp.sps.inphylo_, WFO.file = NULL, WFO.data = wfodf) # error message
+# go smaller
+subby <- egret.phenosp.sps.inphylo[1:35]
+synosubby <- WFO.synonyms(subby, WFO.file = NULL, WFO.data = wfodf) 
 #check with WFO.browse
 bro <- WFO.browse(egret.phenosp.sps.inphylo, WFO.file = NULL, WFO.data = wfodf,
            accepted.only = FALSE, acceptedNameUsageID.match = TRUE)
 
+syn <- WFO.synonyms(spec.test, WFO.data = wfodf) 
+syn <- WFO.synonyms(spec.test, WFO.file = wfodf, WFO.data = NULL) 
 
+# try the vignette with the old package and lizzies loaded bryophyte data
+setwd("/Users/christophe_rouleau-desrochers/Downloads")
+bryophytes <- read.csv("bryophytes.csv")
+
+# check species name
+w1 <- WFO.match(bryophytes[1:20, ], WFO.file=WFO.file.RK, spec.name="Full.name", counter=1)
+
+# rename wfodf to fit the name of the vignette
+WFO.file.RK <- wfodf
+
+# check species name
+w1 <- WFO.match(bryophytes[1:20, ], WFO.file=WFO.file.RK, spec.name="Full.name", counter=1)
 
 -## first prune the phylogeny to include$ only these genera
 # phy.genera.egret<-drop.tip(phy.plants,

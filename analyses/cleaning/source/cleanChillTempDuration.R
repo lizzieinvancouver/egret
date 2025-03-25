@@ -6,14 +6,7 @@
 ## This contains code to clean chill duration and temperature ##
 ## Original code taken from file called cleaningDL.R ##
 
-#to clean
-unique(d$chill.temp)
-unique(d$chill.duration)
-
-# "Continuous cold stratification" kept in cold whole experiment? How long was experiment? # CHECK : add in scraping notes that if duration of chilling wasn't provided, we input NA for duration, but we kept the temperature.
-
-
-
+# Do basic overview of the data to look at what needs cleaning 
 temp_vals <- unique(d$chill.temp)
 neg_temp <- c(3, 4, 5, 6, 9, 43, 50, 97)
 dash <- grep("-", temp_vals)
@@ -65,8 +58,9 @@ d$chillTempUnc <- NA
 d$chillTempCycle <- NA
 d$chillLightCycle <- NA
 
-##additional cleaning
-
+# === === === === === === === === === === === === === === === === === === ===
+## Additional cleaning
+# === === === === === === === === === === === === === === === === === === ===
 #budisavljevic21
 d$chillTemp[which(d$datasetID == "budisavljevic21" & d$figure == "Table2e")] <- 23
 
@@ -146,10 +140,10 @@ d$chillDuration[which(d$chill.duration == "0, 15, 30, 60")] <- NA
 #bibby53: paper NA so setting chill treatments to na
 d$chillTemp[which(d$datasetID == "bibby53")] <- NA
 d$chillDuration[which(d$datasetID == "bibby53")] <- NA
+
 # === === === === === === === === === === === === === === === === === === ===
 ## Standardize chillTemp and Duration formats
 # === === === === === === === === === === === === === === === === === === ===
-
 #zhang21 - -5/5/25/15
 d$chillTemp[which(d$datasetID == "zhang21")] <- gsub("/", " then ", d$chill.temp[which(d$datasetID == "zhang21")])
 d$chillDuration[which(d$datasetID == "zhang21" & d$chill.temp == "-5/5")] <- "50 then 50"
