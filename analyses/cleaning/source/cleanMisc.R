@@ -41,12 +41,14 @@ d <- d[-which(d$datasetID == "olmez07" & d$entered.by == "MN"),] #92
 d <- d[-which(d$datasetID == "olmez09" & d$entered.by == "MN"),] #56
 d <- d[-which(d$datasetID == "redondo-gomez11" & d$entered.by == "DM"),]#142
 d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.A"),]  #43
-d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.B"),]  #43
-d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.C"),]  #43
-d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.D"),]  #43
-d <- d[-which(d$datasetID == "song20" & d$entered.by == "DM"),]  #43
-d <- d[-which(d$datasetID == "pritchard93" & d$entered.by == "MN" & d$figure == "Table 3"),]  #6 
-d <- d[-which(d$datasetID == "pritchard93" & d$figure == "Figure 2"),]  #6 
+d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.B"),]  
+d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.C"),]  
+d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.D"),]  
+d <- d[-which(d$datasetID == "song20" & d$entered.by == "DM"),]  
+d <- d[-which(d$datasetID == "pritchard93" & d$entered.by == "MN" & d$figure == "Table 3"),]  
+d <- d[-which(d$datasetID == "pritchard93" & d$figure == "Figure 2"),]  
+d <- d[-which(d$datasetID == "rubin18" & d$entered.by == "MN" & d$figure == "Figure 1"),]  
+
 
 # momonoki79: issue #65 these two tables switch the seeds to lettuce---a crop
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table20")),] # 4
