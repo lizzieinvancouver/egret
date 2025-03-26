@@ -56,6 +56,10 @@ d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "5 to 15")] <- 15
 d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "10 to 15")] <- 15
 d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "25 to 15")] <- 15
 
+#naseri18 : contin chilling treatment with seeds germinated under chilling conditions.
+d$germ.temp[which(d$datasetID == "naseri18" & d$chill.duration == "Continuous cold stratification")] <- "2-4"
+d$germTemp[which(d$datasetID == "naseri18" & d$chill.duration == "Continuous cold stratification")] <- 3
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
