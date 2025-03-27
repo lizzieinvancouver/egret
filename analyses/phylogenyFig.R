@@ -104,14 +104,24 @@ syn <- WFO.synonyms(spec.test, WFO.file = wfodf, WFO.data = NULL)
 setwd("/Users/christophe_rouleau-desrochers/Downloads")
 bryophytes <- read.csv("bryophytes.csv")
 
-# check species name
-w1 <- WFO.match(bryophytes[1:20, ], WFO.file=WFO.file.RK, spec.name="Full.name", counter=1)
+# Give the file with the static copy of the Taxonomic Backbone data ('classification.txt')
+# that was downloaded from \url{https://www.worldfloraonline.org/downloadData}.
+# Possibly first use unzip(file.choose()) for the downloaded WFO_Backbone.zip
 
-# rename wfodf to fit the name of the vignette
+# change to fit WFO.file.RK
 WFO.file.RK <- wfodf
 
 # check species name
 w1 <- WFO.match(bryophytes[1:20, ], WFO.file=WFO.file.RK, spec.name="Full.name", counter=1)
+
+# check species name from list of names
+w1 <- WFO.match(bryophytes$Full.name[1:20], WFO.file=WFO.file.RK, counter=1)
+
+# show all listings at a next hierarchical level
+WFO.data1 <- data.table::fread(WFO.file.RK, encoding="UTF-8")
+
+# give synonyms
+WFO.synonyms("Olea europaea", WFO.data=WFO.data1)
 
 -## first prune the phylogeny to include$ only these genera
 # phy.genera.egret<-drop.tip(phy.plants,
