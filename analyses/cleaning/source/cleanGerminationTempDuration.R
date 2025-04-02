@@ -300,6 +300,10 @@ d$germTemp[which(d$datasetID == "mamut20" & d$figure == "table 2")] <- "5/2"
 dur <- c(rep(c(28, 56, 84), 4))
 d$germDuration[which(d$datasetID == "mamut20" & d$figure == "table 2")] <- dur
 
+d$germDuration[which(d$datasetID == "lee06" & d$figure == "Figure 1")] <-
+  d$storage.time[which(d$datasetID == "lee06" & d$figure == "Figure 1")]
+d$germDuration[which(d$datasetID == "lee06" & d$figure == "Table 2")] <- 20
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>

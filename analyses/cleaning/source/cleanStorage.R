@@ -447,7 +447,18 @@ d$storageTemp[which(d$datasetID == "lee21")] <- "4"
 d$storageDuration[which(d$datasetID == "lee21")] <- "30"
 
 #lee06 - 20-25
-d$storageTemp[which(d$storage.temp == "20-25")] <- 22.5
+d$storageTemp[which(d$datasetID == "lee06" & d$storage.temp == "20-25")] <- 22.5
+d$storageDuration[which(d$datasetID == "lee06" & d$figure == "Figure 1")] <-
+  d$germ.duration[which(d$datasetID == "lee06" & d$figure == "Figure 1")]
+
+d$storageTemp[which(d$datasetID == "lee06" & d$figure == "Table 2")] <- NA
+d$storageDuration[which(d$datasetID == "lee06" & d$figure == "Table 2")] <- NA
+
+temp <- c(rep(NA, 15), rep(c(5, 30, 35, 40), each = 3))
+d$storageTemp[which(d$datasetID == "lee06" & d$figure == "Table 2")] <- temp
+
+temp <- c(rep(NA, 12), rep(c(20, 40, 60), 5))
+d$storageDuration[which(d$datasetID == "lee06" & d$figure == "Table 2")] <- temp
 
 #li21 - 20 - 25
 d$storageTemp[which(d$datasetID == "li21" & d$storage.temp == "20 - 25")] <- 22.5
