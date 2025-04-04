@@ -80,8 +80,8 @@ d$chillDuration[which(d$datasetID == "vahdati12")] <- as.numeric(d$chill.duratio
 d$chillDuration[which(d$datasetID == "lee21")] <- as.numeric(d$chill.duration[which(d$datasetID == "lee21")]) * 7
 
 #airi2009: Changing temp of 0 to NA
-d$chillTemp[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA
-d$chillDuration[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA
+d$chillTemp[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA # TO CHECK
+d$chillDuration[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA # TO CHECK
 
 # === === === === === === === === === === === === === === === === === === ===
 ## Clean remaining chill duration
@@ -101,7 +101,7 @@ d$chillDuration[which(d$datasetID == "nkomo09" & d$chill.duration == 3.5)] <- 4
 d$chillDuration[which(d$datasetID == "sundaramoorthy93" & d$chill.temp == 4)] <-
   round(as.numeric(d$chillDuration[which(d$datasetID == "sundaramoorthy93" & d$chill.temp == 4)]))
 
-#chien09: Changing temp of 0 to NA and fixing chilling duration
+#chien09: Changing temp of 0 to NA and fixing chilling duration # TO CHECK
 d$chillTemp[which(d$datasetID == "chien09" & d$chill.temp == 0)] <- NA
 d$chillDuration[which(d$datasetID == "chien09" & d$chill.temp == 0)] <- 0
 d$chillDuration[which(d$datasetID == "chien09" & d$chill.temp == 4)] <-
@@ -122,16 +122,15 @@ d$chillTemp[which(d$datasetID == "ma18" & d$germ.temp =="25 to 15")] <- 25
 d$chillTemp[which(d$datasetID == "mattana16")] <- NA
 d$chillDuration[which(d$datasetID == "mattana16")] <- 0
 
-#nin17 TO CHECK: mean values of stratification accross 4 different durations
+#nin17
 dur <- c(15, 30, 60, 90)
 d$chillTemp[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 4
 d$chillDuration[which(d$datasetID == "nin17" & d$treatment == "non stratified")] <- 0
 d$chillDuration[which(d$chill.duration == "15;30;60;90")] <- NA # average across all treatments
 
 #nurse08: changing months to days
-d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == "1 month")] <- 30
-d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == " 2 months")] <- 61
-d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == "3 months")] <- 91
+d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == "60")] <- 61
+d$chillDuration[which(d$datasetID == "nurse08" & d$chill.duration == "90")] <- 91
 
 # okay11: averaged resp var of the 3 different chilling treatments. Converting to NA.90, 120, 150
 d$chillTemp[which(d$datasetID == "okay11" & d$treatment == "Control")] <- NA
@@ -233,13 +232,13 @@ temp <- c("", "", rep(" then 28", 8))
 d$chillDuration[which(d$datasetID == "brandel05" & d$other.treatment == "secondary dormant")] <- paste0("28 then 28", temp)
 
 #Boscagli01: average temp and add uncertainty
-d$chillTemp[which(d$datasetID == "boscagli01" & d$chill.temp == "5-7")] <- 6
-d$chillDuration[which(d$datasetID == "boscagli01" & d$chill.temp == "5-7")] <- 1
+d$chillTemp[which(d$datasetID == "boscagli01" & d$chill.temp == "07-May")] <- 6
+d$chillDuration[which(d$datasetID == "boscagli01" & d$chill.temp == "07-May")] <- 1
 
 #Borghetti86: average temp and add uncertainty
-d$chillTemp[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 2.5
-d$chillTempUnc[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 0.5
-d$chillLightCycle[which(d$datasetID == "borghetti86" & d$chill.temp == "2-3")] <- 0
+d$chillTemp[which(d$datasetID == "borghetti86" & d$chill.temp == "03-Feb")] <- 2.5
+d$chillTempUnc[which(d$datasetID == "borghetti86" & d$chill.temp == "03-Feb")] <- 0.5
+d$chillLightCycle[which(d$datasetID == "borghetti86" & d$chill.temp == "03-Feb")] <- 0
 
 #barros12: temperatures and their corresponding duration
 d$chillTemp[which(d$datasetID == "barros12" & d$chill.temp == "20/4")] <- "20 then 40"
@@ -287,8 +286,8 @@ d$chillTemp[which(d$datasetID == "yang20" & d$treatment == "control")] <- 1
 d$chillDuration[which(d$datasetID == "yang20" & d$treatment == "control")] <- 0
 d$chillLightCycle[which(d$datasetID == "yang20" & d$treatment == "control")] <- 24
 
-#yang16
-d$chillTemp[which(d$datasetID == "yang16" & d$treatment == "none")] <- 1
+#yang16 # TO CHECK
+d$chillTemp[which(d$datasetID == "yang16" & d$treatment == "none")] <- 1 
 d$chillDuration[which(d$datasetID == "yang16" & d$treatment == "none")] <- 0
 
 #yang18_1 : fixing temp and duration for species "taiwanensis"
@@ -503,7 +502,7 @@ d$chillDuration[which(d$chill.temp == "20/25 (warm); 4-6 (cold)")] <- temp
 #pliszko18
 d$chillLightCycle[which(d$datasetID == "pliszko18")] <- 0
 
-#pritchard93: standardize cycles for temp and duration
+#pritchard93: standardize cycles for temp and duration # TO CHECK. need to look back in the paper
 d$chillDuration[which(d$datasetID == "pritchard93" & d$treatment == "Cold stratification" & is.na(d$error.type))] <-
   as.numeric(d$chill.duration[which(d$datasetID == "pritchard93" & d$treatment == "Cold stratification" & is.na(d$error.type))]) * 7
 d$chillTemp[grep("6°C", d$chill.duration)] <- "6 then 16"
@@ -633,7 +632,7 @@ d$chillTemp[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "
 d$chillLightCycle[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "24 then 24"
 d$chillDuration[which(d$datasetID == "zhou08" & d$treatment == "water stress")] <- "28 then 56"
 
-#yang08 - 30/20 warm, cold strat---it is a day night alternating temp regime for 12 weeks # TO CHECK AND ASK KEN
+#yang08 - 30/20 warm, cold strat---it is a day night alternating temp regime for 12 weeks
 d$chillTemp[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "23.33 then 4"
 
 d$chillTempCycle[which(d$datasetID == "yang08" & d$chill.temp == "30/20")] <- "30 then 20"
@@ -647,14 +646,12 @@ d$chillTemp[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
 d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 2")]  <- NA
 d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 4")]  <- NA
 d$chillDuration[which(d$datasetID == "yang08" & d$figure == "Figure 5")]  <- NA
-#chilling seems to be warm + cold
-#should I change the treatment and photoperiod, since they don't seem to correspond with the results
 
 #zulfiqar15: average temp and add uncertainty
 d$chillTemp[which(d$chill.temp == "4 +/- 2 ")] <- 4
 d$chillTempUnc[which(d$chill.temp == "4 +/- 2 ")] <- 2
 
-#battaglia97 : missing chill duration in the figure
+# battaglia97 : missing chill duration in the figure # TO CHECK
 
 #fulbright86: standardize format
 d$chillTemp[which(d$chill.temp == "30/7")] <- "30 then 7"
