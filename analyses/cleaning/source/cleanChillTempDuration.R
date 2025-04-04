@@ -61,6 +61,12 @@ d$chillLightCycle <- NA
 # === === === === === === === === === === === === === === === === === === ===
 ## Additional cleaning
 # === === === === === === === === === === === === === === === === === === ===
+#lee06
+temp <- c(rep(5, 12), rep(NA, 15))
+d$chillTemp[which(d$datasetID == "lee06" & d$figure == "Table 2")] <- temp
+temp <- c(rep(c(20, 40, 60), 4), rep(NA, 15))
+d$chillDuration[which(d$datasetID == "lee06" & d$figure == "Table 2")] <- temp
+
 #budisavljevic21
 d$chillTemp[which(d$datasetID == "budisavljevic21" & d$figure == "Table2e")] <- 23
 
