@@ -50,9 +50,10 @@ egret.phenosp.sps.inphylo<-egret.sps[which(!egret.sps%in%phy.sps.uniqu)] #48 out
 
 # Get a list of synonyms for ALL species that aren't from the worldflora package
 setwd("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL")
-wfodf <- read.csv("classification.csv", header = TRUE, sep = "\t")
-
-# pull all the fuzzy matches, which included those at infraspecifc level
+# wfodf <- read.csv("classification.csv", header = TRUE, sep = "\t")
+kew <- read.csv("wcvp/wcvp_names.csv", header = TRUE, sep = "|", stringsAsFactors = FALSE)
+head(kew)
+ # pull all the fuzzy matches, which included those at infraspecifc level
 e1 <- WFO.match(spec.data=egret.phenosp.sps.inphylo, WFO.data=wfodf, counter=1,
                 Fuzzy.min=FALSE, Fuzzy.shortest=FALSE, verbose=TRUE)
 head(e1$Old.name)
