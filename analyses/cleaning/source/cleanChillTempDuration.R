@@ -79,10 +79,6 @@ d$chillDuration[which(d$datasetID == "vahdati12")] <- as.numeric(d$chill.duratio
 #lee21: changing weeks to days
 d$chillDuration[which(d$datasetID == "lee21")] <- as.numeric(d$chill.duration[which(d$datasetID == "lee21")]) * 7
 
-#airi2009: Changing temp of 0 to NA
-d$chillTemp[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA # TO CHECK
-d$chillDuration[which(d$datasetID == "airi2009" & d$chill.temp == 0)] <- NA # TO CHECK
-
 # === === === === === === === === === === === === === === === === === === ===
 ## Clean remaining chill duration
 # === === === === === === === === === === === === === === === === === === ===
@@ -286,9 +282,9 @@ d$chillTemp[which(d$datasetID == "yang20" & d$treatment == "control")] <- 1
 d$chillDuration[which(d$datasetID == "yang20" & d$treatment == "control")] <- 0
 d$chillLightCycle[which(d$datasetID == "yang20" & d$treatment == "control")] <- 24
 
-#yang16 # TO CHECK
-d$chillTemp[which(d$datasetID == "yang16" & d$treatment == "none")] <- 1 
-d$chillDuration[which(d$datasetID == "yang16" & d$treatment == "none")] <- 0
+#yang16_2
+d$chillTemp[which(d$datasetID == "yang16_2" & d$treatment == "none")] <- 1 
+d$chillDuration[which(d$datasetID == "yang16_2" & d$treatment == "none")] <- 0
 
 #yang18_1 : fixing temp and duration for species "taiwanensis"
 d$chillTemp[which(d$datasetID == "yang18_1" & d$treatment == "control" & d$figure == "Figure 3")] <- 4
@@ -502,17 +498,13 @@ d$chillDuration[which(d$chill.temp == "20/25 (warm); 4-6 (cold)")] <- temp
 #pliszko18
 d$chillLightCycle[which(d$datasetID == "pliszko18")] <- 0
 
-#pritchard93: standardize cycles for temp and duration # TO CHECK. need to look back in the paper
-d$chillDuration[which(d$datasetID == "pritchard93" & d$treatment == "Cold stratification" & is.na(d$error.type))] <-
-  as.numeric(d$chill.duration[which(d$datasetID == "pritchard93" & d$treatment == "Cold stratification" & is.na(d$error.type))]) * 7
-d$chillTemp[grep("6°C", d$chill.duration)] <- "6 then 16"
+#pritchard93: standardize cycles for temp and duration # TO CHECK. need to look back in the paper 
+d$chillTemp[grep("6°C", d$chill.duration[d$datasetID == "pritchard93"])] <- "6 then 16"
 temp <- c(364, "14 then 350", "28 then 336", "42 then 322", "56 then 308",
           "70 then 294", "84 then 280", "112 then 252", "140 then 224", "161 then 203",
           "182 then 182", "210 then 154", 364)
-  c(52, "0 then 52", "0 then 52", "0 then 52", "0 then 52", "0 then 52", "0 then 52",
-          "0 then 52", "0 then 52", "0 then 52", "0 then 52", "0 then 52", 52)
-d$chillDuration[grep("6°C", d$chill.duration)] <- temp
-d$chillTemp[which(d$datasetID == "pritchard93" & d$chillDuration == 52)] <- c(16, 6)
+d$chillDuration[grep("6°C", d$chill.duration[d$datasetID == "pritchard93"])] <- temp
+d$chillTemp[which(d$datasetID == "pritchard93" & d$chill.duration == 52)] <- c(16, 6)
 d$chillTemp[grep("5°C", d$chill.duration)] <- "25 then 5"
 temp <- c(84, "14 then 84", "21 then 84", "28 then 84", "42 then 84", "63 then 84")
 d$chillDuration[grep("5°C", d$chill.duration)] <- temp
