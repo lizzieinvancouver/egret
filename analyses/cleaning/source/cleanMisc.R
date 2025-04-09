@@ -48,6 +48,7 @@ d <- d[-which(d$datasetID == "song20" & d$entered.by == "DM"),]
 d <- d[-which(d$datasetID == "pritchard93" & d$entered.by == "MN" & d$figure == "Table 3"),]  
 d <- d[-which(d$datasetID == "pritchard93" & d$figure == "Figure 2"),]  
 d <- d[-which(d$datasetID == "rubin18" & d$entered.by == "MN" & d$figure == "Figure 1"),]  
+d <- d[-which(d$datasetID == "picciau17" & d$entered.by == "SC" & d$figure == "Table 1"),]  
 
 
 # momonoki79: issue #65 these two tables switch the seeds to lettuce---a crop
