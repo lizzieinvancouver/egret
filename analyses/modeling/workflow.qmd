@@ -56,7 +56,7 @@ kippenberger <- c("#8B174DFF", "#AE2565FF", "#C1447EFF", "#D06C9BFF", "#DA9FB8FF
 ## Conceptual analysis
 
 As a first step, I think the main question we're trying to answer is:\
-➡️ **What are the germination responses to different cues?** (<a href="https://github.com/lizzieinvancouver/egret/wiki/Questions">GitHub repo wiki</a>)
+➡ What are the germination responses to different cues? (see <a href="https://github.com/lizzieinvancouver/egret/wiki/Questions">GitHub repo wiki</a>)
 
 To answer this question, a systematic review of the scientific literature was conducted, focusing on controlled germination trials. They discarded:
 
@@ -72,19 +72,113 @@ To begin with, we focus solely on the effects of chilling (stratification) and f
 
 ### Simulate seed counts
 
-The data generating process is, by nature, binomial: starting from a known number of seeds, we observe the number of successes (seeds that germinate).  
-Let's simulate some data! We assume that species are related through a given phylogenetic tree.  
-The following code is largely inspired (= copied without any shame) from Deirdre's amazing work for OSPREE.
+Let's simulate some data! We assume a priori that species are related through a given phylogenetic tree (so we start from a quite complex model...), with a certain total length $\phi$.  
+The following block of code is largely inspired from Deirdre's amazing work for OSPREE.
 
 ```{r}
 nspecies <- 40 # let's say we have 40 species 
-spetree <- pbtree(n=nspecies, nsim=1, b=1, complete=FALSE,scale=1)
-spetree$tip.label <- paste("s", 1:nspecies, sep="")
 
+# stochastic birth-death trees (from Deirdre)
+maxlength <- runif(1,10,20)
+spetree <- pbtree(n=nspecies, nsim=1, b=1, complete=FALSE,scale=maxlength, type = "continuous") 
+# with a total length bewteen 10 and 20 (scale = maxlength)
+# note: we could set a length = 1, but we want to avoid any confusion 
+# between the covariance matrix [vcv(spetree, corr = FALSE)]
+# and the correlation matrix [vcv(spetree, corr = TRUE)]...
+
+spetree$tip.label <- paste("s", 1:nspecies, sep="")
 palette <- colorRampPalette(kippenberger)(nspecies)
+
 
 ```
 
+We thus make the hypothesis that the correlation (or covariance) between the species is a function of their relative distance (in the phylogenetic tree),  $\Delta x = | x_{sp_i} - x_{sp_j} |$.  
+The maximum distance between two species is thus $\max\Delta x = 2 * \phi$.  
+We can then visualize the structure of the covariance function, either with a covariogram or with a correlogram (see <a href="https://betanalpha.github.io/assets/case_studies/gaussian_processes.html">Mike's chapter on Gaussian Processes</a>).
+
+```{r}
+#| fig-height: 3.5
+
+# distance between species
+distance <- cophenetic(spetree)
+# round(max(distance),2) == round(2 * maxlength,2)
+
+# phylo covariance matrix
+covariance_matrix <- vcv(spetree, corr = FALSE)
+correlation_matrix <- vcv(spetree, corr = TRUE)
+
+dataplot <- unique(data.frame(
+  dist = c(distance),
+  cov = c(covariance_matrix),
+  corr = c(correlation_matrix)
+))
+
+par(mfrow = c(1,2))
+
+plot.new()
+plot.window(xlim = c(0,max(distance)), ylim = c(0,maxlength))
+grid()
+axis(1, las = 1, cex.axis = 1, tck=-0.02, at = c(0,max(distance)), labels=c("0", expression(paste("2 * ", varphi))))
+axis(2, las = 1, cex.axis = 1, tck=-0.02, at = c(0,maxlength), labels=c("0", expression(paste(varphi))))
+title(main = "Covariogram", xlab = expression(paste(Delta,x)),  line=1, cex.main = 1)
+lines(dataplot$dist, dataplot$cov, col="white", lwd=4)
+lines(dataplot$dist, dataplot$cov, col="#AE2565FF", lwd=2)
+
+plot.new()
+plot.window(xlim = c(0,max(distance)), ylim = c(0,1))
+grid()
+axis(1, las = 1, cex.axis = 1, tck=-0.02, at = c(0,max(distance)), labels=c("0", expression(paste("2 * ", varphi))))
+axis(2, las = 1, cex.axis = 1, tck=-0.02, at = c(0,1), labels=c("0", "1"))
+title(main = "Correlogram", xlab = expression(paste(Delta,x)),  line=1, cex.main = 1)
+lines(dataplot$dist, dataplot$corr, col="white", lwd=4)
+lines(dataplot$dist, dataplot$corr, col="#AE2565FF", lwd=2)
+
+lambda <- 0.7
+corr_pagel <- lambda * covariance_matrix
+corr_pagel <- corr_pagel - diag(diag(corr_pagel)) + diag(diag(covariance_matrix))
+
+
+```
+
+So, the way we simulate data assume a linear relationship between the relative distance $\Delta x$ between species and their expected covariance:
+$$f(\Delta x) = \phi - \frac{\Delta x}{2}$$
+When accounting for the Pagel's $\lambda$, we introduce a discontinuity:
+
+```{r}
+#| fig-height: 3.5
+#| fig-width: 4
+
+lambda <- 0.7
+
+cov_pagel <- lambda * covariance_matrix
+cov_pagel <- corr_pagel - diag(diag(corr_pagel)) + diag(diag(covariance_matrix))
+
+dataplot <- unique(data.frame(
+  dist = round(c(distance),2),
+  cov = round(c(cov_pagel),2)
+))
+
+dataplot_sub <- dataplot[dataplot$dist != 0,]
+
+par(mfrow = c(1,1))
+
+plot.new()
+plot.window(xlim = c(0,max(distance)), ylim = c(0,maxlength))
+grid()
+axis(1, las = 1, cex.axis = 1, tck=-0.02, at = c(0,max(distance)), labels=c("0", expression(paste("2 * ", varphi))))
+axis(2, las = 1, cex.axis = 1, tck=-0.02, at = c(0,maxlength), labels=c("0", expression(paste(varphi))))
+title(main = "Covariogram", xlab = expression(paste(Delta,x)),  line=1, cex.main = 1)
+lines(dataplot_sub$dist, dataplot_sub$cov, col="white", lwd=4)
+lines(dataplot_sub$dist, dataplot_sub$cov, col="#AE2565FF", lwd=2)
+points(dataplot[dataplot$dist == 0, "dist"], dataplot[dataplot$dist == 0, "cov"], 
+       col="#AE2565FF", pch = 20)
+
+
+
+```
+
+
+The data generating process is, by nature, binomial: starting from a known number of seeds, we observe the number of successes (seeds that germinate).    
 For convenience, we create a function to simulate from a binomial distribution. We consider only one covariate.
 
 ```{r}
@@ -102,7 +196,7 @@ simulate_data_improved <- function(spetree){
   )
   
   ## Simulate some data ## 
-  # phylogenetic structure
+  # phylogenetic structure (from Deirdre)
   scaledtree_intercept <- rescale(spetree, model = "lambda", params$lambda_a)         
   params$intercepts <- fastBM(scaledtree_intercept,
                               a = params$a_z, mu = 0, 
@@ -394,6 +488,7 @@ model {
 Let's fit both models on the simulated datasets.
 
 ```{r}
+#| eval: false
 
 get_estimates <- function(summ){
   return(
@@ -424,7 +519,7 @@ get_estimates <- function(summ){
 }
 
 
-run_models <- TRUE
+run_models <- FALSE
 
 # fit models
 if(run_models){
@@ -466,7 +561,7 @@ if(run_models){
                   diag = diagnostics))
     }, future.seed=TRUE)
   plan(sequential);gc()
-  saveRDS(databin, file = "modeling/output/comparison/bionomiallikelihood.rds")
+  saveRDS(databin, file = "output/comparison/bionomiallikelihood.rds")
   
   smordbeta <- stan_model("../stan/orderedbetalikelihood.stan")
   plan(multisession, workers = 4) 
@@ -518,10 +613,10 @@ if(run_models){
                   diag = diagnostics))
     }, future.seed=TRUE)
   plan(sequential);gc()
-  saveRDS(databeta, file = "modeling/output/comparison/betalikelihood.rds")
+  saveRDS(databeta, file = "output/comparison/betalikelihood.rds")
 }else{
-  databin <- readRDS(file = "modeling/output/comparison/bionomiallikelihood.rds")
-  databeta <- readRDS(file = "modeling/output/comparison/betalikelihood.rds")
+  databin <- readRDS(file = "output/comparison/bionomiallikelihood.rds")
+  databeta <- readRDS(file = "output/comparison/betalikelihood.rds")
 }
 
 ```
