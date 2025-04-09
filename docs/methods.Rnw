@@ -84,6 +84,10 @@ These selection criteria resulted in \Sexpr{noStudy} studies, including \Sexpr{n
 
 Data were extracted from tables and text sources. In cases where figures were used, the software imageJ  was used for data extraction. Data from figures with poor quality or overlapping datapoints were not further considered.
 
+\subsection*{Decisions on the way to analysis} 
+
+We assumed that authors report \% germination as relative to the total number of (we assume) viable seeds at the start of the experiment and discarded data that reported \% germination relative to some other seed number. % Such as ahmad07, see issue 79
+
 \subsection*{Seed dormancy classes} 
 
 Classes of Seed Dormancy were downloaded on Nov 29 2023 from \url{https://docs.google.com/spreadsheets/d/e/2PACX-1vQT6PoytQP3NP5RyoMb3zSXxoMmNj6rdkkyTv5CjE-jdqeovJJcEVr8OGND_L9P0nvYgdcepDACL8HX/pubhtml}
