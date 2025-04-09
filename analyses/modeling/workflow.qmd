@@ -76,6 +76,9 @@ Let's simulate some data! We assume a priori that species are related through a 
 The following block of code is largely inspired from Deirdre's amazing work for OSPREE.
 
 ```{r}
+#| fig-height: 4.5
+#| fig-width: 6
+
 nspecies <- 40 # let's say we have 40 species 
 
 # stochastic birth-death trees (from Deirdre)
@@ -89,6 +92,10 @@ spetree <- pbtree(n=nspecies, nsim=1, b=1, complete=FALSE,scale=maxlength, type 
 spetree$tip.label <- paste("s", 1:nspecies, sep="")
 palette <- colorRampPalette(kippenberger)(nspecies)
 
+
+plot(spetree, show.tip.label = FALSE, y.lim = c(0,45), x.lim = c(0,maxlength))
+segments(x0 = 0, y0 = 43, x1 = maxlength, col = "#AE2565FF", lwd=1.5)
+text(x = maxlength/2, y = 44.2, label = expression(paste("Tree length = ", varphi)), cex = 1,  col = "#AE2565FF")
 
 ```
 
