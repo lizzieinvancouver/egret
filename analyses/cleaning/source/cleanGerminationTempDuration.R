@@ -56,6 +56,10 @@ d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "5 to 15")] <- 15
 d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "10 to 15")] <- 15
 d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "25 to 15")] <- 15
 
+#naseri18 : contin chilling treatment with seeds germinated under chilling conditions.
+d$germ.temp[which(d$datasetID == "naseri18" & d$chill.duration == "Continuous cold stratification")] <- "2-4"
+d$germTemp[which(d$datasetID == "naseri18" & d$chill.duration == "Continuous cold stratification")] <- 3
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -295,6 +299,10 @@ d$germDuration[which(d$datasetID == "mamut20")] <- "30"
 d$germTemp[which(d$datasetID == "mamut20" & d$figure == "table 2")] <- "5/2"
 dur <- c(rep(c(28, 56, 84), 4))
 d$germDuration[which(d$datasetID == "mamut20" & d$figure == "table 2")] <- dur
+
+d$germDuration[which(d$datasetID == "lee06" & d$figure == "Figure 1")] <-
+  d$storage.time[which(d$datasetID == "lee06" & d$figure == "Figure 1")]
+d$germDuration[which(d$datasetID == "lee06" & d$figure == "Table 2")] <- 20
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 

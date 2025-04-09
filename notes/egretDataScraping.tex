@@ -73,7 +73,7 @@ Now here's what to do:
 \begin{itemize}
 \item We are trying to use camel case where possible for both script names and column names. 
 \item Adding a column for the rare cases where studies start measuring germination day relative to the day of first germination and not the day they start monitoring germination (i.e. day of germination temperatures, imbibing etc)
-\item Excluding papers not in english unless the person scraping the data could read the language fluently 
+\item In general we excluding papers not in english unless the person scraping the data could read the language fluently. But a few papers not were still included accidentally. 
 \item Decided to just add seed mass as a yes/no for now, we will have to go back and scrape it some day if we want it
 \item When dealing with error, enter it as zero if bars are not distinguishable from the points, or as "indistinguishable" if multiple overlapping points have overlapping error bars that can not be scraped with certainty (see issue of a visual example of this).
 \end{itemize}
@@ -112,6 +112,7 @@ Now here's what to do:
 \item \textbf{cleanChillTempDuration.R}: 
 \begin{itemize}
 \item Some studies have alternating day and night temps, so we created unique columns for alternating temps and daylength. %CRD11Feb2025: is that so? I thought we denoted these alternating temps by e.g. "20 then 10"
+\item If duration of chilling wasn't provided, we input NA for duration, but we kept the temperature.
 \item Some studies include warm temperatures as a chilling level. Sometimes, when it was a chilling treatment following a warm stratification, we entered it in chillTemp and its corresponding chillDuration. E.g.  "61 days at 20 C then 61 days at 5C". 
 \item There are 30 studies that are missing chilling temperature and durations. These pdf's were manually checked and notes made to check whether this is true or improperly entered data. It was discovered that in some of these studies, there are no chilling treatments, but there is moderately cold storage temperatures. 
 \item We discussed whether this storage could function as chilling, but decided that it depended on 1. whether the storage is wet, which would allow the seeds to be imbibed, 2. storage is between -20 and 10 degree C. 

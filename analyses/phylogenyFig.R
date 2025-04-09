@@ -20,6 +20,7 @@ library(geiger)
 library(caper)
 library(phangorn)
 library(taxize)
+library(WorldFlora)
 
 rm(list = ls()) # Clear whatever is already in R's memory
 options(stringsAsFactors=FALSE)# Make sure words are read in as characters rather than factors
@@ -36,7 +37,7 @@ phy.genera<-unlist(
 )
 phy.genera.uniq<-sort(unique(phy.genera))
 phy.sps.uniqu <- phy.plants$tip.label
-# === === === === === === === === === ===  === === === === ===  === === === === 
+# === === === === === === === === === ===  === === === === ===  === === === ===
 ### Start with Egret ###
 # === === === === === === === === === ===  === === === === ===  === === === === 
 egret.sps <- sort(unique(egret$latbi))
@@ -47,129 +48,83 @@ egret.phenosp.genus.inphylo<-genus.list[which(!egret.genus%in%phy.genera.uniq)] 
 ## how many phenobc species are NOT in the phylogeny?
 egret.phenosp.sps.inphylo<-egret.sps[which(!egret.sps%in%phy.sps.uniqu)] #48 out of 335
 
-# check synonyms using 2 databases from the package taxize
-### remove Eucalyptus_pauciflora ,Aster_laevis, Carex_scoparia for now 
-# vec <- c("Aster_laevis", "Carex_scoparia", "Eucalyptus_pauciflora", "Eupatorium_maculatum", "Fagus_sylvatica", "Heliopsis_helianthoides", "NA_NA", "Penstemon_scariosus", "Penstemon_pachyphyllus", "Phlox_maculata", "Phlox_pilosa", "Potentilla_argentea", "Symphyotrichum_oolentangiense", "Verbesina_encelioides")
-# egret.phenosp.sps.inphylo <- egret.phenosp.sps.inphylo[!egret.phenosp.sps.inphylo %in% vec]
-# try with db itis first
-# Load the taxize package
+# Get a list of synonyms for ALL species that aren't from the worldflora package
+setwd("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL")
+# wfodf <- read.csv("classification.csv", header = TRUE, sep = "\t")
+kew <- read.csv("wcvp/wcvp_names.csv", header = TRUE, sep = "|", stringsAsFactors = FALSE)
+head(kew)
+ # pull all the fuzzy matches, which included those at infraspecifc level
+e1 <- WFO.match(spec.data=egret.phenosp.sps.inphylo, WFO.data=wfodf, counter=1,
+                Fuzzy.min=FALSE, Fuzzy.shortest=FALSE, verbose=TRUE)
+head(e1$Old.name)
+head(phy.sps.uniqu)
+head(egret.phenosp.sps.inphylo)
+# replace _ by blank space for species names
+phy.sps.uniqu_ <- gsub("_", " ", phy.sps.uniqu)
+# subset all entries that are categorized as synonyms by worldflora
+syn <- subset(e1, Old.status == "Synonym")
+wfovec <- syn$Old.name
+# check occurence of synonyms in tree
+matches <- wfovec[wfovec %in% phy.sps.uniqu_] # 16 matches out of 48.
+
+# check one example for which there isn't a match
+e1$Old.name[grep("Pyrus", e1$Old.name)]
+phy.sps.uniqu[grep("Pyrus_syri", phy.sps.uniqu)] # ok so the package doesn't pull p. syriaca as a synonym, but it pulls it on the website. Lets look into this further:
+pyrus <- subset(e1, spec.name == "Pyrus_glabra") # pulls 4 synonym which don't match the ones on the website.
+pyrus$Old.name
+# let's take another example: Acer_hyrcanum
+phy.sps.uniqu_[grep("Acer h", phy.sps.uniqu_)] # in the tree, the only entry that matches this is Acer hyrcanum subsp. hyrcanum
+acerh <- subset(e1, spec.name == "Acer_hyrcanum") # and in wold flora there is no subs hgyrcanum...
+acerh$Old.name
+# on the website, the synonyms are: 
 
 
+# let's try when there is no _
+egret.phenosp.sps.inphylo_ <- gsub("_", " ", egret.phenosp.sps.inphylo)
+e1no_ <- WFO.match(spec.data=egret.phenosp.sps.inphylo, WFO.data=wfodf, counter=1,
+                Fuzzy.min=FALSE, Fuzzy.shortest=FALSE, verbose=TRUE)
+synno_ <- subset(e1no_, Old.status == "Synonym")
+wfovecno_ <- synno_$Old.name
+# check occurence of synonyms in tree
+matchesno_ <- wfovecno_[wfovecno_ %in% phy.sps.uniqu_] # 16 matches out of 48 still, so changing to no _ doens't make a difference
+# check with WFO.synonyms
+syno <- WFO.synonyms(egret.phenosp.sps.inphylo, WFO.file = NULL, WFO.data = wfodf)
+# check with WFO.synonyms with no _
+WFO.synonyms(egret.phenosp.sps.inphylo_, WFO.file = NULL, WFO.data = wfodf) # error message
+# go smaller
+subby <- egret.phenosp.sps.inphylo[1:35]
+synosubby <- WFO.synonyms(subby, WFO.file = NULL, WFO.data = wfodf) 
+#check with WFO.browse
+bro <- WFO.browse(egret.phenosp.sps.inphylo, WFO.file = NULL, WFO.data = wfodf,
+           accepted.only = FALSE, acceptedNameUsageID.match = TRUE)
 
-# Define your list of species
+syn <- WFO.synonyms(spec.test, WFO.data = wfodf) 
+syn <- WFO.synonyms(spec.test, WFO.file = wfodf, WFO.data = NULL) 
 
-# View results
+# try the vignette with the old package and lizzies loaded bryophyte data
+setwd("/Users/christophe_rouleau-desrochers/Downloads")
+bryophytes <- read.csv("bryophytes.csv")
 
-# Print the final decisions
-print(decisions)
-## fix genus 
-# Chrysojasminum: according to wiki, it's a synonym of jasminum 
-# GIT ISSUE: lizzie will find out if there is a more official ressource for Jasminum 
-# Paper: Jasminus changed by world flora to Chrysojasminum, found online here (https://powo.science.kew.org/taxon/77144221-1#synonyms) that it's a synonym of Jasminum WHICH is the genus name in the tree package. It fits Jasminum_fruticans in the tree. 
-phy.genera.uniq[grep("Jasminum", phy.genera.uniq)]
-phy.sps.uniqu[grep("Jasminum_fruticans", phy.sps.uniqu)]
-suby <- subset(egret, genus == "Chrysojasminum")
-unique(suby$datasetID)
+# Give the file with the static copy of the Taxonomic Backbone data ('classification.txt')
+# that was downloaded from \url{https://www.worldfloraonline.org/downloadData}.
+# Possibly first use unzip(file.choose()) for the downloaded WFO_Backbone.zip
 
-## fix species
-# Abies_marocana: would be a subspecies of Abies_pinsapo, which is in the tree
-phy.sps.uniqu[grep("Abies_pinsapo", phy.sps.uniqu)]
-# Acer_coriaceifolium: Acer_cinnamomifolium which is in the tree
-# https://www.worldfloraonline.org/taxon/wfo-0000514152
-phy.sps.uniqu[grep("Acer_cinnamo", phy.sps.uniqu)]
-# s
-phy.sps.uniqu[grep("Acer_hyrcanum", phy.sps.uniqu)]
-# Alstroemeria_ligtu
-phy.sps.uniqu[grep("Alstroemeria_ligtu", phy.sps.uniqu)]
-# Aster_laevis
-phy.sps.uniqu[grep("Aster_laevis", phy.sps.uniqu)]
-# Betonica_bulgarica
-phy.sps.uniqu[grep("Betonica_bulgarica", phy.sps.uniqu)]
-# Betula_pendula subsp. mandshurica
-phy.sps.uniqu[grep("Betula_pendula subsp. mandshurica", phy.sps.uniqu)]
-# Betula_utilis subsp. albosinensis
-phy.sps.uniqu[grep("Betula_utilis subsp. albosinensis", phy.sps.uniqu)]
-# Calligonum_alaschanicum
-phy.sps.uniqu[grep("Calligonum_alaschanicum", phy.sps.uniqu)]
-# Carex_scoparia
-phy.sps.uniqu[grep("Carex_scoparia", phy.sps.uniqu)]
-# Celtis_pallida
-phy.sps.uniqu[grep("Celtis_pallida", phy.sps.uniqu)]
-# Chrysojasminum_fruticans
-phy.sps.uniqu[grep("Chrysojasminum_fruticans", phy.sps.uniqu)]
-# Crambe_hispanica subsp. abyssinica
-phy.sps.uniqu[grep("Crambe_hispanica subsp. abyssinica", phy.sps.uniqu)]
-# Dianthus_arenarius
-phy.sps.uniqu[grep("Dianthus_arenarius", phy.sps.uniqu)]
-# Echinacea_spp.
-phy.sps.uniqu[grep("Echinacea_spp.", phy.sps.uniqu)]
-# Eucalyptus_delegatensis
-phy.sps.uniqu[grep("Eucalyptus_delegatensis", phy.sps.uniqu)]
-# Eucalyptus_ovata
-phy.sps.uniqu[grep("Eucalyptus_ovata", phy.sps.uniqu)]
-# Eucalyptus_pauciflora
-phy.sps.uniqu[grep("Eucalyptus_pauciflora", phy.sps.uniqu)] # problem with taxise package where it finds multiple entries. Removed for now but will need to be fixed
-# Eucalyptus_pauciflora subsp. niphophila
-phy.sps.uniqu[grep("Eucalyptus_pauciflora subsp. niphophila", phy.sps.uniqu)]
-# Eucomis_autumnalis
-phy.sps.uniqu[grep("Eucomis_autumnalis", phy.sps.uniqu)]
-# Eupatorium_maculatum
-phy.sps.uniqu[grep("Eupatorium_maculatum", phy.sps.uniqu)]
-# Fagus_sylvatica
-phy.sps.uniqu[grep("Fagus_sylvatica", phy.sps.uniqu)]
-# Gentiana_lutea
-phy.sps.uniqu[grep("Gentiana_lutea", phy.sps.uniqu)]
-# Guizotia_scabra
-phy.sps.uniqu[grep("Guizotia_scabra", phy.sps.uniqu)]
-# Heliopsis_helianthoides
-phy.sps.uniqu[grep("Heliopsis_helianthoides", phy.sps.uniqu)]
-# Leontice_incerta
-phy.sps.uniqu[grep("Leontice_incerta", phy.sps.uniqu)]
-# Leuzea_carthamoides
-phy.sps.uniqu[grep("Leuzea_carthamoides", phy.sps.uniqu)]
-# Loranthus_tanakae
-phy.sps.uniqu[grep("Loranthus_tanakae", phy.sps.uniqu)]
-# Maackia_taiwanensis
-phy.sps.uniqu[grep("Maackia_taiwanensis", phy.sps.uniqu)]
-# NA_NA
-phy.sps.uniqu[grep("NA_NA", phy.sps.uniqu)]
-# Penstemon_pachyphyllus
-phy.sps.uniqu[grep("Penstemon_pachyphyllus", phy.sps.uniqu)]
-# Penstemon_scariosus
-phy.sps.uniqu[grep("Penstemon_scariosus", phy.sps.uniqu)]
-# Phlox_maculata
-phy.sps.uniqu[grep("Phlox_maculata", phy.sps.uniqu)]
-# Phlox_pilosa
-phy.sps.uniqu[grep("Phlox_pilosa", phy.sps.uniqu)]
-# Potentilla_argentea
-phy.sps.uniqu[grep("Potentilla_argentea", phy.sps.uniqu)]
-# Potentilla_reptans
-phy.sps.uniqu[grep("Potentilla_reptans", phy.sps.uniqu)]
-# Primula_bulleyana subsp. beesiana
-phy.sps.uniqu[grep("Primula_bulleyana subsp. beesiana", phy.sps.uniqu)]
-# Prunus_lusitanica subsp. azorica
-phy.sps.uniqu[grep("Prunus_lusitanica subsp. azorica", phy.sps.uniqu)]
-# Pyrus_glabra
-phy.sps.uniqu[grep("Pyrus_glabra", phy.sps.uniqu)]
-# Rosa_damascena
-phy.sps.uniqu[grep("Rosa_damascena", phy.sps.uniqu)]
-# Solidago_albopilosa
-phy.sps.uniqu[grep("Solidago_albopilosa", phy.sps.uniqu)]
-# Solidago_niederederi
-phy.sps.uniqu[grep("Solidago_niederederi", phy.sps.uniqu)]
-# Symphyotrichum_oolentangiense
-phy.sps.uniqu[grep("Symphyotrichum_oolentangiense", phy.sps.uniqu)]
-# Taraxacum_platycarpum
-phy.sps.uniqu[grep("Taraxacum_platycarpum", phy.sps.uniqu)]
-# Thymophylla_tephroleuca
-phy.sps.uniqu[grep("Thymophylla_tephroleuca", phy.sps.uniqu)]
-# Tilia_platyphyllos subsp. corinthiaca
-phy.sps.uniqu[grep("Tilia_platyphyllos subsp. corinthiaca", phy.sps.uniqu)]
-# Verbesina_encelioides
-phy.sps.uniqu[grep("Verbesina_encelioides", phy.sps.uniqu)]
-# Veronicastrum_sibiricum
-phy.sps.uniqu[grep("Veronicastrum_sibiricum", phy.sps.uniqu)]
-## first prune the phylogeny to include$ only these genera
+# change to fit WFO.file.RK
+WFO.file.RK <- wfodf
+
+# check species name
+w1 <- WFO.match(bryophytes[1:20, ], WFO.file=WFO.file.RK, spec.name="Full.name", counter=1)
+
+# check species name from list of names
+w1 <- WFO.match(bryophytes$Full.name[1:20], WFO.file=WFO.file.RK, counter=1)
+
+# show all listings at a next hierarchical level
+WFO.data1 <- data.table::fread(WFO.file.RK, encoding="UTF-8")
+
+# give synonyms
+WFO.synonyms("Olea europaea", WFO.data=WFO.data1)
+
+-## first prune the phylogeny to include$ only these genera
 # phy.genera.egret<-drop.tip(phy.plants,
 #                              which(!phy.genera %in% phenosp.genus.inphylo)) #34940 tips
 # length(phy.genera.egret$tip.label)

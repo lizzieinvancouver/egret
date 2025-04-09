@@ -68,6 +68,9 @@ source("cleaning/source/cleanCoordinates.R") # 30777    76
 # 13. Clean treatment column
 source("cleaning/source/cleanTreatments.R") 
 
+#14. clean chemical concenttation
+source("cleaning/source/cleanConcentration.R")
+
 # And ... some final cleaning
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"

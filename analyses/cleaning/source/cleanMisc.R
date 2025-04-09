@@ -41,12 +41,14 @@ d <- d[-which(d$datasetID == "olmez07" & d$entered.by == "MN"),] #92
 d <- d[-which(d$datasetID == "olmez09" & d$entered.by == "MN"),] #56
 d <- d[-which(d$datasetID == "redondo-gomez11" & d$entered.by == "DM"),]#142
 d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.A"),]  #43
-d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.B"),]  #43
-d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.C"),]  #43
-d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.D"),]  #43
-d <- d[-which(d$datasetID == "song20" & d$entered.by == "DM"),]  #43
-d <- d[-which(d$datasetID == "pritchard93" & d$entered.by == "MN" & d$figure == "Table 3"),]  #6 
-d <- d[-which(d$datasetID == "pritchard93" & d$figure == "Figure 2"),]  #6 
+d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.B"),]  
+d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.C"),]  
+d <- d[-which(d$datasetID == "zhou08" & d$entered.by == "DK" & d$figure == "figure 1.D"),]  
+d <- d[-which(d$datasetID == "song20" & d$entered.by == "DM"),]  
+d <- d[-which(d$datasetID == "pritchard93" & d$entered.by == "MN" & d$figure == "Table 3"),]  
+d <- d[-which(d$datasetID == "pritchard93" & d$figure == "Figure 2"),]  
+d <- d[-which(d$datasetID == "rubin18" & d$entered.by == "MN" & d$figure == "Figure 1"),]  
+
 
 # momonoki79: issue #65 these two tables switch the seeds to lettuce---a crop
 d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table20")),] # 4
@@ -99,6 +101,15 @@ d$study[which(d$datasetID == "kulkarni06" & d$study == "exp3" & d$figure == "fii
 d$figure[which(d$datasetID == "pipinis20" & d$treatment == "Warm statification (0 months) + cold stratification (0 months)")] <-
   "Table 2"
 d$study[which(d$datasetID == "li11" & d$study == "exp 1 ")] <- "exp 1"
+
+# rescraped jusung16, Table 1
+d <- d[-which(d$datasetID == "jusung16" & d$entered.by == "SC" & d$figure == "Table 1"),]  
+
+# rescraped tang10b
+#d <- d[-which(d$datasetID == "tang10b" & d$entered.by == "JN"),] #4/7 Dan found this deletes all data
+
+# rescraped bungard97 Fig1B
+d <- d[-which(d$datasetID == "bungard97" & d$entered.by == "BW" & d$figure == "Figure 1b"),]
 
 if(FALSE){
 ##	
