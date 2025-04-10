@@ -33,7 +33,6 @@ corrected <- c("batlla03","chen15","jang22","langlois17", "lo19", "nurse08","olm
 
 d <- d[-which(d$datasetID == "chen15" & d$entered.by == "TA"),] #11
 d <- d[-which(d$datasetID == "jang22" & d$entered.by == "SC"),] #11
-d <- d[-which(d$datasetID == "airi09" & d$entered.by == "TA"),] # 90
 d <- d[-which(d$datasetID == "langlois17" & d$entered.by == "AZ"),] #322
 d <- d[-which(d$datasetID == "lo19" & d$entered.by == "SC"),] #95
 d <- d[-which(d$datasetID == "nurse08" & d$entered.by == "MN"),] #156
@@ -58,7 +57,6 @@ d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table21")),] # 4
 # Washitani85 values greater than 100 bc the x-axis values were entered as
 d <- d[-(which(d$datasetID == "washitani85" & d$entered.by == "HHN" & d$figure == "Figure 5")),] 
 
-"Figure 5"
 # yang18_2: changing figure labels. 
 d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 3")] <- "Figure 4"
 d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 2")] <- "Figure 3"
