@@ -60,7 +60,13 @@
 \section*{Methods} %without number
 \subsection*{EGRET database}
 <<label=runcode1,  echo=FALSE>>=
-source("..//analyses/cleaning/datachecking.R")
+#source("..//analyses/cleaning/datachecking.R")
+setwd("~/Documents/github/egret/docs")
+d <- read.csv("..//analyses/output/egretClean.csv")
+
+noStudy <- length(unique(d$datasetID))
+noSpp <- length(unique(d$sp.name))
+nRow <- nrow(d)
 @
 
 A systematic review was conducted to identify and analyze experimentally controlled germination trials reported in the scientific literature. The search was performed using the ISI Web of Science database with the following search terms: \\
