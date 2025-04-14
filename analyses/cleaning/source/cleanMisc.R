@@ -104,8 +104,8 @@ d$study[which(d$datasetID == "li11" & d$study == "exp 1 ")] <- "exp 1"
 # rescraped jusung16, Table 1
 d <- d[-which(d$datasetID == "jusung16" & d$entered.by == "SC" & d$figure == "Table 1"),]  
 
-# rescraped tang10b
-#d <- d[-which(d$datasetID == "tang10b" & d$entered.by == "JN"),] #4/7 Dan found this deletes all data
+# rescraped tang10_2
+d <- d[-which(d$datasetID == "tang10_2" & d$entered.by == "JN"),] #4/7 Dan found this deletes all data
 
 # rescraped bungard97 Fig1B
 d <- d[-which(d$datasetID == "bungard97" & d$entered.by == "BW" & d$figure == "Figure 1b"),]
