@@ -37,9 +37,12 @@ phy.genera<-unlist(
 )
 phy.genera.uniq<-sort(unique(phy.genera))
 phy.sps.uniqu <- phy.plants$tip.label
+# remove _
+phy.sps.uniqu <- gsub("_", " ", phy.sps.uniqu)
 # === === === === === === === === === ===  === === === === ===  === === === ===
 ### Start with Egret ###
 # === === === === === === === === === ===  === === === === ===  === === === === 
+egret$latbi <-gsub("_", " ", egret$latbi)
 egret.sps <- sort(unique(egret$latbi))
 egret.genus=sort(unique(egret$genus))
 
@@ -53,77 +56,249 @@ setwd("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL")
 # wfodf <- read.csv("classification.csv", header = TRUE, sep = "\t")
 kew <- read.csv("wcvp/wcvp_names.csv", header = TRUE, sep = "|", stringsAsFactors = FALSE)
 head(kew)
- # pull all the fuzzy matches, which included those at infraspecifc level
-e1 <- WFO.match(spec.data=egret.phenosp.sps.inphylo, WFO.data=wfodf, counter=1,
-                Fuzzy.min=FALSE, Fuzzy.shortest=FALSE, verbose=TRUE)
-head(e1$Old.name)
-head(phy.sps.uniqu)
-head(egret.phenosp.sps.inphylo)
-# replace _ by blank space for species names
-phy.sps.uniqu_ <- gsub("_", " ", phy.sps.uniqu)
-# subset all entries that are categorized as synonyms by worldflora
-syn <- subset(e1, Old.status == "Synonym")
-wfovec <- syn$Old.name
-# check occurence of synonyms in tree
-matches <- wfovec[wfovec %in% phy.sps.uniqu_] # 16 matches out of 48.
-
-# check one example for which there isn't a match
-e1$Old.name[grep("Pyrus", e1$Old.name)]
-phy.sps.uniqu[grep("Pyrus_syri", phy.sps.uniqu)] # ok so the package doesn't pull p. syriaca as a synonym, but it pulls it on the website. Lets look into this further:
-pyrus <- subset(e1, spec.name == "Pyrus_glabra") # pulls 4 synonym which don't match the ones on the website.
-pyrus$Old.name
-# let's take another example: Acer_hyrcanum
-phy.sps.uniqu_[grep("Acer h", phy.sps.uniqu_)] # in the tree, the only entry that matches this is Acer hyrcanum subsp. hyrcanum
-acerh <- subset(e1, spec.name == "Acer_hyrcanum") # and in wold flora there is no subs hgyrcanum...
-acerh$Old.name
-# on the website, the synonyms are: 
+### look up kew to start
+unique(kew$taxon_status)
 
 
-# let's try when there is no _
-egret.phenosp.sps.inphylo_ <- gsub("_", " ", egret.phenosp.sps.inphylo)
-e1no_ <- WFO.match(spec.data=egret.phenosp.sps.inphylo, WFO.data=wfodf, counter=1,
-                Fuzzy.min=FALSE, Fuzzy.shortest=FALSE, verbose=TRUE)
-synno_ <- subset(e1no_, Old.status == "Synonym")
-wfovecno_ <- synno_$Old.name
-# check occurence of synonyms in tree
-matchesno_ <- wfovecno_[wfovecno_ %in% phy.sps.uniqu_] # 16 matches out of 48 still, so changing to no _ doens't make a difference
-# check with WFO.synonyms
-syno <- WFO.synonyms(egret.phenosp.sps.inphylo, WFO.file = NULL, WFO.data = wfodf)
-# check with WFO.synonyms with no _
-WFO.synonyms(egret.phenosp.sps.inphylo_, WFO.file = NULL, WFO.data = wfodf) # error message
-# go smaller
-subby <- egret.phenosp.sps.inphylo[1:35]
-synosubby <- WFO.synonyms(subby, WFO.file = NULL, WFO.data = wfodf) 
-#check with WFO.browse
-bro <- WFO.browse(egret.phenosp.sps.inphylo, WFO.file = NULL, WFO.data = wfodf,
-           accepted.only = FALSE, acceptedNameUsageID.match = TRUE)
+kewvec <- unique(kew$taxon_name)
+# now look up only for the species that we don't have a match with the tree:
+matchestree <- egret.phenosp.sps.inphylo[egret.phenosp.sps.inphylo %in% kewvec] 
+length(matchestree) # 32 species in egret are not in kew taxon_name column. Below I will extract all taxon names that return a common accepted parent name ID
 
-syn <- WFO.synonyms(spec.test, WFO.data = wfodf) 
-syn <- WFO.synonyms(spec.test, WFO.file = wfodf, WFO.data = NULL) 
+# create df of species names from egret
+sppegretkew <- subset(egret, latbi %in% egret.phenosp.sps.inphylo)
+# remove duplicated rows
+sppegretkew <- sppegretkew[!duplicated(sppegretkew$latbi), ]
+# select only species column
+sppegretkew2 <- sppegretkew[, c("datasetID", "latbi")]
 
-# try the vignette with the old package and lizzies loaded bryophyte data
-setwd("/Users/christophe_rouleau-desrochers/Downloads")
-bryophytes <- read.csv("bryophytes.csv")
+# add accepted plant name ID from kewsub accepted_plant_name_id
 
-# Give the file with the static copy of the Taxonomic Backbone data ('classification.txt')
-# that was downloaded from \url{https://www.worldfloraonline.org/downloadData}.
-# Possibly first use unzip(file.choose()) for the downloaded WFO_Backbone.zip
+# subset in kew's for all 48 species that we don't have a match in the tree
+kewsub <- subset(kew, taxon_name %in% egret.phenosp.sps.inphylo)
 
-# change to fit WFO.file.RK
-WFO.file.RK <- wfodf
+# grab all parent ID for these species
+accparentIDs <- kewsub$accepted_plant_name_id
+# pull a vector of species names that correspond to these accepted IDs.
+sub <- subset(kew, accepted_plant_name_id %in% accparentIDs)
+# remove NAs
+suby <- sub[sub$accepted_plant_name_id != "", ]
+# pull all of these species 
+kewnames <- suby$taxon_name
+# look how many of these species are in the phylogeny tree:
+withaccepted<-kewnames[which(kewnames%in%phy.sps.uniqu)] 
+# subset kew for these species
+matchednames <- subset(kew, taxon_name %in% withaccepted)
+# remove unecessary columns
+matchednamessub <- matchednames[, c("accepted_plant_name_id", "taxon_name")]
 
-# check species name
-w1 <- WFO.match(bryophytes[1:20, ], WFO.file=WFO.file.RK, spec.name="Full.name", counter=1)
+# add parent name ID in the df containing ALL the species we don't have match for in the tree
+latbiwithId <- merge(sppegretkew2, kewsub[, c("taxon_name", "accepted_plant_name_id")], 
+             by.x = "latbi", by.y = "taxon_name", 
+             all.x = TRUE)
 
-# check species name from list of names
-w1 <- WFO.match(bryophytes$Full.name[1:20], WFO.file=WFO.file.RK, counter=1)
 
-# show all listings at a next hierarchical level
-WFO.data1 <- data.table::fread(WFO.file.RK, encoding="UTF-8")
+# merge matchednamessub and sppegretkew by accepted_plant_name_id
+matchednamesegret <- merge(latbiwithId, matchednamessub, by = "accepted_plant_name_id",
+                           all.x = TRUE) 
+# change colnames
+colnames(matchednamesegret) <- c("accepted_plant_name_id", "egretname", "datasetID", "matchedName")
+nrow(matchednamesegret[!duplicated(matchednamesegret$latbi), ])
 
-# give synonyms
-WFO.synonyms("Olea europaea", WFO.data=WFO.data1)
+nomatch <- matchednamesegret[which(is.na(matchednamesegret$taxon_name)),]
+# now grab the varieties for the latbi names that we don't have matches in the tree
 
+# ok now we have new taxon names, for some species more than name. Below Ill investigate why the remaining don't have matches
+
+# Betonica bulgarica: only one synonym = Stachys bulgarica and it's not in the tree
+phy.sps.uniqu[grepl("bulgarica", phy.sps.uniqu)] 
+# Leontice incerta: only one synonym =Leontice vesicaria and it's not in the tree
+phy.sps.uniqu[grepl("Leontice", phy.sps.uniqu)] 
+# Maackia taiwanensis. Synonyms: none
+phy.sps.uniqu[grepl("taiwanensis", phy.sps.uniqu)] 
+
+# Penstemon pachyphyllus. Synonyms: Penstemon pachyphyllus var. pachyphyllus. Mismatch between website and kew's backbone. 
+kew$taxon_name[grepl("Penstemon pachyphyllus", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Penstemon pachyphyllus", phy.sps.uniqu)] 
+nomatch$taxon_name[which(nomatch$latbi == "Penstemon pachyphyllus")] <- "Penstemon pachyphyllus var. pachyphyllus"
+# Penstemon scariosus. Synonyms: none. Species match, but not varieties
+kew$taxon_name[grepl("Penstemon pachyphyllus", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Penstemon scariosus", phy.sps.uniqu)] 
+
+# Phlox maculata. Synonyms: many, but none that match the one in the tree
+kew$taxon_name[grepl("Phlox maculata", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Phlox maculata", phy.sps.uniqu)] 
+
+# Phlox pilosa. Synonyms: many,  but none that match the one in the tree
+kew$taxon_name[grepl("Phlox pilosa", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Phlox pilosa", phy.sps.uniqu)] 
+
+# Acer hyrcanum. Synonyms: Acer hyrcanum subsp. hyrcanum
+kew$taxon_name[grepl("Acer hyrcanum", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Acer hyrcanum", phy.sps.uniqu)] 
+nomatch$taxon_name[which(nomatch$latbi == "Acer hyrcanum")] <- "Acer hyrcanum subsp. hyrcanum"
+# Dianthus arenarius. Synonyms: Dianthus arenarius subsp. bohemicus
+kew$taxon_name[grepl("Dianthus arenarius", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Dianthus arenarius", phy.sps.uniqu)] 
+nomatch$taxon_name[which(nomatch$latbi == "Dianthus arenarius")] <-"Dianthus arenarius subsp. bohemicus"
+# Gentiana lutea. Synonyms: Gentiana lutea subsp. lutea
+kew$taxon_name[grepl("Gentiana lutea", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Gentiana lutea", phy.sps.uniqu)] 
+nomatch$taxon_name[which(nomatch$latbi == "Gentiana lutea")] <- "Gentiana lutea subsp. lutea"
+# Potentilla reptans. Synonyms: many,  but none that match the one in the tree
+kew$taxon_name[grepl("Potentilla reptans", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Potentilla reptans", phy.sps.uniqu)] 
+
+# Alstroemeria ligtu. Synonyms:  many,  but none that match the one in the tree 
+kew$taxon_name[grepl("Alstroemeria ligtu", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Alstroemeria ligtu", phy.sps.uniqu)] 
+
+# Taraxacum platycarpum. Synonyms: Taraxacum platycarpum subsp. hondoense
+kew$taxon_name[grepl("Taraxacum platycarpum", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Taraxacum platycarpum", phy.sps.uniqu)] 
+nomatch$taxon_name[which(nomatch$latbi == "Taraxacum platycarpum")] <- "Taraxacum platycarpum subsp. hondoense"
+# Verbesina encelioide. Synonyms: many,  but none that match the one in the tree 
+kew$taxon_name[grepl("Verbesina encelioides", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Ximenesia", phy.sps.uniqu)] 
+
+# Heliopsis helianthoides. Synonyms: Heliopsis helianthoides var. scabra
+kew$taxon_name[grepl("Heliopsis helianthoides", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Heliopsis helianthoides", phy.sps.uniqu)] 
+nomatch$taxon_name[which(nomatch$latbi == "Heliopsis helianthoides")] <- "Heliopsis helianthoides var. scabra"
+# Guizotia scabra. Synonyms: many,  but none that match the one in the tree 
+kew$taxon_name[grepl("Guizotia scabra", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Guizotia", phy.sps.uniqu)] 
+
+# Eupatorium maculatum. Synonyms: many,  but none that match the one in the tree 
+kew$taxon_name[grepl("Eupatorium maculatum", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Eutrochium", phy.sps.uniqu)] 
+
+# Abies marocana. Synonyms: Abies pinsapo
+kew$taxon_name[grepl("Abies marocana", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Abies pinsapo", phy.sps.uniqu)] 
+nomatch$taxon_name[which(nomatch$latbi == "Abies marocana")] <- "Abies pinsapo"
+# Betula utilis subsp. albosinensis. Synonyms: 
+kew$taxon_name[grepl("Betula utilis subsp. albosinensis", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Betula utilis subsp. albosinensis", phy.sps.uniqu)] 
+
+# Eucalyptus delegatensis. Synonyms: 
+kew$taxon_name[grepl("Eucalyptus delegatensis", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Eucalyptus delegatensis", phy.sps.uniqu)] 
+
+# Eucalyptus ovata. Synonyms: 
+kew$taxon_name[grepl("Eucalyptus ovata", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Eucalyptus ovata", phy.sps.uniqu)] 
+
+# Eucalyptus pauciflora. Synonyms: 
+kew$taxon_name[grepl("Eucalyptus pauciflora", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Eucalyptus pauciflora", phy.sps.uniqu)] 
+
+# Betula pendula subsp. mandshurica. Synonyms: 
+kew$taxon_name[grepl("Betula pendula subsp. mandshurica", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Betula pendula subsp. mandshurica", phy.sps.uniqu)] 
+
+# Celtis pallida. Synonyms: 
+kew$taxon_name[grepl("Celtis pallida", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Celtis pallida", phy.sps.uniqu)] 
+
+# Echinacea spp.. Synonyms: 
+kew$taxon_name[grepl("Echinacea spp.", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Echinacea spp.", phy.sps.uniqu)] 
+
+# Eucalyptus pauciflora subsp. niphophila. Synonyms: 
+kew$taxon_name[grepl("Eucalyptus pauciflora subsp. niphophila", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Eucalyptus pauciflora subsp. niphophila", phy.sps.uniqu)] 
+
+# Eucomis autumnalis. Synonyms: 
+kew$taxon_name[grepl("Eucomis autumnalis", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Eucomis autumnalis", phy.sps.uniqu)] 
+
+# Thymophylla tephroleuca. Synonyms: 
+kew$taxon_name[grepl("Thymophylla tephroleuca", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Thymophylla tephroleuca", phy.sps.uniqu)] 
+
+# Tilia platyphyllos subsp. corinthiaca. Synonyms: 
+kew$taxon_name[grepl("Tilia platyphyllos subsp. corinthiaca", kew$taxon_name)] 
+phy.sps.uniqu[grepl("Tilia platyphyllos subsp. corinthiaca", phy.sps.uniqu)] 
+
+# Primula bulleyana subsp. beesiana. Synonyms: 
+phy.sps.uniqu[grepl("Primula bulleyana subsp. beesiana", phy.sps.uniqu)] 
+
+# Pyrus glabra. Synonyms: 
+phy.sps.uniqu[grepl("Pyrus glabra", phy.sps.uniqu)] 
+
+# Veronicastrum sibiricum. Synonyms: 
+phy.sps.uniqu[grepl("Veronicastrum sibiricum", phy.sps.uniqu)] 
+
+# Solidago albopilosa. Synonyms: 
+phy.sps.uniqu[grepl("Solidago albopilosa", phy.sps.uniqu)] 
+
+# Symphyotrichum oolentangiense. Synonyms: 
+phy.sps.uniqu[grepl("Symphyotrichum oolentangiense", phy.sps.uniqu)] 
+
+# Rosa damascena. Synonyms: 
+phy.sps.uniqu[grepl("Rosa damascena", phy.sps.uniqu)] 
+
+# Solidago niederederi. Synonyms: 
+phy.sps.uniqu[grepl("Solidago niederederi", phy.sps.uniqu)] 
+
+
+# Create result data.frame
+results <- data.frame(
+  original = nomatch$latbi,
+  match = matched_names,
+  stringsAsFactors = FALSE
+)
+
+# rename columns 
+colnames(matchednamesegret) <- c("accepted_plant_name_id", "og_taxon_name", "matched_taxon_name")
+# now that I have 24 species names that have matches in the tree, there are 24 remaining. Below I select these last 24.First I will 
+
+# try with column parent_plant_name_id
+
+# grab all parent ID for these species
+parentIDs <- kewsub$parent_plant_name_id
+# pull a vector of species names that correspond to these accepted IDs.
+sub <- subset(kew, parent_plant_name_id %in% parentIDs)
+# remove NAs
+suby <- sub[sub$parent_plant_name_id != "", ]
+suby2 <- suby[!is.na(sub$parent_plant_name_id), ]
+# pull all of these species 
+kewnames <- suby2$taxon_name
+# look how many of these species are in the phylogeny tree:
+withparent<-kewnames[which(kewnames%in%phy.sps.uniqu)] 
+
+
+
+
+
+
+
+
+# vector of parent plant name of these 32 species
+vecparentId <- kewsubsyn$accepted_plant_name_id
+# vector of accepted plant name id of these 5 species
+parentName <- subset(kew, plant_name_id %in% vecparentId)
+# get a vector of plant name 
+vecaparentname <- parentName$taxon_name
+# Now look not only for synonyms, but all the different taxon status
+vectaxonacceptedID <- kewsub$accepted_plant_name_id
+allparentName <- subset(kew, plant_name_id %in% vectaxonacceptedID)
+vecall <- allparentName$taxon_name
+matchesKewTree<-vecall[which(!vecall%in%phy.sps.uniqu)]
+# now look up matches in the phylo tree
+bhel <- subset(kew, taxon_name == "Buphthalmum helianthoides L.") 
+# grep Buphthalmum helianthoides L. in kew taxon list
+grepl("helianthoides", kew$taxon_name)
+# select taxon names that have helianthoided with the grepl function
+kew$taxon_name[grepl("helianthoides", kew$taxon_name)]
+
+
+
+
+# === === === === === === === === === === === === === === === === === === === === === ===
+# === === === === === === === === === === === === === === === === === === === === === ===
+# === === === === === === === === === === === === === === === === === === === === === ===
 -## first prune the phylogeny to include$ only these genera
 # phy.genera.egret<-drop.tip(phy.plants,
 #                              which(!phy.genera %in% phenosp.genus.inphylo)) #34940 tips

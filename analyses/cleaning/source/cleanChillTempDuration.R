@@ -504,7 +504,6 @@ temp <- c(364, "14 then 350", "28 then 336", "42 then 322", "56 then 308",
           "70 then 294", "84 then 280", "112 then 252", "140 then 224", "161 then 203",
           "182 then 182", "210 then 154", 364)
 d$chillDuration[grep("6°C", d$chill.duration[d$datasetID == "pritchard93"])] <- temp
-d$chillTemp[which(d$datasetID == "pritchard93" & d$chill.duration == 52)] <- c(16, 6)
 d$chillTemp[grep("5°C", d$chill.duration)] <- "25 then 5"
 temp <- c(84, "14 then 84", "21 then 84", "28 then 84", "42 then 84", "63 then 84")
 d$chillDuration[grep("5°C", d$chill.duration)] <- temp
@@ -644,6 +643,7 @@ d$chillTemp[which(d$chill.temp == "4 +/- 2 ")] <- 4
 d$chillTempUnc[which(d$chill.temp == "4 +/- 2 ")] <- 2
 
 # battaglia97 : missing chill duration in the figure # TO CHECK
+
 
 #fulbright86: standardize format
 d$chillTemp[which(d$chill.temp == "30/7")] <- "30 then 7"
