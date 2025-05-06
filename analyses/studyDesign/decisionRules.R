@@ -27,7 +27,7 @@ d <- read.csv('output/egretclean.csv')
 treats <- c('datasetID', 'study',
             'genus', 'species', 'variety',
             
-            "treatment", # I guess it's a summary?
+            "treatmentCor", # I guess it's a summary?
             
             # STORAGE-RELATED
             'storageType', 'storageTemp', "storageDuration", "storageDetails",
@@ -83,6 +83,12 @@ chem.toremove <- unique(d[grepl(vetochems, d$chemicalCor),'chemicalCor'])
 # chem.notremoved
 filteredd <- filteredd[!(filteredd$chemicalCor %in% chem.toremove),]
 
+# Second veto updated: chemical --- during soaking --- we absolutely want to remove
+vetochems_soaking <- 'GA|BA|ABA|Tween|fungicide|Benomyl|captan|Ethephon|ACC|cytokinin|paclobutrazol|KNO3|KN'
+chem.toremove <- unique(d[grepl(vetochems_soaking, d$soaked.in),'soaked.in'])
+chem.notremoved <- unique(d[!grepl(vetochems_soaking, d$soaked.in),'soaked.in'])
+filteredd <- filteredd[!(filteredd$soaked.in %in% chem.toremove),]
+
 # Third veto: misc. treatment we absolutely want to remove
 misc.toremove <- unique(d[grepl('stress', d$other.treatment),'other.treatment'])
 filteredd <- filteredd[!(filteredd$chemicalCor %in% misc.toremove),]
@@ -101,8 +107,10 @@ ids <- ids[!(ids$datasetID == 'kolodziejek19' & ids$study == 'exp0'),] # I don't
 ids$misc.tokeep <- ids$misc.check <- NA
 ids$scarif.tokeep <- ids$scarif.check <- NA
 ids$chem.tokeep <- ids$chem.check <- NA
+ids$soak.tokeep <- ids$soak.check <- NA
 ids$stor.tokeep <- ids$stor.check <- NA
 ids$photo.tokeep <- ids$photo.check <- NA
+
 for(i in 1:nrow(ids)){
   
   di <- filteredd[paste0(filteredd$datasetID,filteredd$study,filteredd$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
@@ -382,6 +390,77 @@ for(i in 1:nrow(ids)){
   nrow.after <- nrow(di)
   if(nrow.before!=nrow.after){
     message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
+  }
+  
+  # SOAKING (update in May 2025)
+  ids[i, 'soak.check']  <- FALSE
+  if(length(unique(di$soaked.in)) > 1){
+    
+    cat(paste0(" > Number of soak. treat.: ", length(unique(di$soaked.in)), "\n"))
+    cat('   - [');cat(paste(unique(di$soaked.in)), sep = ', ');cat(']\n')
+    
+    ntreati <- di %>%
+      dplyr::group_by(soaked.in) %>%
+      dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
+                     ngerm = n_distinct(germTempGen, germDuration),
+                     ninterest = nstrat + ngerm) %>% as.data.frame()
+    
+    preferences <- 'H20|water|H2O'
+    treat.tokeep <- unique(di[grepl(preferences, di$soaked.in),'soaked.in'])
+    
+    if(any(is.na(unique(di$soaked.in)))){ # what to do with NA?
+      treat.tokeep <- c(treat.tokeep, NA)
+    }
+    
+    if(length(treat.tokeep) == 1){
+      
+      cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+      ids[i, 'soak.tokeep'] <- treat.tokeep
+      ids[i, 'soak.check'] <- TRUE
+      
+    }else if(length(treat.tokeep) > 1){ # case when there are several controls (NA or water)
+      
+      if(identical(treat.tokeep, c("60C water", "80C water", "100C water"))){
+        treat.tokeep <- "60C water"
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+      }else if(identical(treat.tokeep, c('water', '0.7% water agar'))){
+        treat.tokeep <- "water"
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+      }else if(any(is.na(treat.tokeep))){ # if one NA, we keep NA rather than H2O?
+        treat.tokeep <- NA
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+      }else if(identical(treat.tokeep, c('-0.5 MPa water', '-0.1 MPa water', '0 MPa water'))){
+        treat.tokeep <- '0 MPa water'
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+      }else if(identical(treat.tokeep, c('-0.5 MPa water', '-0.25 MPa water', '-0.1 MPa water', '-0.01 MPa water'))){
+        treat.tokeep <- '-0.01 MPa water'
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+      }else{
+        stop("Boulbiboulba") # check
+      }
+
+    }else if(length(treat.tokeep) == 0){ # case when there are no water treatments
+      
+      treats <- unique(di$soaked.in)
+      
+      if(identical(treats, c("0 KNO3", "1.01 KNO3", "2.02 KNO3","4.04 KNO3"))){
+        treat.tokeep <- "0 KNO3"
+      }else{
+        stop("Boulbiboulbanowater") # check
+      }
+      
+      
+    }
+    
+  }else if(length(unique(di$soaked.in)) == 1){
+    
+    cat(paste0(" > Only one soak. treat.\n"))
+    treat.tokeep <- unique(di$soaked.in)
+    ids[i, 'soak.check'] <- treat.tokeep
+    ids[i, 'soak.check'] <- TRUE
+    
+  }else{
+    stop("Boulbiboulba2") # check
   }
   
   # STORAGE
