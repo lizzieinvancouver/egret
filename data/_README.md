@@ -25,3 +25,6 @@ This folder contains data scraped as part of the EGTRET meta-analysis. Files are
 3. scrapedEgred: raw excel files scraped by individuals, see scrapedExcel/README.md for more detail
 4. Notes: notes on specific scraped papers or transfer of scraping tasks between people
 5. ospree_searchers: Results of efforts to search for ospree species in the Baskin and Baskin seed book to see if it was worth doing more widely
+
+## Where is the USDA seed manual data?
+Good question! See egret/analyses/scrapeUSDAseedmanual/scraping
