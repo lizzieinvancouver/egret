@@ -69,7 +69,7 @@ sppegretkew <- subset(egret, latbi %in% egret.phenosp.sps.inphylo)
 # remove duplicated rows
 sppegretkew <- sppegretkew[!duplicated(sppegretkew$latbi), ]
 # select only species column
-sppegretkew2 <- sppegretkew[, c("datasetID", "latbi")]
+sppegretkew2 <- sppegretkew[, c("datasetID", "latbi", "genus","species")]
 
 # add accepted plant name ID from kewsub accepted_plant_name_id
 
@@ -97,13 +97,15 @@ latbiwithId <- merge(sppegretkew2, kewsub[, c("taxon_name", "accepted_plant_name
              all.x = TRUE)
 
 # merge matchednamessub and sppegretkew by accepted_plant_name_id
-matchednamesegret <- merge(latbiwithId, matchednamessub, by = "accepted_plant_name_id",
-                           all.x = TRUE) 
+matchednamesegret <- merge(latbiwithId, matchednamessub, by = "accepted_plant_name_id", all.x = TRUE) 
 # change colnames
-colnames(matchednamesegret) <- c("accepted_plant_name_id", "egretname", "datasetID", "matchedName")
+colnames(matchednamesegret) <- c("accepted_plant_name_id", "egretname", "datasetID", "genus", "species", "matchedName")
+
 nrow(matchednamesegret[!duplicated(matchednamesegret$egretname), ])
 
 nomatch <- matchednamesegret[which(is.na(matchednamesegret$matchedName)),]
+# remove anoying row of NA NA
+nomatch <- subset(nomatch, egretname != "NA NA")
 # now grab the varieties for the latbi names that we don't have matches in the tree
 
 # ok now we have new taxon names, for some species more than name. Below Ill investigate why the remaining don't have matches
@@ -319,18 +321,27 @@ phy.sps.uniqu[grepl("Solidago niederederi", phy.sps.uniqu)]
 # look how many remaining
 nrow(nomatch)
 # count how many rows have NA in the column matchedName
-na_rows <- subset(nomatch, is.na(matchedName))
+nomatchAfterKewcheck <- subset(nomatch, is.na(matchedName))
 nrow(na_rows)
 
-# Create result data.frame
-results <- data.frame(
-  original = nomatch$latbi,
-  match = matched_names,
-  stringsAsFactors = FALSE
+### === === === === === === === === === === ###
+# Find species that are alone in their genus #
+### === === === === === === === === === === ###
+# first look at how many species there is in each genus using Kew's database.
+genus <- nomatchAfterKewcheck$genus
+
+counts <- table(kew$genus)
+
+# Extract counts for your genera
+result <- data.frame(
+  Genus = genus,
+  SpeciesCount = as.integer(counts[genus]),
+  row.names = NULL
 )
 
+nomatchAfterKewcheck
 # rename columns 
-colnames(matchednamesegret) <- c("accepted_plant_name_id", "og_matchedName", "matched_taxon_name")
+
 # now that I have 24 species names that have matches in the tree, there are 24 remaining. Below I select these last 24.First I will 
 
 # try with column parent_plant_name_id
