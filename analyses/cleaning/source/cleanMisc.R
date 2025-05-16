@@ -126,3 +126,6 @@ d$seed.mass.given[which(d$seed.mass.given == "FALSE")] <- "N"
 
 }
 
+d$figure[which(d$datasetID == "airi09" & d$respvar == "mgt")] <- "Table 3"
+
+
