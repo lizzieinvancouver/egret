@@ -60,4 +60,10 @@ _______________________
 
 A new spreadsheet will be created to contain all of the finalized germination data, as this dataset is needed sooner. This will take a lot of manual work as I will need to cross-reference the missing data with the original data from the PDF, ex. the missing genus names that were not parsed.
 
+UPDATES 19 May 2025
+_______________________
 
+After checking the scraped data against the tables in the original book, we found that:
+ 1) some tables were scraped but not renamed, and
+ 2) some tables containing data we needed were not scraped at all.
+Thus, we manually reviewed the entire book and re-scraped all relevant tables to capture any missing data. This process added 34 more tables.
