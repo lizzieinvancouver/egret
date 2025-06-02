@@ -1,0 +1,16 @@
+Species,Germination Test Condition,Response Variable,Response Value
+Magnolia grandiflora,Storage in vermiculite at 15°C for 2 months,Percent germination,88
+Magnolia grandiflora,29°C constant,Time to germination,Rapid
+Magnolia grandiflora,15–35°C range,Percent germination,Greatest total germination
+Magnolia virginiana,"58 days prechilling, 33 days germination",Percent germination,93
+Magnolia acuminata,30°C constant,Time to germination,Earliest and most rapid
+Magnolia acuminata,6h at 15°C dark / 18h at 26°C light,Percent germination,Highest
+Magnolia acuminata,20°C constant,Time to germination,Later and slower
+Magnolia acuminata,>35°C constant,Germination outcome,Death and decay
+Magnolia acuminata,Soaked in water up to 4 days,Viability test,Softens seedcoat for embryo test
+Magnolia acuminata,Blotting paper at 24–30°C,Viability test,Green pigment in 2–3 days
+Magnolia acuminata,"Tetrazolium chloride test, 37°C",Viability test,Viable if embryo stains red
+General Magnolia,45 days prechilling + 42 days at 20/30°C,Percent germination,AOSA standard
+General Magnolia,Cold moist stratification at 0–10°C for 2 months,Germination condition,Required for high success
+General Magnolia,"Freezing, sulfuric acid, hot water soaks",Germination response,Injurious or not beneficial
+General Magnolia,Natural stratification over winter in nursery beds,Germination practice,Successful
