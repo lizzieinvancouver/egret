@@ -324,6 +324,56 @@ nrow(nomatch)
 nomatchAfterKewcheck <- subset(nomatch, is.na(matchedName))
 
 
+
+### === === === === === === === === === === ###
+#### Start by plotting the tree without edits ####
+### === === === === === === === === === === ###
+## first prune the phylogeny to include$ only these genera
+phy.genera.egret<-drop.tip(phy.plants,
+                           which(!phy.genera %in% egret.genus)) #36738 tips
+
+egret.tree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(d$latbi)))
+
+length(egret.tree$tip.label)
+length(unique(egret$latbi))
+length(unique(egret$latbi))-length(egret.tree$tip.label)
+sort(egret.tree$tip.label)
+
+# write.tree(egret.tree,"analyses/output/egretPhylogeny.tre")
+
+# copy d 
+egret <- d
+egret$count <- 1
+egretSub <- unique(egret[,c("latbi", "datasetID", "count")])
+studyNo <- aggregate(egretSub["count"], egretSub[c("latbi")], FUN = sum)
+temp <- subset(studyNo, count >1) 
+nrow(temp)# 23 sp with more than one study
+
+namesphy <- tree$tip.label
+tree$root.edge <- 0
+
+is.rooted(tree)
+tree$node.label<-NULL
+
+# Egret species 
+dataPhy = comparative.data(tree, studyNo, names.col = "latbi", na.omit = T,
+                           vcv = T, warn.dropped = T)
+
+phyloplot = dataPhy$phy
+x = dataPhy$data$count
+names(x)=dataPhy$phy$tip.label
+
+study <- contMap(tree, x, plot = T)
+
+slopeCol <- setMap(study, colors=c("blue","yellow","red"))
+h<-max(nodeHeights(slopeCol$tree))
+
+pdf("analyses/figures/egret_phyloIntColor.pdf", height = 45, width = 10)
+plot(slopeCol,legend = F, lwd=3, ylim=c(1-0.09*(Ntip(slopeCol$tree)),Ntip(slopeCol$tree)))
+
+dev.off()
+
+
 ### === === === === === === === === === === ###
 # Find species that are alone in their genus #
 ### === === === === === === === === === === ###
@@ -346,32 +396,53 @@ result <- data.frame(
 
 # Find species that are alone in their genus and grab a sister species instead
 uniquespp <- subset(result, SpeciesCount == "1")
-
 # start with one genus
-test <- uniquespp$Genus[1]
+test <- uniquespp$Genus[3]
 spp <- subset(egretnomatch, genus %in% test)
-spp$species
+spp$latbi
 
-
-# ok so the tree isn't ultrametric (a type of phylogenetic tree where all leaf nodes are equidistant from the root. In essence, it's a tree structure where the distance from any leaf to the root is the same, meaning the branch lengths can represent evolutionary time), so Ill force it:
+# prune the tree to the only genus we have in egret
 phy.genera.egret<-drop.tip(phy.plants,
                            which(!phy.genera %in% egret.genus)) 
+# add tip for that species
+result_nonultrametric <- add.species.to.genus(tree = phy.genera.egret,
+                                              species = "Maackia_taiwanensis",
+                                              where = "root")
+
+
+
+
+
+
+# === === === === ###
+### Ultrametric ###
+# === === === === ###
 phy_ultra <- force.ultrametric(
   phy.genera.egret,
   method = "extend"  # Extends terminal branches
 )
+
+# ok so the tree isn't ultrametric (a type of phylogenetic tree where all leaf nodes are equidistant from the root. In essence, it's a tree structure where the distance from any leaf to the root is the same, meaning the branch lengths can represent evolutionary time), so Ill force it:
+
+
+is.ultrametric(phy.plants) 
+phy_ultra <- force.ultrametric(
+  phy.genera.egret,
+  method = "extend"  # Extends terminal branches
+)
+
+### plot the tree to check code. 
+
 # Add a new species to an existing genus
 result <- add.species.to.genus(tree = phy_ultra,
                                species = "Betonica_bulgarica",
                                where = "root")
 
-is.ultrametric(phy.plants) 
+egret.tree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% egret.sps))
 
-# rename columns 
 
-# now that I have 24 species names that have matches in the tree, there are 24 remaining. Below I select these last 24.First I will 
 
-# try with column parent_plant_name_id
+
 
 # grab all parent ID for these species
 parentIDs <- kewsub$parent_plant_name_id
@@ -416,49 +487,7 @@ kew$taxon_name[grepl("helianthoides", kew$taxon_name)]
 # === === === === === === === === === === === === === === === === === === === === === ===
 # === === === === === === === === === === === === === === === === === === === === === ===
 # === === === === === === === === === === === === === === === === === === === === === ===
-## first prune the phylogeny to include$ only these genera
-phy.genera.egret<-drop.tip(phy.plants,
-                             which(!phy.genera %in% egret.genus)) #34940 tips
-# length(phy.genera.egret$tip.label)
-egret.tree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% egret.sps))
 
-length(egret.tree$tip.label)
-length(unique(egret$latbi))
-length(unique(egret$latbi))-length(egret.tree$tip.label)
-sort(egret.tree$tip.label)
-
-write.tree(egret.tree,"analyses/output/egretPhylogeny.tre")
-
-# only 288 species are in the phylogeny, ** are lost 
-egret$count <- 1
-egretSub <- unique(egret[,c("latbi", "datasetID", "count")])
-studyNo <- aggregate(egretSub["count"], egretSub[c("latbi")], FUN = sum)
-temp <- subset(studyNo, count >1) 
-nrow(temp)# 23 sp with more than one study
-
-namesphy <- tree$tip.label
-tree$root.edge <- 0
-
-is.rooted(tree)
-tree$node.label<-NULL
-
-# Egret species 
-dataPhy = comparative.data(tree, studyNo, names.col = "latbi", na.omit = T,
-                           vcv = T, warn.dropped = T)
-
-phyloplot = dataPhy$phy
-x = dataPhy$data$count
-names(x)=dataPhy$phy$tip.label
-
-study <- contMap(tree, x, plot = T)
-
-slopeCol <- setMap(study, colors=c("blue","yellow","red"))
-h<-max(nodeHeights(slopeCol$tree))
-
-pdf("analyses/figures/egret_phyloIntColor.pdf", height = 45, width = 10)
-plot(slopeCol,legend = F, lwd=3, ylim=c(1-0.09*(Ntip(slopeCol$tree)),Ntip(slopeCol$tree)))
-
-dev.off()
 
 # === === === === === === === === === ===  === === === === ===  === === === === 
 ### Start with USDA ###
