@@ -322,15 +322,20 @@ phy.sps.uniqu[grepl("Solidago niederederi", phy.sps.uniqu)]
 nrow(nomatch)
 # count how many rows have NA in the column matchedName
 nomatchAfterKewcheck <- subset(nomatch, is.na(matchedName))
-nrow(na_rows)
+
 
 ### === === === === === === === === === === ###
 # Find species that are alone in their genus #
 ### === === === === === === === === === === ###
 # first look at how many species there is in each genus using Kew's database.
-genus <- nomatchAfterKewcheck$genus
+genustomatch <- nomatchAfterKewcheck$genus
 
-counts <- table(kew$genus)
+# unique species in egret
+egretunique <- d[!duplicated(d$latbi),]
+#subset for the genus that we dont have match
+egretnomatch <- subset(egretunique, genus %in% genustomatch)
+# table to check how many species of these no match genus
+counts <- table(egretnomatch$genus)
 
 # Extract counts for your genera
 result <- data.frame(
@@ -339,7 +344,29 @@ result <- data.frame(
   row.names = NULL
 )
 
-nomatchAfterKewcheck
+# Find species that are alone in their genus and grab a sister species instead
+uniquespp <- subset(result, SpeciesCount == "1")
+
+# start with one genus
+test <- uniquespp$Genus[1]
+spp <- subset(egretnomatch, genus %in% test)
+spp$species
+
+
+# ok so the tree isn't ultrametric (a type of phylogenetic tree where all leaf nodes are equidistant from the root. In essence, it's a tree structure where the distance from any leaf to the root is the same, meaning the branch lengths can represent evolutionary time), so Ill force it:
+phy.genera.egret<-drop.tip(phy.plants,
+                           which(!phy.genera %in% egret.genus)) 
+phy_ultra <- force.ultrametric(
+  phy.genera.egret,
+  method = "extend"  # Extends terminal branches
+)
+# Add a new species to an existing genus
+result <- add.species.to.genus(tree = phy_ultra,
+                               species = "Betonica_bulgarica",
+                               where = "root")
+
+is.ultrametric(phy.plants) 
+
 # rename columns 
 
 # now that I have 24 species names that have matches in the tree, there are 24 remaining. Below I select these last 24.First I will 
@@ -389,9 +416,9 @@ kew$taxon_name[grepl("helianthoides", kew$taxon_name)]
 # === === === === === === === === === === === === === === === === === === === === === ===
 # === === === === === === === === === === === === === === === === === === === === === ===
 # === === === === === === === === === === === === === === === === === === === === === ===
--## first prune the phylogeny to include$ only these genera
-# phy.genera.egret<-drop.tip(phy.plants,
-#                              which(!phy.genera %in% phenosp.genus.inphylo)) #34940 tips
+## first prune the phylogeny to include$ only these genera
+phy.genera.egret<-drop.tip(phy.plants,
+                             which(!phy.genera %in% egret.genus)) #34940 tips
 # length(phy.genera.egret$tip.label)
 egret.tree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% egret.sps))
 
