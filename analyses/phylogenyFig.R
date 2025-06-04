@@ -349,29 +349,72 @@ studyNo <- aggregate(egretSub["count"], egretSub[c("latbi")], FUN = sum)
 temp <- subset(studyNo, count >1) 
 nrow(temp)# 23 sp with more than one study
 
-namesphy <- tree$tip.label
-tree$root.edge <- 0
+namesphy <- egret.tree$tip.label
+egret.tree$root.edge <- 0
 
-is.rooted(tree)
-tree$node.label<-NULL
+is.rooted(egret.tree)
+egret.tree$node.label<-NULL
 
-# Egret species 
-dataPhy = comparative.data(tree, studyNo, names.col = "latbi", na.omit = T,
+# create data for all species 
+dataPhy <-  comparative.data(egret.tree, studyNo, names.col = "latbi", na.omit = T,
                            vcv = T, warn.dropped = T)
 
-phyloplot = dataPhy$phy
-x = dataPhy$data$count
-names(x)=dataPhy$phy$tip.label
+phyloplot <-  dataPhy$phy
+x <- dataPhy$data$count
+names(x) <- dataPhy$phy$tip.label
 
-study <- contMap(tree, x, plot = T)
+quartz()
+study <- contMap(egret.tree, x, plot = T)
 
-slopeCol <- setMap(study, colors=c("blue","yellow","red"))
-h<-max(nodeHeights(slopeCol$tree))
-
-pdf("analyses/figures/egret_phyloIntColor.pdf", height = 45, width = 10)
-plot(slopeCol,legend = F, lwd=3, ylim=c(1-0.09*(Ntip(slopeCol$tree)),Ntip(slopeCol$tree)))
 
 dev.off()
+
+### === === === === === === === === === === ###
+#### Try with a subset of species to make the tree smaller ####
+### === === === === === === === === === === ###
+studyNosmall <- subset(studyNo, latbi %in% eucvecAll)
+eucvecNomatch
+# splice in a species that is not currently in the tree
+studyNosmallSpliced <- add.species.to.genus(tree = phy.genera.egret,
+                                              species = "Eucalyptus_ovata",
+                                              where = "root")
+
+
+# subset down to the species we have in egret 
+egret.tree.spliced <- keep.tip(studyNosmallSpliced, which(studyNosmallSpliced$tip.label %in% unique(d$latbi)))
+# remove node label
+egret.tree.spliced$node.label <- NULL
+# create data with this small subset
+dataPhysmall <- comparative.data(egret.tree.spliced, studyNosmall, names.col = "latbi", na.omit = T,
+                            vcv = F, warn.dropped = T)
+
+phyloplotsmall = dataPhysmall$phy
+xsmall = dataPhysmall$data$count
+names(xsmall) <- phyloplotsmall$tip.label
+
+# plot something
+studysmall <- contMap(phyloplotsmall, xsmall, plot = T)
+
+jpeg("figures/splicedtree.jpeg", height = 1600, width = 2400, res = 300)
+plot(phyloplotsmall, cex = 0.8, show.tip.label = TRUE)
+target <- "Eucalyptus_ovata"
+
+# Get the index of the tip
+tip_index <- which(phyloplotsmall$tip.label == target)
+
+# Add a red dot to the tip
+tiplabels(pch = 21, col = "white", bg = "red", cex = 2, tip = tip_index, adj = c(3,0.5))
+
+dev.off()
+
+slopeCol <- setMap(studysmall, colors=c("black"))
+h<-max(nodeHeights(slopeCol$tree))
+
+
+
+plot(slopeCol,legend = F, lwd=3, ylim=c(1-0.09*(Ntip(slopeCol$tree)),Ntip(slopeCol$tree)))
+
+
 
 
 ### === === === === === === === === === === ###
@@ -399,8 +442,11 @@ uniquespp <- subset(result, SpeciesCount == "1")
 # start with one genus
 test <- uniquespp$Genus[3]
 spp <- subset(egretnomatch, genus %in% test)
-spp$latbi
-
+eucalyptus <- subset(egretnomatch, genus == "Eucalyptus")
+eucvecAll <- eucalyptus$latbi
+eucNomatch <- unique(subset(nomatchAfterKewcheck, genus == "Eucalyptus"))
+eucvecNomatch <- eucNomatch$egretname
+eucvecNomatch <- gsub(" ", "_", eucvecNomatch)
 # prune the tree to the only genus we have in egret
 phy.genera.egret<-drop.tip(phy.plants,
                            which(!phy.genera %in% egret.genus)) 
