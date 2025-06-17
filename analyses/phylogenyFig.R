@@ -7,6 +7,8 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("~/Documents/git/projects/others/deirdre/egret")
 } else if (length(grep("christophe_rouleau-desrochers", getwd())) > 0) {
   setwd("/Users/christophe_rouleau-desrochers/github/egret") # Replace with the correct path for Christophe
+} else if (length(grep("victor", getwd())) > 0) {
+  setwd("/home/victor/projects/egret") # Replace with the correct path for Christophe
 } else {
   setwd("/home/deirdre/egret") # for midge
 }
@@ -454,6 +456,49 @@ phy.genera.egret<-drop.tip(phy.plants,
 result_nonultrametric <- add.species.to.genus(tree = phy.genera.egret,
                                               species = "Maackia_taiwanensis",
                                               where = "root")
+
+
+
+
+# === === === === #
+### Ultrametric ###
+# === === === === #
+
+# added by vvdm on 17June2025
+# largely inspired by Isidora code
+# you need: devtools::install_github("josephwb/chronos", dependencies=TRUE)
+run <- FALSE
+if(run){
+  
+  egret.tree <- read.tree('analyses/output/egretPhylogeny.tre')
+  
+  
+  library(chronos)
+  
+  res <- CV(treeFam, 10^seq(-4, 2, 0.25), model = "correlated")
+  plot(res, type = "o", log = "xy")
+  
+  #The idea is to find the lambda values with the lowerst CV, so we can narrow the search for lambda numbers near those ones
+  
+  res <- CV(treeFam, 10^seq(-3, -2, 0.1), model = "correlated")
+  plot(res, type = "o", log = "xy")
+  
+  #Once you choose lambda, you can make the tree ultrametric with chronos
+  
+  # Make it ultrametric
+  treeFam_ultraR <- chronos(treeFam, lambda =  0.0031662, model = "correlated")
+  #log-Lik = -18.33692 
+  #PHIIC = 1210.74 
+  
+  #Resolve multichotomies
+  treeFam_ultraR<-multi2di(treeFam_ultraR)
+  
+  # Rescale with the fossil information of how old is the phylogeny (My Botryo family was 69.9 Mya)
+  library(geiger)
+  treeFam_ultraRes <- rescale(treeFam_ultraR, model = "depth", 69.9)
+
+}
+
 
 
 
