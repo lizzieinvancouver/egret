@@ -46,12 +46,13 @@ if(run){
   b <- Sys.time()
   plan(multisession, workers = 13)
   lambdas <- 10^seq(-4, 2, 0.5)
-  res <- foreach(lambda = lambdas, .combine=rbind) %dofuture% {
+  res <- foreach(lambda = lambdas, .combine=rbind, .options.future = list(seed = TRUE)) %dofuture% {
     resl <- CV(phy.plants, lambda)
     resl
   }
   plan(sequential);gc()
   e <- Sys.time()
+  # Error: cannot allocate vector of size 1027.3 Gb (not due to parallelization)
   
   # We can narrow the search
   res <- CV(treeFam, 10^seq(-3, -2, 0.1), model = "correlated")
