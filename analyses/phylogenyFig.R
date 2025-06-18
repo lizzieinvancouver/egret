@@ -544,9 +544,16 @@ if(run){
   
   
   library(chronos)
+  library(doFuture)
+  egret_tree <- read.tree('analyses/output/egretPhylogeny.tre')
   
-  res <- CV(treeFam, 10^seq(-4, 2, 0.25), model = "correlated")
-  plot(res, type = "o", log = "xy")
+  plan(multisession, workers = 13)
+  lambdas <- 10^seq(-4, 2, 0.5)
+  res <- foreach(lambda = lambdas, .combine=rbind) %dofuture% {
+    resl <- CV(egret_tree, lambda)
+    resl
+  }
+  plan(sequential);gc()
   
   #The idea is to find the lambda values with the lowerst CV, so we can narrow the search for lambda numbers near those ones
   
