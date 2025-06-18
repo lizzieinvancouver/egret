@@ -29,8 +29,47 @@ options(stringsAsFactors=FALSE)# Make sure words are read in as characters rathe
 egret <- read.csv("analyses/output/egretclean.csv")
 usda <- read.csv("analyses/output/usdaGerminationCleaned.csv")
 
-## load phylo (from Smith and Brown 2019)
+## load phylo (from Smith and Brown 2018)
 phy.plants<-read.tree("analyses/input/ALLMB.tre")
+
+## made S&B2018 tree ultrametric!
+# added by vvdm on 17June2025
+# largely inspired by Isidora code
+# you need: devtools::install_github("josephwb/chronos", dependencies=TRUE)
+run <- FALSE
+if(run){
+  
+  library(chronos)
+  library(doFuture)
+  
+  plan(multisession, workers = 13)
+  lambdas <- 10^seq(-4, 2, 0.5)
+  res <- foreach(lambda = lambdas, .combine=rbind) %dofuture% {
+    resl <- CV(phy.plants, lambda)
+    resl
+  }
+  plan(sequential);gc()
+  
+  #The idea is to find the lambda values with the lowerst CV, so we can narrow the search for lambda numbers near those ones
+  
+  res <- CV(treeFam, 10^seq(-3, -2, 0.1), model = "correlated")
+  plot(res, type = "o", log = "xy")
+  
+  #Once you choose lambda, you can make the tree ultrametric with chronos
+  
+  # Make it ultrametric
+  treeFam_ultraR <- chronos(treeFam, lambda =  0.0031662, model = "correlated")
+  #log-Lik = -18.33692 
+  #PHIIC = 1210.74 
+  
+  #Resolve multichotomies
+  treeFam_ultraR<-multi2di(treeFam_ultraR)
+  
+  # Rescale with the fossil information of how old is the phylogeny (My Botryo family was 69.9 Mya)
+  library(geiger)
+  treeFam_ultraRes <- rescale(treeFam_ultraR, model = "depth", 69.9)
+  
+}
 
 ### === === === === === === === === === === === === === === === === === === ###
 # Get a list of synonyms for ALL species that aren't from the kew's list
@@ -526,58 +565,6 @@ phy.genera.egret<-drop.tip(phy.plants,
 result_nonultrametric <- add.species.to.genus(tree = phy.genera.egret,
                                               species = "Maackia_taiwanensis",
                                               where = "root")
-
-
-
-
-# === === === === #
-#### Ultrametric ####
-# === === === === #
-
-# added by vvdm on 17June2025
-# largely inspired by Isidora code
-# you need: devtools::install_github("josephwb/chronos", dependencies=TRUE)
-run <- FALSE
-if(run){
-  
-  egret.tree <- read.tree('analyses/output/egretPhylogeny.tre')
-  
-  
-  library(chronos)
-  library(doFuture)
-  egret_tree <- read.tree('analyses/output/egretPhylogeny.tre')
-  
-  plan(multisession, workers = 13)
-  lambdas <- 10^seq(-4, 2, 0.5)
-  res <- foreach(lambda = lambdas, .combine=rbind) %dofuture% {
-    resl <- CV(egret_tree, lambda)
-    resl
-  }
-  plan(sequential);gc()
-  
-  #The idea is to find the lambda values with the lowerst CV, so we can narrow the search for lambda numbers near those ones
-  
-  res <- CV(treeFam, 10^seq(-3, -2, 0.1), model = "correlated")
-  plot(res, type = "o", log = "xy")
-  
-  #Once you choose lambda, you can make the tree ultrametric with chronos
-  
-  # Make it ultrametric
-  treeFam_ultraR <- chronos(treeFam, lambda =  0.0031662, model = "correlated")
-  #log-Lik = -18.33692 
-  #PHIIC = 1210.74 
-  
-  #Resolve multichotomies
-  treeFam_ultraR<-multi2di(treeFam_ultraR)
-  
-  # Rescale with the fossil information of how old is the phylogeny (My Botryo family was 69.9 Mya)
-  library(geiger)
-  treeFam_ultraRes <- rescale(treeFam_ultraR, model = "depth", 69.9)
-
-}
-
-
-
 
 
 
