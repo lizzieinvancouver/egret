@@ -42,6 +42,8 @@ if(run){
   library(chronos)
   library(doFuture)
   
+  # The idea is to find the lambda values with the lowest CV
+  b <- Sys.time()
   plan(multisession, workers = 13)
   lambdas <- 10^seq(-4, 2, 0.5)
   res <- foreach(lambda = lambdas, .combine=rbind) %dofuture% {
@@ -49,9 +51,9 @@ if(run){
     resl
   }
   plan(sequential);gc()
+  e <- Sys.time()
   
-  #The idea is to find the lambda values with the lowerst CV, so we can narrow the search for lambda numbers near those ones
-  
+  # We can narrow the search
   res <- CV(treeFam, 10^seq(-3, -2, 0.1), model = "correlated")
   plot(res, type = "o", log = "xy")
   
