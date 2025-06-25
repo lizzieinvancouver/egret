@@ -98,10 +98,10 @@ phy.sps.uniqu <- gsub(" ", "_", phy.sps.uniqu)
 # === === === === === === === === === ===  === === === === ===  === === === ===
 # egret$latbi <-gsub("_", " ", egret$latbi)
 egret.sps <- sort(unique(egret$latbi))
-egret.genus=sort(unique(egret$genus))
+egret.genus <- sort(unique(egret$genus))
 
 ## how many phenobc genus are NOT in the phylogeny?
-egret.phenosp.genus.inphylo<-genus.list[which(!egret.genus%in%phy.genera.uniq)] #186 out of 187
+egret.phenosp.genus.inphylo <- egret.genus[which(!egret.genus%in%phy.genera.uniq)] #186 out of 187
 ## how many phenobc species are NOT in the phylogeny?
 egret.phenosp.sps.inphylo<-egret.sps[which(!egret.sps%in%phy.sps.uniqu)] #48 out of 335
 
@@ -279,6 +279,7 @@ kew$taxon_name[grepl("Betula_utilis_subsp._albosinensis", kew$taxon_name)]
 phy.sps.uniqu[grepl("Betula_albosinensis", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Betula_utilis", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Betula_bhojpattra", phy.sps.uniqu)] 
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Betula_utilis_subsp._albosinensis")] <- "Betula_utilis" # TO CHECK: not accepted as a synonym in kew, but utilis fits the tree
 
 # Eucalyptus delegatensis. Synonyms: 
 kew$taxon_name[grepl("Eucalyptus_delegatensis", kew$taxon_name)] 
@@ -311,7 +312,7 @@ phy.sps.uniqu[grepl("Echinacea_spp.", phy.sps.uniqu)]
 
 # Eucalyptus pauciflora subsp. niphophila. Synonyms: Eucalyptus niphophila
 kew$taxon_name[grepl("Eucalyptus_pauciflora_subsp._niphophila", kew$taxon_name)]
-phy.sps.uniqu[grepl("Eucalyptus_pauciflora", phy.sps.uniqu)] # TO ASK: do we accept Eucalyptus pauciflora subsp. pauciflora if POWO doesn't mention it directly?
+phy.sps.uniqu[grepl("Eucalyptus_pauciflora", phy.sps.uniqu)] 
 
 # Eucomis autumnalis. Synonyms:  many, but none that match the one in the tree
 kew$taxon_name[grepl("Eucomis_autumnalis", kew$taxon_name)] 
@@ -372,26 +373,25 @@ nomatchAfterKewcheck <- subset(matchednamesegret , is.na(sppMatch))
 nrow(nomatchAfterKewcheck)
 
 ### === === === === === === === === === === ###
-###### Add matched names to egret df #######
+#### Add matched names to egret df ####
 ### === === === === === === === === === === ###
+# create a df of matched names without NAs
+matchnona <- matchednamesegret[!is.na(matchednamesegret$sppMatch),]
 egret$sppMatch <- NA
 # first add species that match the tree already
 easymatch <- egret.sps[which(egret.sps%in%phy.sps.uniqu)] 
 egret$sppMatch <- ifelse(egret$latbi %in% easymatch, egret$latbi, NA)
 
 missing_idx <- is.na(egret$sppMatch)
-matched_values <- match(egret$latbi[missing_idx], matchsnona$egretname)
-# nrow(egret[is.na(egret$sppMatch),]) # all good, this is the same number of no match we got before!
+matched_values <- match(egret$latbi[missing_idx], matchnona$egretname)
 
-egret$sppMatch[missing_idx] <- matchsnona$sppMatch[matched_values]
+# match spp names back in egret df
+egret$sppMatch[missing_idx] <- matchnona$sppMatch[matched_values]
+# check
 egret[!duplicated(egret$latbi), c("latbi", "sppMatch")]
 
-
-matched_df$sppMatch[match_idx][is.na(main_df$sppMatch)]
-egret$sppMatch <- ifelse(egret$latbi %in% matchsnona, NA, egret$latbi)
-
 ### === === === === === === === === === === ###
-#### Start by plotting the tree without edits ####
+#### Create EGRET tree ####
 ### === === === === === === === === === === ###
 ## first prune the phylogeny to include$ only these genera
 phy.genera.egret<-drop.tip(phy.plants,
@@ -399,72 +399,25 @@ phy.genera.egret<-drop.tip(phy.plants,
 
 egretTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(egret$sppMatch)))
 
+
+write.tree(egretTree,"analyses/output/egretPhylogeny.tre")
+
 length(egretTree$tip.label)
 length(unique(egret$sppMatch))
 length(unique(egret$sppMatch))-length(egretTree$tip.label)
 sort(egretTree$tip.label)
 
-# copy d 
-egret$count <- 1
-egretSub <- unique(egret[,c("sppMatch", "datasetID", "count")])
-studyNo <- aggregate(egretSub["count"], egretSub[c("sppMatch")], FUN = sum)
-temp <- subset(studyNo, count >1) 
-nrow(temp)# 23 sp with more than one study
-
-namesphy <- egretTree$tip.label
-egretTree$root.edge <- 0
-
-is.rooted(egretTree)
-egretTree$node.label<-NULL
-
-# create data for all species 
-dataPhy <-  comparative.data(egretTree, studyNo, names.col = "sppMatch", na.omit = T,
-                           vcv = T, warn.dropped = T)
-
-phyloplot <-  dataPhy$phy
-x <- dataPhy$data$count
-names(x) <- dataPhy$phy$tip.label
-
-study <- contMap(egretTree, x, plot = T)
 
 ### === === === === === === === === === === ###
-#### Try with a subset of species to make the tree smaller ####
-### === === === === === === === === === === ###
-# select some random genus AND 3 that I will splice stuff in
-vec <- c(sample(egret$genus, 3), c("Eucalyptus", "Betula", "Penstemon"))
-
-t <- subset(egret, genus %in% vec)
-spp_smalltree <- unique(t$sppMatch)
-studyNosmall <- subset(studyNo, sppMatch %in% spp_smalltree)
-
-smallTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(t$sppMatch)))
-
-
-smallnamesphy <- smallTree$tip.label
-
-smallTree$root.edge <- 0
-
-is.rooted(smallTree)
-smallTree$node.label<-NULL
-
-
-smallDataPhy <-  comparative.data(smallTree, studyNosmall, names.col = "sppMatch", na.omit = T,
-                             vcv = T, warn.dropped = T)
-
-smallphytoplot <-  smallDataPhy$phy
-smallx <- smallDataPhy$data$count
-names(smallx) <- smallDataPhy$phy$tip.label
-
-smallmap <- contMap(smallTree, smallx, plot = T)
-
-
-### ###
 # Force the tree to be ultrametric FOR NOW.
+### === === === === === === === === === === ###
 smallTreeUltra <- force.ultrametric(
   smallTree,
   method = "extend"  # Extends terminal branches
 )
-
+### === === === === === === === === === === === === === ###
+###### Splice in species with no match from Kew Database ######
+### === === === === === === === === === === === === === ###
 # splice in a species that is not currently in the tree
 # group the species I want to splice in the tree
 unique(nomatch$egretname)
@@ -571,81 +524,8 @@ result_nonultrametric <- add.species.to.genus(tree = phy.genera.egret,
 
 
 
-
-# === === === === ###
-### Ultrametric ###
-# === === === === ###
-
-
-# ok so the tree isn't ultrametric (a type of phylogenetic tree where all leaf nodes are equidistant from the root. In essence, it's a tree structure where the distance from any leaf to the root is the same, meaning the branch lengths can represent evolutionary time), so Ill force it:
-
-
-is.ultrametric(phy.plants) 
-phy_ultra <- force.ultrametric(
-  phy.genera.egret,
-  method = "extend"  # Extends terminal branches
-)
-
-### plot the tree to check code. 
-
-# Add a new species to an existing genus
-result <- add.species.to.genus(tree = phy_ultra,
-                               species = "Betonica_bulgarica",
-                               where = "root")
-
-egretTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% egret.sps))
-
-
-
-
-
-# grab all parent ID for these species
-parentIDs <- kewsub$parent_plant_name_id
-# pull a vector of species names that correspond to these accepted IDs.
-sub <- subset(kew, parent_plant_name_id %in% parentIDs)
-# remove NAs
-suby <- sub[sub$parent_plant_name_id != "", ]
-suby2 <- suby[!is.na(sub$parent_plant_name_id), ]
-# pull all of these species 
-kewnames <- suby2$taxon_name
-# look how many of these species are in the phylogeny tree:
-withparent<-kewnames[which(kewnames%in%phy.sps.uniqu)] 
-
-
-
-
-
-
-
-
-# vector of parent plant name of these 32 species
-vecparentId <- kewsubsyn$accepted_plant_name_id
-# vector of accepted plant name id of these 5 species
-parentName <- subset(kew, plant_name_id %in% vecparentId)
-# get a vector of plant name 
-vecaparentname <- parentName$taxon_name
-# Now look not only for synonyms, but all the different taxon status
-vectaxonacceptedID <- kewsub$accepted_plant_name_id
-allparentName <- subset(kew, plant_name_id %in% vectaxonacceptedID)
-vecall <- allparentName$taxon_name
-matchesKewTree<-vecall[which(!vecall%in%phy.sps.uniqu)]
-# now look up matches in the phylo tree
-bhel <- subset(kew, taxon_name == "Buphthalmum helianthoides L.") 
-# grep Buphthalmum helianthoides L. in kew taxon list
-grepl("helianthoides", kew$taxon_name)
-# select taxon names that have helianthoided with the grepl function
-kew$taxon_name[grepl("helianthoides", kew$taxon_name)]
-
-
-
-
-# === === === === === === === === === === === === === === === === === === === === === ===
-# === === === === === === === === === === === === === === === === === === === === === ===
-# === === === === === === === === === === === === === === === === === === === === === ===
-
-
 # === === === === === === === === === ===  === === === === ===  === === === === 
-### Start with USDA ###
+#### USDA ####
 # === === === === === === === === === ===  === === === === ===  === === === === 
 usda.sps <- sort(unique(usda$latbi))
 usda.genus=sort(unique(usda$genus))
