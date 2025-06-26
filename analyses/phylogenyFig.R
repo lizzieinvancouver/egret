@@ -408,6 +408,42 @@ length(unique(egret$sppMatch))-length(egretTree$tip.label)
 sort(egretTree$tip.label)
 
 
+
+### === === === === === === === === === === === === === ###
+###### Splice in species with no match from Kew Database ######
+### === === === === === === === === === === === === === ###
+# splice in a species that is not currently in the tree
+# group the species I want to splice in the tree
+### === === === === === === === === === === ###
+#### Try with a subset of species to make the tree smaller ####
+### === === === === === === === === === === ###
+# select some random genus AND 3 that I will splice stuff in
+set.seed(123)
+vec <- c("Clematis", "Koelreuteria","Rosa", "Eucalyptus", "Potentilla", "Penstemon")
+t <- subset(egret, genus %in% vec)
+spp_smalltree <- unique(t$sppMatch)
+studyNosmall <- subset(studyNo, sppMatch %in% spp_smalltree)
+
+smallTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(t$sppMatch)))
+
+
+smallnamesphy <- smallTree$tip.label
+
+smallTree$root.edge <- 0
+
+is.rooted(smallTree)
+smallTree$node.label<-NULL
+
+
+smallDataPhy <-  comparative.data(smallTree, studyNosmall, names.col = "sppMatch", na.omit = T,
+                                  vcv = T, warn.dropped = T)
+
+smallphytoplot <-  smallDataPhy$phy
+smallx <- smallDataPhy$data$count
+names(smallx) <- smallDataPhy$phy$tip.label
+
+smallmap <- contMap(smallTree, smallx, plot = T)
+
 ### === === === === === === === === === === ###
 # Force the tree to be ultrametric FOR NOW.
 ### === === === === === === === === === === ###
@@ -415,47 +451,31 @@ smallTreeUltra <- force.ultrametric(
   smallTree,
   method = "extend"  # Extends terminal branches
 )
-### === === === === === === === === === === === === === ###
-###### Splice in species with no match from Kew Database ######
-### === === === === === === === === === === === === === ###
-# splice in a species that is not currently in the tree
-# group the species I want to splice in the tree
-unique(nomatch$egretname)
-spptoplice <- c(nomatch$egretname[grepl("Eucalyptus", nomatch$egretname)], 
-                nomatch$egretname[grepl("Betula", nomatch$egretname)])
+
+unique(nomatchAfterKewcheck$egretname)
+spptoplice <- c(nomatchAfterKewcheck$egretname[grepl("Eucalyptus", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Potentilla", nomatchAfterKewcheck$egretname)],
+                nomatchAfterKewcheck$egretname[grepl("Rosa", nomatchAfterKewcheck$egretname)])
 
 
 # Loop through and add species one-by-one to the tree
 for (i in spptoplice ) {
-  smallTreeUltra <- add.species.to.genus(tree = smallTreeUltra, species = i, where = "root")
+  smallTreeUltraSpliced <- add.species.to.genus(tree = smallTreeUltra, species = i, where = "root")
 }
 
-smallnamesphy <- smallTreeUltra$tip.label
+smallnamesphy <- smallTreeUltraSpliced$tip.label
 studyNosmallSpliced <- subset(studyNo, sppMatch %in% smallnamesphy)
 
-smallTreeUltra$root.edge <- 0
+smallTreeUltraSpliced$root.edge <- 0
 
-is.rooted(smallTreeUltra)
-smallTreeUltra$node.label<-NULL
-
-
-smallDataPhy <-  comparative.data(smallTreeUltra, studyNosmallSpliced, names.col = "sppMatch", na.omit = T,
-                                  vcv = T, warn.dropped = T)
-
-smallphytoplot <-  smallDataPhy$phy
-smallx <- smallDataPhy$data$count
-names(smallx) <- smallDataPhy$phy$tip.label
-
-smallmap <- contMap(smallTreeUltra, smallx, plot = T)
+is.rooted(smallTreeUltraSpliced)
+smallTreeUltraSpliced$node.label<-NULL
 
 
-# subset down to the species we have in egret 
-egretTree.spliced <- keep.tip(studyNosmallSpliced, which(studyNosmallSpliced$tip.label %in% unique(d$latbi)))
-# remove node label
-egretTree.spliced$node.label <- NULL
+
 # create data with this small subset
 dataPhysmall <- comparative.data(egretTree.spliced, studyNosmall, names.col = "latbi", na.omit = T,
-                            vcv = F, warn.dropped = T)
+                                 vcv = F, warn.dropped = T)
 
 phyloplotsmall = dataPhysmall$phy
 xsmall = dataPhysmall$data$count
@@ -476,6 +496,15 @@ tiplabels(pch = 21, col = "white", bg = "red", cex = 2, tip = tip_index, adj = c
 
 slopeCol <- setMap(studysmall, colors=c("black"))
 h<-max(nodeHeights(slopeCol$tree))
+
+
+
+
+# subset down to the species we have in egret 
+egretTree.spliced <- keep.tip(studyNosmallSpliced, which(studyNosmallSpliced$tip.label %in% unique(d$latbi)))
+# remove node label
+egretTree.spliced$node.label <- NULL
+
 
 
 

@@ -43,37 +43,10 @@ phyloplot <-  dataPhy$phy
 x <- dataPhy$data$count
 names(x) <- dataPhy$phy$tip.label
 
+pdf("analyses/figures/egret_contmap.pdf", width = 20, height = 50)
+# plot(tree, cex = 0.3)
 study <- contMap(egretTree, x, plot = T)
+dev.off()
 
 
-pdf("analyses/figures/usda_phyloIntColor.pdf", height = 45, width = 10)
 
-### === === === === === === === === === === ###
-#### Try with a subset of species to make the tree smaller ####
-### === === === === === === === === === === ###
-# select some random genus AND 3 that I will splice stuff in
-vec <- c(sample(egret$genus, 3), c("Eucalyptus", "Betula", "Penstemon"))
-
-t <- subset(egret, genus %in% vec)
-spp_smalltree <- unique(t$sppMatch)
-studyNosmall <- subset(studyNo, sppMatch %in% spp_smalltree)
-
-smallTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(t$sppMatch)))
-
-
-smallnamesphy <- smallTree$tip.label
-
-smallTree$root.edge <- 0
-
-is.rooted(smallTree)
-smallTree$node.label<-NULL
-
-
-smallDataPhy <-  comparative.data(smallTree, studyNosmall, names.col = "sppMatch", na.omit = T,
-                                  vcv = T, warn.dropped = T)
-
-smallphytoplot <-  smallDataPhy$phy
-smallx <- smallDataPhy$data$count
-names(smallx) <- smallDataPhy$phy$tip.label
-
-smallmap <- contMap(smallTree, smallx, plot = T)
