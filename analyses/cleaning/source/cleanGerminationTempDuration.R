@@ -4,7 +4,7 @@
 # 
 # Updated 16 July 2024
 # by Justin
-# Updated by Deirdre February 2, 2025
+# Updated by Deirdre 2 February 2025
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 ## This contains cleaning of germination temperature ##
@@ -615,7 +615,7 @@ d.summarized <- aggregate(. ~ datasetID, data = d.filtered, FUN = function(x) un
 # write.csv(d.summarized,"cleaning/checks/AlternatingTempPaperList.csv")
 
 
-# Added by V. VdM, Feb. 20 2025:
+# Added by V. VdM, 20 Feb 2025:
 # Checking and correcting some issue with photoperiod and germTempGen...
 # Note that in most cases, I understand why there was a problem --- but in some cases, I don't understand how it appeared 
 # (e.g. see meyer95 below)
