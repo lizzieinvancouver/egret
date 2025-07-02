@@ -642,7 +642,7 @@ for(i in 1:nrow(ids)){
     next
   }
   
-  # if we have only two treatments, this is straigthforward
+  # if we have only two treatments, this is straightforward
   if(nrow(phototreats) == 2){
     # and one is NA, but still with alternating temperature
     if(any(!(phototreats$germPhotoperiodDay %in% c(NA, 'NA')))){
