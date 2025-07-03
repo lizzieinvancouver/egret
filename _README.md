@@ -11,11 +11,11 @@ EGRET -- name changed May 10 2023 -- Environmental Germination Responses to Expe
 OEGRES -- the original name Dan suggested, I think it's Observed E--- Germination Responses to Experimental S---- I am shortening to OGRES, and awaiting a lab-agreed-upon name.
 
 
-### UPDATED 1 June 2022
+### UPDATED 1 June 2022 (and 2 July 2025 for Teams folder)
 
 After Dan (B) and Sophia Collins worked on this all spring, we agreed we should try new search terms and start anew. Dan worked through several searches and we together selected the best ones. See OEGRES_searchnotes.txt
 
-Google link for papers (Lizzie moved other stuff that used to be here to the repo): https://drive.google.com/drive/folders/1LZf1vbaJTT9qldi1rFNR3TpSBpyaAp-R
+EGRET on Temporal Ecology Lab Microsoft Teams folder -- all the papers as PDF and an egretOtherFiles folder (previous google link for papers deleted 2 July 2025, so if you want that link, look for a previous version of this file)
 
 Some notes from meeting with Dan, Lizzie, Deirdre (late May 2022):
 

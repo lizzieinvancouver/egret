@@ -28,3 +28,6 @@ This folder contains data scraped as part of the EGTRET meta-analysis. Files are
 
 ## Where is the USDA seed manual data?
 Good question! See egret/analyses/scrapeUSDAseedmanual/scraping
+
+## Where are all the papers?
+They used to be on Google Drive but as of Canada Day 2025, you should access them via the lab's MS Teams folder (I am not linking to it here but it is called EGRET and inside Temporal Ecology Lab/ Documents)
