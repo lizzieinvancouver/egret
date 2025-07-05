@@ -44,26 +44,26 @@ source("cleaning/source/cleanMisc.R") # 30777
 source("cleaning/source/cleanChillTempDuration.R") # 30777 and 50 columns
 
 # 6. Clean germination temperature
-source("cleaning/source/cleanGerminationTempDuration.R") # 
+source("cleaning/source/cleanGerminationTempDuration.R") # 59 columns, see notes in source file as we could cut some
 
 # 7. Clean germination scarification
-source("cleaning/source/cleanScarification.R") # 30777  54 columns
+source("cleaning/source/cleanScarification.R") # 30777  62 columns
 
 # 8. Clean chemical
-source("cleaning/source/cleanChemical.R") # 30777 55  
+source("cleaning/source/cleanChemical.R") # 30777 63  
 
 # 9. Clean storage type
-source("cleaning/source/cleanStorage.R") # 30937 70  
+source("cleaning/source/cleanStorage.R") # 30937 69  
 # This code also has source/combineStorageChill.R here, see issue #39
 
 # 10. Clean response variables and response
-source("cleaning/source/cleanResponseVar.R") # 30777    75
+source("cleaning/source/cleanResponseVar.R") # 30777    73
 
 # 11. Clean photoperiod
-source("cleaning/source/cleanPhotoperiod.R") # 30777    76
+source("cleaning/source/cleanPhotoperiod.R") # 30777    74
 
 # 12. Clean coordinates seed provenance
-source("cleaning/source/cleanCoordinates.R") # 30777    76
+source("cleaning/source/cleanCoordinates.R") # 30777    74
 
 # 13. Clean treatment column
 source("cleaning/source/cleanTreatments.R") 

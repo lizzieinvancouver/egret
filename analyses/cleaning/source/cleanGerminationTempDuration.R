@@ -790,7 +790,13 @@ rm(temp, di, ids, ids2, idscorrected, phototreats)
 message(paste0("Corrected germTempGen-related colums for ", counter,' studies!'))
 
 
+## Lizzie (5 July 2025) renaming and deleting columns
+names(d)[names(d)=="tempClass"] <- "germTempClass"
+names(d)[names(d)=="tempDay"] <- "germTempDay"
+names(d)[names(d)=="tempNight"] <- "germTempNight"
 
-
-
+## Hmm, these do not always equal 24 FYI but I don't think they have extra info beyond germPhotoperiod so could cut
+table(d$germPhotoperiodDay, d$germPhotoperiodNight)
+## And this has extra info so will leave also
+table(d$germPhotoperiod, d$germPhotoperiodNight)
 
