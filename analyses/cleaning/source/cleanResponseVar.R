@@ -324,3 +324,5 @@ sort(unique(germCap$datasetID))
 # "yusefi-tanha19" — # seeds/day 
 # "zare11”— # seeds/day   
 
+## Lizzie (5 July 2025) renaming 
+names(d)[names(d)=="errorType"] <- "responseErrorType"
