@@ -282,25 +282,25 @@ d$chillTemp[which(d$datasetID == "yang20" & d$treatment == "control")] <- 1
 d$chillDuration[which(d$datasetID == "yang20" & d$treatment == "control")] <- 0
 d$chillLightCycle[which(d$datasetID == "yang20" & d$treatment == "control")] <- 24
 
-#yang16_2
-d$chillTemp[which(d$datasetID == "yang16_2" & d$treatment == "none")] <- 1 
-d$chillDuration[which(d$datasetID == "yang16_2" & d$treatment == "none")] <- 0
+#yang16b
+d$chillTemp[which(d$datasetID == "yang16b" & d$treatment == "none")] <- 1 
+d$chillDuration[which(d$datasetID == "yang16b" & d$treatment == "none")] <- 0
 
-#yang18_1 : fixing temp and duration for species "taiwanensis"
-d$chillTemp[which(d$datasetID == "yang18_1" & d$treatment == "control" & d$figure == "Figure 3")] <- 4
-d$chillDuration[which(d$datasetID == "yang18_1" & d$treatment == "control" & d$figure == "Figure 3")] <- 0
-d$chillTemp[which(d$datasetID == "yang18_1" & is.na(d$chill.duration) & d$figure == "Figure 4")] <- 4
-d$chillDuration[which(d$datasetID == "yang18_1" & is.na(d$chill.duration) & d$figure == "Figure 4")] <- 0
-temp <- which(d$datasetID == "yang18_1" & !is.na(d$chill.duration) & d$figure == "Figure 4")
+#yang18a : fixing temp and duration for species "taiwanensis"
+d$chillTemp[which(d$datasetID == "yang18a" & d$treatment == "control" & d$figure == "Figure 3")] <- 4
+d$chillDuration[which(d$datasetID == "yang18a" & d$treatment == "control" & d$figure == "Figure 3")] <- 0
+d$chillTemp[which(d$datasetID == "yang18a" & is.na(d$chill.duration) & d$figure == "Figure 4")] <- 4
+d$chillDuration[which(d$datasetID == "yang18a" & is.na(d$chill.duration) & d$figure == "Figure 4")] <- 0
+temp <- which(d$datasetID == "yang18a" & !is.na(d$chill.duration) & d$figure == "Figure 4")
 for(i in temp){
   if(d$chill.duration[i] >= d$germ.duration[i]){
     d$chillTemp[i] <- NA
     d$chillDuration[i] <- NA
   }
 }
-d$chillTemp[which(d$datasetID == "yang18_1" & is.na(d$chill.duration) & d$figure == "Figure 5")] <- 4
-d$chillDuration[which(d$datasetID == "yang18_1" & is.na(d$chill.duration) & d$figure == "Figure 5")] <- 0
-temp <- which(d$datasetID == "yang18_1" & !is.na(d$chill.duration) & d$figure == "Figure 5")
+d$chillTemp[which(d$datasetID == "yang18a" & is.na(d$chill.duration) & d$figure == "Figure 5")] <- 4
+d$chillDuration[which(d$datasetID == "yang18a" & is.na(d$chill.duration) & d$figure == "Figure 5")] <- 0
+temp <- which(d$datasetID == "yang18a" & !is.na(d$chill.duration) & d$figure == "Figure 5")
 for(i in temp){
   if(d$chill.duration[i] >= d$germ.duration[i]){
     d$chillTemp[i] <- NA
@@ -308,13 +308,13 @@ for(i in temp){
   }
 }
 
-#yang18_3
-d$chillDuration[which(d$datasetID == "yang18_3" & d$figure == "Figure 3")] <-
-  round(as.numeric(d$chill.duration[which(d$datasetID == "yang18_3" & d$figure == "Figure 3")]))
-d$chillDuration[which(d$datasetID == "yang18_3" & d$figure == "Figure 3" & d$chill.duration == 0.864)] <-
+#yang18c
+d$chillDuration[which(d$datasetID == "yang18c" & d$figure == "Figure 3")] <-
+  round(as.numeric(d$chill.duration[which(d$datasetID == "yang18c" & d$figure == "Figure 3")]))
+d$chillDuration[which(d$datasetID == "yang18c" & d$figure == "Figure 3" & d$chill.duration == 0.864)] <-
   0
-d$chillTemp[which(d$datasetID == "yang18_3" & d$figure != "Figure 3")] <- NA
-d$chillDuration[which(d$datasetID == "yang18_3" & d$figure != "Figure 3")] <- NA
+d$chillTemp[which(d$datasetID == "yang18c" & d$figure != "Figure 3")] <- NA
+d$chillDuration[which(d$datasetID == "yang18c" & d$figure != "Figure 3")] <- NA
 
 #muller03: changing duration to 0
 d$chillDuration[which(d$datasetID == "muller03" & is.na(d$chill.temp))] <- 0

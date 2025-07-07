@@ -172,7 +172,7 @@ d$responseVar[which(d$datasetID == "santos19" & d$responseVar == "IVG")] <- "ger
 
 #proportion of viable seeds = prop.germ harrison14; 
 
-#NA  = tan10_2; castro95; huang14; downie91;strazisar13
+#NA  = tan10b; castro95; huang14; downie91;strazisar13
 
 d$responseVar[which(d$datasetID == "zlesak07" & d$responseVar == "AUGPC")] <- "area.under.germination.progress.curve" 
 d$responseVar[which(d$datasetID == "conversa09" & d$responseVar == "cumulative.germ")] <- "percent.germ" 

@@ -247,21 +247,21 @@ d$treatmentCor[which(d$datasetID == "dehgan84")] <- "stratification x hormone"
 #downie98
 #paper pending
 
-#edwards73_1
-d$treatmentCor[which(d$datasetID == "edwards73_1" & d$figure == "table 2")] <- "seedlot"
-d$treatmentCor[which(d$datasetID == "edwards73_1" & d$figure != "table 2")] <- "stratification"
+#edwards73a
+d$treatmentCor[which(d$datasetID == "edwards73a" & d$figure == "table 2")] <- "seedlot"
+d$treatmentCor[which(d$datasetID == "edwards73a" & d$figure != "table 2")] <- "stratification"
 
-d$treatmentDetails[which(d$datasetID == "edwards73_1" &
+d$treatmentDetails[which(d$datasetID == "edwards73a" &
                            d$figure != "table 2" &
                            d$treatment == "dark/moist/cold stratification on filter paper")] <-
   "stratification on filter paper"
-d$treatmentDetails[which(d$datasetID == "edwards73_1" &
+d$treatmentDetails[which(d$datasetID == "edwards73a" &
                            d$figure != "table 2" &
                            d$treatment == "naked stratification in plastic bag")] <-
   "naked stratification in plastic bag"
 
-#edwards73_2
-d$treatmentCor[which(d$datasetID == "edwards73_2")] <- "seedlot x stratification x photoperiod"
+#edwards73b
+d$treatmentCor[which(d$datasetID == "edwards73b")] <- "seedlot x stratification x photoperiod"
 
 #edwards96, paper pending
 
@@ -798,22 +798,22 @@ d$treatmentCor[which(d$datasetID == "tabatabaeian18")] <- "stratification x horm
 d$treatmentDetails[which(d$datasetID == "tabatabaeian18" & d$treatment == "control")] <-
   "control (no hormone, average across stratification)"
 
-#tang10_1
-d$treatmentCor[which(d$datasetID == "tang10_1" & d$study == "exp1")] <-
+#tang10a
+d$treatmentCor[which(d$datasetID == "tang10a" & d$study == "exp1")] <-
   "germination temperature"
-d$treatmentCor[which(d$datasetID == "tang10_1" & d$treatment == "Control")] <-
+d$treatmentCor[which(d$datasetID == "tang10a" & d$treatment == "Control")] <-
   "control"
-d$treatmentCor[which(d$datasetID == "tang10_1" & d$treatment == "stratification")] <-
+d$treatmentCor[which(d$datasetID == "tang10a" & d$treatment == "stratification")] <-
   "cold stratification"
-d$treatmentCor[which(d$datasetID == "tang10_1" & d$treatment == "after-ripening")] <-
+d$treatmentCor[which(d$datasetID == "tang10a" & d$treatment == "after-ripening")] <-
   "drying after ripening"
-d$treatmentCor[which(d$datasetID == "tang10_1" & d$treatment == "GA3")] <-
+d$treatmentCor[which(d$datasetID == "tang10a" & d$treatment == "GA3")] <-
   "hormone"
 
-d$treatmentCor[which(d$datasetID == "tang10_1" & d$study == "exp5")] <-
+d$treatmentCor[which(d$datasetID == "tang10a" & d$study == "exp5")] <-
   "(control, cold stratification, dry storage) x germination temperature"
 
-#tang10_2 paper in gdrive is for tang10_1
+#tang10b paper in gdrive is for tang10a
 #what does the 0, 40, and 60 days mean for control treatments???
 
 #tang21
@@ -930,36 +930,36 @@ d$treatmentCor[which(d$datasetID == "yang10" & d$figure == "Figure 3")] <-
 d$treatmentCor[which(d$datasetID == "yang10" & d$figure == "Figure 4")] <-
   "dry storage x moisture content"
 
-#yang16_1
-d$treatmentCor[which(d$datasetID == "yang16_1")] <-
+#yang16a
+d$treatmentCor[which(d$datasetID == "yang16a")] <-
   "storage x stratification"
 
-#yang16_2
+#yang16b
 temp <- c("control", rep("cold stratification + chemical", 2),
           "cold stratification",  "cold stratification + chemical",
           "cold stratification + chemical + bottom heat")
-d$treatmentCor[which(d$datasetID == "yang16_2")] <- temp
+d$treatmentCor[which(d$datasetID == "yang16b")] <- temp
 
-#yang18_1
-d$treatmentCor[which(d$datasetID == "yang18_1" & d$figure %in% c("Figure 3", "Figure 4", "Figure 5"))] <-
+#yang18a
+d$treatmentCor[which(d$datasetID == "yang18a" & d$figure %in% c("Figure 3", "Figure 4", "Figure 5"))] <-
   "moist stratification"
-d$treatmentCor[which(d$datasetID == "yang18_1" & d$figure %in% c("Figure 6", "Figure 7"))] <-
+d$treatmentCor[which(d$datasetID == "yang18a" & d$figure %in% c("Figure 6", "Figure 7"))] <-
   "dry storage x moisture content"
 
-#yang18_2
-d$treatmentCor[which(d$datasetID == "yang18_2" & d$figure == "Figure 2")] <-
+#yang18b
+d$treatmentCor[which(d$datasetID == "yang18b" & d$figure == "Figure 2")] <-
   "control"
-d$treatmentCor[which(d$datasetID == "yang18_2" & d$figure %in% c("Figure 3", "Figure 4", "Figure 5"))] <-
+d$treatmentCor[which(d$datasetID == "yang18b" & d$figure %in% c("Figure 3", "Figure 4", "Figure 5"))] <-
   "moist stratification"
-d$treatmentCor[which(d$datasetID == "yang18_2" & d$figure %in% c("Figure 6", "Figure 7"))] <-
+d$treatmentCor[which(d$datasetID == "yang18b" & d$figure %in% c("Figure 6", "Figure 7"))] <-
   "naked storage"
 
-#yang18_3
-d$treatmentCor[which(d$datasetID == "yang18_3" & d$figure == "Figure 2")] <-
+#yang18c
+d$treatmentCor[which(d$datasetID == "yang18c" & d$figure == "Figure 2")] <-
   "control"
-d$treatmentCor[which(d$datasetID == "yang18_3" & d$figure == "Figure 3")] <-
+d$treatmentCor[which(d$datasetID == "yang18c" & d$figure == "Figure 3")] <-
   "moist storage"
-d$treatmentCor[which(d$datasetID == "yang18_3" & d$figure %in% c("Figure 4", "Figure 5"))] <-
+d$treatmentCor[which(d$datasetID == "yang18c" & d$figure %in% c("Figure 4", "Figure 5"))] <-
   "dry storage x moisture content"
 
 #yeom21

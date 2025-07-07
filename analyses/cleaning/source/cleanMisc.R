@@ -57,10 +57,10 @@ d <- d[-(which(d$datasetID == "momonoki79" & d$figure == "table21")),] # 4
 # Washitani85 values greater than 100 bc the x-axis values were entered as
 d <- d[-(which(d$datasetID == "washitani85" & d$entered.by == "HHN" & d$figure == "Figure 5")),] 
 
-# yang18_2: changing figure labels. 
-d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 3")] <- "Figure 4"
-d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 2")] <- "Figure 3"
-d$figure[which(d$datasetID == "yang18_2" & d$figure == "Figure 1")] <- "Figure 2"
+# yang18b: changing figure labels. 
+d$figure[which(d$datasetID == "yang18b" & d$figure == "Figure 3")] <- "Figure 4"
+d$figure[which(d$datasetID == "yang18b" & d$figure == "Figure 2")] <- "Figure 3"
+d$figure[which(d$datasetID == "yang18b" & d$figure == "Figure 1")] <- "Figure 2"
 
 # chen08 vs chien09? This is the same paper, but one is the original journal article (chen08) and the other is from the
 # Taiwan Forestry Research Institute Data Catalog, but under a different first author so it got a unique dataset ID (chien09)
@@ -105,7 +105,7 @@ d$study[which(d$datasetID == "li11" & d$study == "exp 1 ")] <- "exp 1"
 d <- d[-which(d$datasetID == "jusung16" & d$entered.by == "SC" & d$figure == "Table 1"),]  
 
 # rescraped tang10_2
-d <- d[-which(d$datasetID == "tang10_2" & d$entered.by == "JN"),] #4/7 Dan found this deletes all data
+d <- d[-which(d$datasetID == "tang10b" & d$entered.by == "JN"),] #4/7 Dan found this deletes all data
 
 # rescraped bungard97 Fig1B
 d <- d[-which(d$datasetID == "bungard97" & d$entered.by == "BW" & d$figure == "Figure 1b"),]

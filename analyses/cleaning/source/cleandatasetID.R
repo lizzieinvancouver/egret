@@ -15,16 +15,19 @@ d$datasetID[which(d$datasetID == "picciau18")] <- "picciau19"
 d$datasetID[which(d$datasetID == "li11 ")] <- "li11"
 d$datasetID[which(d$datasetID == "Sacande05")] <- "sacande04"
 
-d$datasetID[which(d$datasetID == "tang10a")] <- "tang10_1"
-d$datasetID[which(d$datasetID == "tang10b")] <- "tang10_2"
+d$datasetID[which(d$datasetID == "Edwards73_1")] <- "edwards73a"
+d$datasetID[which(d$datasetID == "Edwards73_2")] <- "edwards73b"
 
 # three yang18
-d$datasetID[which(d$datasetID == "yang18" & d$genus == "Maackia")] <- "yang18_1"
-d$datasetID[which(d$datasetID == "yang18" & d$genus == "Pasania")] <- "yang18_2"
-d$datasetID[which(d$datasetID == "yang18" & d$genus == "Scaevola")] <- "yang18_3"
+d$datasetID[which(d$datasetID == "yang18" & d$genus == "Maackia")] <- "yang18a"
+d$datasetID[which(d$datasetID == "yang18" & d$genus == "Pasania")] <- "yang18b"
+d$datasetID[which(d$datasetID == "yang18" & d$genus == "Scaevola")] <- "yang18c"
 
 # two yang16, one already yang16_1
-d$datasetID[which(d$datasetID == "yang16")] <- "yang16_2"
+d$datasetID[which(d$datasetID == "yang16_1")] <- "yang16a"
+d$datasetID[which(d$datasetID == "yang16_2")] <- "yang16b"
+d$datasetID[which(d$datasetID == "yang16")] <- "yang16b"
+
 
 # Checked, these are correct: Kolodziejek18,19, Meyer94,95; Olmez07-09; Rouhi12,13; Tilki06,07; tylkowski09-10
 d$datasetID[which(d$datasetID == "Aldridge1992")] <- "aldridge92"

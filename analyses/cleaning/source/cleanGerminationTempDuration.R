@@ -100,7 +100,7 @@ d$germTemp[which(d$germTemp == "3-20")] <- "20/3"
 # According to the paper, it's 30/20 day/night
 d$germTemp[which(d$datasetID == "yang08" & d$genus == "Litsea")] <- "30/20"
 
-# yang18_1 - "chill and germination data for Figures 4 and 5 is complicated because some germination data were taken during stratification so the stratification conditions should actually be the germination data; 
+# yang18a - "chill and germination data for Figures 4 and 5 is complicated because some germination data were taken during stratification so the stratification conditions should actually be the germination data; 
 #I think cleaning these columns together would be easier than separately"
 
 # Making an empty column to give numeric values for just this subset of data
@@ -110,7 +110,7 @@ d$yang18germDuration <- NA
 
 # For figure 4
 for (i in c(1:nrow(d))) {
-  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18_1" && d$figure[i] == "Figure 4") {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18a" && d$figure[i] == "Figure 4") {
     d$yang18chill.duration[i] <- d$chill.duration[i]
     d$yang18germ.duration[i] <- d$germ.duration[i]
     d$yang18germDuration[i] <- d$germDuration[i]
@@ -119,7 +119,7 @@ for (i in c(1:nrow(d))) {
 
 # For figure 5
 for (i in c(1:nrow(d))) {
-  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18_1" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18a" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
     d$yang18chill.duration[i] <- d$chill.duration[i]
     d$yang18germ.duration[i] <- d$germ.duration[i]
     d$yang18germDuration[i] <- d$germDuration[i]
@@ -133,7 +133,7 @@ d$yang18germDuration <- as.numeric(d$yang18germDuration)
 
 # For Figure 4
 for (i in 1:nrow(d)) {
-  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18_1" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
+  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18a" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
     if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration[i]) && d$yang18germ.duration[i] <= d$yang18chill.duration[i]) {
       d$germTemp[i] <- "4"
       d$yang18germDuration[i] <- d$yang18germ.duration[i] - d$yang18chill.duration[i]
@@ -146,7 +146,7 @@ for (i in 1:nrow(d)) {
 
 # For Figure 5
 for (i in 1:nrow(d)) {
-  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18_1" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
+  if (!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18a" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
     if (!is.na(d$yang18germ.duration[i]) && !is.na(d$yang18chill.duration[i]) && d$yang18germ.duration[i] <= d$yang18chill.duration[i]) {
       d$germTemp[i] <- "4"
       d$yang18germDuration[i] <- d$yang18germ.duration[i] - d$yang18chill.duration[i]
@@ -159,14 +159,14 @@ for (i in 1:nrow(d)) {
 
 # Assigning germDuration the temporary column values, figure 4
 for (i in c(1:nrow(d))) {
-  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18_1" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18a" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 4") {
     d$germDuration[i] <- d$yang18germDuration[i]
   }
 }
 
 # Assigning germDuration the temporary column values, figure 5
 for (i in c(1:nrow(d))) {
-  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18_1" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
+  if(!is.na(d$datasetID[i]) && d$datasetID[i] == "yang18a" && d$genus[i] == "Maackia" && d$figure[i] == "Figure 5") {
     d$germDuration[i] <- d$yang18germDuration[i]
   }
 }
