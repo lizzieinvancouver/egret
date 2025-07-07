@@ -18,6 +18,8 @@ d$datasetID[which(d$datasetID == "Sacande05")] <- "sacande04"
 d$datasetID[which(d$datasetID == "Edwards73_1")] <- "edwards73a"
 d$datasetID[which(d$datasetID == "Edwards73_2")] <- "edwards73b"
 
+d$datasetID[which(d$datasetID == "tang10_2")] <- "tang10b"
+
 # three yang18
 d$datasetID[which(d$datasetID == "yang18" & d$genus == "Maackia")] <- "yang18a"
 d$datasetID[which(d$datasetID == "yang18" & d$genus == "Pasania")] <- "yang18b"
