@@ -48,8 +48,8 @@ treats <- c('datasetID', 'study',
             "dormancyTemp", "dormancyDuration",
             
             # GERMINATION-RELATED
-            "germTempGen", "germTemp", "germDuration", "tempClass", "tempDay", "tempNight",
-            "germPhotoperiod", "germPhotoperiodDay", "germPhotoperiodNight", "photoperiodCor",
+            "germTempGen", "germTemp", "germDuration", "germTempClass", "germTempDay", "germTempNight",
+            "germPhotoperiod", "germPhotoperiodDay", "germPhotoperiodNight", # "photoperiodCor",
             
             # MISC (e.g. sowing depth)
             "other.treatment"
@@ -408,7 +408,7 @@ for(i in 1:nrow(ids)){
     preferences <- 'H20|water|H2O'
     treat.tokeep <- unique(di[grepl(preferences, di$soaked.in),'soaked.in'])
     
-    if(any(is.na(unique(di$soaked.in)))){ # what to do with NA?
+    if(any(is.na(unique(di$soaked.in)))){ # add NA if there is one
       treat.tokeep <- c(treat.tokeep, NA)
     }
     
@@ -423,18 +423,22 @@ for(i in 1:nrow(ids)){
       if(identical(treat.tokeep, c("60C water", "80C water", "100C water"))){
         treat.tokeep <- "60C water"
         cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+        ids[i, 'soak.check'] <- TRUE
       }else if(identical(treat.tokeep, c('water', '0.7% water agar'))){
         treat.tokeep <- "water"
         cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+        ids[i, 'soak.check'] <- TRUE
       }else if(any(is.na(treat.tokeep))){ # if one NA, we keep NA rather than H2O?
         treat.tokeep <- NA
         cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+        ids[i, 'soak.check'] <- TRUE
       }else if(identical(treat.tokeep, c('-0.5 MPa water', '-0.1 MPa water', '0 MPa water'))){
         treat.tokeep <- '0 MPa water'
         cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
       }else if(identical(treat.tokeep, c('-0.5 MPa water', '-0.25 MPa water', '-0.1 MPa water', '-0.01 MPa water'))){
         treat.tokeep <- '-0.01 MPa water'
         cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+        ids[i, 'soak.check'] <- TRUE
       }else{
         stop("Boulbiboulba") # check
       }
@@ -445,6 +449,7 @@ for(i in 1:nrow(ids)){
       
       if(identical(treats, c("0 KNO3", "1.01 KNO3", "2.02 KNO3","4.04 KNO3"))){
         treat.tokeep <- "0 KNO3"
+        ids[i, 'soak.check'] <- TRUE
       }else{
         stop("Boulbiboulbanowater") # check
       }
