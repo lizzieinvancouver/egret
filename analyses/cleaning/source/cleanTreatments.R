@@ -38,8 +38,7 @@ d$treatmentCor[which(d$datasetID == "ahola99")] <- "r/fr light x moist chilling 
 
 #ahmad07, exp2 treatment is chilling but germination data is during chilling
 
-#aiello07
-#possible missing data on gibberelic acid treatments in Table 3 and Table 6
+#aiello07: #possible missing data on gibberelic acid treatments in Table 3 and Table 6
 d$treatmentCor[which(d$datasetID == "aiello17")] <- "population x cold stratification"
 
 #airi09
@@ -53,11 +52,10 @@ d$treatmentCor[which(d$datasetID == "airi09" & d$figure == "Table 3")] <- paste0
 #al-absi10
 temp <- c(rep("hot water", 16), rep("acid", 16), rep("hormone", 16))
 d$treatmentCor[which(d$datasetID == "al-absi10")] <- paste0("cold stratification x ", temp)
-#soaking duration needs to be cleaned, "120" instead of 0 - 30 minutes used in paper
+# soaking duration needs to be cleaned, "120" instead of 0 - 30 minutes used in paper: TO CHECK
 
 #albrecht20
 d$treatmentCor[which(d$datasetID == "albrecht20")] <- "cold stratification x germination temperature x photoperiod"
-#weird shared data between experiments
 
 #aldridge92
 d$treatmentCor[which(d$datasetID == "aldridge92")] <- "moisture content x stratification x hormone"
