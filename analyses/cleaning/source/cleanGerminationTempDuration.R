@@ -732,6 +732,7 @@ suppressWarnings(for(i in 1:nrow(idscorrected)){
 
 # Then, we look only at studies with a germTemp, but where germTempGen == NA and germPhotoperiodDay != NA
 # note: we expect to get some warnings, because of as.numeric
+# Want even more info on this code? Check out issue #18 and Victor's comments in July 2025
 suppressWarnings(temp <- d[which(!(d$germTemp %in% c(NA, 'NA')) & as.numeric(d$germTempGen) %in% c(NA, 'NA') & !(d$germPhotoperiodDay %in% c(NA, 'NA'))),
                            c('datasetID', 'study', 'genus', 'species', 'treatment', 'germTemp', 'germTempGen', 
                              'germPhotoperiod', 'tempDay', 'germPhotoperiodDay', 'germPhotoperiodNight')])
