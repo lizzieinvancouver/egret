@@ -12,7 +12,7 @@ d$percent_germination_20degC_incubated <- as.character(d$percent_germination_20d
 # Converting the data into long format
 d <- d %>%
   group_by(species_name) %>%
-  pivot_longer(cols = c("germination_time_days","total_germination_percent","avg_germination_percent","germination_rate","avg_germinative_energy_percent","germinative_energy_percent","avg_germinative_capacity","germinative_capacity","percent_germination_15degC_incubated","percent_germination_20degC_incubated"),
+  pivot_longer(cols = c("germination_time_days","total_germination_percent","avg_germination_percent","germination_rate","avg_germinative_energy_percent","germinative_energy_percent","avg_germinative_capacity","germinative_capacity","percent_germination_15degC_incubated","percent_germination_20degC_incubated","germ_rate_days","X50._germ"),
                names_to = "responseType",
                values_to = "responseValue") %>% drop_na(responseValue)
 
@@ -28,6 +28,9 @@ d$responseType[which(d$responseType == "avg_germinative_capacity")] <- "mean.ger
 d$responseType[which(d$responseType == "germinative_capacity")] <- "germ.capacity"
 d$responseType[which(d$responseType == "percent_germination_15degC_incubated")] <- "percent.germ.15degC.incubated"
 d$responseType[which(d$responseType == "percent_germination_20degC_incubated")] <- "percent.germ.20degC.incubated"
+d$responseType[which(d$responseType == "germ_rate_days")] <- "germ.rate.day"
+d$responseType[which(d$responseType == "X50._germ")] <- "50%germ"
+
 
 
 #create a new column 

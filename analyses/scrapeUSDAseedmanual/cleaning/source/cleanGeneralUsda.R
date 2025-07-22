@@ -49,9 +49,51 @@ na_columns <- sapply(d, function(x) all(is.na(x)))
 
 d <- d[, !na_columns]
 
+# Remove unwanted columns
+unwanted <- c("file_path", "scraped_table_number", "mean_light", "mean_dark", "light_range", "dark_range")
+d <- d[ , !(names(d) %in% unwanted)]
+
+# Read in newly scraped data
+folder <- "scrapeUSDAseedmanual/scraping/"
+fileList <- list.files(path = folder, pattern = "\\.xlsx$", full.names = TRUE)
+df <- list()
+
+for (file in fileList) {
+  d1 <- read.xlsx(file, sheetIndex = 2)
+  df[[file]] <- d1
+}
+
+d1 <- do.call(rbind, df)
+
+rownames(d1) <- seq_len(nrow(d1))
+
+head(d)
+setdiff(colnames(d), colnames(d1))
+setdiff(colnames(d1), colnames(d))
+d1$seed_type <- NA
+d1$rowID <- NA
+
+# Make new warm stratification column for original dataset
+d$warm_stratification_temp_C <- NA
+
+# Separate warm strat cold strat data
+d$warm_stratification_temp_C[d$stratification_temp_C == "20"] <- "20"
+d$stratification_temp_C[d$stratification_temp_C == "20"] <- NA
+colnames(d)[which(names(d) == "stratification_temp_C")] <- "cold_stratification_temp_C"
+
+# Add the new columns from newly scraped data
+new <- c("germ_rate_days", "X50._germ", "Notes")
+
+for (col in new) {
+  d[[col]] <- NA
+}
+
+d <- rbind(d, d1)
+
+d$rowID <- seq_len(nrow(d))
 # Remove rows with no data at all
 d <- d %>%
-  filter(!if_all(c(pregermination_treatment_time_minutes,pregermination_treatment_hot_water_soak_C,pretreatment,stratification_temp_C,warm_stratification_days,cold_stratification_days,dailyl_light_hours,day_temp_celsius,night_temp_celsius,temp_unspecified_time_of_day_celsius,test_duration_in_days, germination_time_days, total_germination_percent, avg_germination_percent, samples, germination_rate, avg_germinative_energy_percent, germinative_energy_percent, avg_germinative_capacity, germinative_capacity, percent_germination_15degC_incubated, percent_germination_20degC_incubated), is.na))
+  filter(!if_all(c(pregermination_treatment_time_minutes,pregermination_treatment_hot_water_soak_C,pretreatment,cold_stratification_temp_C,warm_stratification_temp_C,warm_stratification_days,cold_stratification_days,dailyl_light_hours,day_temp_celsius,night_temp_celsius,temp_unspecified_time_of_day_celsius,test_duration_in_days, germination_time_days, total_germination_percent, avg_germination_percent, samples, germination_rate, avg_germinative_energy_percent, germinative_energy_percent, avg_germinative_capacity, germinative_capacity, percent_germination_15degC_incubated, percent_germination_20degC_incubated,germ_rate_days,X50._germ,Notes), is.na))
 # Clean some columns without specific cleaning code for other stuff
 d$samples <- gsub("-"," to ",d$samples)
 d$cold_stratification_days <- gsub("-"," to ",d$cold_stratification_days)

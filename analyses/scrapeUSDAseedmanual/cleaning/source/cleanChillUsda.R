@@ -38,6 +38,15 @@ spec_X <- filtered_rows$latbi
 # Remove all filtered rows from the original data frame
 d <- d[!d$X %in% tmp_X, ]
 
+# Clean CSG
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "americana" & d$germination_time_days == "132")] <-"132"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$germination_time_days == "99")] <-"99"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$germination_time_days == "61")] <-"61"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$germination_time_days == "90")] <-"90"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$test_duration_in_days == "150-210" & d$cold_stratification_days == "CSG")] <-"210"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$germination_time_days == "420")] <-"420"
+
+
 # Get rid of weird values
 unique(d$pretrtChillDurAvg)
 d <- subset(d, !(pretrtChillDurAvg %in% c("Variable","Stratification and germination as a continuum under the same conditions")))

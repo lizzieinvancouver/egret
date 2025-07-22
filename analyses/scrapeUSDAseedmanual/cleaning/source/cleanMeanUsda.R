@@ -88,7 +88,7 @@ d$pregermTrtMin[which(d$pregermTrtMin == 99992)] <- "Overnight"
 
 # cold stratification duration
 unique(d$coldStratDurMin)
-d$coldStratDurMin[which(d$coldStratDurMin == "CSG")] <- 99991
+#d$coldStratDurMin[which(d$coldStratDurMin == "CSG")] <- 99991
 d$coldStratDurMin[which(d$coldStratDurMin == "Var.")] <- 99992
 d$coldStratDurMin[which(d$coldStratDurMin == "1803")] <- 180
 d$coldStratDurMin[which(d$coldStratDurMin == "l")] <- 1
@@ -99,7 +99,7 @@ d$coldStratDurMax <- as.integer(d$coldStratDurMax)
 d$coldStratDurAvg <- rowMeans(d[, c("coldStratDurMin", "coldStratDurMax")], na.rm = TRUE)
 d$coldStratDurAvg[which(is.nan(d$coldStratDurAvg))] <- NA
 
-d$coldStratDurAvg[which(d$coldStratDurMin == 99991)] <- "Stratification and germination as a continuum under the same conditions"
+#d$coldStratDurAvg[which(d$coldStratDurMin == 99991)] <- "Stratification and germination as a continuum under the same conditions"
 d$coldStratDurAvg[which(d$coldStratDurMin == 99992)] <- "Variable"
 d$coldStratDurMin[which(d$coldStratDurMin == 99991)] <- "Stratification and germination as a continuum under the same conditions"
 d$coldStratDurMin[which(d$coldStratDurMin == 99992)] <- "Variable"

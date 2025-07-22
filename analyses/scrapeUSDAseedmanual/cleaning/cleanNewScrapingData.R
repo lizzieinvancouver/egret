@@ -24,6 +24,7 @@ head(d)
 setdiff(colnames(d), colnames(d1))
 setdiff(colnames(d1), colnames(d))
 
+
 unwanted <- c("file_path", "scraped_table_number", "seed_type", "stratification_temp_C", "mean_light", "mean_dark", "light_range", "dark_range")
 d <- d[ , !(names(d) %in% unwanted)]
 new <- c("warm_stratification_temp_C", "cold_stratification_temp_C", "germ_rate_days", "X50._germ", "Notes")

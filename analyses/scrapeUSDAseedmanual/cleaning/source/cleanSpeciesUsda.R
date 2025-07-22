@@ -86,8 +86,8 @@ if(runworldflora){
 }
 
 d$seed_source[which(d$species_name == "macrophyllum source i")] <- "Source 1"
-d$seed_source[which(d$species_name == "acrophyllum source 2")] <- "Source 2"
-d$seed_source[which(d$species_name == "acrophyllum source 3")] <- "Source 3"
+d$seed_source[which(d$species_name == "macrophyllum source 2")] <- "Source 2"
+d$seed_source[which(d$species_name == "macrophyllum source 3")] <- "Source 3"
 d$seed_source[which(d$species_name == "rubrump low elevation (u)")] <- "low elevation (u)"
 d$seed_source[which(d$species_name == "rubrump low elevation (s)")] <- "low elevation (s)"
 d$seed_source[which(d$species_name == "rubrump High elevation (u)")] <- "high elevation (U)"
@@ -96,13 +96,12 @@ d$seed_source[which(d$species_name == "glutinosa (pennsylvania)")] <- "Pennsylva
 d$seed_source[which(d$species_name == "glutinosa (finland)")] <- "Finland"
 d$seed_source[which(d$species_name == "incana (europe)")] <- "Europe"
 d$seed_source[which(d$species_name == "incana (finland)")] <- "Finland"
-d$seed_type[which(is.na(d$seed_type) & d$species_name == "incana ssp. tenuifolia fresh seeds")] <- "fresh seed"
 
 # Fixing species names
 d$species_name[which(d$genus_name == "Acer" & d$species_name == "ginnala")] <-"tataricum subsp. ginnala"
-d$species_name[which(d$species_name == "macrophyllum Source i")] <-"macrophyllum"
-d$species_name[which(d$species_name == "macrophyllum Source 2")] <-"macrophyllum"
-d$species_name[which(d$species_name == "macrophyllum Source 3")] <-"macrophyllum"
+d$species_name[which(d$species_name == "macrophyllum source i")] <-"macrophyllum"
+d$species_name[which(d$species_name == "macrophyllum source 2")] <-"macrophyllum"
+d$species_name[which(d$species_name == "macrophyllum source 3")] <-"macrophyllum"
 d$species_name[which(d$genus_name == "Acer" & d$species_name == "pensylvanicumt")] <-"pensylvanicum"
 d$species_name[which(d$genus_name == "Acer" & d$species_name == "")] <-"pensylvanicum"
 d$species_name[which(d$genus_name == "Acer" & d$species_name == "rubrump")] <-"rubrum"
