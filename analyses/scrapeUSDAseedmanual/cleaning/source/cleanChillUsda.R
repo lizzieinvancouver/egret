@@ -37,16 +37,45 @@ spec_X <- filtered_rows$latbi
 
 # Remove all filtered rows from the original data frame
 d <- d[!d$X %in% tmp_X, ]
-
 # Clean CSG
-d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "americana" & d$germination_time_days == "132")] <-"132"
-d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$germination_time_days == "99")] <-"99"
-d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$germination_time_days == "61")] <-"61"
-d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$germination_time_days == "90")] <-"90"
-d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$test_duration_in_days == "150-210" & d$cold_stratification_days == "CSG")] <-"210"
-d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$germination_time_days == "420")] <-"420"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "americana" & d$responseValue == "132")] <-"132"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "americana" & d$responseValue == "16")] <-"132"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$responseValue == "99")] <-"99"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$responseValue == "94")] <-"99"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$responseValue == "61")] <-"61"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$responseValue == "96")] <-"61"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$cold_stratification_days == "CSG"& d$responseValue == "90")] <-"90"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$responseValue == "93")] <-"90"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$cold_stratification_days == "CSG"& d$test_duration_in_days == "150 to 210")] <-"210"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$responseValue == "420")] <-"420"
+d$cold_stratification_days[which(d$genus_name == "Sorbus" & d$species_name == "aucuparia" & d$responseValue == "88")] <-"420"
 
 
 # Get rid of weird values
 unique(d$pretrtChillDurAvg)
 d <- subset(d, !(pretrtChillDurAvg %in% c("Variable","Stratification and germination as a continuum under the same conditions")))
+
+# Add in stratification temp
+d$cold_stratification_temp_C[which(d$genus_name == "Aronia")] <-"10"
+d$cold_stratification_temp_C[which(d$genus_name == "Alnus" & d$cold_stratification_days == "180")] <- "5"
+d$cold_stratification_temp_C[which(d$genus_name == "Alnus" & d$cold_stratification_days == "1803")] <- "5"
+d$warm_stratification_temp_C[which(d$genus_name == "Alnus" & d$cold_stratification_days == "1803")] <- "20"
+d$warm_stratification_days[which(d$genus_name == "Alnus" & d$cold_stratification_days == "1803")] <- "3"
+d$cold_stratification_days[which(d$genus_name == "Alnus" & d$cold_stratification_days == "1803")] <- "180"
+d$cold_stratification_temp_C[which(d$genus_name == "Alnus" & d$cold_stratification_days != "0")] <- "5"
+d$cold_stratification_temp_C[which(d$genus_name == "Berberis")] <-"-1 to 5"
+d$cold_stratification_temp_C[which(d$genus_name == "Aesculus" & d$cold_stratification_days != "0")] <- "-0.5 to 5"
+d$cold_stratification_temp_C[which(d$genus_name == "Ceanothus")] <- "1 to 5"
+d$cold_stratification_temp_C[which(d$genus_name == "Carya")] <- "1 to 4"
+d$cold_stratification_temp_C[which(d$genus_name == "Malus")] <- "2 to 5"
+d$cold_stratification_temp_C[which(d$genus_name == "Taxus" & d$species_name == "baccata" )] <- "4"
+d$warm_stratification_temp_C[which(d$genus_name == "Taxus" & d$species_name == "baccata")] <- "20"
+d$cold_stratification_temp_C[which(d$genus_name == "Taxus" & d$species_name == "cuspidata" )] <- "4"
+d$warm_stratification_temp_C[which(d$genus_name == "Taxus" & d$species_name == "cuspidata")] <- "20"
+d$cold_stratification_temp_C[which(d$genus_name == "Tsuga" & d$cold_stratification_days != "0")] <- "-16 to -15"
+d$cold_stratification_temp_C[which(d$genus_name == "Sequoiadendron" & d$cold_stratification_days != "0")] <- "2"
+d$cold_stratification_temp_C[which(d$genus_name == "Quercus" & d$cold_stratification_days != "0")] <- "2 to 5"
+d$cold_stratification_temp_C[which(d$genus_name == "Sequoiadendron" & d$cold_stratification_days != "0")] <- "2"
+d$cold_stratification_temp_C[which(d$genus_name == "Prunus" & d$cold_stratification_days != "0")] <- "0.6 to 5"
+d$warm_stratification_temp_C[which(d$genus_name == "Prunus" & d$warm_stratification_days != "0")] <- "20"
+d$cold_stratification_temp_C[which(d$genus_name == "Pseudotsuga" & d$cold_stratification_days != "0")] <- "0 to 5"

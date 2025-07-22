@@ -165,7 +165,8 @@ d$species_name[which(d$genus_name == "Pinus" & d$species_name == "elliotti")] <-
 d$species_name[which(d$genus_name == "Pinus" & d$species_name ==  "thunbergiana")] <-"thunbergii"
 d$species_name[which(d$genus_name == "Pinus" & d$species_name == "scopulorum")] <-"scopulorum"
 d$genus_name[which(d$genus_name == "Prosopis" & d$species_name == "juliflora")] <-"Neltuma"
-
+d$genus_name[which(d$genus_name == "magnolia")] <-"Magnolia"
+d$genus_name[which(d$genus_name == "rosa")] <-"Rosa"
 # make a new column "spec" to combine genus and species
 d$latbi <- paste(d$genus_name, d$species_name, sep = "_")
 unique(d$latbi)
