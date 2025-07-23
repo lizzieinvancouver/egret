@@ -110,6 +110,21 @@ d <- d[-which(d$datasetID == "tang10b" & d$entered.by == "JN"),] #4/7 Dan found 
 # rescraped bungard97 Fig1B
 d <- d[-which(d$datasetID == "bungard97" & d$entered.by == "BW" & d$figure == "Figure 1b"),]
 
+# fetouh14: fixing table number
+d$figure[which(d$datasetID == "fetouh14")] <- "table 1"
+
+# santos19: fixing table numbers
+d$figure[which(d$datasetID == "santos19" & d$respvar == "IVG")] <-
+  "Table 2"
+d$figure[which(d$datasetID == "santos19" & d$respvar == "IVG")] <-
+  "Table 3"
+
+# skordilis95: 
+d$figure[which(d$datasetID == "skordilis95" & d$figure == "Figure 2" & d$species == "brutia")] <-
+  "fig2a"
+d$figure[which(d$datasetID == "skordilis95" & d$figure == "Figure 2" & d$species == "halepensis")] <-
+  "fig2B"
+
 if(FALSE){
 ##	
 ## From clean_other.R, Original file called coordinate_cleaning_JS.R
