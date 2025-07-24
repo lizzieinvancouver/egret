@@ -161,7 +161,6 @@ d$treatmentCor[which(d$datasetID == "bungard97" & d$study == "exp1")] <- "chilli
 d$treatmentCor[which(d$datasetID == "bungard97" & d$study == "exp2")] <- "chilling x chemical x photoperiod"
 d$treatmentCor[which(d$datasetID == "bungard97" & d$study == "exp3")] <- "chilling x salt"
 d$treatmentCor[which(d$datasetID == "bungard97" & d$study == "exp4")] <- "chemical"
-# the range of values for figure 1b, ammonium, seem to have a wrong y axis, it might have used the range used for figure 1a. TO CHECK: rescrape 1b if we want good data for seeds treated with amonimum chloride
 
 #bytnerowicz14
 d$treatmentCor[which(d$datasetID == "bytnerowicz14")] <- "germination temperature x photoperiod"
@@ -233,8 +232,6 @@ d$treatmentCor[which(d$datasetID == "dehgan84")] <- "stratification x hormone"
 
 #downie91: TO CHECK: need to scrape fig 3
 
-#downie98: TO CHECK: interlibrary loan lost. Missing whole pdf so cannot verify
-
 #edwards73a
 d$treatmentCor[which(d$datasetID == "edwards73a" & d$figure == "table 2")] <- "seedlot"
 d$treatmentCor[which(d$datasetID == "edwards73a" & d$figure != "table 2")] <- "stratification"
@@ -251,7 +248,7 @@ d$treatmentDetails[which(d$datasetID == "edwards73a" &
 #edwards73b
 d$treatmentCor[which(d$datasetID == "edwards73b")] <- "seedlot x stratification x photoperiod"
 
-#edwards96: TO CHECK: data scraped is the mean of mixed seeds germination... 
+#edwards96
 
 #erken21
 d$treatmentCor[which(d$datasetID == "erken21" & d$study == "exp1")] <- "storage"
@@ -777,24 +774,8 @@ d$treatmentCor[which(d$datasetID == "tang10a" & d$treatment == "after-ripening")
   "drying after ripening"
 d$treatmentCor[which(d$datasetID == "tang10a" & d$treatment == "GA3")] <-
   "hormone"
-
 d$treatmentCor[which(d$datasetID == "tang10a" & d$study == "exp5")] <-
   "(control, cold stratification, dry storage) x germination temperature"
-
-###################################
-# I AM HERE
-###################################
-
-
-
-
-
-
-
-
-
-#tang10b paper in gdrive is for tang10a
-#what does the 0, 40, and 60 days mean for control treatments???
 
 #tang21
 d$treatmentCor[which(d$datasetID == "tang21" &
@@ -816,7 +797,6 @@ d$treatmentCor[which(d$datasetID == "teimouri13" & d$figure == "Table 2")] <-
 #thomsen02
 d$treatmentCor[which(d$datasetID == "thomsen02" & d$figure == "Figure 2")] <-
   "mechanical scarification"
-#fix figure number, Figure 3 -> Figure 4
 
 #tilki06
 d$treatmentCor[which(d$datasetID == "tilki06" & d$study == "exp3")] <- "sowing"
@@ -958,7 +938,6 @@ d$treatmentCor[which(d$datasetID == "yin09")] <- "cold stratification x seed den
 
 #yuan21
 d$treatmentCor[which(d$datasetID == "yuan21")] <- "harvest date x cold stratification"
-#fix response variables
 
 #yusefi-tanha19
 d$treatmentCor[which(d$datasetID == "yusefi-tanha19")] <- "priming x cold stratification"
@@ -1017,8 +996,6 @@ d$treatmentCor[which(d$datasetID == "zlesak07" & d$study == "exp 6")] <-
   "soaking (chemical) x cold stratification"
 d$treatmentCor[which(d$datasetID == "zlesak07" & d$study == "exp 7")] <-
   "soaking (chemical) x light"
-
-#d$treatmentCor[which(d$datasetID == "")] <- ""
 
 sub_check <- FALSE
 if(sub_check){

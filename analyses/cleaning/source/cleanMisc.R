@@ -121,9 +121,16 @@ d$figure[which(d$datasetID == "santos19" & d$respvar == "IVG")] <-
 
 # skordilis95: 
 d$figure[which(d$datasetID == "skordilis95" & d$figure == "Figure 2" & d$species == "brutia")] <-
-  "fig2a"
+  "Figure 2a"
 d$figure[which(d$datasetID == "skordilis95" & d$figure == "Figure 2" & d$species == "halepensis")] <-
-  "fig2B"
+  "Figure 2b"
+# thomsen02
+d$figure[which(d$datasetID == "thomsen02" & d$figure == "Figure 2" & d$respvar == "per.germ")] <-
+  "Figure 2a"
+d$figure[which(d$datasetID == "thomsen02" & d$figure == "Figure 2" & d$respvar == "mgt")] <-
+  "Figure 2b"
+d$figure[which(d$datasetID == "thomsen02" & d$figure == "Figure 3")] <-
+  "Figure 4"
 
 if(FALSE){
 ##	
