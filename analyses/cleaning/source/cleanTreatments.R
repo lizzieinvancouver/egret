@@ -47,7 +47,7 @@ temp <- c(rep(" x control", 5), rep(" x cold stratification", 15), rep(" x chemi
 d$treatmentCor[which(d$datasetID == "airi09" & d$figure == "table 2")] <- paste0("population", temp)
 
 temp <- rep(c("control", "cold stratification", "hormone", "chemical", "chemical"), each = 5)
-d$treatmentCor[which(d$datasetID == "airi09" & d$figure == "Table 3")] <- paste0("population x ", temp) # TO check: table 3 was never entered...
+d$treatmentCor[which(d$datasetID == "airi09" & d$figure == "Table 3")] <- paste0("population x ", temp)
 
 #al-absi10
 temp <- c(rep("hot water", 16), rep("acid", 16), rep("hormone", 16))
