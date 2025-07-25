@@ -461,8 +461,7 @@ d$treatmentCor[which(d$datasetID == "lo19" & d$figure == "Fig 2")] <- "stratific
 temp <- rep(c("control", "soaking", "priming", "hormone", rep("plasma", 9)), 3)
 d$treatmentCor[which(d$datasetID == "lo19" & d$figure == "Table 2")] <- temp
 
-#ma03: TO CHECK: different treatment than other fig and tables and don't know what they did here
-d$treatmentCor[which(d$datasetID == "ma03")] <- "moist chilling x solid matrix priming"
+# ma03 is okay, see issue #70 for more news
 
 #ma18
 d$treatmentCor[which(d$datasetID == "ma18")] <- "chemical x germination temperature"
