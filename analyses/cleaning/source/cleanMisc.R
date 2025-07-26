@@ -143,6 +143,10 @@ d$figure[which(d$datasetID == "thomsen02" & d$figure == "Figure 3")] <-
 d$figure[which(d$datasetID == "edwards73a" & d$figure == "table 2")] <-
   "Table 1"
 
+#redondo-gomez11: fixing photoperiod that was not originally entered for table 1
+d$photoperiod[which(d$datasetID == "redondo-gomez11" & d$figure == "Table 1")] <- 
+c(rep("16/8", 5), rep("dark", 5), rep("16/8", 5))
+
 if(FALSE){
 ##	
 ## From clean_other.R, Original file called coordinate_cleaning_JS.R
