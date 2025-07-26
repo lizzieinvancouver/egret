@@ -2,6 +2,7 @@
 ## By Dan, continued by Justin ##
 
 ## Updated 26 Jan 2025 by Mao ##
+# checked by Deirdre 26 July 2025
 
 ## Fix empty sp names
 library("stringr")

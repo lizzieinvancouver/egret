@@ -1,4 +1,5 @@
 ## Started 10 Feb by Mao ##
+## checked 26 July 2025 by Deirdre
 
 d$pretreatmentScarifTypeGen <- d$pretreatment
 d$pretreatmentScarifTypeSpe <- d$pretreatment
@@ -13,12 +14,14 @@ d$pretreatmentScarifTypeGen[which(d$pretreatment == "Heat")] <- "mechanical"
 d$pretreatmentScarifTypeGen[which(d$pretreatment == "No scarification")] <- NA
 d$pretreatmentScarifTypeGen[which(grepl("scarification|Scarification", d$pretreatmentScarifTypeGen))] <- "unknownScarification"
 # Rubus spectabilis has general scarification, will find
-d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Scarification & 2-mon stratification")] <- "chemical"
-d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Scarification & 4-mon stratification")] <- "chemical"
-d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Scarification & 6-mon stratification")] <- "chemical"
+d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Scarification & 2 mon stratification")] <- "chemical"
+d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Scarification & 4 mon stratification")] <- "chemical"
+d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Scarification & 6 mon stratification")] <- "chemical"
 
 # Clean specific scarification column
 d$pretreatmentScarifTypeSpe[which(d$pretreatmentScarifTypeSpe == "H2SO4")] <- "checmical - H2SO4"
+d$pretreatmentScarifTypeSpe[which(d$pretreatmentScarifTypeSpe == "sulfuric acid")] <- "checmical - H2SO4"
+
 d$pretreatmentScarifTypeSpe[which(grepl("Mech", d$pretreatmentScarifTypeSpe))] <- "mechanical - unknown"
 d$pretreatmentScarifTypeSpe[which(d$pretreatmentScarifTypeSpe == "Heat")] <- "mechanical - heat"
 d$pretreatmentScarifTypeSpe[which(d$pregermination_treatment_hot_water_soak_C == "77-100")] <- "soaking - 77°C-100°C hot water"
