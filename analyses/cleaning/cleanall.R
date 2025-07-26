@@ -71,6 +71,9 @@ source("cleaning/source/cleanTreatments.R") # 31395 76 (25 July 2025)
 #14. clean chemical concentration
 source("cleaning/source/cleanConcentration.R") # 31395 78 (25 July 2025)
 
+#15. clean soaked.in (only some studies)
+source("cleaning/source/cleanSoakedIn.R") 
+
 # And ... some final cleaning
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"

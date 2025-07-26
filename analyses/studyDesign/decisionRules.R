@@ -25,6 +25,7 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } 
 
 # 0. Get the cleaned data
+source('cleaning/cleanall.R')
 d <- read.csv('output/egretclean.csv')
 treats <- c('datasetID', 'study',
             'genus', 'species', 'variety',
@@ -38,7 +39,7 @@ treats <- c('datasetID', 'study',
             "scarifType", "scarifTypeGen", "scarifTypeSpe", 
             
             # CHEMICAL-RELATED 
-            "chemicalCor", "chemical.concent",
+            "chemicalCor", "chemicalConcent",
             
             # SOAKING-RELATED (IMBIBITION)
             "soaking", "soaked.in", "soaking.duration", # I guess it's not cleaned?
@@ -113,7 +114,20 @@ ids$soak.tokeep <- ids$soak.check <- NA
 ids$stor.tokeep <- ids$stor.check <- NA
 ids$photo.tokeep <- ids$photo.check <- NA
 
-for(i in 1:nrow(ids)){
+## A particular case of misc. treatment: the color of the seeds
+# We want to keep both brown and black, so we're dealing with this
+# before entering the loop (it's easier, I'm lazy)
+filteredd[filteredd$other.treatment %in% c('brown seeds', 'black seeds') &
+            filteredd$datasetID == 'nurse08', 'other.treatment'] <- 'brown/black seeds'
+
+# -----------------------------
+# FOR PEOPLE CHECKING: MODIFY HERE
+# allids <- 1:nrow(ids)
+# example: Lizzie is doing 1:100
+allids <- 1:100
+
+
+for(i in allids){
   
   di <- filteredd[paste0(filteredd$datasetID,filteredd$study,filteredd$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
   cat(paste0("\nID: ", i, ' | ',paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ' '), "\n"))
@@ -172,10 +186,10 @@ for(i in 1:nrow(ids)){
         
       }else if(length(treat.tokeep) == 1){
         
-        cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
         
       }else{
-        stop('Missing conditions')
+        stop('Missing conditions (line 184)')
       }
       
     }else if(length(treat.tokeep) == 1){
@@ -183,7 +197,7 @@ for(i in 1:nrow(ids)){
       cat(paste0('   - Keeping: ', treat.tokeep,' (max. no. of chill./forc. treat.)\n'))
       
     }else{
-      stop('Missing conditions')
+      stop('Missing conditions (line 192)')
     }
     
     ids[i, 'misc.tokeep'] <- as.character(treat.tokeep)
@@ -198,7 +212,7 @@ for(i in 1:nrow(ids)){
     ids[i, 'misc.check']  <- TRUE
     
   }else{
-    stop('Missing conditions?') # check
+    stop('Missing conditions (line 207)') # check
   }
   
   # Summary
@@ -253,7 +267,7 @@ for(i in 1:nrow(ids)){
         ids[i, 'scarif.check']  <- TRUE
         
       }else{
-        stop('Missing conditions?') # check
+        stop('Missing conditions (line 262)') # check
       }
       
     }else if(length(unique(ntreati$ninterest)) > 1){
@@ -284,7 +298,7 @@ for(i in 1:nrow(ids)){
       ids[i, 'scarif.check']  <- TRUE
       
     }else{
-      stop('Missing conditions?') # check
+      stop('Missing conditions (line 293)') # check
     }
     
   }else if(length(unique(di$scarifType)) == 1){
@@ -308,77 +322,100 @@ for(i in 1:nrow(ids)){
     message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
   }
   
-  # CHEMICAL
+  # CHEMICAL (updated 26 July 2025, we don't care about control anymore)
   ids[i, 'chem.check']  <- FALSE
-  if(length(unique(di$chemicalCor)) > 1){
+  di$chemicalTreat <- paste0(di$chemicalCor, di$chemicalConcent)
+  if(length(unique(di$chemicalTreat)) > 1){
     
-    cat(paste0(" > Number of chem. treat.: ", length(unique(di$chemicalCor)), "\n"))
-    cat('   - [');cat(paste(unique(di$chemicalCor)), sep = ', ');cat(']\n')
+    cat(paste0(" > Number of chem. treat.: ", length(unique(di$chemicalTreat)), "\n"))
+    cat('   - [');cat(paste(unique(di$chemicalTreat)), sep = ', ');cat(']\n')
     
     di$nstrat <- paste0(di$dormancyTemp, di$dormancyDuration)
     di$ngerm <- paste0(di$germTempGen, di$germDuration)
     ntreati <- merge(
-      aggregate(nstrat ~ factor(chemicalCor, exclude = NULL), data = di, function(x) length(unique(x))),
-      aggregate(ngerm ~ factor(chemicalCor, exclude = NULL), data = di, function(x) length(unique(x)))
+      aggregate(nstrat ~ factor(chemicalTreat, exclude = NULL), data = di, function(x) length(unique(x))),
+      aggregate(ngerm ~ factor(chemicalTreat, exclude = NULL), data = di, function(x) length(unique(x)))
     )
     ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
-    names(ntreati)[1] <- 'chemicalCor'
+    names(ntreati)[1] <- 'chemicalTreat'
     
     if(length(unique(ntreati$ninterest)) == 1){ # same no. of chill/forc treatments
       
       cat('   - Same number of chill./forc. treat. across chem. treat.\n')
       
-      if(any(is.na(unique(di$chemicalCor)))){ # if there is a control, we keep it
-        
-        treat.tokeep <- NA
-        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
-        
-      }else if(any(unique(di$chemicalCor) %in% c('H2O'))){ # or there is water?
-        
-        treat.tokeep <- 'H2O'
-        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
-        
-      }else if(!any(unique(di$chemicalCor) %in% c(NA, 'H2O'))){ # if no control
-        
-        # we can just keep the chemical treat. with max. germ. rate?
-        maxresp <- max(di$responseValue)
-        treat.tokeep <- unique(di[di$responseValue == maxresp, 'chemicalCor']) 
-        cat(paste0('   - Keeping: [', treat.tokeep,'] (max. resp.)\n'))
-        
-      }else{
-        stop('Missing conditions?') # check
+      # Below was changed 26 July 2025
+      # if(any(is.na(unique(di$chemicalCor)))){ # if there is a control, we keep it
+      #   
+      #   treat.tokeep <- NA
+      #   cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+      #   
+      # }else if(any(unique(di$chemicalCor) %in% c('H2O'))){ # or there is water?
+      #   
+      #   treat.tokeep <- 'H2O'
+      #   cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+      #   
+      # }else if(!any(unique(di$chemicalCor) %in% c(NA, 'H2O'))){ # if no control
+      #   
+      #   # we can just keep the chemical treat. with max. germ. rate?
+      #   maxresp <- max(di$responseValue)
+      #   treat.tokeep <- unique(di[di$responseValue == maxresp, 'chemicalCor']) 
+      #   cat(paste0('   - Keeping: [', treat.tokeep,'] (max. resp.)\n'))
+      #   
+      # }else{
+      #   stop('Missing conditions?') # check
+      # }
+      
+      # we can just keep the chemical treat. with max. germ. rate?
+      maxresp <- max(di$responseValue)
+      treat.tokeep <- unique(di[di$responseValue == maxresp, 'chemicalTreat']) 
+      cat(paste0('   - Keeping: [', treat.tokeep,'] (max. resp.)\n'))
+      
+      if(length(treat.tokeep) > 1){
+        stop('Missing conditions (line 366)') # check
       }
+      
       
     }else if(length(unique(ntreati$ninterest)) > 1){ # different no. of chill/forc treatments
       
       cat('   - Different number of chill./forc. treat. across chem. treat.\n')
-      treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'chemicalCor'] # chem. treat. with max. no. of chill/forc treatments
+      treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'chemicalTreat'] # chem. treat. with max. no. of chill/forc treatments
       
-      if(length(treat.tokeep) > 1 & any(is.na(unique(treat.tokeep)))){ # then if needed: if there is control, we keep it!
-        
-        treat.tokeep <- NA
-        cat(paste0('   - Keeping: ', treat.tokeep,' (max. no. of chill./forc. treat. + control)\n'))
-        
-      }else if(length(treat.tokeep) > 1 & any(unique(treat.tokeep) %in% c('H2O'))){ # or there is water?
-        
-        treat.tokeep <- 'H2O'
-        cat(paste0('   - Keeping: ', treat.tokeep,' (max. no. of chill./forc. treat. + control)\n'))
-        
-      }else if(length(treat.tokeep) > 1 & !any(is.na(unique(treat.tokeep)))){ # no control, we have to choose something else
-        
-        # here, we need to make a decision with concentration information?
-        # stop('Need concentration here')
-        # or we can just keep the chemical treat. with max. germ. rate?
-        maxresp <- max(di[di$chemicalCor %in% treat.tokeep, 'responseValue'])
-        treat.tokeep <- unique(di[di$chemicalCor %in% treat.tokeep & di$responseValue == maxresp, 'scarifType']) 
+      # Below was changed in 26 July 2025
+      # if(length(treat.tokeep) > 1 & any(is.na(unique(treat.tokeep)))){ # then if needed: if there is control, we keep it!
+      #   
+      #   treat.tokeep <- NA
+      #   cat(paste0('   - Keeping: ', treat.tokeep,' (max. no. of chill./forc. treat. + control)\n'))
+      #   
+      # }else if(length(treat.tokeep) > 1 & any(unique(treat.tokeep) %in% c('H2O'))){ # or there is water?
+      #   
+      #   treat.tokeep <- 'H2O'
+      #   cat(paste0('   - Keeping: ', treat.tokeep,' (max. no. of chill./forc. treat. + control)\n'))
+      #   
+      # }else if(length(treat.tokeep) > 1 & !any(is.na(unique(treat.tokeep)))){ # no control, we have to choose something else
+      #   
+      #   # here, we need to make a decision with concentration information?
+      #   # stop('Need concentration here')
+      #   # or we can just keep the chemical treat. with max. germ. rate?
+      #   maxresp <- max(di[di$chemicalCor %in% treat.tokeep, 'responseValue'])
+      #   treat.tokeep <- unique(di[di$chemicalCor %in% treat.tokeep & di$responseValue == maxresp, 'chemicalTreat']) 
+      #   cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
+      #   
+      # }else if(length(treat.tokeep) == 1){
+      #   
+      #   cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
+      #   
+      # }else{
+      #   stop("Missing conditions") # check
+      # }
+      
+      if(length(treat.tokeep) > 1){
+        maxresp <- max(di[di$chemicalTreat %in% treat.tokeep, 'responseValue'])
+        treat.tokeep <- unique(di[di$chemicalTreat %in% treat.tokeep & di$responseValue == maxresp, 'chemicalTreat']) 
         cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
-        
       }else if(length(treat.tokeep) == 1){
-        
         cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
-        
       }else{
-        stop("Missing conditions") # check
+        stop("Missing conditions (line 410)") # check
       }
       
     }
@@ -386,28 +423,28 @@ for(i in 1:nrow(ids)){
     ids[i, 'chem.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'chem.check'] <- TRUE
     
-  }else if(length(unique(di$chemicalCor)) == 1){
+  }else if(length(unique(di$chemicalTreat)) == 1){
     
     cat(paste0(" > Only one chemical. treat.\n"))
-    treat.tokeep <- unique(di$chemicalCor)
+    treat.tokeep <- unique(di$chemicalTreat)
     ids[i, 'chem.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'chem.check'] <- TRUE
     
   }else{
-    stop("Missing conditions") # check
+    stop("Missing conditions (line 426)") # check
   }
   
   # Summary
   if(any(!ids$chem.check, na.rm = TRUE)){stop()} # check
   nrow.before <- nrow(di)
-  di <- di[di$chemicalCor %in% ids[i, 'chem.tokeep'], ]
-  if(length(unique(di$chemicalCor)) > 1){stop()} # check
+  di <- di[di$chemicalTreat %in% ids[i, 'chem.tokeep'], ]
+  if(length(unique(di$chemicalTreat)) > 1){stop()} # check
   nrow.after <- nrow(di)
   if(nrow.before!=nrow.after){
     message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
   }
   
-  # SOAKING (update in May 2025)
+  # SOAKING (update in May 2025: keep control) (reupdated in July 2025: we now keep the max. germ.)
   ids[i, 'soak.check']  <- FALSE
   if(length(unique(di$soaked.in)) > 1){
     
@@ -423,67 +460,127 @@ for(i in 1:nrow(ids)){
     ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
     names(ntreati)[1] <- 'soaked.in'
     
-    preferences <- 'H20|water|H2O'
-    treat.tokeep <- unique(di[grepl(preferences, di$soaked.in),'soaked.in'])
-    
-    if(any(is.na(unique(di$soaked.in)))){ # add NA if there is one
-      treat.tokeep <- c(treat.tokeep, NA)
-    }
-    
-    if(length(treat.tokeep) == 1){
+    if(length(unique(ntreati$ninterest)) == 1){ # same no. of chill/forc treatments
       
-      cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
-      ids[i, 'soak.tokeep'] <- treat.tokeep
-      ids[i, 'soak.check'] <- TRUE
+      cat('   - Same number of chill./forc. treat. across chem. treat.\n')
+        
+      # we can just keep the chemical treat. with max. germ. rate?
+      maxresp <- max(di$responseValue)
+      treat.tokeep <- unique(di[di$responseValue == maxresp, 'soaked.in']) 
+      cat(paste0('   - Keeping: [', treat.tokeep,'] (max. resp.)\n'))
       
-    }else if(length(treat.tokeep) > 1){ # case when there are several controls (NA or water)
-      
-      if(identical(treat.tokeep, c("60C water", "80C water", "100C water"))){
-        treat.tokeep <- "60C water"
-        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
-        ids[i, 'soak.check'] <- TRUE
-      }else if(identical(treat.tokeep, c('water', '0.7% water agar'))){
-        treat.tokeep <- "water"
-        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
-        ids[i, 'soak.check'] <- TRUE
-      }else if(any(is.na(treat.tokeep))){ # if one NA, we keep NA rather than H2O?
-        treat.tokeep <- NA
-        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
-        ids[i, 'soak.check'] <- TRUE
-      }else if(identical(treat.tokeep, c('-0.5 MPa water', '-0.1 MPa water', '0 MPa water'))){
-        treat.tokeep <- '0 MPa water'
-        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
-      }else if(identical(treat.tokeep, c('-0.5 MPa water', '-0.25 MPa water', '-0.1 MPa water', '-0.01 MPa water'))){
-        treat.tokeep <- '-0.01 MPa water'
-        cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
-        ids[i, 'soak.check'] <- TRUE
-      }else{
+      if(length(treat.tokeep) > 1){
         stop("Boulbiboulba") # check
       }
-
-    }else if(length(treat.tokeep) == 0){ # case when there are no water treatments
+        
+    }else if(length(unique(ntreati$ninterest)) > 1){ # different no. of chill/forc treatments
       
-      treats <- unique(di$soaked.in)
+      cat('   - Different number of chill./forc. treat. across chem. treat.\n')
+      treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'soaked.in'] # chem. treat. with max. no. of chill/forc treatments
       
-      if(identical(treats, c("0 KNO3", "1.01 KNO3", "2.02 KNO3","4.04 KNO3"))){
-        treat.tokeep <- "0 KNO3"
-        ids[i, 'soak.check'] <- TRUE
-      }else{
-        stop("Boulbiboulbanowater") # check
+      if(length(treat.tokeep) > 1){ 
+        
+        maxresp <- max(di[di$soaked.in %in% treat.tokeep, 'responseValue'])
+        treat.tokeep <- unique(di[di$soaked.in %in% treat.tokeep & di$responseValue == maxresp, 'scarifType']) 
+        cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
+        
+        if(length(treat.tokeep) > 1){
+          stop("Boulbiboulba2") # check
+        }
+        
+      }else if(length(treat.tokeep) == 1){
+        cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
       }
-      
-      
     }
     
-  }else if(length(unique(di$soaked.in)) == 1){
-    
-    cat(paste0(" > Only one soak. treat.\n"))
-    treat.tokeep <- unique(di$soaked.in)
-    ids[i, 'soak.check'] <- as.character(treat.tokeep)
+    ids[i, 'soak.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'soak.check'] <- TRUE
     
+  }else if(length(unique(di$soaked.in)) == 1){
+    cat(paste0(" > Only one soak. treat.\n"))
+    treat.tokeep <- unique(di$soaked.in)
+    ids[i, 'soak.tokeep'] <- as.character(treat.tokeep)
+    ids[i, 'soak.check'] <- TRUE
   }else{
-    stop("Boulbiboulba2") # check
+      stop("Boulbiboulba2") # check
+  }
+    
+    # preferences <- 'H20|water|H2O'
+    # treat.tokeep <- unique(di[grepl(preferences, di$soaked.in),'soaked.in'])
+    
+  #   if(any(is.na(unique(di$soaked.in)))){ # add NA if there is one
+  #     treat.tokeep <- c(treat.tokeep, NA)
+  #   }
+  #   
+  #   if(length(treat.tokeep) == 1){
+  #     
+  #     cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+  #     ids[i, 'soak.tokeep'] <- treat.tokeep
+  #     ids[i, 'soak.check'] <- TRUE
+  #     
+  #   }else if(length(treat.tokeep) > 1){ # case when there are several controls (NA or water)
+  #     
+  #     if(identical(treat.tokeep, c("60C water", "80C water", "100C water"))){
+  #       treat.tokeep <- "60C water"
+  #       cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+  #       ids[i, 'soak.check'] <- TRUE
+  #     }else if(identical(treat.tokeep, c('water', '0.7% water agar'))){
+  #       treat.tokeep <- "water"
+  #       cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+  #       ids[i, 'soak.check'] <- TRUE
+  #     }else if(any(is.na(treat.tokeep))){ # if one NA, we keep NA rather than H2O?
+  #       treat.tokeep <- NA
+  #       cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+  #       ids[i, 'soak.check'] <- TRUE
+  #     }else if(identical(treat.tokeep, c('-0.5 MPa water', '-0.1 MPa water', '0 MPa water'))){
+  #       treat.tokeep <- '0 MPa water'
+  #       cat(paste0('   - Keeping: [', treat.tokeep,'] (control)\n'))
+  #     }else if(identical(treat.tokeep, c('-0.5 MPa water', '-0.25 MPa water', '-0.1 MPa water', '-0.01 MPa water'))){
+  #       treat.tokeep <- '-0.01 MPa water'
+  #       cat(paste0('   - Keeping: [', treat.tokeep,'] (smallest osmotic pot.)\n'))
+  #       ids[i, 'soak.check'] <- TRUE
+  #     }else if(identical(treat.tokeep, c("0 water solution","-0.001 water solution","-0.005 water solution","-0.0075 water solution","-0.01 water solution",
+  #                                        "-0.1 water solution","-0.25 water solution","-0.5 water solution","-1 water solution"))){
+  #       treat.tokeep <- '0 water solution'
+  #       cat(paste0('   - Keeping: [', treat.tokeep,'] (smallest osmotic pot.)\n'))
+  #       ids[i, 'soak.check'] <- TRUE
+  #     }else{
+  #       stop("Boulbiboulba") # check
+  #     }
+  # 
+  #   }else if(length(treat.tokeep) == 0){ # case when there are no water treatments
+  #     
+  #     treats <- unique(di$soaked.in)
+  #     
+  #     if(identical(treats, c("0 KNO3", "1.01 KNO3", "2.02 KNO3","4.04 KNO3"))){
+  #       treat.tokeep <- "0 KNO3"
+  #       ids[i, 'soak.check'] <- TRUE
+  #     }else{
+  #       stop("Boulbiboulbanowater") # check
+  #     }
+  #     
+  #     
+  #   }
+  #   
+  # }else if(length(unique(di$soaked.in)) == 1){
+  #   
+  #   cat(paste0(" > Only one soak. treat.\n"))
+  #   treat.tokeep <- unique(di$soaked.in)
+  #   ids[i, 'soak.check'] <- as.character(treat.tokeep)
+  #   ids[i, 'soak.check'] <- TRUE
+  #   
+  # }else{
+  #   stop("Boulbiboulba2") # check
+  # }
+  
+  # Summary
+  if(any(!ids$soak.check, na.rm = TRUE)){stop()} # check
+  nrow.before <- nrow(di)
+  di <- di[di$soaked.in %in% ids[i, 'soak.tokeep'], ]
+  if(length(unique(di$soaked.in)) > 1){stop()} # check
+  nrow.after <- nrow(di)
+  if(nrow.before!=nrow.after){
+    message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
   }
   
   # STORAGE
@@ -518,30 +615,30 @@ for(i in 1:nrow(ids)){
     
     if(length(treat.tokeep) == 1){
       
-      cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
+      cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
       
     }else if(length(treat.tokeep) > 1){ # if not enough...
       
       maxresp <- max(di[di$storConditions %in% treat.tokeep, 'responseValue'], na.rm = TRUE)
       treat.tokeep <- unique(di[di$storConditions %in% treat.tokeep & di$responseValue %in% maxresp, 'storConditions']) 
-      cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
+      cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
       
       if(length(treat.tokeep) > 1){
         
         avgrespi <- aggregate(responseValue ~ factor(storConditions, exclude = NULL), data = di[di$storConditions %in% treat.tokeep,], mean)
         names(avgrespi)[1] <- 'storConditions'
         
-        treat.tokeep <- avgrespi[avgrespi$avgresp == max(avgrespi$avgresp), 'storConditions']
+        treat.tokeep <- avgrespi[avgrespi$responseValue == max(avgrespi$responseValue), 'storConditions']
         cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + max. avg. resp.)\n'))
         
         if(length(treat.tokeep) > 1){
-          stop("Missing conditions") # check
+          stop("Missing conditions (line 627)") # check
         }
         
       }
       
     }else{
-      stop("Missing conditions") # check
+      stop("Missing conditions (line 633)") # check
     }
     
     ids[i, 'stor.tokeep'] <- as.character(treat.tokeep)
@@ -556,7 +653,7 @@ for(i in 1:nrow(ids)){
     ids[i, 'stor.check'] <- TRUE
     
   }else{
-    stop("Missing conditions") # check
+    stop("Missing conditions (line 648)") # check
   }
   
   # Summary
@@ -590,7 +687,7 @@ for(i in 1:nrow(ids)){
     
     if(length(treat.tokeep) == 1){
       
-      cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
+      cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
       
     }else if(length(treat.tokeep) > 1){ # if not enough...
       
@@ -602,7 +699,7 @@ for(i in 1:nrow(ids)){
         avgrespi <- aggregate(responseValue ~ factor(germPhotoperiod, exclude = NULL), data = di[di$germPhotoperiod %in% treat.tokeep,], mean)
         names(avgrespi)[1] <- 'germPhotoperiod'
         
-        treat.tokeep <- avgrespi[avgrespi$avgresp == max(avgrespi$avgresp), 'germPhotoperiod']
+        treat.tokeep <- avgrespi[avgrespi$responseValue == max(avgrespi$responseValue), 'germPhotoperiod']
         cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + max. avg. resp.)\n'))
         
         if(length(treat.tokeep) > 1){
@@ -611,17 +708,17 @@ for(i in 1:nrow(ids)){
         
       }else if(length(treat.tokeep) == 1){
         
-        cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
         
       }else{
-        stop("Missing conditions") # check
+        stop("Missing conditions (line 706)") # check
       }
       
     }else{
-      stop("Missing conditions") # check
+      stop("Missing conditions (line 710)") # check
     }
     
-    ids[i, 'photo.tokeep'] <- treat.tokeep
+    ids[i, 'photo.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'photo.check'] <- TRUE
     
     
@@ -629,11 +726,11 @@ for(i in 1:nrow(ids)){
     
     cat(paste0(" > Only one photo. treat.\n"))
     treat.tokeep <- unique(di$germPhotoperiod)
-    ids[i, 'photo.tokeep'] <- treat.tokeep
+    ids[i, 'photo.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'photo.check'] <- TRUE
     
   }else{
-    stop("Missing conditions") # check
+    stop("Missing conditions (line 725)") # check
   }
   
   # Summary
@@ -647,104 +744,3 @@ for(i in 1:nrow(ids)){
   }
   
 }
-
-# Create the new dataset
-newd <- data.frame()
-for(i in 1:nrow(ids)){
-  
-  di <- filteredd[paste0(filteredd$datasetID,filteredd$study,filteredd$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
-  di <- di[di$other.treatment %in% ids[i, 'misc.tokeep'], ]
-  di <- di[di$scarifType %in% ids[i, 'scarif.tokeep'], ]
-  di <- di[di$chemicalCor %in% ids[i, 'chem.tokeep'], ]
-  
-  # some storage conditions may correspond to chilling (moist + cold)
-  for(s in 1:nrow(di)){
-    # between -20 and 10 => we consider these as chilling, not storage
-    if(di[s, 'storageType']  %in% c("moist", "moist/cold") & !is.na(as.numeric(di[s, 'storageTemp'])) &
-       as.numeric(di[s, 'storageTemp']) <= 10 & as.numeric(di[s, 'storageTemp']) >= - 20){
-      di[s, 'storageType'] <- di[s, 'storageTemp'] <- di[s, 'storageDuration'] <- NA
-    }
-  }
-  
-  di$storConditions <- paste(di$storageType, di$storageTemp, di$storageDuration)
-  di <- di[di$storConditions %in% ids[i, 'stor.tokeep'], ]
-  di <- di[di$germPhotoperiod %in% ids[i, 'photo.tokeep'], ]
-  newd <- rbind(newd, di)
-  
-}
-
-# ntreats <- newd %>%
-#   dplyr::filter(!is.na(germDuration) & !is.na(germTemp)) %>%
-#   dplyr::group_by(datasetID, study, genusspecies) %>%
-#   dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
-#                  ngerm = n_distinct(germTempGen, germDuration)) %>% 
-#   as.data.frame()
-# newids <- unique(ntreats[c('datasetID', 'study', 'genusspecies')])
-# 
-# newids_chill <- unique(ntreats[ntreats$nstrat > ntreats$ngerm, c('datasetID', 'study', 'genusspecies')])
-# newids_forc <- unique(ntreats[ntreats$ngerm >= ntreats$nstrat, c('datasetID', 'study', 'genusspecies')])
-
-# pdf(file=paste0("figures/studyDesign/chillhours.pdf"), height = 15, width = 18)
-# par(mfrow = c(11,13), mar=c(1.4,0,0,0)+0.7, mgp=c(0,0.5,0))
-# for(i in 1:nrow(newids_chill)){
-# 
-#   di <- newd[paste0(newd$datasetID,newd$study,newd$genusspecies) == 
-#                paste0(newids_chill[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),
-#              c('dormancyDuration', 'dormancyTemp', 
-#                'germTempGen', 'germDuration', 'germPhotoperiod',
-#                'responseValue')]
-#   
-#   di$chillhours <- as.numeric(di$dormancyDuration) * 24 * as.numeric(as.numeric(di$dormancyTemp) < 10 & as.numeric(di$dormancyTemp) > -20)
-#   di$forc <- as.numeric(di$germDuration) * as.numeric(di$germTempGen)
-#   
-#   plot.new()
-#   limits <- c(min(di$chillhours, na.rm = T), max(di$chillhours, na.rm = T))
-#   plot.window(xlim = limits, ylim = c(0,100))
-#   grid()
-#   
-#   points(di$responseValue ~ di$chillhours, pch = 19, col = '#498ba7', cex = 0.5)
-#   # for(f in unique(paste0(di$germTempGen, di$germDuration))){
-#   #   subi <- di[paste0(di$germTempGen, di$germDuration) == f, ]
-#   #   lines(subi$responseValue ~ subi$chillhours, col = '#498ba7')
-#   # }
-#   
-#   title(ylab = "Germ. perc.", cex.lab = 0.5)
-#   title(xlab = "Chill hours", cex.lab = 0.5, line = -0.1)
-#   title(paste("ID", i, paste(newids_chill[i,c('datasetID', 'study', 'genusspecies')], collapse = '|')), adj=0, cex.main = 0.5)
-#   
-# }
-# dev.off()
-# 
-# pdf(file=paste0("figures/studyDesign/forcingtime.pdf"), height = 15, width = 18)
-# par(mfrow = c(11,13), mar=c(1.4,0,0,0)+0.7, mgp=c(0,0.5,0))
-# for(i in 1:nrow(newids_forc)){
-# 
-#   di <- newd[paste0(newd$datasetID,newd$study,newd$genusspecies) == 
-#                paste0(newids_forc[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),
-#              c('dormancyDuration', 'dormancyTemp', 
-#                'germTempGen', 'germDuration', 'germPhotoperiod',
-#                'responseValue')]
-#   
-#   di$chillhours <- as.numeric(di$dormancyDuration) * 24 * as.numeric(as.numeric(di$dormancyTemp) < 10 & as.numeric(di$dormancyTemp) > -20)
-#   di$forc <- as.numeric(di$germTempGen)
-#   di$t <- as.numeric(di$germDuration)
-#   
-#   plot.new()
-#   limits <- c(min(di$t, na.rm = T), max(di$t, na.rm = T))
-#   plot.window(xlim = limits, ylim = c(0,100))
-#   grid()
-#   
-#   points(di$responseValue ~ di$t, pch = 19, col = '#498ba7', cex = 0.5)
-#   # for(f in unique(paste0(di$germTempGen, di$germDuration))){
-#   #   subi <- di[paste0(di$germTempGen, di$germDuration) == f, ]
-#   #   lines(subi$responseValue ~ subi$chillhours, col = '#498ba7')
-#   # }
-#   
-#   title(ylab = "Germ. perc.", cex.lab = 0.5)
-#   title(xlab = "Time", cex.lab = 0.5, line = -0.1)
-#   title(paste("ID", i, paste(newids_forc[i,c('datasetID', 'study', 'genusspecies')], collapse = '|')), adj=0, cex.main = 0.5)
-#   
-# }
-# dev.off()
-
-rm(list=ls()[which(!(ls() %in% c('d', 'newd')))]) 
