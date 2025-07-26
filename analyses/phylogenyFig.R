@@ -422,7 +422,7 @@ set.seed(123)
 vec <- c("Clematis", "Koelreuteria","Rosa", "Eucalyptus", "Potentilla", "Penstemon")
 t <- subset(egret, genus %in% vec)
 spp_smalltree <- unique(t$sppMatch)
-studyNosmall <- subset(studyNo, sppMatch %in% spp_smalltree)
+studyNosmall <- subset(egret, sppMatch %in% spp_smalltree)
 
 smallTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(t$sppMatch)))
 
@@ -435,8 +435,7 @@ is.rooted(smallTree)
 smallTree$node.label<-NULL
 
 
-smallDataPhy <-  comparative.data(smallTree, studyNosmall, names.col = "sppMatch", na.omit = T,
-                                  vcv = T, warn.dropped = T)
+smallDataPhy <-  comparative.data(smallTree, studyNosmall, names.col = "sppMatch", na.omit = F, vcv = T, warn.dropped = T)
 
 smallphytoplot <-  smallDataPhy$phy
 smallx <- smallDataPhy$data$count
@@ -464,7 +463,7 @@ for (i in spptoplice ) {
 }
 
 smallnamesphy <- smallTreeUltraSpliced$tip.label
-studyNosmallSpliced <- subset(studyNo, sppMatch %in% smallnamesphy)
+studyNosmallSpliced <- subset(studyNosmall, sppMatch %in% smallnamesphy)
 
 smallTreeUltraSpliced$root.edge <- 0
 

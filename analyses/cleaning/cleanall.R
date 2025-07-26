@@ -66,10 +66,13 @@ source("cleaning/source/cleanPhotoperiod.R") # 30777    74
 source("cleaning/source/cleanCoordinates.R") # 30777    74
 
 # 13. Clean treatment column
-source("cleaning/source/cleanTreatments.R") 
+source("cleaning/source/cleanTreatments.R") # 31395 76 (25 July 2025)
 
-#14. clean chemical concenttation
-source("cleaning/source/cleanConcentration.R")
+#14. clean chemical concentration
+source("cleaning/source/cleanConcentration.R") # 31395 78 (25 July 2025)
+
+#15. clean soaked.in (only some studies)
+source("cleaning/source/cleanSoakedIn.R") 
 
 # And ... some final cleaning
 # Cleaning experiment number, if missing a value add "exp1"
@@ -87,7 +90,7 @@ d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altit
 
 
 # checking sizing ..
-dim(d) # dim on 18 Mar 2025: 80 and 30401 
+dim(d) # dim on 18 Mar 2025: 80 and 30401 - dim on 25 July 2025: 31395, 82
 
 write.csv(d, "output/egretclean.csv", row.names=FALSE)
 
