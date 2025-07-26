@@ -139,6 +139,10 @@ d$figure[which(d$datasetID == "thomsen02" & d$figure == "Figure 2" & d$respvar =
 d$figure[which(d$datasetID == "thomsen02" & d$figure == "Figure 3")] <-
   "Figure 4"
 
+# edwards73a 
+d$figure[which(d$datasetID == "edwards73a" & d$figure == "table 2")] <-
+  "Table 1"
+
 if(FALSE){
 ##	
 ## From clean_other.R, Original file called coordinate_cleaning_JS.R
