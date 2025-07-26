@@ -675,6 +675,35 @@ d$chillTempUnc[which(d$chill.temp == "07-May")] <- 1
 d$chillTemp[which(d$chill.temp == "03-Feb")] <- 2.5
 d$chillTempUnc[which(d$chill.temp == "03-Feb")] <- 0.5
 
+# meyer94 and meyer95
+# 'preincubation' or 'incubation' (in other.treatment) should be warm. strat. (discussed 26 July 2025)
+pattern <- "4 wk preincubatiion at 10-20C"
+d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillTemp'] <- 
+  paste0('15 then ', d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillTemp'])
+d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillDuration'] <- 
+  paste0('28 then ', d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillDuration'])
+pattern <- '4 wks of incubation at 10-20C after 4 wks of chilling, then chilling resumes for remaining 8 wks'
+d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillTemp'] <- 
+  paste0(d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillTemp'], ' then 15 then ', 
+         d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillTemp'])
+d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillDuration'] <- '28 then 28 then 56'
+pattern <- '4 wks of incubation at 10-20C after 8 wks of chilling, then chilling resumes for remaining 4 wks'
+d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillTemp'] <- 
+  paste0(d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillTemp'], ' then 15 then ', 
+         d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillTemp'])
+d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillDuration'] <- '56 then 28 then 28'
+
+# al-absi10
+d[d$chillTemp %in% '05-Apr' & d$datasetID %in% 'al-absi10', 'chillTemp'] <- 4.5
+
+# pritchard93
+d[d$chillTemp %in% '6/16' & d$datasetID %in% 'pritchard93', 'chillTemp'] <- '6 then 16'
+d[d$chillTemp %in% '6/16' & d$datasetID %in% 'pritchard93', 'chillDuration'] <- 
+  unname(sapply(d[d$chillTemp %in% '6/16' & d$datasetID %in% 'pritchard93', 'chillDuration'],
+              function(i) paste0(as.numeric(na.omit(as.numeric(unlist(stringr::str_split(i, pattern = '[()+ ]'))))), collapse = ' then ')))
+
+
+
 #check
 unique(d$chillTemp)
 unique(d$chillDuration)
