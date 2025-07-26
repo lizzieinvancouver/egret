@@ -1,4 +1,4 @@
-### Started by Dan April 7
+### Started by Dan April 7 2025
 ### Then taken over (with a lot of enthusiasm) by Victor, 25 July 2025
 
 sort(unique(d$chemical.concent))
@@ -8,7 +8,13 @@ length(unique(d$chemical.concent))
 d$chemicalConcent <- d$chemical.concent
 suppressWarnings(d$chemicalConcent <- as.numeric(d$chemicalConcent)) ### this should make all non numeric values NA
 table(is.na(d$chemicalConcent))
-cols_tocheck <- c(27,28,32,33,34,63,77) # chose by Dan
+cols_tocheck <- c("chemical", 
+    "chemical.concent",
+    "soaking",
+    "soaked.in",
+    "soaking.duration",
+    "chemicalCor",
+    "chemicalConcent") # chosen by Dan, changed to names by Lizzie
 
 ### First clean the NA's
 temp <- d[is.na(d$chemicalConcent),cols_tocheck]
