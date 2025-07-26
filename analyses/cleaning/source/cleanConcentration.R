@@ -6,7 +6,7 @@ length(unique(d$chemical.concent))
 
 ### Make a cleaned column
 d$chemicalConcent <- d$chemical.concent
-d$chemicalConcent <- as.numeric(d$chemicalConcent) ### this should make all non numeric values NA
+suppressWarnings(d$chemicalConcent <- as.numeric(d$chemicalConcent)) ### this should make all non numeric values NA
 table(is.na(d$chemicalConcent))
 cols_tocheck <- c(27,28,32,33,34,63,77) # chose by Dan
 

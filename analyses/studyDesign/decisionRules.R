@@ -2,6 +2,8 @@
 # Aim: selecting some treatments/experiments to include in the model, following various decision rules
 # by Victor
 
+rm(list=ls()) 
+
 if(length(grep("deirdre", getwd()) > 0)) {
   setwd("~/Documents/github/egret/analyses")
 } else if(length(grep("lizzie", getwd()) > 0)) {
@@ -35,7 +37,7 @@ treats <- c('datasetID', 'study',
             # SCARIFICATION-RELATED
             "scarifType", "scarifTypeGen", "scarifTypeSpe", 
             
-            # CHEMICAL-RELATED (warning: concentration not cleaned)
+            # CHEMICAL-RELATED 
             "chemicalCor", "chemical.concent",
             
             # SOAKING-RELATED (IMBIBITION)
@@ -123,11 +125,20 @@ for(i in 1:nrow(ids)){
     cat(paste0(" > Number of misc. treat.: ", length(unique(di$other.treatment)), "\n"))
     cat('   - [');cat(paste(unique(di$other.treatment)), sep = ', ');cat(']\n')
     
-    ntreati <- di %>%
-      dplyr::group_by(other.treatment) %>%
-      dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
-                     ngerm = n_distinct(germTempGen, germDuration),
-                     ninterest = nstrat + ngerm) %>% as.data.frame()
+    di$nstrat <- paste0(di$dormancyTemp, di$dormancyDuration)
+    di$ngerm <- paste0(di$germTempGen, di$germDuration)
+    ntreati <- merge(
+      aggregate(nstrat ~ factor(other.treatment, exclude = NULL), data = di, function(x) length(unique(x))),
+      aggregate(ngerm ~ factor(other.treatment, exclude = NULL), data = di, function(x) length(unique(x)))
+    )
+    ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
+    names(ntreati)[1] <- 'other.treatment'
+    
+    # ntreati <- di %>%
+    #   dplyr::group_by(other.treatment) %>%
+    #   dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
+    #                  ngerm = n_distinct(germTempGen, germDuration),
+    #                  ninterest = nstrat + ngerm) %>% as.data.frame()
     
     # Base R solution? but drop NA group, will look into it later
     # ntreati <- aggregate(
@@ -153,13 +164,10 @@ for(i in 1:nrow(ids)){
         
       }else if(length(treat.tokeep) > 1 & !any(is.na(treat.tokeep))){ # if still not enough, we keep the one with max. average resp.
         
-        avgrespi <- di %>%
-          dplyr::group_by(other.treatment) %>%
-          dplyr::filter(other.treatment %in% treat.tokeep) %>%
-          dplyr::reframe(avgresp = mean(responseValue, na.rm = TRUE)) %>%
-          as.data.frame()
+        avgrespi <- aggregate(responseValue ~ factor(other.treatment, exclude = NULL), data = di[di$other.treatment %in% treat.tokeep,], mean)
+        names(avgrespi)[1] <- 'other.treatment'
         
-        treat.tokeep <- avgrespi[avgrespi$avgresp == max(avgrespi$avgresp), 'other.treatment']
+        treat.tokeep <- avgrespi[avgrespi$responseValue == max(avgrespi$responseValue), 'other.treatment']
         cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + control + max. avg. resp.)\n'))
         
       }else if(length(treat.tokeep) == 1){
@@ -178,7 +186,7 @@ for(i in 1:nrow(ids)){
       stop('Missing conditions')
     }
     
-    ids[i, 'misc.tokeep'] <- treat.tokeep
+    ids[i, 'misc.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'misc.check']  <- TRUE
     
     
@@ -186,7 +194,7 @@ for(i in 1:nrow(ids)){
     
     cat(paste0(" > No misc. treat.\n"))
     treat.tokeep <- unique(di$other.treatment)
-    ids[i, 'misc.tokeep'] <- treat.tokeep
+    ids[i, 'misc.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'misc.check']  <- TRUE
     
   }else{
@@ -210,12 +218,16 @@ for(i in 1:nrow(ids)){
     cat(paste0(" > Number of scarif. treat.: ", length(unique(di$scarifType)), "\n"))
     cat('   - [');cat(paste(unique(di$scarifType)), sep = ', ');cat(']\n')
     
-    ntreati <- di %>%
-      dplyr::group_by(scarifType) %>%
-      dplyr::reframe(nscarif = n_distinct(scarifType, scarifTypeGen, scarifTypeSpe),
-                     nstrat = n_distinct(dormancyTemp, dormancyDuration),
-                     ngerm = n_distinct(germTempGen, germDuration),
-                     ninterest = nstrat + ngerm) %>% as.data.frame()
+    di$nscarif <- paste0(di$scarifType, di$scarifTypeGen, di$scarifTypeSpe)
+    di$nstrat <- paste0(di$dormancyTemp, di$dormancyDuration)
+    di$ngerm <- paste0(di$germTempGen, di$germDuration)
+    ntreati <- merge(
+      aggregate(nscarif ~ factor(scarifType, exclude = NULL), data = di, function(x) length(unique(x))),
+      merge(aggregate(nstrat ~ factor(scarifType, exclude = NULL), data = di, function(x) length(unique(x))),
+            aggregate(ngerm ~ factor(scarifType, exclude = NULL), data = di, function(x) length(unique(x))))
+    )
+    ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
+    names(ntreati)[1] <- 'scarifType'
     
     if(any(ntreati$nscarif > 1)){stop()} # check
     
@@ -228,7 +240,7 @@ for(i in 1:nrow(ids)){
         treat.tokeep <- unique(di$scarifType)[which(!is.na(unique(di$scarifType)))] # we keep scarified
         cat(paste0('   - Keeping: ', treat.tokeep,' (instead of control)\n'))
         
-        ids[i, 'scarif.tokeep'] <- treat.tokeep
+        ids[i, 'scarif.tokeep'] <- as.character(treat.tokeep)
         ids[i, 'scarif.check']  <- TRUE
         
         
@@ -237,7 +249,7 @@ for(i in 1:nrow(ids)){
         treat.tokeep <- unique(di[di$responseValue == max(di$responseValue), 'scarifType']) # we keep scarif. with max. germ. rate
         cat(paste0('   - Keeping: ', treat.tokeep,' (max. germ. rate observed)\n'))
         
-        ids[i, 'scarif.tokeep'] <- treat.tokeep
+        ids[i, 'scarif.tokeep'] <- as.character(treat.tokeep)
         ids[i, 'scarif.check']  <- TRUE
         
       }else{
@@ -268,7 +280,7 @@ for(i in 1:nrow(ids)){
         
       }
 
-      ids[i, 'scarif.tokeep'] <- treat.tokeep
+      ids[i, 'scarif.tokeep'] <- as.character(treat.tokeep)
       ids[i, 'scarif.check']  <- TRUE
       
     }else{
@@ -279,7 +291,7 @@ for(i in 1:nrow(ids)){
     
     cat(paste0(" > Only one scarif. treat.\n"))
     treat.tokeep <- unique(di$scarifType)
-    ids[i, 'scarif.tokeep'] <- treat.tokeep
+    ids[i, 'scarif.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'scarif.check']  <- TRUE
     
   }else{
@@ -303,11 +315,14 @@ for(i in 1:nrow(ids)){
     cat(paste0(" > Number of chem. treat.: ", length(unique(di$chemicalCor)), "\n"))
     cat('   - [');cat(paste(unique(di$chemicalCor)), sep = ', ');cat(']\n')
     
-    ntreati <- di %>%
-      dplyr::group_by(chemicalCor) %>%
-      dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
-                     ngerm = n_distinct(germTempGen, germDuration),
-                     ninterest = nstrat + ngerm) %>% as.data.frame()
+    di$nstrat <- paste0(di$dormancyTemp, di$dormancyDuration)
+    di$ngerm <- paste0(di$germTempGen, di$germDuration)
+    ntreati <- merge(
+      aggregate(nstrat ~ factor(chemicalCor, exclude = NULL), data = di, function(x) length(unique(x))),
+      aggregate(ngerm ~ factor(chemicalCor, exclude = NULL), data = di, function(x) length(unique(x)))
+    )
+    ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
+    names(ntreati)[1] <- 'chemicalCor'
     
     if(length(unique(ntreati$ninterest)) == 1){ # same no. of chill/forc treatments
       
@@ -368,14 +383,14 @@ for(i in 1:nrow(ids)){
       
     }
     
-    ids[i, 'chem.tokeep'] <- treat.tokeep
+    ids[i, 'chem.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'chem.check'] <- TRUE
     
   }else if(length(unique(di$chemicalCor)) == 1){
     
     cat(paste0(" > Only one chemical. treat.\n"))
     treat.tokeep <- unique(di$chemicalCor)
-    ids[i, 'chem.tokeep'] <- treat.tokeep
+    ids[i, 'chem.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'chem.check'] <- TRUE
     
   }else{
@@ -399,11 +414,14 @@ for(i in 1:nrow(ids)){
     cat(paste0(" > Number of soak. treat.: ", length(unique(di$soaked.in)), "\n"))
     cat('   - [');cat(paste(unique(di$soaked.in)), sep = ', ');cat(']\n')
     
-    ntreati <- di %>%
-      dplyr::group_by(soaked.in) %>%
-      dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
-                     ngerm = n_distinct(germTempGen, germDuration),
-                     ninterest = nstrat + ngerm) %>% as.data.frame()
+    di$nstrat <- paste0(di$dormancyTemp, di$dormancyDuration)
+    di$ngerm <- paste0(di$germTempGen, di$germDuration)
+    ntreati <- merge(
+      aggregate(nstrat ~ factor(soaked.in, exclude = NULL), data = di, function(x) length(unique(x))),
+      aggregate(ngerm ~ factor(soaked.in, exclude = NULL), data = di, function(x) length(unique(x)))
+    )
+    ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
+    names(ntreati)[1] <- 'soaked.in'
     
     preferences <- 'H20|water|H2O'
     treat.tokeep <- unique(di[grepl(preferences, di$soaked.in),'soaked.in'])
@@ -461,7 +479,7 @@ for(i in 1:nrow(ids)){
     
     cat(paste0(" > Only one soak. treat.\n"))
     treat.tokeep <- unique(di$soaked.in)
-    ids[i, 'soak.check'] <- treat.tokeep
+    ids[i, 'soak.check'] <- as.character(treat.tokeep)
     ids[i, 'soak.check'] <- TRUE
     
   }else{
@@ -486,11 +504,14 @@ for(i in 1:nrow(ids)){
     cat(paste0(" > Number of stor. treat.: ", length(unique(di$storConditions)), "\n"))
     cat('   - [');cat(paste(unique(di$storConditions)), sep = ', ');cat(']\n')
     
-    ntreati <- di %>%
-      dplyr::group_by(storConditions) %>%
-      dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
-                     ngerm = n_distinct(germTempGen, germDuration),
-                     ninterest = nstrat + ngerm) %>% as.data.frame()
+    di$nstrat <- paste0(di$dormancyTemp, di$dormancyDuration)
+    di$ngerm <- paste0(di$germTempGen, di$germDuration)
+    ntreati <- merge(
+      aggregate(nstrat ~ factor(storConditions, exclude = NULL), data = di, function(x) length(unique(x))),
+      aggregate(ngerm ~ factor(storConditions, exclude = NULL), data = di, function(x) length(unique(x)))
+    )
+    ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
+    names(ntreati)[1] <- 'storConditions'
     
     # we keep misc. with max. no. of chill/forc treatments
     treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'storConditions']
@@ -507,11 +528,8 @@ for(i in 1:nrow(ids)){
       
       if(length(treat.tokeep) > 1){
         
-        avgrespi <- di %>%
-          dplyr::group_by(storConditions) %>%
-          dplyr::filter(storConditions %in% treat.tokeep) %>%
-          dplyr::reframe(avgresp = mean(responseValue, na.rm = TRUE)) %>%
-          as.data.frame()
+        avgrespi <- aggregate(responseValue ~ factor(storConditions, exclude = NULL), data = di[di$storConditions %in% treat.tokeep,], mean)
+        names(avgrespi)[1] <- 'storConditions'
         
         treat.tokeep <- avgrespi[avgrespi$avgresp == max(avgrespi$avgresp), 'storConditions']
         cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + max. avg. resp.)\n'))
@@ -526,7 +544,7 @@ for(i in 1:nrow(ids)){
       stop("Missing conditions") # check
     }
     
-    ids[i, 'stor.tokeep'] <- treat.tokeep
+    ids[i, 'stor.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'stor.check'] <- TRUE
     
     
@@ -534,7 +552,7 @@ for(i in 1:nrow(ids)){
     
     cat(paste0(" > Only one stor. treat.\n"))
     treat.tokeep <- unique(di$storConditions)
-    ids[i, 'stor.tokeep'] <- treat.tokeep
+    ids[i, 'stor.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'stor.check'] <- TRUE
     
   }else{
@@ -558,11 +576,14 @@ for(i in 1:nrow(ids)){
     cat(paste0(" > Number of photo. treat.: ", length(unique(di$germPhotoperiod)), "\n"))
     cat('   - [');cat(paste(unique(di$germPhotoperiod)), sep = ', ');cat(']\n')
     
-    ntreati <- di %>%
-      dplyr::group_by(germPhotoperiod) %>%
-      dplyr::reframe(nstrat = n_distinct(dormancyTemp, dormancyDuration),
-                     ngerm = n_distinct(germTempGen, germDuration),
-                     ninterest = nstrat + ngerm) %>% as.data.frame()
+    di$nstrat <- paste0(di$dormancyTemp, di$dormancyDuration)
+    di$ngerm <- paste0(di$germTempGen, di$germDuration)
+    ntreati <- merge(
+      aggregate(nstrat ~ factor(germPhotoperiod, exclude = NULL), data = di, function(x) length(unique(x))),
+      aggregate(ngerm ~ factor(germPhotoperiod, exclude = NULL), data = di, function(x) length(unique(x)))
+    )
+    ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
+    names(ntreati)[1] <- 'germPhotoperiod'
     
     # we keep misc. with max. no. of chill/forc treatments
     treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'germPhotoperiod']
@@ -578,11 +599,8 @@ for(i in 1:nrow(ids)){
       
       if(length(treat.tokeep) > 1){
         
-        avgrespi <- di %>%
-          dplyr::group_by(germPhotoperiod) %>%
-          dplyr::filter(germPhotoperiod %in% treat.tokeep) %>%
-          dplyr::reframe(avgresp = mean(responseValue, na.rm = TRUE)) %>%
-          as.data.frame()
+        avgrespi <- aggregate(responseValue ~ factor(germPhotoperiod, exclude = NULL), data = di[di$germPhotoperiod %in% treat.tokeep,], mean)
+        names(avgrespi)[1] <- 'germPhotoperiod'
         
         treat.tokeep <- avgrespi[avgrespi$avgresp == max(avgrespi$avgresp), 'germPhotoperiod']
         cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + max. avg. resp.)\n'))
