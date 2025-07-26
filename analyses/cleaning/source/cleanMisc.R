@@ -15,11 +15,6 @@ d <- d[-(which(d$datasetID == "na11")),] #12 rows
 # zhou08: one entry is mislabbeled figure 1.A but is for Table two 
 d$figure[which(d$datasetID == "zhou08" & d$response =="8.4")] <- "table 2"
 
-# cho18b: species name is incorrect
-d$genus[which(d$datasetID == "cho18b")] <- "Cornus"
-d$species[which(d$datasetID == "cho18b")] <- "kousa"
-d$latbi[which(d$datasetID == "cho18b")] <- "Cornus_kousa"
-
 
 # datasets that were entered my multiple people to check for data consistency, but keeping only one
 d <- d[-(which(d$datasetID == "batlla03" & d$entered.by == "DM")),] #34
@@ -95,11 +90,17 @@ d$datasetID[which(d$datasetID == "cho18" & d$study == "exp1" & d$figure == "Figu
 d$datasetID[which(d$datasetID == "cho18" & d$study == "exp2" & d$figure == "Table 3")] <-
   "cho18a"
 
+
 #exp1 fig 3 and exp2 fig 5 is from b, wrong species
 d$datasetID[which(d$datasetID == "cho18" & d$study == "exp1" & d$figure == "Figure 3")] <-
   "cho18b"
 d$datasetID[which(d$datasetID == "cho18" & d$study == "exp2" & d$figure == "Figure 5")] <-
   "cho18b"
+
+# cho18b: species name is incorrect
+d$genus[which(d$datasetID == "cho18b")] <- "Cornus"
+d$species[which(d$datasetID == "cho18b")] <- "kousa"
+# d$latbi[which(d$datasetID == "cho18b")] <- "Cornus_kousa"
 
 # fix grouping, fix study and figure some other time
 d$study[which(d$datasetID == "kulkarni06" & d$study == "exp3" & d$figure == "fiigure 3")] <- "exp2"
