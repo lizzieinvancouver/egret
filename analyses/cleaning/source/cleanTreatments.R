@@ -30,15 +30,15 @@ d$treatmentDetails[which(d$datasetID == "acosta13" & d$treatment == "osmotic pot
 d$treatmentCor[which(d$datasetID == "acosta13" & d$treatment == "dry storage")] <- "storage x photoperiod"
 
 #ahola99
-d$treatmentCor[which(d$datasetID == "ahola99")] <- "r/fr light x moist chilling x germination temperature"
+d$treatmentCor[which(d$datasetID == "ahola99")] <- "r/fr light x moist chilling x germination temperature" # CHECK: 2 treatments, now 1
 
 #aiello07
-d$treatmentCor[which(d$datasetID == "aiello17")] <- "population x cold stratification"
+d$treatmentCor[which(d$datasetID == "aiello17")] <- "population x cold stratification" # CHECK: 2 treatments, now 1. 
 
 #airi09
 temp <- c(rep(" x control", 5), rep(" x cold stratification", 15), rep(" x chemical", 15),
           rep(" x hormone", 15), rep(" x chemical", 15))
-d$treatmentCor[which(d$datasetID == "airi09" & d$figure == "table 2")] <- paste0("population", temp)
+d$treatmentCor[which(d$datasetID == "airi09" & d$figure == "table 2")] <- paste0("population", temp) # CHECK: 2 treatments, now 4
 temp <- rep(c("control", "cold stratification", "hormone", "chemical", "chemical"), each = 5)
 d$treatmentCor[which(d$datasetID == "airi09" & d$figure == "Table 3")] <- paste0("population x ", temp)
 
@@ -53,7 +53,7 @@ d$treatmentCor[which(d$datasetID == "albrecht20")] <- "cold stratification x ger
 d$treatmentCor[which(d$datasetID == "aldridge92")] <- "moisture content x stratification x hormone"
 
 #alhelal96
-d$treatmentCor[which(d$datasetID == "alhelal96" & d$study == "exp1")] <- "soaking temperature x hormone x photoperiod"
+d$treatmentCor[which(d$datasetID == "alhelal96" & d$study == "exp1")] <- "soaking temperature x hormone x photoperiod" # CHECK: 2 treatments to 1
 d$treatmentCor[which(d$datasetID == "alhelal96" & d$study == "exp2")] <- "germination temperature"
 
 #alptekin02
@@ -62,11 +62,12 @@ d$treatmentCor[which(d$datasetID == "alptekin02")] <- "population x stratificati
 #amini18: paper pending
 
 #amooaghaie09
-d$treatmentCor[which(d$datasetID == "amooaghaie09")] <- "moist chilling x hormone"
+d$treatmentCor[which(d$datasetID == "amooaghaie09")] <- "moist chilling x hormone" # CHECK: 2 treat, now 1
 
 #arslan11
-d$treatmentCor[which(d$datasetID == "arslan11")] <- "moist chilling x hormone x photoperiod x germination temperature"
-d$treatmentCor[which(d$datasetID == "arslan11" & d$figure == "table 1")]
+d$treatmentCor[which(d$datasetID == "arslan11")] <- "moist chilling x hormone x photoperiod x germination temperature" 
+# CHECK: 
+#dark vs dark/moist is captured by photoperiodCord + chillTemp columns for dark/moist where dark only is NA for chillTemp
 
 #barnhill82
 d$treatmentCor[which(d$datasetID == "barnhill82")] <- "stratification x germination temperature x photoperiod"
@@ -209,6 +210,10 @@ d$treatmentDetails[which(d$datasetID == "cuena-lombrana18")] <- paste0(temp, " s
 
 #dalling99
 d$treatmentCor[which(d$datasetID == "dalling99")] <- "scarification x germination temperature x photoperiod"
+### CHECK
+# scarification ok
+# germ temp ok
+# photoperiod not ok. Not captured as photoperiod was never entered in the scraped data. Looked back into paper and they write up the photoperiod conditions. Need to fix this. 
 
 #deb17
 d$treatmentCor[which(d$datasetID == "deb17" & d$study == "exp1")] <- "light"
