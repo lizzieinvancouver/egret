@@ -15,6 +15,12 @@ d <- d[-(which(d$datasetID == "na11")),] #12 rows
 # zhou08: one entry is mislabbeled figure 1.A but is for Table two 
 d$figure[which(d$datasetID == "zhou08" & d$response =="8.4")] <- "table 2"
 
+# cho18b: species name is incorrect
+d$genus[which(d$datasetID == "cho18b")] <- "Cornus"
+d$species[which(d$datasetID == "cho18b")] <- "kousa"
+d$latbi[which(d$datasetID == "cho18b")] <- "Cornus_kousa"
+
+
 # datasets that were entered my multiple people to check for data consistency, but keeping only one
 d <- d[-(which(d$datasetID == "batlla03" & d$entered.by == "DM")),] #34
 d <- d[-(which(d$datasetID == "chen15" & d$entered.by == "AZ")),] #257
