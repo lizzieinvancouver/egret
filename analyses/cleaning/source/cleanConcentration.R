@@ -5,8 +5,8 @@ sort(unique(d$chemical.concent))
 length(unique(d$chemical.concent))
 
 ### Make a cleaned column
-d$chemicalConcent<-d$chemical.concent
-d$chemicalConcent<-as.numeric(d$chemicalConcent) ### this should make all non numeric values NA
+d$chemicalConcent <- d$chemical.concent
+d$chemicalConcent <- as.numeric(d$chemicalConcent) ### this should make all non numeric values NA
 table(is.na(d$chemicalConcent))
 cols_tocheck <- c(27,28,32,33,34,63,77) # chose by Dan
 
@@ -22,7 +22,7 @@ nrow(temp)
 ### Now clean zero values
 equivalents_0 <- c("0 (control)", "0%", "0 mM", "0, 0")
 d[which(d$chemical.concent %in% equivalents_0), 'chemicalConcent'] <- 0
-temp<-d[is.na(d$chemicalConcent),]
+temp <- d[is.na(d$chemicalConcent),]
 nrow(temp)
 
 ### This is a biggie, if they are true NA (ie no chemical provided make them 0 so they dont get dropped)
@@ -32,6 +32,9 @@ nrow(temp)
 
 ### Make a unit column
 d$chemicalConcentUnit <- NA
+
+### check
+unique(d$chemicalConcent)
 
 ### millimoles
 ## it is NOT a concentration unit, so we assume mmol/L
@@ -63,9 +66,10 @@ pattern <- "diluted at concentration 1:500 v/v"
 d[which(d$chemical.concent == pattern), c('chemicalConcent', 'chemicalConcentUnit')] <- rep(c(0.002, '%v/v'), each = length((which(d$chemical.concent == pattern))))
 
 ### just standardize the way we write molecular concentration
+## and since there is two chemicals in this study, the concentration should be NA+1.4
 unique(subset(temp, grepl("mmol", temp$chemical.concent))$chemical.concent)
 pattern <- "1.4 mmol liter^-1"
-d[which(d$chemical.concent == pattern), c('chemicalConcent', 'chemicalConcentUnit')] <- rep(c(1.4, 'mmol.L^-1'), each = length((which(d$chemical.concent == pattern))))
+d[which(d$chemical.concent == pattern), c('chemicalConcent', 'chemicalConcentUnit')] <- rep(c('NA+1.4', 'mmol.L^-1'), each = length((which(d$chemical.concent == pattern))))
 
 ### percentage, without further specification (i.e. volumetric or mass/mass or mass/volume)
 unique(subset(temp, grepl("%", temp$chemical.concent))[, c('chemical.concent', 'chemicalCor')])
@@ -122,7 +126,8 @@ nrow(temp)
 rows_of_interest <- which(is.na(d$chemicalConcent) & !is.na(stringr::str_split_i(d$chemical.concent, pattern = '[,+/]', i = 2)))
 for(r in rows_of_interest){
   chemical.concent.r <- d[r, 'chemical.concent']
-  chemical.concent.vec <- stringr::str_trim(unlist(stringr::str_split(chemical.concent.r, pattern = '[,+]')))
+  chemical.concent.vec <- stringr::str_trim(unlist(stringr::str_split(chemical.concent.r, pattern = '[,+/]')))
+  chemical.concent.vec <- stringr::str_split_i(chemical.concent.vec, pattern = '[ (]', i = 1) # in case the name is in parenthesis
   d[r, 'chemicalConcent'] <- paste0(chemical.concent.vec, collapse = '+')
 }
 
@@ -139,3 +144,18 @@ d[rows_of_interest, 'chemicalConcent'] <- stringr::str_split_i(d[rows_of_interes
 ## and in the paper, it is written "98% sulfuric acid"---I assume again it's volumetric percentage
 d[d$chemical.concent %in% "H2SO4" & d$datasetID == 'olmez08', 'chemicalConcent'] <- 98
 d[d$chemical.concent %in% "H2SO4" & d$datasetID == 'olmez08', 'chemicalConcentUnit'] <- '%v/v'
+
+### So now, let's look at the values, to see if they make sense!
+
+### We start by looking only at the rows where we have only one chemical
+temp <- d[which(!grepl("[+]", d$chemicalConcent)),]
+temp <- temp[temp$chemicalConcent != 0, ]
+temp$chemicalConcent <- as.numeric(temp$chemicalConcent)
+
+### We are confident that the values were entered correctly
+### and we will not use the concentration values per se
+### but only the different concentration treatments 
+### in our decision rules
+
+### So we decidedwe're happy with this (partial) cleaning
+
