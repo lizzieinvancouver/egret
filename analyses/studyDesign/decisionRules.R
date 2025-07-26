@@ -120,12 +120,35 @@ ids$photo.tokeep <- ids$photo.check <- NA
 filteredd[filteredd$other.treatment %in% c('brown seeds', 'black seeds') &
             filteredd$datasetID == 'nurse08', 'other.treatment'] <- 'brown/black seeds'
 
+## Another particular case of misc. treatment: the color of the seeds
+filteredd[filteredd$other.treatment %in% c('Brown seed', 'Black seed') &
+            filteredd$datasetID == 'li11', 'other.treatment'] <- 'brown/black seeds'
+
+## Another particular case of misc. treatment: some locations that should not be here
+# It's also in the source.population
+filteredd[filteredd$datasetID == 'airi09', 'other.treatment'] <- NA
+
+## Another particular case of misc. treatment: some locations that should not be here
+filteredd[filteredd$datasetID == 'crank92', 'other.treatment'] <- NA
+
+## Another particular case of misc. treatment: strat. should not be here
+filteredd[filteredd$datasetID == 'battaglia93' & filteredd$study == 'exp4', 'other.treatment'] <- NA
+
+## Another particular case of misc. treatment: scarification should not be here
+filteredd[filteredd$datasetID == 'wytsalucy21' & filteredd$study == 'exp1', 'other.treatment'] <- NA
+
+## Another particular case of misc. treatment: cold stratification should not be here
+filteredd[filteredd$datasetID == 'barros12' & filteredd$study == 'exp1', 'other.treatment'] <- NA
+
+## Another particular case of misc. treatment: cold stratification should not be here
+filteredd[filteredd$datasetID == 'veiga-barbosa14' & filteredd$study == 'exp1', 'other.treatment'] <- NA
+
+
 # -----------------------------
 # FOR PEOPLE CHECKING: MODIFY HERE
-# allids <- 1:nrow(ids)
+allids <- 1:nrow(ids)
 # example: Lizzie is doing 1:100
-allids <- 1:100
-
+# allids <- 201:250
 
 for(i in allids){
   
@@ -621,7 +644,6 @@ for(i in allids){
       
       maxresp <- max(di[di$storConditions %in% treat.tokeep, 'responseValue'], na.rm = TRUE)
       treat.tokeep <- unique(di[di$storConditions %in% treat.tokeep & di$responseValue %in% maxresp, 'storConditions']) 
-      cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
       
       if(length(treat.tokeep) > 1){
         
@@ -635,6 +657,8 @@ for(i in allids){
           stop("Missing conditions (line 627)") # check
         }
         
+      }else if(length(treat.tokeep) == 1){
+        cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
       }
       
     }else{
