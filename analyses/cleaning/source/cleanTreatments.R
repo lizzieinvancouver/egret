@@ -33,7 +33,7 @@ d$treatmentCor[which(d$datasetID == "acosta13" & d$treatment == "dry storage")] 
 d$treatmentCor[which(d$datasetID == "ahola99")] <- "r/fr light x moist chilling x germination temperature" # CHECK: 2 treatments, now 1
 
 #aiello07
-d$treatmentCor[which(d$datasetID == "aiello17")] <- "population x cold stratification" # CHECK: 2 treatments, now 1. 
+d$treatmentCor[which(d$datasetID == "aiello17")] <- "population x cold stratification" 
 
 #airi09
 temp <- c(rep(" x control", 5), rep(" x cold stratification", 15), rep(" x chemical", 15),
@@ -53,7 +53,7 @@ d$treatmentCor[which(d$datasetID == "albrecht20")] <- "cold stratification x ger
 d$treatmentCor[which(d$datasetID == "aldridge92")] <- "moisture content x stratification x hormone"
 
 #alhelal96
-d$treatmentCor[which(d$datasetID == "alhelal96" & d$study == "exp1")] <- "soaking temperature x hormone x photoperiod" # CHECK: 2 treatments to 1
+d$treatmentCor[which(d$datasetID == "alhelal96" & d$study == "exp1")] <- "soaking temperature x hormone x photoperiod" 
 d$treatmentCor[which(d$datasetID == "alhelal96" & d$study == "exp2")] <- "germination temperature"
 
 #alptekin02
@@ -62,7 +62,7 @@ d$treatmentCor[which(d$datasetID == "alptekin02")] <- "population x stratificati
 #amini18: paper pending
 
 #amooaghaie09
-d$treatmentCor[which(d$datasetID == "amooaghaie09")] <- "moist chilling x hormone" # CHECK: 2 treat, now 1
+d$treatmentCor[which(d$datasetID == "amooaghaie09")] <- "moist chilling x hormone"
 
 #arslan11
 d$treatmentCor[which(d$datasetID == "arslan11")] <- "moist chilling x hormone x photoperiod x germination temperature" 
@@ -224,8 +224,6 @@ d$treatmentCor[which(d$datasetID == "dehgan84")] <- "stratification x hormone"
 
 #edwards73a
 d$treatmentCor[which(d$datasetID == "edwards73a" & d$figure == "Table 1")] <- "seedlot"
-### CHECK
-# treatmentCor should also have stratification. But data entered correctly in chilling column. Entered in treatment Details though
 d$treatmentCor[which(d$datasetID == "edwards73a" & d$figure != "Table 1")] <- "stratification"
 d$treatmentDetails[which(d$datasetID == "edwards73a" &
                            d$figure != "Table 1" &
@@ -238,8 +236,6 @@ d$treatmentDetails[which(d$datasetID == "edwards73a" &
 
 #edwards73b
 d$treatmentCor[which(d$datasetID == "edwards73b")] <- "seedlot x moist stratification x photoperiod"
-### CHECK:
-# ok
 
 #edwards96
 
@@ -328,11 +324,6 @@ d$treatmentCor[which(d$datasetID == "hawkins19" & d$figure == "Fig 4" & d$treatm
 temp <- c("control", rep("chilling", 4), rep("hormone", 4), rep("chilling x hormone", 4),
           "mechanical scarification")
 d$treatmentCor[which(d$datasetID == "he09")] <- "cold stratification x germination temperature"
-### CHECK:
-# chiling: ok
-# GA3: ok
-# chilling + GA3: ok
-# mec. scarification: ok
 
 #herron01
 d$treatmentCor[which(d$datasetID == "herron01")] <- "chemical scarification"
@@ -512,10 +503,6 @@ d$treatmentCor[which(d$datasetID == "moradi12" & d$figure == "Table 2")] <-
   "hormone"
 d$treatmentCor[which(d$datasetID == "moradi12" & d$figure == "Table 3")] <-
   "hormone"
-### CHECK
-# prechilling: ok
-# acide scarif: ok
-# GA3, BAP, Kin, : ok
 
 #naseri18
 d$treatmentCor[which(d$datasetID == "naseri18" & d$study == "exp1")] <-
@@ -647,8 +634,10 @@ d$treatmentCor[which(d$datasetID == "redondo-gomez11" & d$figure != "Table 1")] 
 ### CHECK
 #NaCl in dark/light conditions: NaCl yes, but not photoperiod.
 #NaCl and cold stratification in darkness: no chill temp nor photoperiod. only for the last 2 rows. Should be either 24h of darkness or 16 light / 8 darkness.
-#NaCl & dark/light: missing phcotoperiod
+#NaCl & dark/light: missing photoperiod
 #NaCl & dark only
+
+# overall this paper missed all chilling values.
 
 #ren04
 d$treatmentCor[which(d$datasetID == "ren04" & d$treatment == "cold")] <- "cold stratification"
