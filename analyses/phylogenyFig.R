@@ -9,7 +9,8 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("/Users/christophe_rouleau-desrochers/github/egret") # Replace with the correct path for Christophe
 } else if (length(grep("victor", getwd())) > 0) {
   setwd("/home/victor/projects/egret") # Replace with the correct path for Christophe
-} else {
+} else if (length(grep("Xiaomao", getwd())) > 0) {
+  setwd("C:/PhD/Project/egret") # Replace with the correct path for Mao {
   setwd("/home/deirdre/egret") # for midge
 }
 
@@ -76,10 +77,11 @@ if(run){
 
 ### === === === === === === === === === === === === === === === === === === ###
 # Get a list of synonyms for ALL species that aren't from the kew's list
-setwd("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL")
+#setwd("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL")
 # wfodf <- read.csv("classification.csv", header = TRUE, sep = "\t")
 kew <- read.csv("wcvp/wcvp_names.csv", header = TRUE, sep = "|", stringsAsFactors = FALSE )
 kew$taxon_name <- gsub(" ", "_", kew$taxon_name)
+kew <- read.csv("wcvp_Mao/wcvp_names.csv", header = TRUE, sep = "|", stringsAsFactors = FALSE )
 # do the same for egret because there is a space when subsp.
 egret$latbi <- gsub(" ", "_", egret$latbi)
 ### === === === === === === === === === === === === === === === === === === ###
@@ -177,17 +179,19 @@ kew$taxon_name[grepl("Penstemon_pachyphyllus", kew$taxon_name)]
 phy.sps.uniqu[grepl("Penstemon_scariosus", phy.sps.uniqu)] # TO ASK: if 2 varieties of one species, should we keep one?
 
 # Phlox_maculata. Synonyms: many, but none that match the one in the tree
-kew$taxon_name[grepl("Phlox_maculata", kew$taxon_name)] 
-phy.sps.uniqu[grepl("Phlox_alba", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Phlox_bimaculata", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Phlox_candida", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Phlox_excelsa", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Phlox_fruticosa", phy.sps.uniqu)] 
+kew$taxon_name[grepl("Phlox_maculata", kew$taxon_name)]
 phy.sps.uniqu[grepl("Phlox_maculata", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Phlox_odorata", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Phlox_penduliflora", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Phlox_reflexa", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Phlox_suaveolens", phy.sps.uniqu)] 
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Phlox_maculata")] <- "Phlox_maculata_subsp._maculata" # accepted 
+#phy.sps.uniqu[grepl("Phlox_alba", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Phlox_bimaculata", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Phlox_candida", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Phlox_excelsa", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Phlox_fruticosa", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Phlox_maculata", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Phlox_odorata", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Phlox_penduliflora", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Phlox_reflexa", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Phlox_suaveolens", phy.sps.uniqu)] 
 
 # Phlox_pilosa. Synonyms: 
 kew$taxon_name[grepl("Phlox_pilosa", kew$taxon_name)] 
@@ -214,30 +218,34 @@ matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Gentiana_lutea"
 # Potentilla_reptans
 kew$taxon_name[grepl("Potentilla_reptans", kew$taxon_name)] 
 phy.sps.uniqu[grepl("Potentilla_reptans", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Dasiphora_reptans", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Dynamidium_reptans", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Fragaria_reptans", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Tormentilla_linnaeana", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Potentilla_reptans_var._sericophylla", phy.sps.uniqu)] # accepted infraspecific
+#phy.sps.uniqu[grepl("Dasiphora_reptans", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Dynamidium_reptans", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Fragaria_reptans", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Tormentilla_linnaeana", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Potentilla_reptans_var._sericophylla", phy.sps.uniqu)] # accepted infraspecific
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Potentilla_reptans")] <- "Potentilla_reptans_var._sericophylla"
+
 
 # Alstroemeria_ligtu. Synonyms:  many, but none that match the one in the tree 
 kew$taxon_name[grepl("Alstroemeria_ligtu", kew$taxon_name)] 
-phy.sps.uniqu[grepl("Alstroemeria_ligtu_subsp._simsii", phy.sps.uniqu)] # TO ASK: accepted infraspecific
- 
+phy.sps.uniqu[grepl("Alstroemeria_ligtu", phy.sps.uniqu)] # TO ASK: accepted infraspecific
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Alstroemeria_ligtu")] <- "Alstroemeria_ligtu_subsp._simsii" 
+
 # Taraxacum_platycarpum. Synonyms: Taraxacum_platycarpum_subsp._hondoense
 kew$taxon_name[grepl("Taraxacum_platycarpum", kew$taxon_name)] 
 phy.sps.uniqu[grepl("Taraxacum_platycarpum", phy.sps.uniqu)] 
-matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Taraxacum_platycarpum")] <- "Taraxacum_platycarpum_subsp._hondoense"
+#matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Taraxacum_platycarpum")] <- "Taraxacum_platycarpum_subsp._hondoense"
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Taraxacum_platycarpum")] <- "Taraxacum_platycarpum_var._longeappendiculatum"
 
-# Verbesina_encelioide. Synonyms: many, but none that match the one in the tree
+# Verbesina_encelioides. Synonyms: many, but none that match the one in the tree
 kew$taxon_name[grepl("Verbesina_encelioides", kew$taxon_name)] 
-phy.sps.uniqu[grepl("Ximenesia_encelioides", phy.sps.uniqu)] 
+phy.sps.uniqu[grepl("Ximenesia encelioides", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Encelia_albescens", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Pallasia_serratifolia", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Verbesina_australis", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Verbesina_encelioides", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Verbesina_exauriculata", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Verbesina_microptera_", phy.sps.uniqu)] 
+phy.sps.uniqu[grepl("Verbesina_microptera", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Verbesina_scabra", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Ximenesia_australis", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Ximenesia_encelioides", phy.sps.uniqu)]
@@ -248,22 +256,24 @@ phy.sps.uniqu[grepl("Ximenesia_microptera", phy.sps.uniqu)]
 kew$taxon_name[grepl("Heliopsis_helianthoides", kew$taxon_name)] 
 phy.sps.uniqu[grepl("Heliopsis_helianthoides", phy.sps.uniqu)] 
 matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Heliopsis_helianthoides")] <- "Heliopsis_helianthoides_var._scabra"
+# Updates with new wcvp: Heliopsis_helianthoides_var._occidentalis and Heliopsis_helianthoides_var._scabra are both synonyms and can be found in the tree
 
 # Guizotia_scabra. Synonyms: many,  but none that match the one in the tree 
 kew$taxon_name[grepl("Guizotia_scabra", kew$taxon_name)] 
-phy.sps.uniqu[grepl("Veslingia_scabra", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Coreopsis_galericulata", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Guizotia_collina", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Guizotia_eylesii", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Guizotia_kassneri", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Guizotia_nyikensis", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Guizotia_oblonga", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Guizotia_ringoetii", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Guizotia_schultzii_", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Wedelia_oblonga", phy.sps.uniqu)] 
+phy.sps.uniqu[grepl("Guizotia_scabra", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Coreopsis_galericulata", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Guizotia_collina", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Guizotia_eylesii", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Guizotia_kassneri", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Guizotia_nyikensis", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Guizotia_oblonga", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Guizotia_ringoetii", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Guizotia_schultzii_", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Wedelia_oblonga", phy.sps.uniqu)] 
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Guizotia_scabra")] <- "Guizotia_scabra_subsp._schimperi"
 
 # Eupatorium maculatum. Synonyms: many,  but none that match the one in the tree
-kew$taxon_name[grepl("Eupatorium_maculatum", kew$taxon_name)] 
+kew$taxon_name[grepl("Eupatorium_maculatum", kew$taxon_name)]
 phy.sps.uniqu[grepl("Eupatoriadelphus_maculatus", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Eupatorium_maculatum", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Eupatorium_purpureum", phy.sps.uniqu)] 
@@ -301,8 +311,8 @@ phy.sps.uniqu[grepl("Betula_pendula", phy.sps.uniqu)] # accepted intraspecific
 matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Betula_pendula_subsp._mandshurica")] <-  "Betula_pendula"
 
 # Celtis pallida. Synonyms: many,  but none that match the one in the tree 
-kew$taxon_name[grepl("Celtis_pallida", kew$taxon_name)] 
-phy.sps.uniqu[grepl("Celtis_pallida_var._discolor", phy.sps.uniqu)] 
+kew$taxon_name[grepl("Celtis_pallida", kew$taxon_name)]
+phy.sps.uniqu[grepl("Celtis_pallida", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Celtis_spinosa_var._pallida", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Celtis_tala_var._pallida", phy.sps.uniqu)] 
 
@@ -310,9 +320,10 @@ phy.sps.uniqu[grepl("Celtis_tala_var._pallida", phy.sps.uniqu)]
 kew$taxon_name[grepl("Echinacea_spp.", kew$taxon_name)] 
 phy.sps.uniqu[grepl("Echinacea_spp.", phy.sps.uniqu)] 
 
-# Eucalyptus pauciflora subsp. niphophila. Synonyms: Eucalyptus niphophila
+# Eucalyptus pauciflora subsp. niphophila. Synonyms: Eucalyptus niphophila, doesn't match the tree
 kew$taxon_name[grepl("Eucalyptus_pauciflora_subsp._niphophila", kew$taxon_name)]
-phy.sps.uniqu[grepl("Eucalyptus_pauciflora", phy.sps.uniqu)] 
+phy.sps.uniqu[grepl("Eucalyptus niphophila", phy.sps.uniqu)] 
+
 
 # Eucomis autumnalis. Synonyms:  many, but none that match the one in the tree
 kew$taxon_name[grepl("Eucomis_autumnalis", kew$taxon_name)] 
@@ -320,7 +331,7 @@ phy.sps.uniqu[grepl("Fritillaria_autumnalis", phy.sps.uniqu)]
 
 # Thymophylla tephroleuca. Synonyms: many,but none that match the one in the tree
 kew$taxon_name[grepl("Thymophylla_tephroleuca", kew$taxon_name)] 
-phy.sps.uniqu[grepl("Thymophylla", phy.sps.uniqu)] 
+phy.sps.uniqu[grepl("Dyssodia_tephroleuca", phy.sps.uniqu)] 
 
 # Tilia platyphyllos subsp. corinthiaca. Synonyms: 
 kew$taxon_name[grepl("Tilia_platyphyllos_subsp._corinthiaca", kew$taxon_name)] 
@@ -329,28 +340,37 @@ phy.sps.uniqu[grepl("Tilia_corinthiaca", phy.sps.uniqu)]
 matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Tilia_platyphyllos_subsp._corinthiaca")] <-  "Tilia_platyphyllos"
 
 # Primula bulleyana subsp. beesiana. Synonyms: 
-phy.sps.uniqu[grepl("Primula_bulleyana_subsp._beesiana", phy.sps.uniqu)] 
+kew$taxon_name[grepl("Primula_bulleyana_subsp._beesiana", kew$taxon_name)]
+phy.sps.uniqu[grepl("Primula_bulleyana", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Aleuritia_beesiana", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Primula_beesiana", phy.sps.uniqu)] # homotypic accepted
 matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Primula_bulleyana_subsp._beesiana")] <-  "Primula_beesiana"
 
 # Pyrus glabra. Synonyms: 
+kew$taxon_name[grepl("Pyrus_glabra", kew$taxon_name)]
 phy.sps.uniqu[grepl("Pyrus_syriaca", phy.sps.uniqu)] # homotypic accepted
 matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Pyrus_glabra")] <-  "Pyrus_syriaca"
 
 # Veronicastrum sibiricum. Synonyms: 
-phy.sps.uniqu[grepl("Callistachya_sibirica", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Eustachya_cerulea", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Eustachya_sibirica", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Leptandra_sibirica", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Veronica_sibirica", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Veronica_virginica_var._sibirica", phy.sps.uniqu)] 
-phy.sps.uniqu[grepl("Veronicastrum_virginicum", phy.sps.uniqu)] # TO ASK: what happens when the only name in the tree is an accepted infraspecific?
+kew$taxon_name[grepl("Veronicastrum_sibiricum", kew$taxon_name)]
+phy.sps.uniqu[grepl("Veronicastrum_sibiricum", phy.sps.uniqu)]
+#phy.sps.uniqu[grepl("Callistachya_sibirica", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Eustachya_cerulea", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Eustachya_sibirica", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Leptandra_sibirica", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Veronica_sibirica", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Veronica_virginica_var._sibirica", phy.sps.uniqu)] 
+#phy.sps.uniqu[grepl("Veronicastrum_virginicum", phy.sps.uniqu)] # TO ASK: what happens when the only name in the tree is an accepted infraspecific?
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Veronicastrum_sibiricum")] <-  "Veronicastrum_sibiricum_var._zuccarinii"
+
 
 # Solidago albopilosa. Synonyms: no synonyms
+kew$taxon_name[grepl("Solidago_albopilosa", kew$taxon_name)]
 phy.sps.uniqu[grepl("Solidago_albo", phy.sps.uniqu)] 
 
-# Symphyotrichum oolentangiense. Synonyms: 
+# Symphyotrichum oolentangiense. Synonyms:
+kew$taxon_name[grepl("Symphyotrichum_oolentangiense", kew$taxon_name)]
+
 phy.sps.uniqu[grepl("Aster_azureus", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Aster_capillaceus", phy.sps.uniqu)] 
 phy.sps.uniqu[grepl("Aster_capillaris", phy.sps.uniqu)] 
@@ -361,10 +381,62 @@ phy.sps.uniqu[grepl("Aster_vernalis", phy.sps.uniqu)]
 phy.sps.uniqu[grepl("Symphyotrichum_oolentangiense", phy.sps.uniqu)] 
 
 # Rosa damascena. Synonyms: artificial hybrid, so many synnonyms 
+kew$taxon_name[grepl("Rosa_damascena", kew$taxon_name)]
 phy.sps.uniqu[grepl("damascena", phy.sps.uniqu)] 
 
 # Solidago niederederi. Synonyms: hybrid and no synonyms 
-phy.sps.uniqu[grepl("Solidago_niederederi", phy.sps.uniqu)] 
+phy.sps.uniqu[grepl("Solidago", phy.sps.uniqu)] 
+
+# Fagus sylvatica. Synonyms: a lot
+kew$taxon_name[grepl("Fagus_sylvatica", kew$taxon_name)]
+phy.sps.uniqu[grepl("Fagus_sylvatica", phy.sps.uniqu)] 
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Fagus_sylvatica")] <-  "Fagus_sylvatica_subsp._orientalis"
+
+# Carex scoparia. Synonyms: a lot, but non of them is in the tree
+kew$taxon_name[grepl("Carex_scoparia", kew$taxon_name)]
+phy.sps.uniqu[grepl("Loncoperis scoparia", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Vignea scoparia", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Carex lagopodioides", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Carex leporina", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Carex ovalis", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Carex scoparia", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Carex tribuloides", phy.sps.uniqu)]
+
+# Chrysojasminum fruticans
+kew$taxon_name[grepl("Chrysojasminum_fruticans", kew$taxon_name)]
+phy.sps.uniqu[grepl("Chrysojasminum_fruticans", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Jasminum_collinum", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Jasminum frutescens", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Jasminum frutescens", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Jasminum_fruticans", phy.sps.uniqu)]
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Chrysojasminum_fruticans")] <-  "Jasminum_fruticans"
+
+# Acer coriaceifolium
+kew$taxon_name[grepl("Acer_coriaceifolium", kew$taxon_name)]
+phy.sps.uniqu[grepl("Acer_cinnamomifolium", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Acer_coriaceifolium", phy.sps.uniqu)]
+phy.sps.uniqu[grepl("Acer_oblongum", phy.sps.uniqu)]
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Acer_coriaceifolium")] <-  "Acer_cinnamomifolium"
+
+# Aster laevis
+kew$taxon_name[grepl("Aster_laevis", kew$taxon_name)]
+phy.sps.uniqu[grepl("Symphyotrichum_laeve", phy.sps.uniqu)]
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Aster_laevis")] <-  "Symphyotrichum_laeve"
+
+# Calligonum alaschanicum
+kew$taxon_name[grepl("Calligonum_alaschanicum", kew$taxon_name)]
+phy.sps.uniqu[grepl("Calligonum_mongolicum", phy.sps.uniqu)]
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Calligonum_alaschanicum")] <-  "Calligonum_mongolicum"
+
+# Loranthus_tanakae
+kew$taxon_name[grepl("Loranthus_tanakae", kew$taxon_name)]
+phy.sps.uniqu[grepl("Hyphear_tanakae", phy.sps.uniqu)]
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Loranthus_tanakae")] <-  "Hyphear_tanakae"
+
+# Potentilla_argentea
+kew$taxon_name[grepl("Potentilla_argentea", kew$taxon_name)]
+phy.sps.uniqu[grepl("Potentilla_argentea", phy.sps.uniqu)]
+matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Potentilla_argentea")] <-  "Potentilla_argentea_var._pseudocalabra"
 
 # --- --- --- ---- --- --- --- --- --- ---- --- --- --- --- --- ---- --- ---
 # look how many species with no match even after this search
@@ -399,6 +471,15 @@ phy.genera.egret<-drop.tip(phy.plants,
 
 egretTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(egret$sppMatch)))
 
+# Replace the tip names with the species names we have in egret
+name_map <- setNames(matchednamesegret$egretname, matchednamesegret$sppMatch)
+egretTree$tip.label <- ifelse(egretTree$tip.label %in% names(name_map),
+                              name_map[egretTree$tip.label],
+                              egretTree$tip.label)
+phy.plants$tip.label <- ifelse(phy.plants$tip.label %in% names(name_map),
+                               name_map[phy.plants$tip.label],
+                               phy.plants$tip.label)
+
 
 write.tree(egretTree,"analyses/output/egretPhylogeny.tre")
 
@@ -418,30 +499,52 @@ sort(egretTree$tip.label)
 #### Try with a subset of species to make the tree smaller ####
 ### === === === === === === === === === === ###
 # select some random genus AND 3 that I will splice stuff in
+egret_sub <- egret[c("latbi","genus","sppMatch")]
+
 set.seed(123)
-vec <- c("Clematis", "Koelreuteria","Rosa", "Eucalyptus", "Potentilla", "Penstemon")
-t <- subset(egret, genus %in% vec)
-spp_smalltree <- unique(t$sppMatch)
-studyNosmall <- subset(egret, sppMatch %in% spp_smalltree)
+vec <- c("Carex", "Eucomis","Leontice", "Maackia", "Penstemon", "Celtis", "Solidago", "Symphyotrichum", "Thymophylla", "Verbesina", "Betonica", "Eupatorium", "Echinacea", "Eucalyptus", "Rosa")
+t <- subset(egret_sub, genus %in% vec)
+t <- t$latbi
+spp_smalltree <- unique(t)
+studyNosmall <- subset(egret_sub, latbi %in% spp_smalltree)
 
-smallTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(t$sppMatch)))
+phy.sps.uniqu[grepl("Eucomis", phy.sps.uniqu)]#Eucomis_zambesiaca
+phy.sps.uniqu[grepl("Leontice", phy.sps.uniqu)]#Leontice_leontopetalum
+phy.sps.uniqu[grepl("Maackia", phy.sps.uniqu)]#Maackia_amurensis
+phy.sps.uniqu[grepl("Celtis", phy.sps.uniqu)]#Celtis_schippii
+phy.sps.uniqu[grepl("Thymophylla", phy.sps.uniqu)]#Thymophylla_setifolia
+phy.sps.uniqu[grepl("Verbesina", phy.sps.uniqu)]#Verbesina_occidentalis
+phy.sps.uniqu[grepl("Betonica", phy.sps.uniqu)]#Betonica_officinalis
+phy.sps.uniqu[grepl("Eupatorium", phy.sps.uniqu)]#Eupatorium_fernaldii
 
+
+t <- c(t, "Eucomis_zambesiaca","Leontice_leontopetalum","Maackia_amurensis","Celtis_schippii","Thymophylla_setifolia","Verbesina_occidentalis","Betonica_officinalis","Eupatorium_fernaldii")
+
+
+smallTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(t)))
 
 smallnamesphy <- smallTree$tip.label
+#I run the following three lines of code before I fixed the missing genus in the tree. There are some genus in nomatchAfterKewcheck only has one species in egret, so if we don't mannually add a sister species in the list, it won't be added to the tree, that's why I wrote line 513-523
+#smallgenus <- unique(sub("_.*", "", smallnamesphy))
+#smallgenus
+#vec[which(!vec %in% smallgenus)]
+
 
 smallTree$root.edge <- 0
 
 is.rooted(smallTree)
 smallTree$node.label<-NULL
 
+studyNosmall$latbi[which(studyNosmall$latbi %in% smallTree$tip.label)]
 
-smallDataPhy <-  comparative.data(smallTree, studyNosmall, names.col = "sppMatch", na.omit = F, vcv = T, warn.dropped = T)
+#studyNosmall <- studyNosmall[!duplicated(studyNosmall$latbi), ]
+#smallDataPhy <-  comparative.data(smallTree, studyNosmall, names.col = "latbi", na.omit = TRUE, vcv = TRUE, warn.dropped = TRUE)
 
-smallphytoplot <-  smallDataPhy$phy
-smallx <- smallDataPhy$data$count
-names(smallx) <- smallDataPhy$phy$tip.label
+#smallphytoplot <-  smallDataPhy$phy
+#smallx <- smallDataPhy$data$count
+#names(smallx) <- smallDataPhy$phy$tip.label
 
-smallmap <- contMap(smallTree, smallx, plot = T)
+#smallmap <- contMap(smallTree, smallx, plot = T)
 
 ### === === === === === === === === === === ###
 # Force the tree to be ultrametric FOR NOW.
@@ -451,19 +554,34 @@ smallTreeUltra <- force.ultrametric(
   method = "extend"  # Extends terminal branches
 )
 
+
 unique(nomatchAfterKewcheck$egretname)
-spptoplice <- c(nomatchAfterKewcheck$egretname[grepl("Eucalyptus", nomatchAfterKewcheck$egretname)], 
-                nomatchAfterKewcheck$egretname[grepl("Potentilla", nomatchAfterKewcheck$egretname)],
+spptoplice <- c(nomatchAfterKewcheck$egretname[grepl("Carex", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Eucomis", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Leontice", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Maackia", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Penstemon", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Celtis", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Solidago", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Symphyotrichum", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Thymophylla", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Verbesina", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Betonica", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Eupatorium", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Echinacea", nomatchAfterKewcheck$egretname)], 
+                nomatchAfterKewcheck$egretname[grepl("Eucalyptus", nomatchAfterKewcheck$egretname)], 
                 nomatchAfterKewcheck$egretname[grepl("Rosa", nomatchAfterKewcheck$egretname)])
 
 
-# Loop through and add species one-by-one to the tree
-for (i in spptoplice ) {
-  smallTreeUltraSpliced <- add.species.to.genus(tree = smallTreeUltra, species = i, where = "root")
+smallTreeUltraSpliced <- smallTreeUltra
+
+# Loop and update the tree with one species a time
+for (i in spptoplice) {
+  smallTreeUltraSpliced <- add.species.to.genus(tree = smallTreeUltraSpliced, species = i, where = "root")
 }
 
 smallnamesphy <- smallTreeUltraSpliced$tip.label
-studyNosmallSpliced <- subset(studyNosmall, sppMatch %in% smallnamesphy)
+studyNosmallSpliced <- subset(egret, latbi %in% smallnamesphy)
 
 smallTreeUltraSpliced$root.edge <- 0
 
@@ -471,32 +589,58 @@ is.rooted(smallTreeUltraSpliced)
 smallTreeUltraSpliced$node.label<-NULL
 
 
-
 # create data with this small subset
-dataPhysmall <- comparative.data(egretTree.spliced, studyNosmall, names.col = "latbi", na.omit = T,
-                                 vcv = F, warn.dropped = T)
+#dataPhysmall <- comparative.data(egretTree.spliced, studyNosmall, names.col = "latbi", na.omit = T,vcv = F, warn.dropped = T)
 
-phyloplotsmall = dataPhysmall$phy
-xsmall = dataPhysmall$data$count
-names(xsmall) <- phyloplotsmall$tip.label
+#phyloplotsmall = dataPhysmall$phy
+#xsmall = dataPhysmall$data$count
+#names(xsmall) <- phyloplotsmall$tip.label
 
 # plot something
-studysmall <- contMap(phyloplotsmall, xsmall, plot = T)
+#studysmall <- contMap(phyloplotsmall, xsmall, plot = T)
 
 # jpeg("figures/splicedtree.jpeg", height = 1600, width = 2400, res = 300)
-plot(phyloplotsmall, cex = 0.8, show.tip.label = TRUE)
-target <- "Eucalyptus_ovata"
+#plot(phyloplotsmall, cex = 0.8, show.tip.label = TRUE)
 
-# Get the index of the tip
-tip_index <- which(phyloplotsmall$tip.label == target)
+# instead of using comparative.data in caper, trying to use something simpler in ape for the same purpose
+
+smallTreeUltraSpliced
+studyNosmallSpliced
+
+# remove duplicated rows
+studyNosmallSpliced <- studyNosmallSpliced[!duplicated(studyNosmallSpliced$latbi), ]
+
+rownames(studyNosmallSpliced) <- studyNosmallSpliced$latbi
+
+# species in both tree and data
+common_species <- intersect(smallTreeUltraSpliced$tip.label, studyNosmallSpliced$latbi)
+
+# drop unmatched species from the tree and data
+pruned_tree <- drop.tip(smallTreeUltraSpliced, setdiff(smallTreeUltraSpliced$tip.label, common_species))
+
+# plot the tree
+plot(pruned_tree, cex = 0.4, show.tip.label = TRUE)
+
+# list of species got spliced
+target <- nomatchAfterKewcheck$egretname
+
+# get the index of the tip
+tip_index <- match(target, pruned_tree$tip.label)
 
 # Add a red dot to the tip
-tiplabels(pch = 21, col = "white", bg = "red", cex = 2, tip = tip_index, adj = c(3,0.5))
+#edgelabels(pch = 21, col = "white", bg = "red", cex = 1, tip = tip_index, adj = c(3,0.5))
+#slopeCol <- setMap(studysmall, colors=c("black"))
+#h<-max(nodeHeights(slopeCol$tree))
 
-slopeCol <- setMap(studysmall, colors=c("black"))
-h<-max(nodeHeights(slopeCol$tree))
+# categorize them into splicing and non-splicing for color purpose
+status <- ifelse(common_species %in% target, "splicing", "non-splicing")
+status <- factor(status, levels = c("non-splicing", "splicing"))
+mycol <- c("black", "red")[status]
 
-
+# plot the tree
+pdf("analyses/figures/egret_spliced.pdf", width = 20, height = 40)
+plot(pruned_tree, cex = 1.5, tip.color = mycol)
+dev.off()
 
 
 # subset down to the species we have in egret 

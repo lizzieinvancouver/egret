@@ -510,6 +510,10 @@ d$chillDuration[grep("5°C", d$chill.duration)] <- temp
 d$chillTemp[which(d$datasetID == "pritchard93" & d$chillDuration == 84)] <- 5
 d$chillLightCycle[which(d$datasetID == "pritchard93" & !is.na(d$chill.temp))] <- 0
 
+# redondo-gomez11
+d$chillTemp[which(d$datasetID == "redondo-gomez11" & d$figure == "Table 1" & d$responseVar == "percent.germ")] <- c(rep(NA, 5), rep(NA, 5), rep(5, 5))
+d$chillDuration[which(d$datasetID == "redondo-gomez11" & d$figure == "Table 1" & d$responseVar == "percent.germ")] <- c(rep(NA, 5), rep(NA, 5), rep(30, 5))
+
 #tylkowski91: standardize cycles for temp and duration
 ###exp1
 temp <- c("20 and 30", "20 and 30", "20 and 30", "20 and 30", "15 and 25", "15 and 25",
