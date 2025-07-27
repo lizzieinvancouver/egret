@@ -2,19 +2,31 @@
 ## By Dan, continued by Justin ##
 
 ## Updated 26 Jan 2025 by Mao ##
+## Checked 26 July 2025 by Deirdre 
 
 # unique(d$pregermination_treatment_time_minutes)
+d$pregermination_treatment_time_minutes[which(d$pregermination_treatment_time_minutes == "3-")] <- "30" #how can there be negative 5 minutes?
 d$pregermination_treatment_time_minutes <- gsub("-"," to ",d$pregermination_treatment_time_minutes)
 d$pregermination_treatment_time_minutes[which(d$pregermination_treatment_time_minutes == " to 5")] <- "-5" #how can there be negative 5 minutes?
 d$pregermination_treatment_time_minutes[which(d$pregermination_treatment_time_minutes == "None")] <- NA 
+
+# ttc. = time to cool to room temp
+d$pregermination_treatment_time_minutes[which(is.na(d$pregermination_treatment_time_minutes) & d$species_name == "sanguineus")] <- "1" 
+d$pregermination_treatment_time_minutes[which(d$pregermination_treatment_time_minutes == "-5" & d$species_name == "sanguineus")] <- "1 to 5" 
 
 unique(d$pretreatment) #Should we standardize abrasion and nicking to mechanical?
 # d$pretreatment[which(d$pretreatment == "Mech.")] <- "Mechanical"
 # d$pretreatment[which(d$pretreatment == "Mech")] <- "Mechanical"
 d$pretreatment[which(d$pretreatment == "None")] <- NA
-d$pretreatment[which(d$pretreatment == "Fresh seeds")] <- "Fresh seed"
+d$pretreatment[which(d$pretreatment == "Fresh seeds")] <- "fresh seed"
+d$pretreatment[which(d$pretreatment == "Fresh seed")] <- "fresh seed"
+
 d$pretreatment <- gsub("-mon"," month",d$pretreatment)
 d$pretreatment <- gsub("-"," to ",d$pretreatment)
+d$pretreatment[which(d$pretreatment == "Mech.")] <- "Mech"
+d$pretreatment[which(d$pretreatment == "Acid soak")] <- "Acid scarification"
+d$pretreatment[which(d$pretreatment == "stored seeds")] <- "storage"
+
 
 # Making new columns for pretreatment
 d$pretreatmentChill <- d$pretreatment
