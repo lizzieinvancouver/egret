@@ -511,8 +511,8 @@ d$chillTemp[which(d$datasetID == "pritchard93" & d$chillDuration == 84)] <- 5
 d$chillLightCycle[which(d$datasetID == "pritchard93" & !is.na(d$chill.temp))] <- 0
 
 # redondo-gomez11
-d$chillTemp[which(d$datasetID == "redondo-gomez11" & d$figure == "Table 1" & d$responseVar == "percent.germ")] <- c(rep(NA, 5), rep(NA, 5), rep(5, 5))
-d$chillDuration[which(d$datasetID == "redondo-gomez11" & d$figure == "Table 1" & d$responseVar == "percent.germ")] <- c(rep(NA, 5), rep(NA, 5), rep(30, 5))
+d$chillTemp[which(d$datasetID == "redondo-gomez11" & d$figure == "Table 1" & d$respvar == "per.germ")] <- c(rep(NA, 5), rep(NA, 5), rep(5, 5))
+d$chillDuration[which(d$datasetID == "redondo-gomez11" & d$figure == "Table 1" & d$respvar == "per.germ")] <- c(rep(NA, 5), rep(NA, 5), rep(30, 5))
 
 #tylkowski91: standardize cycles for temp and duration
 ###exp1
