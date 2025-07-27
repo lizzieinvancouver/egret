@@ -642,20 +642,11 @@ pdf("analyses/figures/egret_spliced.pdf", width = 20, height = 40)
 plot(pruned_tree, cex = 1.5, tip.color = mycol)
 dev.off()
 
-
 # subset down to the species we have in egret 
 egretTree.spliced <- keep.tip(studyNosmallSpliced, which(studyNosmallSpliced$tip.label %in% unique(d$latbi)))
 # remove node label
 egretTree.spliced$node.label <- NULL
-
-
-
-
 plot(slopeCol,legend = F, lwd=3, ylim=c(1-0.09*(Ntip(slopeCol$tree)),Ntip(slopeCol$tree)))
-
-
-
-
 ### === === === === === === === === === === ###
 # Find species that are alone in their genus #
 ### === === === === === === === === === === ###
