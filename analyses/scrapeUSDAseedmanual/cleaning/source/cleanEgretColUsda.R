@@ -8,10 +8,6 @@
 # Replacing all blanks with NA
 d[d==""] <- NA
 
-
-# Removing redundant columns
-d <- subset(d, select = -c(responseVarClean,X)) 
-
 colnames(d)
 colnames(d) <- c("rowID",
                  "pdfPageNumber",
@@ -32,7 +28,7 @@ colnames(d) <- c("rowID",
                  "tempNight",
                  "tempUnspecified",
                  "germDuration",
-                 "samples",
+                 "reps",
                  "warmStratTemp",
                  "notes",
                  "latbi",
@@ -40,8 +36,10 @@ colnames(d) <- c("rowID",
                  "chillDuration",
                  "scarifTypeGen",
                  "scarifTypeSpe",
-                 "responseVar",
+                 "avgGerminationPercen",
+                 "responseType",
                  "responseValue",
+                 "responseVarClean",     
                  "pretreatmentMin",
                  "pretreatmentMax",
                  "coldStratDurMin",
@@ -69,6 +67,7 @@ colnames(d) <- c("rowID",
                  "germDurationAvg",
                  "samplesAvg",
                  "chillDurationAvg")
+
 d <- d[, c("rowID", "pdfPageNumber", "pdfTableNumber",
            "genus",
            "species","latbi",
@@ -84,11 +83,11 @@ d <- d[, c("rowID", "pdfPageNumber", "pdfTableNumber",
            "tempNight",
            "tempUnspecified",
            "germDuration",
-           "samples","chilling",
+           "reps","chilling",
            "chillDuration",
            "scarifTypeGen",
            "scarifTypeSpe",
-           "responseVar",
+           "avgGerminationPercen",
            "responseValue",
            "pretreatmentMin",
            "pretreatmentMax",

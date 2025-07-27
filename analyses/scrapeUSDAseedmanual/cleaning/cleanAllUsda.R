@@ -8,9 +8,10 @@ library(chillR)
 library(stringr)
 library(ggplot2)
 library(tidyverse)
-library(xlsx)
+library(readxl)
 library(tibble)
-library(WorldFlora)
+library(plyr)
+# library(WorldFlora)
 
 if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
   setwd("~/Documents/github/egret/analyses")
@@ -18,6 +19,8 @@ if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
   setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses/")
 } else if(length(grep("lizzie", getwd()) > 0)) {
   setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+} else if(length(grep("deirdreloughnan", getwd()) > 0)) {
+  setwd("/Users/deirdre/Documents/github/egret/analyses")
 } else if(length(grep("sapph", getwd()) > 0)) { # Justin wd
   setwd("/Users/sapph/Documents/ubc things/work/egret/analyses/")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
@@ -25,7 +28,7 @@ if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
 }
 
 # 1. Read in the data
-d <- read_csv("scrapeUSDAseedmanual/cleaning/germPreCleanedMasterSheet.csv", na = c("", "NA"))
+d <- read.csv("scrapeUSDAseedmanual/cleaning/germPreCleanedMasterSheet.csv", na = c("", "NA"))
 
 # 2. Clean miscellaneous
 source("scrapeUSDAseedmanual/cleaning/source/cleanGeneralUsda.R")

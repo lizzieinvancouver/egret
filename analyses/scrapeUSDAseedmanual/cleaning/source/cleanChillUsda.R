@@ -2,6 +2,7 @@
 ## By Dan, continued by Justin ##
 
 ## Updated 26 Jan 2025 by Mao ##
+## checked 26 July 2025 by Deirdre
 
 ###add stratification and chilling
 d$pretreatmentChill<-ifelse(!is.na(d$coldStratDurAvg),"Y",d$pretreatmentChill)
@@ -79,3 +80,6 @@ d$cold_stratification_temp_C[which(d$genus_name == "Sequoiadendron" & d$cold_str
 d$cold_stratification_temp_C[which(d$genus_name == "Prunus" & d$cold_stratification_days != "0")] <- "0.6 to 5"
 d$warm_stratification_temp_C[which(d$genus_name == "Prunus" & d$warm_stratification_days != "0")] <- "20"
 d$cold_stratification_temp_C[which(d$genus_name == "Pseudotsuga" & d$cold_stratification_days != "0")] <- "0 to 5"
+d$cold_stratification_days[which(d$cold_stratification_days == "l")] <- "1"
+
+d <- d[,1:58]
