@@ -17,6 +17,7 @@ d$pretreatmentScarifTypeGen[which(grepl("scarification|Scarification", d$pretrea
 d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Scarification & 2 mon stratification")] <- "chemical"
 d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Scarification & 4 mon stratification")] <- "chemical"
 d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Scarification & 6 mon stratification")] <- "chemical"
+d$pretreatmentScarifTypeGen[which(d$pretreatmentScarifTypeGen == "Nicking")] <- "mechanical"
 
 # Clean specific scarification column
 d$pretreatmentScarifTypeSpe[which(d$pretreatmentScarifTypeSpe == "H2SO4")] <- "checmical - H2SO4"

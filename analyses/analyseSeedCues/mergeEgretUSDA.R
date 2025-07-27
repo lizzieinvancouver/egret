@@ -24,19 +24,25 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd('~/projects/egret/analyses')
 } 
 
-u <- read.csv("input/usdaGerminationCleaned.csv")
+require(reshape2)
+
+u <- read.csv("output/usdaGerminationCleaned.csv")
 d <- read.csv("output/egretclean.csv")
 
+u$avgGerminationPercen
 
-rmCol <- c("speciesID", "filePath", "pdfPageNumber", "scrapedTableNumber","pdfTableNumber", "medium", "pretreatment", 
-           "pretreatmentDuration", "pretreatmentHotWaterTemp", "")
+rmCol <- c("rowID", "pdfPageNumber", "pdfTableNumber", 
+           "seedType", "medium", "samplesMin", "samplesMax", # only one instance where there was an actual range in sample so removing these
+            "scrapedTableNumber","pdfTableNumber", "medium", "pretreatment", 
+           "pretreatmentDuration", "pretreatmentHotWaterTemp")
 
-# seedType: includes endocarp removed ---seems like scarification
-# what is tempunspecified?
-# what is samples?
-# clean responseVar to match cleaning done in egret: "perc.standard" mostly
+uTemp <- u[!u %in% rmCol, ]
+uTemp <- u[,c(4:8,10, 12:26, 28)]
 
+uTemp <- u[,c("latbi", "coldStratDurMin", "coldStratDurMax", "germDurationMin", "germDurationMax","tempDayMin","tempDayMax", "tempNightMin","tempNightMax", "photoperiodMin", "photoperiodMax","responseValueMin","responseValueMin" )]
+uTemp$germTemp <- uTemp$tempDayMin
+testy <- melt(uTemp, id=c("latbi","responseVar","responseValue"))
 
-
+# germDuration, chillDuration, and day/night temp
 
 
