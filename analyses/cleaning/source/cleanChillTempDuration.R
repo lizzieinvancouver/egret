@@ -706,8 +706,6 @@ d[d$chillTemp %in% '6/16' & d$datasetID %in% 'pritchard93', 'chillDuration'] <-
   unname(sapply(d[d$chillTemp %in% '6/16' & d$datasetID %in% 'pritchard93', 'chillDuration'],
               function(i) paste0(as.numeric(na.omit(as.numeric(unlist(stringr::str_split(i, pattern = '[()+ ]'))))), collapse = ' then ')))
 
-
-
 #check
 unique(d$chillTemp)
 unique(d$chillDuration)
