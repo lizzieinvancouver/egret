@@ -768,3 +768,31 @@ for(i in allids){
   }
   
 }
+
+# Create the new dataset
+# Commented for now, so people checking the loop iterations don't panick - 26 July
+newd <- data.frame()
+for(i in 1:nrow(ids)){
+
+  di <- filteredd[paste0(filteredd$datasetID,filteredd$study,filteredd$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
+  di <- di[di$other.treatment %in% ids[i, 'misc.tokeep'], ]
+  di <- di[di$scarifType %in% ids[i, 'scarif.tokeep'], ]
+  di <- di[paste0(di$chemicalCor, di$chemicalConcent) %in% ids[i, 'chem.tokeep'], ]
+
+  # some storage conditions may correspond to chilling (moist + cold)
+  for(s in 1:nrow(di)){
+    # between -20 and 10 => we consider these as chilling, not storage
+    if(di[s, 'storageType']  %in% c("moist", "moist/cold") & !is.na(as.numeric(di[s, 'storageTemp'])) &
+       as.numeric(di[s, 'storageTemp']) <= 10 & as.numeric(di[s, 'storageTemp']) >= - 20){
+      di[s, 'storageType'] <- di[s, 'storageTemp'] <- di[s, 'storageDuration'] <- NA
+    }
+  }
+
+  di$storConditions <- paste(di$storageType, di$storageTemp, di$storageDuration)
+  di <- di[di$storConditions %in% ids[i, 'stor.tokeep'], ]
+  di <- di[di$germPhotoperiod %in% ids[i, 'photo.tokeep'], ]
+  newd <- rbind(newd, di)
+
+}
+
+rm(list=ls()[which(!(ls() %in% c('d', 'newd')))])
