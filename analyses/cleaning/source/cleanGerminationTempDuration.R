@@ -470,7 +470,7 @@ d$germPhotoperiod[which(d$photoperiod == "0/16")] <- "16/8"
 d$germPhotoperiod[which(d$photoperiod == "84")] <- "14/10"
 d$germPhotoperiod[which(d$photoperiod == "16/9")] <- "16/8"
 d$germPhotoperiod[which(d$photoperiod == "16/10")] <- "16/8"
-d$germPhotoperiod[which(d$photoperiod == "25" & d$datasetID == "Chen15")] <- "12/12"
+d$germPhotoperiod[which(d$photoperiod == "25" & d$datasetID == "chen15")] <- "12/12"
 d$germPhotoperiod[which(d$datasetID == "yang08" & d$treatment == "warm stratification")] <- "8/16" #yang08 the photoperiod was dragged down so it's a series of values from 8 onward for warm strat. seeds
 d$germPhotoperiod[which(d$photoperiod == "25/15")] <- "12/12"
 d$germPhotoperiod[which(d$photoperiod == "0/24 ")] <- "0/24"
@@ -636,7 +636,7 @@ for(i in 1:nrow(ids)){
   
   phototreats <- unique(di[c('germPhotoperiod', 'germPhotoperiodDay', 'germPhotoperiodNight')])
   
-  # if we don't have any info on photoperiod for the entire study, we cannot do anything
+  # if we don't have any info on photoperiod for the entire study, we cannot do anything (for now?)
   if(all((phototreats$germPhotoperiod %in% c(NA, 'NA', 'ambient')))){
     ids[i, 'corrected'] <- FALSE
     next
@@ -712,11 +712,21 @@ for(i in 1:nrow(ids)){
       d[which(d$datasetID == ids[i, 'datasetID'] & d$study == ids[i, 'study'] &
                 d$genus == ids[i, 'genus'] & d$species == ids[i, 'species']), ] <- di
       next
+    }else if(nrow(di[di$germPhotoperiod %in% c('12:12'), ]) > 0){
+      ind <- which(di$germPhotoperiod %in% c('12:12'))
+      di[ind, 'germPhotoperiod'] <- '12:12'
+      di[ind, 'germPhotoperiodDay'] <- '12'
+      di[ind, 'germPhotoperiodNight'] <- '12'
+      counter <- counter + 1
+      ids[i, 'corrected'] <- TRUE
+      d[which(d$datasetID == ids[i, 'datasetID'] & d$study == ids[i, 'study'] &
+                d$genus == ids[i, 'genus'] & d$species == ids[i, 'species']), ] <- di
+      next
     }
   }
 }
 
-# We can then correct germTempGen in the studies where we found an issue
+# We can then correct germTempGen in the studies where we found an issue (i.e. where we just corrected photoperiod)
 # note: we expect to see some warnings, but not an issue (NA are created)
 idscorrected <- ids[ids$corrected, ]
 suppressWarnings(for(i in 1:nrow(idscorrected)){
