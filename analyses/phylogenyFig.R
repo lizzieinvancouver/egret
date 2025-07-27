@@ -476,9 +476,6 @@ name_map <- setNames(matchednamesegret$egretname, matchednamesegret$sppMatch)
 egretTree$tip.label <- ifelse(egretTree$tip.label %in% names(name_map),
                               name_map[egretTree$tip.label],
                               egretTree$tip.label)
-phy.plants$tip.label <- ifelse(phy.plants$tip.label %in% names(name_map),
-                               name_map[phy.plants$tip.label],
-                               phy.plants$tip.label)
 
 
 write.tree(egretTree,"analyses/output/egretPhylogeny.tre")
@@ -641,6 +638,38 @@ mycol <- c("black", "red")[status]
 pdf("analyses/figures/egret_spliced.pdf", width = 20, height = 40)
 plot(pruned_tree, cex = 1.5, tip.color = mycol)
 dev.off()
+
+# make the full egret tree
+egretlist <- egret$sppMatch
+egretlist <- c(egretlist, "Eucomis_zambesiaca","Leontice_leontopetalum","Maackia_amurensis","Celtis_schippii","Thymophylla_setifolia","Verbesina_occidentalis","Betonica_officinalis","Eupatorium_fernaldii")
+
+egretTree1 <- keep.tip(phy.plants, phy.plants$tip.label[phy.plants$tip.label %in% egretlist])
+matchednamesegret1 <- matchednamesegret[!is.na(matchednamesegret$sppMatch), ]
+name_map <- setNames(matchednamesegret1$egretname, matchednamesegret1$sppMatch)
+
+# replace the tip name with the name in egret
+egretTree1$tip.label <- ifelse(egretTree1$tip.label %in% names(name_map),
+                              name_map[egretTree1$tip.label],
+                              egretTree1$tip.label)
+
+egretUltra <- force.ultrametric(
+  egretTree1,
+  method = "extend"  # Extends terminal branches
+)
+
+# splicing
+egretSpliced <- egretUltra
+for (i in spptoplice) {
+  egretSpliced <- add.species.to.genus(tree = egretSpliced, species = i, where = "root")
+}
+
+# plot the tree
+pdf("analyses/figures/egret_phy.pdf", width = 20, height = 50)
+plot(egretSpliced, cex = 0.4, show.tip.label = TRUE)
+dev.off()
+
+# write out the tree
+write.tree(egretTree,"analyses/output/egretPhylogenyFull.tre")
 
 # subset down to the species we have in egret 
 egretTree.spliced <- keep.tip(studyNosmallSpliced, which(studyNosmallSpliced$tip.label %in% unique(d$latbi)))
