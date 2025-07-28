@@ -169,6 +169,10 @@ fig
 # === === === === === === === === === === === #
 vec <- unique(d$treatmentCor[grepl("warm", d$treatmentCor)])
 warmstrat <- subset(d, treatmentCor %in% vec)
+#
+
+
+warmstratbychilltemp <- subset(d, chillTemp >19)
 
 # transform lat long to numeric (will be deleted once clean coordinate is finished)
 warmstrat$provenance.lat <- as.numeric(subbyrespvar$provenance.lat)
@@ -215,4 +219,42 @@ dfmorethan1 <- subset(d, datasetID %in% morethan1ids)
 
 # remove duplicated locations
 f <- dfmorethan1[!duplicated(dfmorethan1$provLatLon),]
-nrow(f)
+
+# first average provenance  per dataset ID and size by number of different source.population
+
+# then plot all source.population and color code by datasetID 
+warmstrat$provenance.lat <- as.numeric(subbyrespvar$provenance.lat)
+warmstrat$provenance.long <- as.numeric(subbyrespvar$provenance.long)
+# get rid of nas
+warmstratnona <- warmstrat[!is.na(warmstrat$provenance.lat), ]
+# Select only 1 entry per provenance
+warmstratFormap <- warmstratnona[!duplicated(warmstratnona$provenance.lat), ]
+# clean columns not necessary
+warmstratFormap2 <- warmstratFormap[, c("datasetID", "provenance.lat", "provenance.long", "continent", "responseVar", "treatment")]
+
+color <- "red"
+fig <- plot_ly(
+  data = warmstratFormap2,
+  type = 'scattergeo', 
+  mode = 'markers',
+  lat = ~provenance.lat,
+  lon = ~provenance.long,
+  marker = list(size = 5, opacity = 0.8),
+  color = ~responseVar,
+  colors = color,
+  text = ~paste("Dataset ID:", datasetID, "<br>ResponseVar:", responseVar),
+  hoverinfo = "text"
+)
+
+# Set map layout
+fig <- fig %>% layout(
+  title = "Locations of study using warm strat treatments",
+  geo = list(
+    projection = list(type = "natural earth"),
+    showland = TRUE,
+    landcolor = "rgb(243, 243, 243)"
+  )
+)
+fig
+
+
