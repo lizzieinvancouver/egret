@@ -24,9 +24,8 @@ unique(provcount2$provLatLon)
 vec <- unique(provcount2$provLatLon)[2:length(unique(provcount2$provLatLon))]
 
 # how many have more than one provenances including NAs
-suby <- subset(provcount2, provLatLon %in% vec)
+countsabove1 <- subset(provcount2, provLatLon %in% vec)
 morethan1 <- subset(provcount2, provLatLon > 1)
-nrow(morethan1)
 suby$provLatLon <- as.numeric(suby$provLatLon)
 
 # add column to fit colors in the plot
@@ -44,11 +43,14 @@ count
 ggsave("figures/provenanceCount.jpeg", count)
 #### make map with color subsetting by most common treatments ####
 
+# === === === === === === === === === #
+#### Map for treatment x respVar ####
+# === === === === === === === === === #
+
 # quick check of which treatment happens the most often (for now need to run clean treatments!)
 treatment_counts <- table(d$treatment)
 treatment_df <- data.frame(treatment = names(treatment_counts), Frequency = as.numeric(treatment_counts))
 treatment_df <- treatment_df[order(-treatment_df$Frequency), ]
-head(treatment_df) 
 
 # alright for now the most common treatments are :
 vect <- treatment_df$treatment[1:6]
@@ -65,8 +67,9 @@ vecr <- respvar_df$respvar[1:8]
 # subset for the 20 most common respvar and by the 6 most common treatments
 subbyrespvar <- subbytreat[subbytreat$responseVar %in% vecr, ]
 
-# map! 
-
+# === === === === === === === === === #
+### Map! ###
+# === === === === === === === === === #
 # transform lat long to numeric (will be deleted once clean coordinate is finished)
 subbyrespvar$provenance.lat <- as.numeric(subbyrespvar$provenance.lat)
 subbyrespvar$provenance.long <- as.numeric(subbyrespvar$provenance.long)
@@ -104,7 +107,12 @@ fig <- fig %>% layout(
 )
 fig
 
+# === === === === === === === === === === === #
 #### Make a map and color code by perc germ ####
+# === === === === === === === === === === === #
+respvarmap <- FALSE
+if(respvarmap){
+  
 # subset down to studies with perc germ 
 PG_lang <- subset(d, responseVar == "percent.germ")
 
@@ -154,3 +162,57 @@ fig <- fig %>% layout(
   )
 )
 fig
+
+}
+# === === === === === === === === === === === #
+#### Make a map for warm stratification ####
+# === === === === === === === === === === === #
+vec <- unique(d$treatmentCor[grepl("warm", d$treatmentCor)])
+warmstrat <- subset(d, treatmentCor %in% vec)
+
+# transform lat long to numeric (will be deleted once clean coordinate is finished)
+warmstrat$provenance.lat <- as.numeric(subbyrespvar$provenance.lat)
+warmstrat$provenance.long <- as.numeric(subbyrespvar$provenance.long)
+# get rid of nas
+warmstratnona <- warmstrat[!is.na(warmstrat$provenance.lat), ]
+# Select only 1 entry per provenance
+warmstratFormap <- warmstratnona[!duplicated(warmstratnona$provenance.lat), ]
+# clean columns not necessary
+warmstratFormap2 <- warmstratFormap[, c("datasetID", "provenance.lat", "provenance.long", "continent", "responseVar", "treatment")]
+
+color <- "red"
+fig <- plot_ly(
+  data = warmstratFormap2,
+  type = 'scattergeo', 
+  mode = 'markers',
+  lat = ~provenance.lat,
+  lon = ~provenance.long,
+  marker = list(size = 5, opacity = 0.8),
+  color = ~responseVar,
+  colors = color,
+  text = ~paste("Dataset ID:", datasetID, "<br>ResponseVar:", responseVar),
+  hoverinfo = "text"
+)
+
+# Set map layout
+fig <- fig %>% layout(
+  title = "Locations of study using warm strat treatments",
+  geo = list(
+    projection = list(type = "natural earth"),
+    showland = TRUE,
+    landcolor = "rgb(243, 243, 243)"
+  )
+)
+fig
+
+
+# === === === === === === === === === === #
+#### Make a map for provenance trials ####
+# === === === === === === === === === === #
+# get all the datasetIDs that have multiple provenances in at least 1 of their study
+morethan1ids <- unique(morethan1$datasetID)
+dfmorethan1 <- subset(d, datasetID %in% morethan1ids)
+
+# remove duplicated locations
+f <- dfmorethan1[!duplicated(dfmorethan1$provLatLon),]
+nrow(f)
