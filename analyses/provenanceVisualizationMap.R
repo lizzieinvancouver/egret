@@ -7,7 +7,7 @@
 library(ggplot2)
 library(plotly)
 library(RColorBrewer)
-
+library(dplyr)
 # how many provenances per study
 provcount <- aggregate(d["provLatLon"], d[c("datasetID", "study", "latbi")], function(x) length(unique(x)))
 # check how many datasetIDs don't have provenance data
@@ -221,32 +221,48 @@ morethan1nona <- dfmorethan1[!duplicated(dfmorethan1$provLatLon),]
 morethan1nona$provenance.lat <- as.numeric(morethan1nona$provenance.lat)
 morethan1nona$provenance.long <- as.numeric(morethan1nona$provenance.long)
 
-# first average provenanceper dataset ID and size by number of different source.population
+# grab the cols I want
+provbycolor <- morethan1nona[,c("datasetIDstudy", "provenance.lat", "provenance.long", "provLatLon")]
 
-# then plot all source.population and color code by datasetID 
-aggregate(provenance.lat ~ c("datasetID"), data = morethan1nona, function(x) mean(x))
+# first average provenance per dataset ID and size by number of different source.population
+provcountlat <- aggregate(provbycolor["provenance.lat"], provbycolor["datasetIDstudy"], function(x) mean(x))
+provcountlong <- aggregate(provbycolor["provenance.long"], provbycolor["datasetIDstudy"], function(x) mean(x))
 
-provcount <- aggregate(d["provenance.lat"], d[c("datasetID", "study")], function(x) mean(x))
+# count number of provenance per datasetIDstudy
+provbycolor$provcount <- 1
+count <- aggregate(provbycolor["count"], provbycolor["datasetIDstudy"], function(x) sum(x))
 
-morethan1nona$provenance.long <- as.numeric(subbyrespvar$provenance.long)
+### need to merge them together, but not now
+merged1 <- merge(provcountlat, provcountlong, by = "datasetIDstudy")
+merged2 <- merge(merged1, count, by = "datasetIDstudy")
+
 # get rid of nas
-warmstratnona <- warmstrat[!is.na(warmstrat$provenance.lat), ]
-# Select only 1 entry per provenance
-warmstratFormap <- warmstratnona[!duplicated(warmstratnona$provenance.lat), ]
-# clean columns not necessary
-warmstratFormap2 <- warmstratFormap[, c("datasetID", "provenance.lat", "provenance.long", "continent", "responseVar", "treatment")]
+provbysize <- merged2[!is.na(merged2$provenance.lat), ]
 
-color <- "red"
-fig <- plot_ly(
-  data = warmstratFormap2,
-  type = 'scattergeo', 
+# set colors
+nbysize <- nrow(provbysize)
+colors <- colorRampPalette(brewer.pal(12, "Paired"))(nbysize)
+provbysize$color <- colors[as.numeric(as.factor(provbysize$datasetIDstudy))]
+
+# scale count larger
+provbysize$countscaled <- provbysize$count*5
+
+fig <-plot_ly(
+  data = provbysize,
+  type = 'scattergeo',
   mode = 'markers',
   lat = ~provenance.lat,
   lon = ~provenance.long,
-  marker = list(size = 5, opacity = 0.8),
-  color = ~responseVar,
-  colors = color,
-  text = ~paste("Dataset ID:", datasetID, "<br>ResponseVar:", responseVar),
+  marker = list(
+    size = ~countscaled,  # or ~countscaled if you've pre-scaled
+    sizemode = "area",          # ensures perceptual scaling
+    # sizeref = 2.0 * max(provbysize$count, na.rm = TRUE) / (40^2),  # adjust 40 as max size
+    sizemin = 2,
+    opacity = 0.8,
+    color = ~datasetIDstudy,
+    colorscale = 'Viridis'  # optional or use your `colors`
+  ),
+  text = ~paste("datasetIDstudy:", datasetIDstudy, "<br>Provenance count:", count),
   hoverinfo = "text"
 )
 
@@ -260,5 +276,40 @@ fig <- fig %>% layout(
   )
 )
 fig
+
+# === === === === === === === === === === === === === #
+##### All provenances and color code by dataset ID #####
+# === === === === === === === === === === === === === #
+# assign colors to each of the datasetID
+# Create 48 unique colors from a qualitative palette
+
+n <- length(unique(provbycolor))
+colors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
+provbycolor$color <- colors[as.numeric(as.factor(provbycolor$datasetID))]
+
+# make the map!
+provbycolormap <- plot_ly(
+  data = provbycolor,
+  type = 'scattergeo', 
+  mode = 'markers',
+  lat = ~provenance.lat,
+  lon = ~provenance.long,
+  marker = list(size = 5, opacity = 0.8),
+  color = ~datasetID,
+  colors = colors,
+  text = ~paste("Dataset ID:", datasetID, "<br>datasetID:", datasetID),
+  hoverinfo = "text"
+)
+
+# Set map layout
+provbycolormap <- provbycolormap %>% layout(
+  title = "All provenance color-coded by datasetID",
+  geo = list(
+    projection = list(type = "natural earth"),
+    showland = TRUE,
+    landcolor = "rgb(243, 243, 243)"
+  )
+)
+provbycolormap
 
 
