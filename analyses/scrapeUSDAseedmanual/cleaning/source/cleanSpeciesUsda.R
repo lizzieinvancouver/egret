@@ -6,6 +6,7 @@
 
 ## Fix empty sp names
 library("stringr")
+library("WorldFlora")
 d$species_name <- tolower(d$species_name)
 d$species_name <- str_trim(d$species_name)
 d$genus_name <- str_trim(d$genus_name)
@@ -168,6 +169,43 @@ d$species_name[which(d$genus_name == "Pinus" & d$species_name == "scopulorum")] 
 d$genus_name[which(d$genus_name == "Prosopis" & d$species_name == "juliflora")] <-"Neltuma"
 d$genus_name[which(d$genus_name == "magnolia")] <-"Magnolia"
 d$genus_name[which(d$genus_name == "rosa")] <-"Rosa"
+d$species_name[which(d$genus_name == "Euonymus" & d$species_name == "americanum")] <-"americanus"
+d$species_name[which(d$genus_name == "Sambucus" & d$species_name == "racemosa subsp. racemosa")] <-"racemosa"
+d$species_name[which(d$genus_name == "Taxodium" & d$species_name == "distichum var. imbricarium")] <-"distichum var. imbricatum"
+d$species_name[which(d$genus_name == "Rosa" & d$species_name == "wichuriana")] <-"luciae"
+d$species_name[which(d$genus_name == "Juglans" & d$species_name == "ailantifolia")] <-"mandshurica var. sachalinensis"
+d$species_name[which(d$genus_name == "Lupinus" & d$species_name == "albiftons")] <-"albifrons"
+d$species_name[which(d$genus_name == "Lupinus" & d$species_name == "longifolims")] <-"longifolius"
+d$genus_name[which(d$genus_name == "Cupressus" & d$species_name == "arizonica ssp. nevadensis")] <-"Hesperocyparis"
+d$species_name[which(d$genus_name == "Hesperocyparis" & d$species_name == "arizonica ssp. nevadensis")] <-"nevadensis"
+d$genus_name[which(d$genus_name == "Cupressus" & d$species_name == "bakeri")] <-"Hesperocyparis"
+d$genus_name[which(d$genus_name == "Cupressus" & d$species_name == "forbesii")] <-"Hesperocyparis"
+d$genus_name[which(d$genus_name == "Cupressus" & d$species_name == "goveniana ssp. pygmaea")] <-"Hesperocyparis"
+d$species_name[which(d$genus_name == "Hesperocyparis" & d$species_name == "goveniana ssp. pygmaea")] <-"pygmaea"
+d$genus_name[which(d$genus_name == "Cupressus" & d$species_name == "macnabiana")] <-"Hesperocyparis"
+d$genus_name[which(d$genus_name == "Cupressus" & d$species_name == "macrocarpa")] <-"Hesperocyparis"
+d$genus_name[which(d$genus_name == "Cupressus" & d$species_name == "sargentii")] <-"Hesperocyparis"
+d$species_name[which(d$genus_name == "Juniperus" & d$species_name == "osteosaperma")] <-"osteosperma"
+d$genus_name[which(d$genus_name == "Kochia" & d$species_name == "prostrata")] <-"Bassia"
+d$species_name[which(d$genus_name == "Artemisia" & d$species_name == "tridentata subsp. vaseyatia")] <-"tridentata subsp. vaseyana"
+d$species_name[which(d$genus_name == "Betula" & d$species_name == "populifera")] <-"populifolia"
+d$species_name[which(d$genus_name == "Betula" & d$species_name == "pumila var. glandulifera")] <-"pumila"
+d$genus_name[which(d$genus_name == "Chamaecyparis" & d$species_name == "nootkatensis")] <-"Callitropsis"
+d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "linifolius")] <-"Lorandersonia"
+d$species_name[which(d$genus_name == "Lorandersonia" & d$species_name == "linifolius")] <-"linifolia"
+d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "nauseosus subsp. albicaulis")] <-"Ericameria"
+d$species_name[which(d$genus_name == "Ericameria" & d$species_name == "nauseosus subsp. albicaulis")] <-"nauseosa var. speciosa"
+d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "nauseosus subsp. hololeucus")] <-"Ericameria"
+d$species_name[which(d$genus_name == "Ericameria" & d$species_name == "nauseosus subsp. hololeucus")] <-"nauseosa var. hololeuca"
+d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "nauseosus subsp. consimilis")] <-"Ericameria"
+d$species_name[which(d$genus_name == "Ericameria" & d$species_name == "nauseosus subsp. consimilis")] <-"nauseosa var. oreophila"
+d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "nauseosus subsp. graveolens")] <-"Ericameria"
+d$species_name[which(d$genus_name == "Ericameria" & d$species_name == "nauseosus subsp. graveolens")] <-"nauseosa var. graveolens"
+d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "nauseosus subsp. salicifolius")] <-"Ericameria"
+d$species_name[which(d$genus_name == "Ericameria" & d$species_name == "nauseosus subsp. salicifolius")] <-"nauseosa var. salicifolia"
+d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "teretifolius")] <-"Ericameria"
+d$species_name[which(d$genus_name == "Viburnum" & d$species_name == "nudum var. cassinoides")] <-"cassinoides"
+
 # make a new column "spec" to combine genus and species
 d$latbi <- paste(d$genus_name, d$species_name, sep = "_")
 unique(d$latbi)
