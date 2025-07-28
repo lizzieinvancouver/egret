@@ -26,7 +26,9 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 # 0. Get the cleaned data
 source('cleaning/cleanall.R')
-d <- read.csv('output/egretclean.csv')
+#d <- read.csv('output/egretclean.csv')
+rm(list=ls()[which(!(ls() %in% c('d', 'idsnotcorrected')))])
+
 treats <- c('datasetID', 'study',
             'genus', 'species', 'variety',
             
@@ -101,7 +103,13 @@ ids <- unique(filteredd[c('datasetID', 'study', 'genusspecies')])
 write.csv(ids, file.path('studyDesign', 'ids_for_ken', 'ids_after_step3.csv'))
 
 # Fourth veto: no info on germination temperature
-filteredd <- filteredd[!is.na(filteredd$germTempGen),]
+filteredd <- filteredd[!(filteredd$germTempGen %in% c(NA, 'NA')),]
+
+# Here I'm discarding studies where I knopw the germTempGen could not be corrected earlier (~ 300 rows, who cares?!)
+for(i in 1:nrow(idsnotcorrected)){
+  filteredd <- filteredd[which(!(filteredd$datasetID == idsnotcorrected[i, 'datasetID'] & filteredd$study == idsnotcorrected[i, 'study'] &
+                                   filteredd$genus == idsnotcorrected[i, 'genus'] & filteredd$species == idsnotcorrected[i, 'species'])),]
+}
 
 ids <- unique(filteredd[c('datasetID', 'study', 'genusspecies')])
 ids <- ids[!(ids$datasetID == 'forbes09' & ids$study == 'exp20'),]
@@ -142,7 +150,6 @@ filteredd[filteredd$datasetID == 'barros12' & filteredd$study == 'exp1', 'other.
 
 ## Another particular case of misc. treatment: cold stratification should not be here
 filteredd[filteredd$datasetID == 'veiga-barbosa14' & filteredd$study == 'exp1', 'other.treatment'] <- NA
-
 
 # -----------------------------
 # FOR PEOPLE CHECKING: MODIFY HERE
@@ -205,6 +212,12 @@ for(i in allids){
         names(avgrespi)[1] <- 'other.treatment'
         
         treat.tokeep <- avgrespi[avgrespi$responseValue == max(avgrespi$responseValue), 'other.treatment']
+        if(length(treat.tokeep) > 1){
+
+            stop('Missing conditions (line 219)')
+          
+        }
+        
         cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + control + max. avg. resp.)\n'))
         
       }else if(length(treat.tokeep) == 1){
@@ -284,6 +297,12 @@ for(i in allids){
       }else if(length(unique(di$scarifType)) > 2){
         
         treat.tokeep <- unique(di[di$responseValue == max(di$responseValue), 'scarifType']) # we keep scarif. with max. germ. rate
+        
+        if(length(treat.tokeep) > 1){
+          
+            stop('Missing conditions (line 219)')
+          
+        }
         cat(paste0('   - Keeping: ', treat.tokeep,' (max. germ. rate observed)\n'))
         
         ids[i, 'scarif.tokeep'] <- as.character(treat.tokeep)
@@ -434,6 +453,13 @@ for(i in allids){
       if(length(treat.tokeep) > 1){
         maxresp <- max(di[di$chemicalTreat %in% treat.tokeep, 'responseValue'])
         treat.tokeep <- unique(di[di$chemicalTreat %in% treat.tokeep & di$responseValue == maxresp, 'chemicalTreat']) 
+        
+        if(length(treat.tokeep) > 1){
+          
+          stop("Missing conditions (line 468)") # check
+          
+        }
+        
         cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
       }else if(length(treat.tokeep) == 1){
         cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat.)\n'))
@@ -795,4 +821,5 @@ for(i in 1:nrow(ids)){
 
 }
 
-rm(list=ls()[which(!(ls() %in% c('d', 'newd')))])
+rm(list=ls()[which(!(ls() %in% c('d', 'newd', 'oldids')))])
+newids <- unique(newd[c('datasetID', 'study', 'genusspecies')])
