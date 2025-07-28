@@ -6,12 +6,12 @@
 
 ###add stratification and chilling
 d$pretreatmentChill<-ifelse(!is.na(d$coldStratDurAvg),"Y",d$pretreatmentChill)
-d$pretreatmentChill<-ifelse(!is.na(d$coldStratDurMax),"Y",d$pretreatmentChill)
-d$pretreatmentChill<-ifelse(!is.na(d$coldStratDurMin),"Y",d$pretreatmentChill)
+d$pretreatmentChill<-ifelse(!is.na(d$chillDurationMax),"Y",d$pretreatmentChill)
+d$pretreatmentChill<-ifelse(!is.na(d$chillDurationMin),"Y",d$pretreatmentChill)
 
 ###add stratification to chilling values
-d$pretrtChillDurMin<-ifelse(!is.na(d$coldStratDurMin),d$coldStratDurMin,d$pretrtChillDurMin)
-d$pretrtChillDurMax<-ifelse(!is.na(d$coldStratDurMax),d$coldStratDurMax,d$pretrtChillDurMax)
+d$pretrtChillDurationMin<-ifelse(!is.na(d$chillDurationMin),d$chillDurationMin,d$pretrtChillDurationMin)
+d$pretrtChillDurationMax<-ifelse(!is.na(d$chillDurationMax),d$chillDurationMax,d$pretrtChillDurationMax)
 d$pretrtChillDurAvg<-ifelse(!is.na(d$coldStratDurAvg),d$coldStratDurAvg,d$pretrtChillDurAvg)
 d$pretreatmentChillDuration<-ifelse(!is.na(d$cold_stratification_days),d$cold_stratification_days,d$pretreatmentChillDuration)
 
@@ -19,17 +19,17 @@ d$pretreatmentChillDuration<-ifelse(!is.na(d$cold_stratification_days),d$cold_st
 
 ############
 
-aggregate(latbi ~ pretrtChillDurMax, data = d, FUN = function(x) length(unique(x)))
+aggregate(latbi ~ pretrtChillDurationMax, data = d, FUN = function(x) length(unique(x)))
 
 ###need to make a rowmnames column
 d$X<-rownames(d)
 
 
 # Step 1: Filter rows with non-NA values in all specified columns
-filtered_rows <- d[!is.na(d$pretrtChillDurMin) & !is.na(d$pretrtChillDurMax) & 
+filtered_rows <- d[!is.na(d$pretrtChillDurationMin) & !is.na(d$pretrtChillDurationMax) & 
                      !is.na(d$responseValueMin) & !is.na(d$responseValueMax), ]
 
-filtered_spp <- d[!is.na(d$pretrtChillDurMin) & !is.na(d$pretrtChillDurMax) & 
+filtered_spp <- d[!is.na(d$pretrtChillDurationMin) & !is.na(d$pretrtChillDurationMax) & 
                     !is.na(d$responseValueMin) & !is.na(d$responseValueMax), "latbi"]
 
 
@@ -82,4 +82,4 @@ d$warm_stratification_temp_C[which(d$genus_name == "Prunus" & d$warm_stratificat
 d$cold_stratification_temp_C[which(d$genus_name == "Pseudotsuga" & d$cold_stratification_days != "0")] <- "0 to 5"
 d$cold_stratification_days[which(d$cold_stratification_days == "l")] <- "1"
 
-d <- d[,1:58]
+d <- d[,1:65]

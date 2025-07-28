@@ -22,3 +22,9 @@ d$test_duration_in_days[which(d$test_duration_in_days == "60+")] <- ">60"
 d$test_duration_in_days[which(d$test_duration_in_days == "NP")] <- "0" # no light pretreatment
 
 d$dailyl_light_hours[which(d$genus == "Philadelphus")] <- "8"
+
+d$photoperiodCor <- d$dailyl_light_hours
+d$photoperiodCor[d$dailyl_light_hours %in% c("<16", ">8", "10","16", "20" ,"24", "6","8","8 to 24", "8<" , "9", "ambient", "Light")] <- "light"
+d$photoperiodCor[d$dailyl_light_hours %in% c("Dark")] <- "dark"
+
+

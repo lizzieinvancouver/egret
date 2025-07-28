@@ -15,8 +15,8 @@ d$pregermTrtMin <- unlist(lapply(breakbyto, function(x) x[1]))
 d$pregermTrtMax <- unlist(lapply(breakbyto, function(x) x[2]))
 
 breakbyto2 <- strsplit(d$cold_stratification_days, " to ", fixed=TRUE)
-d$coldStratDurMin <- unlist(lapply(breakbyto2, function(x) x[1]))
-d$coldStratDurMax <- unlist(lapply(breakbyto2, function(x) x[2]))
+d$chillDurationMin <- unlist(lapply(breakbyto2, function(x) x[1]))
+d$chillDurationMax <- unlist(lapply(breakbyto2, function(x) x[2]))
 
 breakbyto3 <- strsplit(d$dailyl_light_hours, " to ", fixed=TRUE)
 d$photoperiodMin <- unlist(lapply(breakbyto3, function(x) x[1]))
@@ -39,12 +39,35 @@ d$samplesMin <- unlist(lapply(breakbyto7, function(x) x[1]))
 d$samplesMax <- unlist(lapply(breakbyto7, function(x) x[2]))
 
 breakbyto8 <- strsplit(d$pretreatmentChillDuration, " to ", fixed=TRUE)
-d$pretrtChillDurMin <- unlist(lapply(breakbyto8, function(x) x[1]))
-d$pretrtChillDurMax <- unlist(lapply(breakbyto8, function(x) x[2]))
+d$pretrtChillDurationMin <- unlist(lapply(breakbyto8, function(x) x[1]))
+d$pretrtChillDurationMax <- unlist(lapply(breakbyto8, function(x) x[2]))
 
 breakbyto9 <- strsplit(d$responseValue, " to ", fixed=TRUE)
 d$responseValueMin <- unlist(lapply(breakbyto9, function(x) x[1]))
 d$responseValueMax <- unlist(lapply(breakbyto9, function(x) x[2]))
+
+d$cold_stratification_temp_C[which(d$cold_stratification_temp_C == "3-5")] <- "3 to 5"
+d$cold_stratification_temp_C[which(d$cold_stratification_temp_C == "2-4")] <- "2 to 4"
+breakbyto10 <- strsplit(d$cold_stratification_temp_C, " to ", fixed=TRUE)
+d$chillTempMin <- unlist(lapply(breakbyto10, function(x) x[1]))
+d$chillTempMax <- unlist(lapply(breakbyto10, function(x) x[2]))
+
+d$warm_stratification_temp_C[which(d$warm_stratification_temp_C == "20-30")] <- "20 to 30"
+
+breakbyto11 <- strsplit(d$warm_stratification_temp_C, " to ", fixed=TRUE)
+d$warmTempMin <- unlist(lapply(breakbyto11, function(x) x[1]))
+d$warmTempMax <- unlist(lapply(breakbyto11, function(x) x[2]))
+
+breakbyto12 <- strsplit(d$temp_unspecified_time_of_day_celsius, " to ", fixed=TRUE)
+d$unspecTempMin <- unlist(lapply(breakbyto12, function(x) x[1]))
+d$unspecTempMax <- unlist(lapply(breakbyto12, function(x) x[2]))
+
+d$warm_stratification_days[which(d$warm_stratification_days == "some I suspect (see notes)")] <- "NA"
+d$warm_stratification_days[which(d$warm_stratification_days == "60-90")] <- "60 to 90"
+
+breakbyto13 <- strsplit(d$warm_stratification_days, " to ", fixed=TRUE)
+d$warmDurationMin <- unlist(lapply(breakbyto13, function(x) x[1]))
+d$warmDurationMax <- unlist(lapply(breakbyto13, function(x) x[2]))
 
 # Making mean average columns for the above columns
 # unique(d$responseValueMin)
@@ -82,26 +105,26 @@ d$pregermTrtAvg[which(is.nan(d$pregermTrtAvg))] <- NA
 # d$pregermTrtMin[which(d$pregermTrtMin == 99992)] <- "Overnight"
 
 # cold stratification duration
-sort(unique(d$coldStratDurMin))
-d$coldStratDurMin[which(d$coldStratDurMin == "CSG")] <- NA # "stratification and germination as a continuum under the same conditions"
-d$coldStratDurMin[which(d$coldStratDurMin == "Var.")] <- NA
-d$coldStratDurMin[which(d$coldStratDurMin == "over winter")] <- NA
-d$coldStratDurMin[which(d$coldStratDurMin == "1803")] <- 180 # 180 +3 in the table
-d$coldStratDurMin[which(d$coldStratDurMin == "l")] <- 1
-d$coldStratDurMin[which(d$coldStratDurMin == "60+")] <- 60
-d$coldStratDurMin[which(d$coldStratDurMin == "90+")] <- 90
+sort(unique(d$chillDurationMin))
+d$chillDurationMin[which(d$chillDurationMin == "CSG")] <- NA # "stratification and germination as a continuum under the same conditions"
+d$chillDurationMin[which(d$chillDurationMin == "Var.")] <- NA
+d$chillDurationMin[which(d$chillDurationMin == "over winter")] <- NA
+d$chillDurationMin[which(d$chillDurationMin == "1803")] <- 180 # 180 +3 in the table
+d$chillDurationMin[which(d$chillDurationMin == "l")] <- 1
+d$chillDurationMin[which(d$chillDurationMin == "60+")] <- 60
+d$chillDurationMin[which(d$chillDurationMin == "90+")] <- 90
 
-# unique(d$coldStratDurMax)
+# unique(d$chillDurationMax)
 
-d$coldStratDurMin <- as.integer(d$coldStratDurMin)
-d$coldStratDurMax <- as.integer(d$coldStratDurMax)
-d$coldStratDurAvg <- rowMeans(d[, c("coldStratDurMin", "coldStratDurMax")], na.rm = TRUE)
+d$chillDurationMin <- as.integer(d$chillDurationMin)
+d$chillDurationMax <- as.integer(d$chillDurationMax)
+d$coldStratDurAvg <- rowMeans(d[, c("chillDurationMin", "chillDurationMax")], na.rm = TRUE)
 d$coldStratDurAvg[which(is.nan(d$coldStratDurAvg))] <- NA
 
-#d$coldStratDurAvg[which(d$coldStratDurMin == 99991)] <- "Stratification and germination as a continuum under the same conditions"
-# d$coldStratDurAvg[which(d$coldStratDurMin == 99992)] <- "Variable"
-# d$coldStratDurMin[which(d$coldStratDurMin == 99991)] <- "Stratification and germination as a continuum under the same conditions"
-# d$coldStratDurMin[which(d$coldStratDurMin == 99992)] <- "Variable"
+#d$coldStratDurAvg[which(d$chillDurationMin == 99991)] <- "Stratification and germination as a continuum under the same conditions"
+# d$coldStratDurAvg[which(d$chillDurationMin == 99992)] <- "Variable"
+# d$chillDurationMin[which(d$chillDurationMin == 99991)] <- "Stratification and germination as a continuum under the same conditions"
+# d$chillDurationMin[which(d$chillDurationMin == 99992)] <- "Variable"
 
 # Photoperiod
 d$photoperiodMax[which(d$photoperiodMin == "<16")] <- 16
@@ -160,10 +183,11 @@ d$samplesAvg <- rowMeans(d[, c("samplesMin", "samplesMax")], na.rm = TRUE)
 d$samplesAvg[which(is.nan(d$samplesAvg))] <- NA
 
 # Pretreatment Chill Duration
-# unique(d$pretrtChillDurMin)
-# unique(d$pretrtChillDurMax)
+# unique(d$pretrtChillDurationMin)
+# unique(d$pretrtChillDurationMax)
 
-d$pretrtChillDurMin <- as.integer(d$pretrtChillDurMin)
-d$pretrtChillDurMax <- as.integer(d$pretrtChillDurMax)
-d$pretrtChillDurAvg <- rowMeans(d[, c("pretrtChillDurMin", "pretrtChillDurMax")], na.rm = TRUE)
+d$pretrtChillDurationMin <- as.integer(d$pretrtChillDurationMin)
+d$pretrtChillDurationMax <- as.integer(d$pretrtChillDurationMax)
+d$pretrtChillDurAvg <- rowMeans(d[, c("pretrtChillDurationMin", "pretrtChillDurationMax")], na.rm = TRUE)
 d$pretrtChillDurAvg[which(is.nan(d$pretrtChillDurAvg))] <- NA
+
