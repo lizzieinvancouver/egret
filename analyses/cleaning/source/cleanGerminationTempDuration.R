@@ -614,6 +614,9 @@ d.summarized <- aggregate(. ~ datasetID, data = d.filtered, FUN = function(x) un
 # d.summarized <- unique(d.filtered$datasetID)
 # write.csv(d.summarized,"cleaning/checks/AlternatingTempPaperList.csv")
 
+# Added this 28 July
+d[d$datasetID %in% 'chen15' & d$tempClass %in% 'alternating', 'germPhotoperiod'] <- '12/12'
+
 
 # Added by V. VdM, 20 Feb 2025:
 # Checking and correcting some issue with photoperiod and germTempGen...
