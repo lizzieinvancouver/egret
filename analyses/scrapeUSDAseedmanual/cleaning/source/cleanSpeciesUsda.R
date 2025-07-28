@@ -205,6 +205,11 @@ d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "nauseosu
 d$species_name[which(d$genus_name == "Ericameria" & d$species_name == "nauseosus subsp. salicifolius")] <-"nauseosa var. salicifolia"
 d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "teretifolius")] <-"Ericameria"
 d$species_name[which(d$genus_name == "Viburnum" & d$species_name == "nudum var. cassinoides")] <-"cassinoides"
+d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "parryi")] <-"Ericameria"
+d$species_name[which(d$genus_name == "Ericameria" & d$species_name == "teretifolius")] <-"teretifolia"
+d$species_name[which(d$genus_name == "Pinus" & d$species_name == "ponderosa var. scopulorum")] <-"scopulorum"
+d$species_name[which(d$genus_name == "Taxodium" & d$species_name == "distichum var. imbricatum")] <- "distichum var. imbricariumm"
+
 
 # make a new column "spec" to combine genus and species
 d$latbi <- paste(d$genus_name, d$species_name, sep = "_")
