@@ -6,7 +6,6 @@
 
 ## Fix empty sp names
 library("stringr")
-library("WorldFlora")
 d$species_name <- tolower(d$species_name)
 d$species_name <- str_trim(d$species_name)
 d$genus_name <- str_trim(d$genus_name)
@@ -76,6 +75,7 @@ d$species_name[which(d$genus_name == "Pseudotsuga" & d$species_name == "" & d$sa
 # Read in the backbone dataset
 runworldflora <- FALSE
 if(runworldflora){
+  library("WorldFlora")
   backbone <- read.csv("C:/PhD/Project/classification.csv",head = TRUE, sep="\t")
   d$species_name <- tolower(d$species_name)
   d$genus_name <- str_trim(d$genus_name)
@@ -209,7 +209,7 @@ d$genus_name[which(d$genus_name == "Chrysothamnus" & d$species_name == "parryi")
 d$species_name[which(d$genus_name == "Ericameria" & d$species_name == "teretifolius")] <-"teretifolia"
 d$species_name[which(d$genus_name == "Pinus" & d$species_name == "ponderosa var. scopulorum")] <-"scopulorum"
 d$species_name[which(d$genus_name == "Taxodium" & d$species_name == "distichum var. imbricatum")] <- "distichum var. imbricariumm"
-
+d$genus_name[which(d$genus_name == "Neltuma" & d$species_name == "juliflora")] <- "Prosopis"
 
 # make a new column "spec" to combine genus and species
 d$latbi <- paste(d$genus_name, d$species_name, sep = "_")
