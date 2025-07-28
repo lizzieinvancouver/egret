@@ -8,34 +8,48 @@ library(ggplot2)
 library(plotly)
 library(RColorBrewer)
 library(dplyr)
+#start by subsetting down to the studies that have provenances
+provnona <- subset(d, provLatLon != "NA NA")
+
 # how many provenances per study
-provcount <- aggregate(d["provLatLon"], d[c("datasetID", "study", "latbi")], function(x) length(unique(x)))
+provcount <- aggregate(provnona["provLatLon"], provnona[c("datasetIDstudy", "latbi")], function(x) length(unique(x)))
+
 # check how many datasetIDs don't have provenance data
-subby <- unique(d[, c("datasetID", "study", "latbi", "provLatLon")])
+subby <- unique(d[, c("datasetIDstudy", "latbi", "provLatLon")])
 # subset down and get the ones with no provenance data
 subNA <- subset(subby, provLatLon == "NA NA")
 # replace NA NA with NA
-subNA$provLatLon[which(subNA$provLatLon == "NA NA")] <- 0.001
+subNA$provLatLon[which(subNA$provLatLon == "NA NA")] <- 0
 
 # rbind both dfs
-provcount2 <- rbind(provcount, subNA) # recovered appropriate n of datasetIDs
+provcount2 <- rbind(provcount, subNA) # recovered appropriate n ofdatasetIDs
+nrow(provcount2)
+# vec <- unique(provcount2$provLatLon)[2:length(unique(provcount2$provLatLon))]
 
-unique(provcount2$provLatLon)
-vec <- unique(provcount2$provLatLon)[2:length(unique(provcount2$provLatLon))]
-
-# how many have more than one provenances including NAs
-countsabove1 <- subset(provcount2, provLatLon %in% vec)
-morethan1 <- subset(provcount2, provLatLon > 1)
-countsabove1$provLatLon <- as.numeric(countsabove1$provLatLon)
+# keep only 1 entry per datasetIDstudy since we want to know how many provenances/datasetIDstudy
+# test <- provcountnodup[!duplicated(provcountnodup$datasetIDstudy),]
+unique(test$provLatLon)
+# morethan1 <- subset(provcount2, provLatLon > 1)
+provcountnodup$provLatLon <- as.numeric(provcountnodup$provLatLon)
 
 # add column to fit colors in the plot
-countsabove1$color <- NA
-countsabove1$color[which(countsabove1$provLatLon <1)] <- "NA"
-countsabove1$color[which(countsabove1$provLatLon > 1)] <- "Nb of studies"
+provcountnodup$color <- NA
+provcountnodup$color[which(provcountnodup$provLatLon < 1)] <- "NA provenance"
+provcountnodup$color[which(provcountnodup$provLatLon == 1)] <- "1 provenance"
+provcountnodup$color[which(provcountnodup$provLatLon > 1)] <- "More than 1 provenance"
 
 # plotting the number of studies with more than 1 provenance AND NAs
-count <- ggplot(countsabove1, aes(x = provLatLon, fill = color)) +
+count <- ggplot(provcountnodup, aes(x = provLatLon, fill = color)) +
   geom_histogram(binwidth = 1) +
+  labs(title = "", x = "Number of provenances", y= "Studies count")+
+  scale_color_manual()+
+  theme_minimal()
+count
+ggsave("figures/provenanceCount.jpeg", count)
+
+# plotting only the ones with NAs 
+count <- ggplot(provcount, aes(x = provLatLon, fill = color)) +
+geom_histogram(binwidth = 1) +
   labs(title = "", x = "Number of provenances", y= "Studies count")+
   scale_color_manual()+
   theme_minimal()
