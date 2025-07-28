@@ -681,7 +681,6 @@ d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "156
 d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "157.3833")] <- "146.3833"
 d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "158.3833")] <- "146.3833"
 d$provenance.long[which(d$datasetID == "middleton96" & d$provenance.long == "159.3833")] <- "146.3833"
-
 # pliszko18
 d$provenance.long[which(d$datasetID == "pliszko18" & d$provenance.long == "21")] <- "21.00"
 # yin09:
@@ -701,6 +700,13 @@ d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Drum
 d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Wrights Lake, USA")] <- "-120.252"
 d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Yosemite, USA")] <- "-119.566"
 d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Lassen Volcanic, USA")] <- "-121.505"
+# zhou08: changing long to lat and lat to long for tab 2 and fig 2
+d$source.population[which(d$datasetID == "zhou08" & d$figure == "table 2")] <- "Upper Minjiang River, Sichuan Province, China"
+d$source.population[which(d$datasetID == "zhou08" & d$figure == "figure 2")] <- "Upper Minjiang River, Sichuan Province, China"
+d$provenance.lat[which(d$datasetID == "zhou08" & d$figure == "table 2")] <- "32"
+d$provenance.lat[which(d$datasetID == "zhou08" & d$figure == "figure 2")] <- "32"
+d$provenance.long[which(d$datasetID == "zhou08" & d$figure == "table 2")] <- "103.7"
+d$provenance.long[which(d$datasetID == "zhou08" & d$figure == "figure 2")] <- "103.7"
 
 ############################################################################
 ##### Fixing Continents Points #####
