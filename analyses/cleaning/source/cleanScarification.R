@@ -50,10 +50,23 @@ d$scarifType[which(d$datasetID == "moradi12" & d$scarif.type == "acid")] <- "che
 d$scarifType[which(d$datasetID == "irvani12" & d$scarif.type == "acid")] <- "chemical - H2SO4"
 d$scarifType[which(d$datasetID == "tilki07" & d$scarif.type == "mechanical")] <- "mechanical - razor"
 d$scarifType[which(d$datasetID == "tilki07" & d$scarif.type == "mechanical")] <- "mechanical - razor"
+d$scarifType[which(d$datasetID == "ghimeray14" & d$scarif.type == "sand")] <- "mechanical - sand"
+d$scarifType[which(d$scarif.type == "partially scarified ")] <- "mechanical - razor" # Lizzie adds: I checked paper, they did it with a scalpel
 
+# Lizzie here! Hi, hi. Cleaning some data we added: al-absi10 and ghimeray14
+# Careful, some of these entries are 0 minutes!
+d$scarifType[grep("H2SO4.98per", d$scarifType)] <- "chemical - H2SO4"
+d$chemical[which(d$datasetID=="al-absi10" & d$scarifType=="chemical - H2SO4")]  <- "H2S04"
+d$chemical.concent[which(d$datasetID=="al-absi10" & d$scarifType=="chemical - H2SO4")]  <- "98 percent"
+d$scarifType[grep("sand, 12h", d$scarif.type)] <- "mechanical - sand"
+d$scarifType[grep("HCl, 0.01ppm,", d$scarif.type)] <- "chemical - HCl"
+d$chemical[grep("HCl, 0.01ppm", d$scarif.type)]  <- "HCl"
+d$chemical.concent[grep("HCl, 0.01ppm", d$scarif.type)]  <- "0.01" # in ppm!
 
-
+# In 2025 Lizzie adds that there are some new entries not cleaned as well for scarifType
+# but I am ignoring them as this column seems rarely used so far
 unique(d$scarifType)
+
 # group more generally --- chemical vs mechanical
 d$scarifTypeGen <- d$scarifType
 # mechanical 
@@ -62,6 +75,7 @@ d$scarifTypeGen[which(d$scarifTypeGen == "sandpaper")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "sand paper")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "sand paper (Np. 150)")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "mechanical - sandpaper")] <- "mechanical"
+d$scarifTypeGen[which(d$scarifType == "mechanical - sand")] <- "mechanical" # Lizzie in 2025
 d$scarifTypeGen[which(d$scarifTypeGen == "mechanical - razor")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "coat removal")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "pericarp removal")] <- "mechanical"
@@ -76,6 +90,7 @@ d$scarifTypeGen[which(d$scarifTypeGen == "manual with needle at the cotyledon en
 d$scarifTypeGen[which(d$scarifTypeGen == "partly scarified")] <- "mechanical" #seed coat was partly removed 
 d$scarifTypeGen[which(d$scarifTypeGen == "seed coat removal")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "Seed coat removed")] <- "mechanical"
+d$scarifTypeGen[which(d$scarifTypeGen == "partially scarified")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "mechanical with 220 grit sandpaper")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "Demucilagation")] <- "mechanical"
 d$scarifTypeGen[which(d$scarifTypeGen == "soaking - 70°C hot water")] <- "soaking"
@@ -97,8 +112,8 @@ d$scarifTypeGen[which(d$scarifTypeGen == "chemical - citric acid")] <- "chemical
 d$scarifTypeGen[which(d$scarifTypeGen == "chemical - H2SO4 (80%)")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "chemical - Thiourea (3%)")] <- "chemical"
 d$scarifTypeGen[which(d$scarifTypeGen == "chemical - KNO3 (0.3%)")] <- "chemical"
-
-
+d$scarifTypeGen[which(d$scarifType == "chemical - H2SO4")] <- "chemical" # Lizzie in 2025
+d$scarifTypeGen[which(d$scarifType == "chemical - HCl")] <- "chemical" # Lizzie in 2025
 
 #soaking (Al-Absi10, prknova15, rouhi13, Wickens01)
 d$scarifTypeGen[which(d$scarifTypeGen == "soaking in water")] <- "soaking"
@@ -113,6 +128,9 @@ d$scarifTypeGen[which(d$scarifTypeGen == "mechanical - 90°C hot water")] <- "so
 
 # other
 unique(d$scarifTypeGen)
+
+# check
+unique(paste(d$scarifType, "-->", d$scarifTypeGen))
 
 #look at each general categories 
 d.mechanical <- subset(d,d$scarifTypeGen == "mechanical")
@@ -150,7 +168,7 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "partially scarified")] <- "mechanical 
 d$scarifTypeSpe[which(d$scarifTypeSpe == "partly scarified")] <- "mechanical - pericarp partially removed"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "Demucilagation")] <- "mechanical - demucilagation"
 
-unique(d$scarifTypeSpe)
+unique(d$scarifTypeSpe) # Lizzie adds: I aslo did not update this.
 
 # chemical
 d$scarifTypeSpe[which(d$scarifTypeSpe == "H2SO4")] <- "chemical - H2SO4"
