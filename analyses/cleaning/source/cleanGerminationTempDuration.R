@@ -785,7 +785,7 @@ for(i in 1:nrow(ids2)){
     
     if(ids2[i, 'datasetID'] == 'goggans74'){
       # Ok, this is not very elegant, I'm ashamed (but I did discuss this with Lizzie on 27 July 2025)
-      di[di$germTempGem %in% '22.2/20/29.4','germTempGen'] <- (22.2*24+29.4*16+20*8)/48
+      di[di$germTempGen %in% '22.2/20/29.4','germTempGen'] <- (22.2*24+29.4*16+20*8)/48
       d[which(d$datasetID == ids2[i, 'datasetID'] & d$study == ids2[i, 'study'] &
                 d$genus == ids2[i, 'genus'] & d$species == ids2[i, 'species']), ] <- di
       counter <- counter + 1
