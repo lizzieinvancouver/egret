@@ -26,15 +26,15 @@ vec <- unique(provcount2$provLatLon)[2:length(unique(provcount2$provLatLon))]
 # how many have more than one provenances including NAs
 countsabove1 <- subset(provcount2, provLatLon %in% vec)
 morethan1 <- subset(provcount2, provLatLon > 1)
-suby$provLatLon <- as.numeric(suby$provLatLon)
+countsabove1$provLatLon <- as.numeric(countsabove1$provLatLon)
 
 # add column to fit colors in the plot
-suby$color <- NA
-suby$color[which(suby$provLatLon <1)] <- "NA"
-suby$color[which(suby$provLatLon > 1)] <- "Nb of studies"
+countsabove1$color <- NA
+countsabove1$color[which(countsabove1$provLatLon <1)] <- "NA"
+countsabove1$color[which(countsabove1$provLatLon > 1)] <- "Nb of studies"
 
 # plotting the number of studies with more than 1 provenance AND NAs
-count <- ggplot(suby, aes(x = provLatLon, fill = color)) +
+count <- ggplot(countsabove1, aes(x = provLatLon, fill = color)) +
   geom_histogram(binwidth = 1) +
   labs(title = "", x = "Number of provenances", y= "Studies count")+
   scale_color_manual()+
@@ -209,7 +209,6 @@ fig <- fig %>% layout(
 )
 fig
 
-
 # === === === === === === === === === === #
 #### Make a map for provenance trials ####
 # === === === === === === === === === === #
@@ -218,13 +217,18 @@ morethan1ids <- unique(morethan1$datasetID)
 dfmorethan1 <- subset(d, datasetID %in% morethan1ids)
 
 # remove duplicated locations
-f <- dfmorethan1[!duplicated(dfmorethan1$provLatLon),]
+morethan1nona <- dfmorethan1[!duplicated(dfmorethan1$provLatLon),]
+morethan1nona$provenance.lat <- as.numeric(morethan1nona$provenance.lat)
+morethan1nona$provenance.long <- as.numeric(morethan1nona$provenance.long)
 
-# first average provenance  per dataset ID and size by number of different source.population
+# first average provenanceper dataset ID and size by number of different source.population
 
 # then plot all source.population and color code by datasetID 
-warmstrat$provenance.lat <- as.numeric(subbyrespvar$provenance.lat)
-warmstrat$provenance.long <- as.numeric(subbyrespvar$provenance.long)
+aggregate(provenance.lat ~ c("datasetID"), data = morethan1nona, function(x) mean(x))
+
+provcount <- aggregate(d["provenance.lat"], d[c("datasetID", "study")], function(x) mean(x))
+
+morethan1nona$provenance.long <- as.numeric(subbyrespvar$provenance.long)
 # get rid of nas
 warmstratnona <- warmstrat[!is.na(warmstrat$provenance.lat), ]
 # Select only 1 entry per provenance
