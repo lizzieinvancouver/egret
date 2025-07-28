@@ -756,7 +756,7 @@ suppressWarnings(for(i in 1:nrow(idscorrected)){
             d$genus == idscorrected[i, 'genus'] & d$species == idscorrected[i, 'species'] &
             is.na(as.numeric(d$germTempGen)) & d$tempClass %in% c('alternating')), ] <- di
 })
-
+idsnotcorrected <- ids[!ids$corrected, ]
 
 # Then, we look only at studies with a germTemp, but where germTempGen == NA and germPhotoperiodDay != NA
 # note: we expect to get some warnings, because of as.numeric
@@ -871,7 +871,7 @@ suppressWarnings(for(i in 1:nrow(idscorrected)){
             d$genus == idscorrected[i, 'genus'] & d$species == idscorrected[i, 'species'] &
             is.na(as.numeric(d$germTempGen)) & d$tempClass %in% c('alternating')), ] <- di
 })
-
+idsnotcorrected <- rbind(idsnotcorrected, ids2[!ids2$corrected, ])
 rm(temp, di, ids, ids2, idscorrected, phototreats)
 message(paste0("Corrected germTempGen-related colums for ", counter,' studies!'))
 
