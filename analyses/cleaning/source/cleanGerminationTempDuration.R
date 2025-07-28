@@ -620,6 +620,9 @@ d.summarized <- aggregate(. ~ datasetID, data = d.filtered, FUN = function(x) un
 # Note that in most cases, I understand why there was a problem --- but in some cases, I don't understand how it appeared 
 # (e.g. see meyer95 below)
 
+phototreat_freq <- table(unique(d[,c('datasetID', 'germPhotoperiod')])$germPhotoperiod)
+phototreat_mostcommon <- names(phototreat_freq)[phototreat_freq == max(phototreat_freq[names(phototreat_freq) != 'NA'])]
+
 # First, we look only at studies with a germTemp, but where germTempGen == NA and germPhotoperiodDay == NA
 # note: we expect to get some warnings, because of as.numeric
 suppressWarnings(temp <- d[which(!(d$germTemp %in% c(NA, 'NA')) & as.numeric(d$germTempGen) %in% c(NA, 'NA') & d$germPhotoperiodDay %in% c(NA, 'NA')),
@@ -636,9 +639,24 @@ for(i in 1:nrow(ids)){
   
   phototreats <- unique(di[c('germPhotoperiod', 'germPhotoperiodDay', 'germPhotoperiodNight')])
   
-  # if we don't have any info on photoperiod for the entire study, we cannot do anything (for now?)
+  # if we don't have any info on photoperiod for the entire study, we now
+  # assume the germPhotoperiod applied is the mostcoomon applied
+  # across studies--- i.e. 12/12
+  if(phototreat_mostcommon != '12/12'){
+    stop('The most common photoperiod has changed! Critical need to update the code here!') # just a check
+  }
   if(all((phototreats$germPhotoperiod %in% c(NA, 'NA', 'ambient')))){
-    ids[i, 'corrected'] <- FALSE
+    if(all((di$germTempGen %in% c('ambient')))){
+      ids[i, 'corrected'] <- FALSE
+      next
+    }
+    di[, 'germPhotoperiod'] <- '12/12'
+    di[, 'germPhotoperiodDay'] <- '12'
+    di[, 'germPhotoperiodNight'] <- '12'
+    d[which(d$datasetID == ids[i, 'datasetID'] & d$study == ids[i, 'study'] &
+              d$genus == ids[i, 'genus'] & d$species == ids[i, 'species']), ] <- di
+    counter <- counter + 1
+    ids[i, 'corrected'] <- TRUE
     next
   }
   
@@ -714,7 +732,7 @@ for(i in 1:nrow(ids)){
       next
     }else if(nrow(di[di$germPhotoperiod %in% c('12:12'), ]) > 0){
       ind <- which(di$germPhotoperiod %in% c('12:12'))
-      di[ind, 'germPhotoperiod'] <- '12:12'
+      di[ind, 'germPhotoperiod'] <- '12/12'
       di[ind, 'germPhotoperiodDay'] <- '12'
       di[ind, 'germPhotoperiodNight'] <- '12'
       counter <- counter + 1
@@ -764,18 +782,75 @@ for(i in 1:nrow(ids2)){
     next
   }else if(any(di$tempClass %in% "three levels")){ 
     # nothing much to do here I guess? 
-    # but it will be good to check goggans74 again, unclear to me in the paper, I don't see a three level temp. treatment
-    ids2[i, 'corrected'] <- FALSE
-    next
+    
+    if(ids2[i, 'datasetID'] == 'goggans74'){
+      # Ok, this is not very elegant, I'm ashamed (but I did discuss this with Lizzie on 27 July 2025)
+      di[di$germTempGem %in% '22.2/20/29.4','germTempGen'] <- (22.2*24+29.4*16+20*8)/48
+      d[which(d$datasetID == ids2[i, 'datasetID'] & d$study == ids2[i, 'study'] &
+                d$genus == ids2[i, 'genus'] & d$species == ids2[i, 'species']), ] <- di
+      counter <- counter + 1
+      ids2[i, 'corrected'] <- TRUE
+      next
+    }else{
+      ids2[i, 'corrected'] <- FALSE
+      next
+    }
+    
   }else if(all(is.na(di$tempDay))){
-    ids2[i, 'corrected'] <- FALSE
-    next
+    
+    # I don't know why the hypen was not corrected before, but I'm fixing it now
+    if(any(grepl('-', di$germTemp))){
+      ind <- which(grepl('-', di$germTemp))
+      di[ind, 'germTemp'] <- stringr::str_replace(di[ind, 'germTemp'], '-', '/')
+      di[ind, 'tempDay'] <- stringr::str_split_i(di[ind, 'germTemp'] , '/', 1)
+      di[ind, 'tempNight'] <- stringr::str_split_i(di[ind, 'germTemp'] , '/', 2)
+      ids2[i, 'corrected'] <- TRUE
+      d[which(d$datasetID == ids2[i, 'datasetID'] & d$study == ids2[i, 'study'] &
+                d$genus == ids2[i, 'genus'] & d$species == ids2[i, 'species']), ] <- di
+      counter <- counter + 1
+      next
+      
+    }else{
+      ids2[i, 'corrected'] <- FALSE
+      next
+    }
+    
   }else if(ids2[i, 'datasetID'] == 'nurse08'){
     # not much to do because, because data are pooled across three temperature regimes in the figure
     ids2[i, 'corrected'] <- FALSE
     next
   }else if(ids2[i, 'datasetID'] == 'meyer95'){
     # nothing to change here, but germTemp will be recomputed later on (I don't know why it was not computed before?)
+    counter <- counter + 1
+    ids2[i, 'corrected'] <- TRUE
+    next
+  }else if(ids2[i, 'datasetID'] == 'strazisar13'){
+    print('ep')
+    # nothing to change here, but germTemp will be recomputed later on (I don't know why it was not computed before?)
+    counter <- counter + 1
+    ids2[i, 'corrected'] <- TRUE
+    next
+  }else if(ids2[i, 'datasetID'] == 'acosta13'){
+    # this should have been cleaned before I guess?
+    # anyway I don't care I'm cleaning it here
+    # according to the 3 other rows tempDay was < tempNight
+    di[di$germTemp %in% '5-15', 'tempDay'] <- '5'
+    di[di$germTemp %in% '5-15', 'tempNight'] <- '15'
+    di[di$germTemp %in% '5-15', 'germTemp'] <- '5/15'
+    d[which(d$datasetID == ids2[i, 'datasetID'] & d$study == ids2[i, 'study'] &
+              d$genus == ids2[i, 'genus'] & d$species == ids2[i, 'species']), ] <- di
+    counter <- counter + 1
+    ids2[i, 'corrected'] <- TRUE
+    next
+  }else if(ids2[i, 'datasetID'] == 'ghimeray14'){
+    # this should have been cleaned before I guess?
+    # anyway I don't care I'm cleaning it here
+    di[di$germTemp %in% '15-22', 'tempDay'] <- '15'
+    di[di$germTemp %in% '15-22', 'tempNight'] <- '22'
+    di[di$germTemp %in% '15-22', 'germTemp'] <- '15/22'
+    d[which(d$datasetID == ids2[i, 'datasetID'] & d$study == ids2[i, 'study'] &
+              d$genus == ids2[i, 'genus'] & d$species == ids2[i, 'species']), ] <- di
+    counter <- counter + 1
     ids2[i, 'corrected'] <- TRUE
     next
   }
