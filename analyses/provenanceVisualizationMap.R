@@ -8,14 +8,25 @@ library(ggplot2)
 library(plotly)
 library(RColorBrewer)
 library(dplyr)
+
 #start by subsetting down to the studies that have provenances
+d$idspp <- paste(d$datasetIDstudy, d$latbi, sep = "_")
+
 provnona <- subset(d, provLatLon != "NA NA")
 
 # how many provenances per study
-provcount <- aggregate(provnona["provLatLon"], provnona[c("datasetIDstudy", "latbi")], function(x) length(unique(x)))
+provcount <- aggregate(provnona["provLatLon"], provnona[c("idspp")], function(x) length(unique(x)))
+
+# remove duplicates
+nrow(provcount[!duplicated(provcount$datasetIDstudy),])
+
+
+# # # make some checks
+test <- subset(provcount, provLatLon == 1)
+nrow(test)
 
 # check how many datasetIDs don't have provenance data
-subby <- unique(d[, c("datasetIDstudy", "latbi", "provLatLon")])
+subby <- unique(d[, c("idspp", "provLatLon")])
 # subset down and get the ones with no provenance data
 subNA <- subset(subby, provLatLon == "NA NA")
 # replace NA NA with NA
@@ -30,18 +41,18 @@ nrow(provcount2)
 # test <- provcountnodup[!duplicated(provcountnodup$datasetIDstudy),]
 unique(test$provLatLon)
 # morethan1 <- subset(provcount2, provLatLon > 1)
-provcountnodup$provLatLon <- as.numeric(provcountnodup$provLatLon)
+provcount2$provLatLon <- as.numeric(provcount2$provLatLon)
 
 # add column to fit colors in the plot
-provcountnodup$color <- NA
-provcountnodup$color[which(provcountnodup$provLatLon < 1)] <- "NA provenance"
-provcountnodup$color[which(provcountnodup$provLatLon == 1)] <- "1 provenance"
-provcountnodup$color[which(provcountnodup$provLatLon > 1)] <- "More than 1 provenance"
+provcount2$color <- NA
+provcount2$color[which(provcount2$provLatLon < 1)] <- "NA provenance"
+provcount2$color[which(provcount2$provLatLon == 1)] <- "1 provenance"
+provcount2$color[which(provcount2$provLatLon > 1)] <- "More than 1 provenance"
 
 # plotting the number of studies with more than 1 provenance AND NAs
-count <- ggplot(provcountnodup, aes(x = provLatLon, fill = color)) +
+count <- ggplot(provcount2, aes(x = provLatLon, fill = color)) +
   geom_histogram(binwidth = 1) +
-  labs(title = "", x = "Number of provenances", y= "Studies count")+
+  labs(title = "", x = "Number of provenances X datasetIDstudy x spp", y= "Studies count")+
   scale_color_manual()+
   theme_minimal()
 count
