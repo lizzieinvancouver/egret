@@ -9,20 +9,39 @@ library(plotly)
 library(RColorBrewer)
 
 # how many provenances per study
-provenance_count <- aggregate(provLatLon  ~ datasetID, data = d, function(x) length(unique(x)))
-# how many have more than one provenances
-suby <- subset(provenance_count, provLatLon > 1)
-# vector of datasetID with multiple provenances
-vec <- suby$datasetID
-# subset datasetID with multiple provenances
-subset_df <- d[d$datasetID %in% vec, ]
-# plotting the number of studies with more than 1 provenance
-count <- ggplot(suby, aes(x = provLatLon)) +
-  geom_histogram(binwidth = 1, color = "black", fill = "salmon") +
-  labs(title = "", x = "Number of provenances", y= "DatasetID count") +
+provcount <- aggregate(d["provLatLon"], d[c("datasetID", "study", "latbi")], function(x) length(unique(x)))
+# check how many datasetIDs don't have provenance data
+subby <- unique(d[, c("datasetID", "study", "latbi", "provLatLon")])
+# subset down and get the ones with no provenance data
+subNA <- subset(subby, provLatLon == "NA NA")
+# replace NA NA with NA
+subNA$provLatLon[which(subNA$provLatLon == "NA NA")] <- 0.001
+
+# rbind both dfs
+provcount2 <- rbind(provcount, subNA) # recovered appropriate n of datasetIDs
+
+unique(provcount2$provLatLon)
+vec <- unique(provcount2$provLatLon)[2:length(unique(provcount2$provLatLon))]
+
+# how many have more than one provenances including NAs
+suby <- subset(provcount2, provLatLon %in% vec)
+morethan1 <- subset(provcount2, provLatLon > 1)
+nrow(morethan1)
+suby$provLatLon <- as.numeric(suby$provLatLon)
+
+# add column to fit colors in the plot
+suby$color <- NA
+suby$color[which(suby$provLatLon <1)] <- "NA"
+suby$color[which(suby$provLatLon > 1)] <- "Nb of studies"
+
+# plotting the number of studies with more than 1 provenance AND NAs
+count <- ggplot(suby, aes(x = provLatLon, fill = color)) +
+  geom_histogram(binwidth = 1) +
+  labs(title = "", x = "Number of provenances", y= "Studies count")+
+  scale_color_manual()+
   theme_minimal()
 count
-
+ggsave("figures/provenanceCount.jpeg", count)
 #### make map with color subsetting by most common treatments ####
 
 # quick check of which treatment happens the most often (for now need to run clean treatments!)
