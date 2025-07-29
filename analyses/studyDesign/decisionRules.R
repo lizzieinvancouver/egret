@@ -26,11 +26,14 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 # 0. Get the cleaned data
 source('cleaning/cleanall.R')
+source('analyseSeedCues/summarizeStrat.R')
 #d <- read.csv('output/egretclean.csv')
 rm(list=ls()[which(!(ls() %in% c('d', 'idsnotcorrected')))])
 
 treats <- c('datasetID', 'study',
             'genus', 'species', 'variety',
+            
+            'provLatLonAlt', # seems useful
             
             "treatmentCor", # I guess it's a summary?
             
@@ -48,6 +51,7 @@ treats <- c('datasetID', 'study',
             
             # STRATIFICATION-RELATED
             "chillTemp", "chillDuration", "chillTempUnc", "chillTempCycle", "chillLightCycle",
+            'stratSequence_condensed', # new fancy column
             
             # STRAT + STORAGE
             "dormancyTemp", "dormancyDuration",
@@ -107,8 +111,8 @@ filteredd <- filteredd[!(filteredd$germTempGen %in% c(NA, 'NA')),]
 
 # Here I'm discarding studies where I knopw the germTempGen could not be corrected earlier (~ 300 rows, who cares?!)
 for(i in 1:nrow(idsnotcorrected)){
-  filteredd <- filteredd[which(!(filteredd$datasetID == idsnotcorrected[i, 'datasetID'] & filteredd$study == idsnotcorrected[i, 'study'] &
-                                   filteredd$genus == idsnotcorrected[i, 'genus'] & filteredd$species == idsnotcorrected[i, 'species'])),]
+  filteredd <- filteredd[which(!(filteredd$datasetID %in% idsnotcorrected[i, 'datasetID'] & filteredd$study %in% idsnotcorrected[i, 'study'] &
+                                   filteredd$genus %in% idsnotcorrected[i, 'genus'] & filteredd$species %in% idsnotcorrected[i, 'species'])),]
 }
 
 ids <- unique(filteredd[c('datasetID', 'study', 'genusspecies')])
@@ -161,6 +165,9 @@ for(i in allids){
   
   di <- filteredd[paste0(filteredd$datasetID,filteredd$study,filteredd$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
   cat(paste0("\nID: ", i, ' | ',paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ' '), "\n"))
+  # if(unique(di$datasetID) %in% 'seng20'){
+  #   stop(i)
+  # }
   
   # MISC. TREATMENT
   ids[i, 'misc.check']  <- FALSE
@@ -493,21 +500,22 @@ for(i in allids){
     message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
   }
   
-  # SOAKING (update in May 2025: keep control) (reupdated in July 2025: we now keep the max. germ.)
+  # SOAKING (update in May 2025: keep control) (reupdated in July 2025: we now keep the max. germ. + take into account duration)
   ids[i, 'soak.check']  <- FALSE
-  if(length(unique(di$soaked.in)) > 1){
+  di$soakedTreat <- paste0(di$soaked.in, di$soaking.duration)
+  if(length(unique(di$soakedTreat)) > 1){
     
-    cat(paste0(" > Number of soak. treat.: ", length(unique(di$soaked.in)), "\n"))
-    cat('   - [');cat(paste(unique(di$soaked.in)), sep = ', ');cat(']\n')
+    cat(paste0(" > Number of soak. treat.: ", length(unique(di$soakedTreat)), "\n"))
+    cat('   - [');cat(paste(unique(di$soakedTreat)), sep = ', ');cat(']\n')
     
     di$nstrat <- paste0(di$dormancyTemp, di$dormancyDuration)
     di$ngerm <- paste0(di$germTempGen, di$germDuration)
     ntreati <- merge(
-      aggregate(nstrat ~ factor(soaked.in, exclude = NULL), data = di, function(x) length(unique(x))),
-      aggregate(ngerm ~ factor(soaked.in, exclude = NULL), data = di, function(x) length(unique(x)))
+      aggregate(nstrat ~ factor(soakedTreat, exclude = NULL), data = di, function(x) length(unique(x))),
+      aggregate(ngerm ~ factor(soakedTreat, exclude = NULL), data = di, function(x) length(unique(x)))
     )
     ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
-    names(ntreati)[1] <- 'soaked.in'
+    names(ntreati)[1] <- 'soakedTreat'
     
     if(length(unique(ntreati$ninterest)) == 1){ # same no. of chill/forc treatments
       
@@ -515,7 +523,7 @@ for(i in allids){
         
       # we can just keep the chemical treat. with max. germ. rate?
       maxresp <- max(di$responseValue)
-      treat.tokeep <- unique(di[di$responseValue == maxresp, 'soaked.in']) 
+      treat.tokeep <- unique(di[di$responseValue == maxresp, 'soakedTreat']) 
       cat(paste0('   - Keeping: [', treat.tokeep,'] (max. resp.)\n'))
       
       if(length(treat.tokeep) > 1){
@@ -525,12 +533,12 @@ for(i in allids){
     }else if(length(unique(ntreati$ninterest)) > 1){ # different no. of chill/forc treatments
       
       cat('   - Different number of chill./forc. treat. across chem. treat.\n')
-      treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'soaked.in'] # chem. treat. with max. no. of chill/forc treatments
+      treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'soakedTreat'] # chem. treat. with max. no. of chill/forc treatments
       
       if(length(treat.tokeep) > 1){ 
         
-        maxresp <- max(di[di$soaked.in %in% treat.tokeep, 'responseValue'])
-        treat.tokeep <- unique(di[di$soaked.in %in% treat.tokeep & di$responseValue == maxresp, 'scarifType']) 
+        maxresp <- max(di[di$soakedTreat %in% treat.tokeep, 'responseValue'])
+        treat.tokeep <- unique(di[di$soakedTreat %in% treat.tokeep & di$responseValue == maxresp, 'soakedTreat']) 
         cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
         
         if(length(treat.tokeep) > 1){
@@ -545,9 +553,9 @@ for(i in allids){
     ids[i, 'soak.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'soak.check'] <- TRUE
     
-  }else if(length(unique(di$soaked.in)) == 1){
+  }else if(length(unique(di$soakedTreat)) == 1){
     cat(paste0(" > Only one soak. treat.\n"))
-    treat.tokeep <- unique(di$soaked.in)
+    treat.tokeep <- unique(di$soakedTreat)
     ids[i, 'soak.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'soak.check'] <- TRUE
   }else{
@@ -625,8 +633,8 @@ for(i in allids){
   # Summary
   if(any(!ids$soak.check, na.rm = TRUE)){stop()} # check
   nrow.before <- nrow(di)
-  di <- di[di$soaked.in %in% ids[i, 'soak.tokeep'], ]
-  if(length(unique(di$soaked.in)) > 1){stop()} # check
+  di <- di[di$soakedTreat %in% ids[i, 'soak.tokeep'], ]
+  if(length(unique(di$soakedTreat)) > 1){stop()} # check
   nrow.after <- nrow(di)
   if(nrow.before!=nrow.after){
     message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
@@ -804,6 +812,7 @@ for(i in 1:nrow(ids)){
   di <- di[di$other.treatment %in% ids[i, 'misc.tokeep'], ]
   di <- di[di$scarifType %in% ids[i, 'scarif.tokeep'], ]
   di <- di[paste0(di$chemicalCor, di$chemicalConcent) %in% ids[i, 'chem.tokeep'], ]
+  di <- di[paste0(di$soaked.in, di$soaking.duration) %in% ids[i, 'soak.tokeep'], ]
 
   # some storage conditions may correspond to chilling (moist + cold)
   for(s in 1:nrow(di)){
