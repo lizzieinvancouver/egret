@@ -62,7 +62,7 @@ treats <- c('datasetID', 'study',
 )
 
 # RESPONSE
-resp <- c("responseVar", "responseValue")
+resp <- c("responseVar", "responseValueNum")
 
 # Unique treatments per study
 dtreat <- unique(d[,treats])
@@ -79,7 +79,7 @@ priority <- c("percent.germ") # here, just in case, we could set several respons
 d <- d[order(d$uniqueID, match(d$responseVar, priority)), ]
 d <- d[!duplicated(d$uniqueID), ]
 filteredd <- d[d$responseVar == 'percent.germ',]
-filteredd$responseValue <- as.numeric(filteredd$responseValue)
+filteredd$responseValueNum <- as.numeric(filteredd$responseValueNum)
 
 # Second veto: chemical we absolutely want to remove
 vetochems <- 'GA|BAP|ABA|hormone|regulator|kinetin|fertilizer|probiotic|herbicide|fungicide|captan|PEG|KNO3|IBA|thiourea|benzyladenine|Tween'
@@ -198,8 +198,8 @@ for(i in allids){
     
     if(length(treat.tokeep) > 1){ # then, if needed, we keep the one with max. resp.
       
-      maxresp <- max(di[di$other.treatment %in% treat.tokeep, 'responseValue'], na.rm = TRUE)
-      treat.tokeep <- unique(di[di$other.treatment %in% treat.tokeep & di$responseValue %in% maxresp, 'other.treatment']) 
+      maxresp <- max(di[di$other.treatment %in% treat.tokeep, 'responseValueNum'], na.rm = TRUE)
+      treat.tokeep <- unique(di[di$other.treatment %in% treat.tokeep & di$responseValueNum %in% maxresp, 'other.treatment']) 
       
       if(length(treat.tokeep) > 1 & any(is.na(treat.tokeep))){ # if still not enough, we keep the control (if there is one)
         
@@ -208,10 +208,10 @@ for(i in allids){
         
       }else if(length(treat.tokeep) > 1 & !any(is.na(treat.tokeep))){ # if still not enough, we keep the one with max. average resp.
         
-        avgrespi <- aggregate(responseValue ~ factor(other.treatment, exclude = NULL), data = di[di$other.treatment %in% treat.tokeep,], mean)
+        avgrespi <- aggregate(responseValueNum ~ factor(other.treatment, exclude = NULL), data = di[di$other.treatment %in% treat.tokeep,], mean)
         names(avgrespi)[1] <- 'other.treatment'
         
-        treat.tokeep <- avgrespi[avgrespi$responseValue == max(avgrespi$responseValue), 'other.treatment']
+        treat.tokeep <- avgrespi[avgrespi$responseValueNum == max(avgrespi$responseValueNum), 'other.treatment']
         if(length(treat.tokeep) > 1){
 
             stop('Missing conditions (line 219)')
@@ -296,7 +296,7 @@ for(i in allids){
         
       }else if(length(unique(di$scarifType)) > 2){
         
-        treat.tokeep <- unique(di[di$responseValue == max(di$responseValue), 'scarifType']) # we keep scarif. with max. germ. rate
+        treat.tokeep <- unique(di[di$responseValueNum == max(di$responseValueNum), 'scarifType']) # we keep scarif. with max. germ. rate
         
         if(length(treat.tokeep) > 1){
           
@@ -324,8 +324,8 @@ for(i in allids){
         
         if(length(treat.tokeep) > 1){ # if still not enough, we keep the scarified treatment...
           
-          maxresp <- max(di[di$scarifType %in% treat.tokeep, 'responseValue'])
-          treat.tokeep <- unique(di[di$scarifType %in% treat.tokeep & di$responseValue == maxresp, 'scarifType']) 
+          maxresp <- max(di[di$scarifType %in% treat.tokeep, 'responseValueNum'])
+          treat.tokeep <- unique(di[di$scarifType %in% treat.tokeep & di$responseValueNum == maxresp, 'scarifType']) 
           cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + scarified + max. resp.)\n'))
           
         }
@@ -399,8 +399,8 @@ for(i in allids){
       # }else if(!any(unique(di$chemicalCor) %in% c(NA, 'H2O'))){ # if no control
       #   
       #   # we can just keep the chemical treat. with max. germ. rate?
-      #   maxresp <- max(di$responseValue)
-      #   treat.tokeep <- unique(di[di$responseValue == maxresp, 'chemicalCor']) 
+      #   maxresp <- max(di$responseValueNum)
+      #   treat.tokeep <- unique(di[di$responseValueNum == maxresp, 'chemicalCor']) 
       #   cat(paste0('   - Keeping: [', treat.tokeep,'] (max. resp.)\n'))
       #   
       # }else{
@@ -408,8 +408,8 @@ for(i in allids){
       # }
       
       # we can just keep the chemical treat. with max. germ. rate?
-      maxresp <- max(di$responseValue)
-      treat.tokeep <- unique(di[di$responseValue == maxresp, 'chemicalTreat']) 
+      maxresp <- max(di$responseValueNum)
+      treat.tokeep <- unique(di[di$responseValueNum == maxresp, 'chemicalTreat']) 
       cat(paste0('   - Keeping: [', treat.tokeep,'] (max. resp.)\n'))
       
       if(length(treat.tokeep) > 1){
@@ -438,8 +438,8 @@ for(i in allids){
       #   # here, we need to make a decision with concentration information?
       #   # stop('Need concentration here')
       #   # or we can just keep the chemical treat. with max. germ. rate?
-      #   maxresp <- max(di[di$chemicalCor %in% treat.tokeep, 'responseValue'])
-      #   treat.tokeep <- unique(di[di$chemicalCor %in% treat.tokeep & di$responseValue == maxresp, 'chemicalTreat']) 
+      #   maxresp <- max(di[di$chemicalCor %in% treat.tokeep, 'responseValueNum'])
+      #   treat.tokeep <- unique(di[di$chemicalCor %in% treat.tokeep & di$responseValueNum == maxresp, 'chemicalTreat']) 
       #   cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
       #   
       # }else if(length(treat.tokeep) == 1){
@@ -451,8 +451,8 @@ for(i in allids){
       # }
       
       if(length(treat.tokeep) > 1){
-        maxresp <- max(di[di$chemicalTreat %in% treat.tokeep, 'responseValue'])
-        treat.tokeep <- unique(di[di$chemicalTreat %in% treat.tokeep & di$responseValue == maxresp, 'chemicalTreat']) 
+        maxresp <- max(di[di$chemicalTreat %in% treat.tokeep, 'responseValueNum'])
+        treat.tokeep <- unique(di[di$chemicalTreat %in% treat.tokeep & di$responseValueNum == maxresp, 'chemicalTreat']) 
         
         if(length(treat.tokeep) > 1){
           
@@ -514,8 +514,8 @@ for(i in allids){
       cat('   - Same number of chill./forc. treat. across chem. treat.\n')
         
       # we can just keep the chemical treat. with max. germ. rate?
-      maxresp <- max(di$responseValue)
-      treat.tokeep <- unique(di[di$responseValue == maxresp, 'soaked.in']) 
+      maxresp <- max(di$responseValueNum)
+      treat.tokeep <- unique(di[di$responseValueNum == maxresp, 'soaked.in']) 
       cat(paste0('   - Keeping: [', treat.tokeep,'] (max. resp.)\n'))
       
       if(length(treat.tokeep) > 1){
@@ -529,8 +529,8 @@ for(i in allids){
       
       if(length(treat.tokeep) > 1){ 
         
-        maxresp <- max(di[di$soaked.in %in% treat.tokeep, 'responseValue'])
-        treat.tokeep <- unique(di[di$soaked.in %in% treat.tokeep & di$responseValue == maxresp, 'scarifType']) 
+        maxresp <- max(di[di$soaked.in %in% treat.tokeep, 'responseValueNum'])
+        treat.tokeep <- unique(di[di$soaked.in %in% treat.tokeep & di$responseValueNum == maxresp, 'scarifType']) 
         cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp.)\n'))
         
         if(length(treat.tokeep) > 1){
@@ -668,15 +668,15 @@ for(i in allids){
       
     }else if(length(treat.tokeep) > 1){ # if not enough...
       
-      maxresp <- max(di[di$storConditions %in% treat.tokeep, 'responseValue'], na.rm = TRUE)
-      treat.tokeep <- unique(di[di$storConditions %in% treat.tokeep & di$responseValue %in% maxresp, 'storConditions']) 
+      maxresp <- max(di[di$storConditions %in% treat.tokeep, 'responseValueNum'], na.rm = TRUE)
+      treat.tokeep <- unique(di[di$storConditions %in% treat.tokeep & di$responseValueNum %in% maxresp, 'storConditions']) 
       
       if(length(treat.tokeep) > 1){
         
-        avgrespi <- aggregate(responseValue ~ factor(storConditions, exclude = NULL), data = di[di$storConditions %in% treat.tokeep,], mean)
+        avgrespi <- aggregate(responseValueNum ~ factor(storConditions, exclude = NULL), data = di[di$storConditions %in% treat.tokeep,], mean)
         names(avgrespi)[1] <- 'storConditions'
         
-        treat.tokeep <- avgrespi[avgrespi$responseValue == max(avgrespi$responseValue), 'storConditions']
+        treat.tokeep <- avgrespi[avgrespi$responseValueNum == max(avgrespi$responseValueNum), 'storConditions']
         cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + max. avg. resp.)\n'))
         
         if(length(treat.tokeep) > 1){
@@ -741,15 +741,15 @@ for(i in allids){
       
     }else if(length(treat.tokeep) > 1){ # if not enough...
       
-      maxresp <- max(di[di$germPhotoperiod %in% treat.tokeep, 'responseValue'], na.rm = TRUE)
-      treat.tokeep <- unique(di[di$germPhotoperiod %in% treat.tokeep & di$responseValue %in% maxresp, 'germPhotoperiod']) 
+      maxresp <- max(di[di$germPhotoperiod %in% treat.tokeep, 'responseValueNum'], na.rm = TRUE)
+      treat.tokeep <- unique(di[di$germPhotoperiod %in% treat.tokeep & di$responseValueNum %in% maxresp, 'germPhotoperiod']) 
       
       if(length(treat.tokeep) > 1){
         
-        avgrespi <- aggregate(responseValue ~ factor(germPhotoperiod, exclude = NULL), data = di[di$germPhotoperiod %in% treat.tokeep,], mean)
+        avgrespi <- aggregate(responseValueNum ~ factor(germPhotoperiod, exclude = NULL), data = di[di$germPhotoperiod %in% treat.tokeep,], mean)
         names(avgrespi)[1] <- 'germPhotoperiod'
         
-        treat.tokeep <- avgrespi[avgrespi$responseValue == max(avgrespi$responseValue), 'germPhotoperiod']
+        treat.tokeep <- avgrespi[avgrespi$responseValueNum == max(avgrespi$responseValueNum), 'germPhotoperiod']
         cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of chill./forc. treat. + max. resp. + max. avg. resp.)\n'))
         
         if(length(treat.tokeep) > 1){
