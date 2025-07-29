@@ -79,6 +79,7 @@ Articles were excluded if:\\
 
 \begin{enumerate}
 \item study species were crops, e.g. cultivated varieties that underwent anthropogenic selection alternating dormancy traits % only 488 studies remained
+\item We removed the subsp. names from our latbi column and merge data based on the species names only.
 \item treatments didn't include environmental variables
 \item studies were conducted in the field, i.e. no controlled environments
 \item treatments were pooled, sequential or in other ways not clearly distinguishable
