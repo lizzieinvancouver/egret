@@ -3,6 +3,7 @@
 # Updates in July 2024 by Mao
 # Updates in Feb 2025 by Mao
 # Compare the EGRET data to other datasets (currently Baskin^2 and OSPREE, and USDA)
+# Updates in July 2025 by Mao
 
 # housekeeping
 rm(list=ls()) 
@@ -46,15 +47,15 @@ bbusdaSp <- unique(bbusda$Genus_species)
 
 # Compare OSPREE x EGRET
 intersect_eo <- intersect(egretSp, ospreeSp)
-length(intersect_eo)# 8 sp
+length(intersect_eo)# 9 sp
 
 # Compare OSPREE x USDA
 intersect_ou <- intersect(ospreeSp, usdaSp)
-length(intersect_ou)# 41 sp
+length(intersect_ou)# 66 sp
 
 # Compare EGRET x USDA (for fun!)
 intersect_eu <- intersect(egretSp, usdaSp)
-length(intersect_eu)# 16 sp
+length(intersect_eu)# 26 sp
 
 # Compare Baskin x EGRET
 intersect_be <- intersect(bbegretSp, egretSp)
@@ -62,11 +63,11 @@ length(intersect_be)# 207 sp
 
 # Compare Baskin x USDA
 intersect_bu <- intersect(bbusdaSp, usdaSp)
-length(intersect_bu)# 172 sp
+length(intersect_bu)# 173 sp
 
 # Combine egret and USDA
 egretusda <- data.frame(latbi = c(egretSp, usdaSp))
 
 # Compare OSPREE x (EGRET + USDA)
 intersect_o_eu <- intersect(ospreeSp, egretusda$latbi)
-length(intersect_o_eu)# 48 sp
+length(intersect_o_eu)# 69 sp
