@@ -18,7 +18,7 @@ check_short <- subset(check, select = c("datasetID", "study", "species", "treatm
                                         "storageType", "storageDetails", "storageTemp", "storageDuration",
                                         "chillTemp", "chillDuration", "chillTempCycle", "chillLightCycle",
                                         "germTemp", "germDuration", "photoperiodCor",
-                                        "scarification", "scarifType", "scarifTypeGen", "scarifTypeSpe",
+                                        "scarification", "scarifTypeGen", "scarifTypeSpe",
                                         "soaking", "soaked.in", "soaking.duration",
                                         "chemicalCor", "trt.duration",
                                         "respvar", "response", "figure"))
@@ -1013,7 +1013,7 @@ if(sub_check){
                                           "storageType", "storageDetails", "storageTemp", "storageDuration",
                                           "chillTemp", "chillDuration", "chillTempCycle", "chillLightCycle",
                                           "germTemp", "germDuration", "photoperiodCor",
-                                          "scarification", "scarifType", "scarifTypeGen", "scarifTypeSpe",
+                                          "scarification",  "scarifTypeGen", "scarifTypeSpe",
                                           "soaking", "soaked.in", "soaking.duration",
                                           "chemicalCor", "trt.duration",
                                           "respvar", "response", "figure"))
