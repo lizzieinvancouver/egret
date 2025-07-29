@@ -10,8 +10,23 @@ library(RColorBrewer)
 library(dplyr)
 library(viridisLite)
 
-# run cleanall
-source("/Users/christophe_rouleau-desrochers/github/egret/analyses/cleaning/cleanall.R")
+# housekeeping
+rm(list=ls()) 
+options(stringsAsFactors = FALSE)
+
+if(length(grep("deirdre", getwd()) > 0)) {
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
+} else if(length(grep("Xiaomao", getwd()) > 0)) {
+  setwd("C:/PhD/Project/egret/analyses")
+} else if(length(grep("Ken", getwd())) > 0){
+  setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
+} else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
+  setwd("/Users/christophe_rouleau-desrochers/github/egret/analyses")
+} else if(length(grep("victor", getwd())) > 0){
+  setwd('~/projects/egret/analyses')
+} 
 
 #start by subsetting down to the studies that have provenances
 d$idspp <- paste(d$datasetIDstudy, d$latbi, sep = "_")
@@ -222,7 +237,13 @@ strat$colmap <- NA
 strat$colmap[which(strat$stratclasses == "both")] <- "purple"
 strat$colmap[which(strat$stratclasses == "warm")] <- "#ff3300"
 strat$colmap[which(strat$stratclasses == "cold")] <- "#0066ff"
-strat$colmap[which(strat$stratclasses == "nostrat")] <- "#aaaaaa"
+strat$colmap[which(strat$stratclasses == "nostrat")] <- "black"
+
+strat$opacityprov <- NA
+strat$opacityprov[which(strat$stratclasses == "both")] <- 1
+strat$opacityprov[which(strat$stratclasses == "warm")] <- 0.5
+strat$opacityprov[which(strat$stratclasses == "cold")] <- 0.5
+strat$opacityprov[which(strat$stratclasses == "nostrat")] <- 0.5
 
 # convert prov to numeric
 strat$provenance.lat <- as.numeric(strat$provenance.lat)
@@ -231,10 +252,29 @@ strat$provenance.long <- as.numeric(strat$provenance.long)
 # get rid of nas
 stratnona <- subset(strat, provLatLon != "NA NA")
 
-# Select only 1 entry per provenance
-stratFormap <- stratnona[!duplicated(stratnona$provLatLon), ]
+# drop rows when there is no strat for SOME prov, but that they have either warm or cold
+test <- subset(stratnona, stratclasses)
 
+stratnona$datasetID[which(stratnona$stratclasses == "cold" &
+                            stratnona$stratclasses == "warm" &
+                            stratnona$stratclasses == "both")]
+color_map <- c(
+  "nostrat" = "#aaaaaa",
+  "cold"    = "#0066ff",
+  "both"    = "purple",
+  "warm"    = "#ff3300"
+)
 
+opacityprov <- c(
+  "nostrat" = 0.5,
+  "cold"    = 0.8,
+  "both"    = 1,
+  "warm"    = 0.8
+  # adjust if you have more
+)
+
+unique(stratnona$stratclasses)
+# Now plot
 stratmap <- plot_ly(
   data = stratnona,
   type = 'scattergeo', 
@@ -243,23 +283,29 @@ stratmap <- plot_ly(
   lon = ~provenance.long,
   text = ~paste("datasetID:", datasetID, "<br>Strat:", stratclasses),
   hoverinfo = "text",
+  color = ~stratclasses,           # key step: map color to variable
+  colors = color_map,              # use your predefined hex color mapping
   marker = list(
-    size = 5,  
+    size = 5,
     sizemode = "area",
-    opacity = 0.8,
-    color = ~I(colmap)
-    # colorscale = unique(stratnona$colmap)
+    opacity = ~opacityprov
   )
-)
-# Set map layout
-stratmap <- stratmap %>% layout(
-  title = "Loc of studies of warm, cold, both and no strat treatments",
-  geo = list(
-    projection = list(type = "natural earth"),
-    showland = TRUE,
-    landcolor = "rgb(243, 243, 243)"
+) %>%
+  layout(
+    title = "Loc of studies of warm, cold, both and no strat treatments",
+    geo = list(
+      projection = list(type = "natural earth"),
+      showland = TRUE,
+      landcolor = "rgb(243, 243, 243)"
+    ),
+    legend = list(
+      title = list(text = "<b>Strat Classes</b>"),
+      bgcolor = "#FFFFFF",
+      bordercolor = "#CCCCCC",
+      borderwidth = 1
+    )
   )
-)
+
 stratmap
 
 # make a small one with just warm strat
