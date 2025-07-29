@@ -878,6 +878,10 @@ idsnotcorrected <- rbind(idsnotcorrected, ids2[!ids2$corrected, ])
 rm(temp, di, ids, ids2, idscorrected, phototreats)
 message(paste0("Corrected germTempGen-related colums for ", counter,' studies!'))
 
+d$germDuration[which(d$germDuration == "14(7)")] <- "14"
+d$germDuration[which(d$germDuration == "21(7)")] <- "21"
+d$germDuration[which(d$germDuration == "28(7)")] <- "28"
+
 
 ## Lizzie (5 July 2025) renaming and deleting columns
 names(d)[names(d)=="tempClass"] <- "germTempClass"
