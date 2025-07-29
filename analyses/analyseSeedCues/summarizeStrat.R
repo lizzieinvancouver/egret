@@ -189,12 +189,12 @@ d$stratSequence_condensed <- stratSequence_cdsd
 d$stratTemp_condensed <- stratTemp_cdsd
 
 # For Deirdre and merging with USDA
-d$warmStratTemp <- sapply(1:nrow(d), function(i){
+d$warmStratTemp <- as.numeric(sapply(1:nrow(d), function(i){
   seq <-  unlist(stringr::str_split(d$stratSequence_condensed[i], ' then '))
   temp <-  unlist(stringr::str_split(d$stratTemp_condensed[i], ' then '))
   id <- which(seq == 'warm')
   return(ifelse(is.null(id), NA, temp[id]))
-})
+}))
 
 # If you want to plot 
 strat_summary <- data.frame(table(unique(d[,c('datasetID', 'stratSequence_condensed')])$stratSequence_condensed))
