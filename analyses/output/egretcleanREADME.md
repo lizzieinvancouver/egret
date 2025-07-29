@@ -80,8 +80,6 @@ They are cleaned in analyses/cleaning/cleanall.R
 * storageDetails -- storage information including substrate/vessel on top of wet/dry/cold/room temp 
 * storageTemp -- storage temperatures given sequentially seperated by `then`
 * storageDuration -- storage durations in days given sequentially seperated by `then`
-* dormancyTemp -- sequence of moist cold storage and cold stratification temperatures given sequentially seperated by `then` (was created in combineStorageChill.R at the end cleanChillTempDuration.R)
-* dormancyDuration -- sequence of moist cold storage and cold stratification durations (days) given sequentially seperated by `then` (was created in combineStorageChill.R at the end cleanChillTempDuration.R)
 * responseVar -- cleaned column of respvar with cleaned names for the response variables (n = 106)
 * responseValueNum -- same as responseValue, but numeric, values are the same but with trailing zeros. 
 * responseErrorType -- cleaned the names of the different types of errors, but error values not cleaned.

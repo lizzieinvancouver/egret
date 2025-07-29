@@ -88,7 +88,6 @@ d$latbi <- paste(d$genus, d$species, sep = "_")
 d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
 d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
 
-
 # checking sizing ..
 dim(d) # dim on 18 Mar 2025: 80 and 30401 - dim on 29 July 2025: 31395, 79
 
