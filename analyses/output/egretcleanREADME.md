@@ -72,9 +72,8 @@ They are cleaned in analyses/cleaning/cleanall.R
 * germPhotoperiod -- cleaned column of photoperiod conditions during germination, includes alternating values with slashes.
 * germPhotoperiodDay -- day time photoperiod conditions taken from germPhotoperiod, usually the first value of the alternating day/night entries, or assumed so if not clear in the paper
 * germPhotoperiodNight -- duration of night photoperiod taken from germPhotoperiod, usually the second value of the alternating day/night entries
-* scarifType -- detailed description of scarification (as of July 2025: this is a slightly cleaned version of scarif.type that we stopped fully cleaning at some point)
-* scarifTypeGen -- detailed description of scarification: NA, chemical, mechanical or soaking (which is in hot water)
-* scarifTypeSpe -- very similar to scarifType, just cleaner **FIXME: clean up this one and delete out scarifType
+* scarifTypeGen -- simplified description of scarification: NA, chemical, mechanical or soaking (which is in hot water)
+* scarifTypeSpe -- detailed description of scarification (also there is a scarifType in cleanScarification.R but Lizzie stopped including it on 29 July 2025)
 * chemicalCor -- chemical column cleaned so there *should* be no duplicates that are mis-spelled or ordered differently (but you should double-check this)
 * storageType -- storage information focusing on wet/dry/cold/room temp (around 21 different types)
 * storageDetails -- storage information including substrate/vessel on top of wet/dry/cold/room temp 
