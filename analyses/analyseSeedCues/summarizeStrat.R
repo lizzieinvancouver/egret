@@ -1,4 +1,6 @@
 
+# Summarizing stratification treatments in a more handy format
+
 # detailled info
 stratSequence <- rep(NA, nrow(d))
 stratTemp <- rep(NA, nrow(d))
@@ -167,12 +169,12 @@ d$stratSequence_condensed <- stratSequence_cdsd
 
 # For Christophe: grepl('warm', d$stratSequence_condensed)
 
+
+# If you want to plot 
 strat_summary <- data.frame(table(unique(d[,c('datasetID', 'stratSequence_condensed')])$stratSequence_condensed))
 names(strat_summary) <- c('sequence', 'count')
-
 strat_summary_plotdf <- data.frame()
 for(i in 1:nrow(strat_summary)){
-  
   seq <- unlist(stringr::str_split(strat_summary$sequence[i], ' then '))
   seqplot <- rep(NA, 3)
   if(length(seq) == 1){
@@ -188,10 +190,8 @@ for(i in 1:nrow(strat_summary)){
     data.frame(count = strat_summary$count[i], t(seqplot))
   )
 }
-
 strat_summary_plotdf <- strat_summary_plotdf[order(strat_summary_plotdf$count),]
 strat_summary_plotdf$y <- 1:nrow(strat_summary_plotdf)
-
 strat_summary_plot <- ggplot(data = strat_summary_plotdf) +
   geom_point(aes(y = y, x = 1, color = step1), size = 5) +
   geom_point(aes(y = y, x = 1.5, color = step2), size = 5) +
