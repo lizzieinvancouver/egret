@@ -20,7 +20,7 @@ for(i in 1:nrow(newids_chill)){
                paste0(newids_chill[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),
              c('dormancyDuration', 'dormancyTemp',
                'germTempGen', 'germDuration', 'germPhotoperiod',
-               'responseValue')]
+               'responseValueNum')]
 
   di$chillhours <- as.numeric(di$dormancyDuration) * 24 * as.numeric(as.numeric(di$dormancyTemp) < 10 & as.numeric(di$dormancyTemp) > -20)
   di$forc <- as.numeric(di$germDuration) * as.numeric(di$germTempGen)
@@ -30,10 +30,10 @@ for(i in 1:nrow(newids_chill)){
   plot.window(xlim = limits, ylim = c(0,100))
   grid()
 
-  points(di$responseValue ~ di$chillhours, pch = 19, col = '#498ba7', cex = 0.5)
+  points(di$responseValueNum ~ di$chillhours, pch = 19, col = '#498ba7', cex = 0.5)
   # for(f in unique(paste0(di$germTempGen, di$germDuration))){
   #   subi <- di[paste0(di$germTempGen, di$germDuration) == f, ]
-  #   lines(subi$responseValue ~ subi$chillhours, col = '#498ba7')
+  #   lines(subi$responseValueNum ~ subi$chillhours, col = '#498ba7')
   # }
 
   title(ylab = "Germ. perc.", cex.lab = 0.5)
@@ -51,7 +51,7 @@ for(i in 1:nrow(newids_forc)){
                paste0(newids_forc[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),
              c('dormancyDuration', 'dormancyTemp',
                'germTempGen', 'germDuration', 'germPhotoperiod',
-               'responseValue')]
+               'responseValueNum')]
 
   di$chillhours <- as.numeric(di$dormancyDuration) * 24 * as.numeric(as.numeric(di$dormancyTemp) < 10 & as.numeric(di$dormancyTemp) > -20)
   di$forc <- as.numeric(di$germTempGen)
@@ -62,10 +62,10 @@ for(i in 1:nrow(newids_forc)){
   plot.window(xlim = limits, ylim = c(0,100))
   grid()
 
-  points(di$responseValue ~ di$t, pch = 19, col = '#498ba7', cex = 0.5)
+  points(di$responseValueNum ~ di$t, pch = 19, col = '#498ba7', cex = 0.5)
   # for(f in unique(paste0(di$germTempGen, di$germDuration))){
   #   subi <- di[paste0(di$germTempGen, di$germDuration) == f, ]
-  #   lines(subi$responseValue ~ subi$chillhours, col = '#498ba7')
+  #   lines(subi$responseValueNum ~ subi$chillhours, col = '#498ba7')
   # }
 
   title(ylab = "Germ. perc.", cex.lab = 0.5)

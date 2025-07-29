@@ -65,14 +65,14 @@ modeld <- newd %>%
   dplyr::filter(!is.na(germDuration) & !is.na(germTempGen) & germDuration != 'unknown' & germTempGen != "ambient") %>% # (1)
   dplyr::mutate(dormancyTemp = if_else(dormancyTemp %in% c(NA, "NA"), "0", dormancyTemp)) %>% # (2)
   dplyr::filter(genusspecies %in% phylo$tip.label) %>% # (3)
-  dplyr::mutate(responseValue = as.numeric(responseValue)/100, # (4)
+  dplyr::mutate(responseValueNum = as.numeric(responseValueNum)/100, # (4)
                 germDuration = as.numeric(germDuration), # (4)
                 germTempGen = as.numeric(germTempGen), # (4)
                 dormancyDuration = as.numeric(dormancyDuration), # (4)
                 dormancyTemp = as.numeric(dormancyTemp)) %>% # (4)
-  dplyr::filter(responseValue < 1.05) %>% # temporary - need to check whether odd values (>>> scrapping uncertainty) have been corrected
-  dplyr::mutate(responseValue = if_else(responseValue > 1, 1, responseValue), # (5)
-                responseValue = if_else(responseValue < 0, 0, responseValue), # (5)
+  dplyr::filter(responseValueNum < 1.05) %>% # temporary - need to check whether odd values (>>> scrapping uncertainty) have been corrected
+  dplyr::mutate(responseValueNum = if_else(responseValueNum > 1, 1, responseValueNum), # (5)
+                responseValueNum = if_else(responseValueNum < 0, 0, responseValueNum), # (5)
                 germDuration = if_else(germDuration < 0, 0, germDuration), # (5)
                 time = scale(germDuration)[,1], # (6)
                 forcing = scale(germTempGen)[,1], # (6)
@@ -102,34 +102,34 @@ cphy <- vcv.phylo(phylo2,corr=TRUE)
 
 # Prepare data for Stan - chilling hours between -20 and 10
 modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
-mdl.data <- list(N_degen = sum(modeld$responseValue %in% c(0,1)),
-                 N_prop = sum(modeld$responseValue>0 & modeld$responseValue<1),
+mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
+                 N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
                  
                  Nsp =  length(unique(modeld$numspp)),
-                 sp_degen = array(modeld$numspp[modeld$responseValue %in% c(0,1)],
-                                  dim = sum(modeld$responseValue%in% c(0,1))),
-                 sp_prop = array(modeld$numspp[modeld$responseValue>0 & modeld$responseValue<1],
-                                 dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 sp_degen = array(modeld$numspp[modeld$responseValueNum %in% c(0,1)],
+                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 sp_prop = array(modeld$numspp[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 y_degen = array(modeld$responseValue[modeld$responseValue %in% c(0,1)],
-                                dim = sum(modeld$responseValue%in% c(0,1))),
-                 y_prop = array(modeld$responseValue[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 y_degen = array(modeld$responseValueNum[modeld$responseValueNum %in% c(0,1)],
+                                dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 y_prop = array(modeld$responseValueNum[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 t_degen = array(modeld$time[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 t_prop = array(modeld$time[modeld$responseValue>0 & modeld$responseValue<1],
-                              dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 t_degen = array(modeld$time[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 t_prop = array(modeld$time[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                              dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 f_degen = array(modeld$forcing[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 f_prop = array(modeld$forcing[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 f_degen = array(modeld$forcing[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 f_prop = array(modeld$forcing[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 c_degen = array(modeld$chillh10[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 c_prop = array(modeld$chillh10[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 c_degen = array(modeld$chillh10[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 c_prop = array(modeld$chillh10[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
                  Vphy = cphy)
 
@@ -150,6 +150,58 @@ saveRDS(fit, file = 'modeling/output/3slopes/fit_chillh10.rds')
 saveRDS(summ, file = 'modeling/output/3slopes/summary_chillh10.rds')
 saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics_chillh10.rds')
 
+<<<<<<< HEAD
+=======
+# Prepare data for Stan - chilling hours between -20 and 5
+modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
+mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
+                 N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
+                 
+                 Nsp =  length(unique(modeld$numspp)),
+                 sp_degen = array(modeld$numspp[modeld$responseValueNum %in% c(0,1)],
+                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 sp_prop = array(modeld$numspp[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 y_degen = array(modeld$responseValueNum[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 y_prop = array(modeld$responseValueNum[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 t_degen = array(modeld$time[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 t_prop = array(modeld$time[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 f_degen = array(modeld$forcing[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 f_prop = array(modeld$forcing[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 c_degen = array(modeld$chillh5[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 c_prop = array(modeld$chillh5[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 Vphy = cphy)
+
+# Run model
+fit <- sampling(smordbeta, mdl.data, 
+                iter = 4000, warmup = 3000,
+                chains = 4, cores = 4)
+summ <- data.frame(summary(fit)[["summary"]])
+sampler_params  <- get_sampler_params(fit, inc_warmup = FALSE)
+diagnostics <- list(
+  max_treedepth= max(sapply(sampler_params, function(x) max(x[, "treedepth__"]))),
+  max_divergence = max(sapply(sampler_params, function(x) sum(x[, "divergent__"]))),
+  max_rhat = max(summ$Rhat, na.rm = TRUE),
+  min_ess = min(summ$n_eff, na.rm = TRUE)
+)
+saveRDS(fit, file = 'modeling/output/3slopes/fit_chillh5.rds')
+saveRDS(summ, file = 'modeling/output/3slopes/summary_chillh5.rds')
+saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics_chillh5.rds')
+
+>>>>>>> ce1ca0417e8ada28d9ec1d0e5e3f7cb878f8b089
 # Make some plots
 summ_df <- data.frame( bf.mean = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "mean"],
                        bf.q2.5 = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "X2.5."],
