@@ -5,7 +5,9 @@ library(stringr)
 library(ape)
 library(phytools)
 library(rstan)
+options(mc.cores = parallel::detectCores())
 library(dplyr) # oops
+# this preliminary version uses dplyr, will soon take the time to move to a full base R version
 
 # housekeeping
 rm(list=ls()) 
@@ -53,38 +55,43 @@ cphy <- ape::vcv.phylo(phylo,corr=TRUE)
 rm(gymno)
 
 # Process data 
-# (removing rows where we do not have any info on covariates, i.e. chilling and forcing) 
-# (removing species not present in the phylo tree)
-# (computing chilling hours)
+# (1) - removing rows where we do not have any info on forcing) 
+# (2) - transform NA chilling to 0
+# (3) - removing species not present in the phylo tree)
+# (4) - transform response to proportion and covariates to numeric
+# (5) - transform values a bit above or below 0 (due to scrapping uncertainty)
+# (6) - computing chilling hours, scale covariates
 modeld <- newd %>%
-  dplyr::filter(!is.na(germDuration) & !is.na(germTempGen) & !is.na(dormancyDuration) & !is.na(dormancyTemp)) %>%
-  dplyr::filter(germDuration != 'unknown') %>%
-  dplyr::filter(genusspecies %in% phylo$tip.label) %>%
-  dplyr::mutate(responseValueNum = as.numeric(responseValueNum)/100,
-                germDuration = as.numeric(germDuration),
-                germTempGen = as.numeric(germTempGen),
-                dormancyDuration = as.numeric(dormancyDuration),
-                dormancyTemp = as.numeric(dormancyTemp)) %>%
-  dplyr::filter(responseValueNum < 1.05) %>%
-  dplyr::mutate(responseValueNum = if_else(responseValueNum > 1, 1, responseValueNum),
-                responseValueNum = if_else(responseValueNum < 0, 0, responseValueNum),
-                germDuration = if_else(germDuration < 0, 0, germDuration),
-                time = scale(germDuration)[,1],
-                forcing = scale(germTempGen)[,1],
-                chillh10 = scale(dormancyDuration * 24 * as.numeric(dormancyTemp < 10 & dormancyTemp > -20))[,1],
-                chillh5 = scale(dormancyDuration * 24 * as.numeric(dormancyTemp < 5 & dormancyTemp > -20))[,1]) %>%
-  dplyr::filter(!is.na(germDuration) & !is.na(germTempGen) & !is.na(dormancyDuration) & !is.na(dormancyTemp))
+  dplyr::filter(!is.na(germDuration) & !is.na(germTempGen) & germDuration != 'unknown' & germTempGen != "ambient") %>% # (1)
+  dplyr::mutate(dormancyTemp = if_else(dormancyTemp %in% c(NA, "NA"), "0", dormancyTemp)) %>% # (2)
+  dplyr::filter(genusspecies %in% phylo$tip.label) %>% # (3)
+  dplyr::mutate(responseValueNum = as.numeric(responseValueNum)/100, # (4)
+                germDuration = as.numeric(germDuration), # (4)
+                germTempGen = as.numeric(germTempGen), # (4)
+                dormancyDuration = as.numeric(dormancyDuration), # (4)
+                dormancyTemp = as.numeric(dormancyTemp)) %>% # (4)
+  dplyr::filter(responseValueNum < 1.05) %>% # temporary - need to check whether odd values (>>> scrapping uncertainty) have been corrected
+  dplyr::mutate(responseValueNum = if_else(responseValueNum > 1, 1, responseValueNum), # (5)
+                responseValueNum = if_else(responseValueNum < 0, 0, responseValueNum), # (5)
+                germDuration = if_else(germDuration < 0, 0, germDuration), # (5)
+                time = scale(germDuration)[,1], # (6)
+                forcing = scale(germTempGen)[,1], # (6)
+                chillh10 = scale(dormancyDuration * 24 * as.numeric(dormancyTemp < 10 & dormancyTemp > -20))[,1], # (6)
+                chillh5 = scale(dormancyDuration * 24 * as.numeric(dormancyTemp < 5 & dormancyTemp > -20))[,1]) %>% # (6)
+  dplyr::filter(!is.na(germTempGen)) # still needed because germTempGen is far from being in a nice format (e.g. "15 and 25 then 3"...)
 
 # Removing potential duplicates
-modeld_wodup <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValueNum', 'time', 'forcing', 'chillh10')]),]
-message(paste0("Removing ", nrow(modeld)-nrow(modeld_wodup), ' potential duplicates!'))# 17 rows 
+modeld_wodup <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValue', 'time', 'forcing', 'chillh10')]),]
+message(paste0("Removing ", nrow(modeld)-nrow(modeld_wodup), ' potential duplicates!'))# 139 rows 
+#modeld <- modeld_wodup 
+
+# Other test for duplicate removal
+modeld$responseValueRounded <- round(modeld$responseValue,3) # rounded to 3 digits, ie percentage with 1 digits (data scraping uncertainty...?)
+modeld_wodup <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValueRounded', 'time', 'forcing', 'chillh10')]),]
+nrow(modeld)-nrow(modeld_wodup) # 143 when responseValue rounded to 3 digits (XX.X%)
+
 modeld <- modeld_wodup 
 rm(modeld_wodup)
-
-# # Other test for duplicate removal: does not change anything
-# modeld$responseValueRounded <- round(modeld$responseValue,2) # rounded to 2 digits, ie percentage with 0 digits (data scraping uncertainty...?)
-# test <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValueRounded', 'time', 'forcing', 'chillh')]),]
-# nrow(modeld)-nrow(test) # still 17!
 
 # Trim the phylo tree with species present in the dataset
 spp <-  unique(modeld$genusspecies)
@@ -130,7 +137,7 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
 smordbeta <- stan_model("stan/orderedbetalikelihood_3slopes.stan")
 fit <- sampling(smordbeta, mdl.data, 
                 iter = 4000, warmup = 3000,
-                chains = 4, cores = 4)
+                chains = 4)
 summ <- data.frame(summary(fit)[["summary"]])
 sampler_params  <- get_sampler_params(fit, inc_warmup = FALSE)
 diagnostics <- list(
@@ -143,6 +150,8 @@ saveRDS(fit, file = 'modeling/output/3slopes/fit_chillh10.rds')
 saveRDS(summ, file = 'modeling/output/3slopes/summary_chillh10.rds')
 saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics_chillh10.rds')
 
+<<<<<<< HEAD
+=======
 # Prepare data for Stan - chilling hours between -20 and 5
 modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
 mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
@@ -192,6 +201,7 @@ saveRDS(fit, file = 'modeling/output/3slopes/fit_chillh5.rds')
 saveRDS(summ, file = 'modeling/output/3slopes/summary_chillh5.rds')
 saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics_chillh5.rds')
 
+>>>>>>> ce1ca0417e8ada28d9ec1d0e5e3f7cb878f8b089
 # Make some plots
 summ_df <- data.frame( bf.mean = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "mean"],
                        bf.q2.5 = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "X2.5."],
@@ -274,10 +284,10 @@ forcingeffect_baskin <-
                       col = dormancyclass.simp), 
                   size = 0.05, linewidth = 0.5, alpha = 0.5) +
   geom_point(aes(x = bf.mean, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species)), col = 'white', size = 0.01) +
-  geom_text(aes(x = -3.7, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species), label = ifelse(dormancyclass.genusapprox, "~", "")), size = 2) + 
+  geom_text(aes(x = -4.6, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species), label = ifelse(dormancyclass.genusapprox, "~", "")), size = 2) + 
   theme_bw() +
   scale_color_manual(values = c('#7fa688', '#ddb166', '#D98B65', "#6B95B2", "grey70"), breaks = c('Endogenous', "Mixed", "Exogenous", "Non-dormant", "Unclear, unknown")) +
-  coord_cartesian(clip = "off", ylim = c(0,126), xlim = c(-3.6,3.6), expand = FALSE) +
+  coord_cartesian(clip = "off", ylim = c(0,length(unique(modeld$numspp))+1), xlim =  c(-4.5,4.5), expand = FALSE) +
   scale_x_continuous(position = "top") +
   theme(axis.title.y = element_blank(), axis.text.y = element_text(size = 5),
         axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
@@ -352,10 +362,10 @@ chillingeffect_baskin <- ggplot(data = arrange(summ_df,desc(bc.mean))) +
                       col = dormancyclass.simp), 
                   size = 0.05, linewidth = 0.5, alpha = 0.5) +
   geom_point(aes(x = bc.mean, y = factor(species,level = arrange(summ_df,desc(bc.mean))$species),), col = 'white', size = 0.01) +
-  geom_text(aes(x = -6.6, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species), label = ifelse(dormancyclass.genusapprox, "~", "")), size = 2) + 
+  geom_text(aes(x = -4.6, y = factor(species,level = arrange(summ_df,desc(bf.mean))$species), label = ifelse(dormancyclass.genusapprox, "~", "")), size = 2) + 
   theme_bw() +
   scale_color_manual(values = c('#7fa688', '#ddb166', '#D98B65', "#6B95B2", "grey70"), breaks = c('Endogenous', "Mixed", "Exogenous", "Non-dormant", "Unclear, unknown")) +
-  coord_cartesian(clip = "off", ylim = c(0,126), xlim = c(-6.4,6.4), expand = FALSE) +
+  coord_cartesian(clip = "off", ylim = c(0,length(unique(modeld$numspp))+1), xlim = c(-4.5,4.5), expand = FALSE) +
   scale_x_continuous(position = "top") +
   theme(axis.title.y = element_blank(), axis.text.y = element_text(size = 5),
         axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
