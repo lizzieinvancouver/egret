@@ -166,3 +166,40 @@ d$stratSequence <- stratSequence
 d$stratSequence_condensed <- stratSequence_cdsd
 
 # For Christophe: grepl('warm', d$stratSequence_condensed)
+
+strat_summary <- data.frame(table(unique(d[,c('datasetID', 'stratSequence_condensed')])$stratSequence_condensed))
+names(strat_summary) <- c('sequence', 'count')
+
+strat_summary_plotdf <- data.frame()
+for(i in 1:nrow(strat_summary)){
+  
+  seq <- unlist(stringr::str_split(strat_summary$sequence[i], ' then '))
+  seqplot <- rep(NA, 3)
+  if(length(seq) == 1){
+    seqplot[3] <- seq[1]
+  }else if(length(seq) == 2){
+    seqplot[2:3] <- seq[1:2]
+  }else{
+    seqplot <- seq
+  }
+  names(seqplot) <- paste0('step', 1:3)
+  strat_summary_plotdf <- rbind(
+    strat_summary_plotdf,
+    data.frame(count = strat_summary$count[i], t(seqplot))
+  )
+}
+
+strat_summary_plotdf <- strat_summary_plotdf[order(strat_summary_plotdf$count),]
+strat_summary_plotdf$y <- 1:nrow(strat_summary_plotdf)
+
+strat_summary_plot <- ggplot(data = strat_summary_plotdf) +
+  geom_point(aes(y = y, x = 1, color = step1), size = 5) +
+  geom_point(aes(y = y, x = 1.5, color = step2), size = 5) +
+  geom_point(aes(y = y, x = 2, color = step3), size = 5) +
+  geom_text(aes(y = y, x = 0.3, label = paste0('n=',count))) +
+  scale_color_manual(breaks = c('cold', 'mild', 'warm'), values = c('#178a94','#bfe1bf','#ee8080'), na.value = NA) +
+  theme_void() +
+  theme(legend.position = 'bottom',
+        legend.title = element_blank(),
+        plot.margin = margin(5,5,5,10)) +
+  coord_cartesian(xlim = c(0,2))
