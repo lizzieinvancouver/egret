@@ -20,9 +20,9 @@ egret/data/egret.xlsx meta_general tab below (data scraped in data_detailed tab)
 * crop -- Y/N plant is a crop species
 * woody -- Y/N plant has a woody stem
 * source.population -- name of population if applicable
-* providence.lat -- Latitude of samples, in decimal degrees. Negative = South
-* providence.long -- Longitude of samples, in decimal degrees. Negative = West
-* providence.altitude -- altitude of sample origin, in meters
+* providence.lat -- Latitude of samples, in decimal degrees. Negative = South (_cleaned!_ see also egretDataScraping)
+* providence.long -- Longitude of samples, in decimal degrees. Negative = West (_cleaned!_ see also egretDataScraping)
+* providence.altitude -- altitude of sample origin, in meters (see also egretDataScraping)
 * continent -- Continent of seed collection
 * no.indiv.collected -- number of seeds collected in the field per indiviudal
 * year.collected -- year seeds were collected
@@ -92,7 +92,7 @@ Cleaned columns either
 * chemicalConcent -- chemical concentrations, when given sequentially they are separate by `+`, 
 * chemicalConcentUnit -- chemical concentration in units, when given sequentially they are separate by `+`, when the unit is given it is correct (Victor checked), otherwise you can assume ppm (but Victor did not check)
 * datasetIDstudy -- a unique experiment (datasetID and study pasted together)
-* latbi	-- latin binomial (genus and species pasted together)
-* provLatLon
-* provLatLonAlt
+* latbi	-- latin binomial (genus and species pasted together, includes subsp.)
+* provLatLon -- provenance latitude and longitude pasted together
+* provLatLonAlt -- provenance altitude??? WTF FIXME
 
