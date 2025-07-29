@@ -14,18 +14,18 @@ egret/data/egret.xlsx meta_general tab below (data scraped in data_detailed tab)
 * datasetID -- short name for each publication
 * study	-- used to differentiate between separate experiments within a publication. Shorthand: exp1, exp2, exp3 etc.
 * entered.by -- 3-5 letter acronym 
-* genus -- genus of individual
-* species -- species of individual (without author)
-* variety -- variety, accession, cultivar, or other subspecies designation
+* genus -- genus of individual (_cleaned_ and synonymized with worldflora package)
+* species -- species of individual (without author) (_cleaned_ and synonymized with worldflora package)
+* variety -- variety, accession, cultivar, or other subspecies designation (including some subsp. moved off species, so a little cleaned)
 * crop -- Y/N plant is a crop species
 * woody -- Y/N plant has a woody stem
-* source.population -- name of population if applicable
-* providence.lat -- Latitude of samples, in decimal degrees. Negative = South (_cleaned!_ see also egretDataScraping)
-* providence.long -- Longitude of samples, in decimal degrees. Negative = West (_cleaned!_ see also egretDataScraping)
-* providence.altitude -- altitude of sample origin, in meters (see also egretDataScraping)
-* continent -- Continent of seed collection
+* source.population -- name of population if applicable (_cleaned!_ see also egretDataScraping under `cleanCoordinates.R`)
+* providence.lat -- Latitude of samples, in decimal degrees. Negative = South (_cleaned!_ see also egretDataScraping under `cleanCoordinates.R`)
+* providence.long -- Longitude of samples, in decimal degrees. Negative = West (_cleaned!_ see also egretDataScraping under `cleanCoordinates.R`)
+* providence.altitude -- altitude of sample origin, in meters (_cleaned!_ see also egretDataScraping under `cleanCoordinates.R`)
+* continent -- Continent of seed collection (_cleaned!_ see also egretDataScraping under `cleanCoordinates.R`)
 * no.indiv.collected -- number of seeds collected in the field per indiviudal
-* year.collected -- year seeds were collected
+* year.collected -- year seeds were collected (not cleaned, but see issue 63)
 * storage.type -- how were seeds stored (e.g. dry, moist, in darkness
 * storage.time -- how long were seeds stored for in days
 * storage.humidity -- humidity of where seeds were stored in percent humidity
@@ -78,19 +78,18 @@ They are cleaned in analyses/cleaning/cleanall.R
 * storageDetails -- storage information including substrate/vessel on top of wet/dry/cold/room temp 
 * storageTemp -- storage temperatures given sequentially seperated by `then`
 * storageDuration -- storage durations in days given sequentially seperated by `then`
-* dormancyTemp
-* dormancyDuration
+* dormancyTemp -- sequence of moist cold storage and cold stratification temperatures given sequentially seperated by `then` (was created in combineStorageChill.R at the end cleanChillTempDuration.R)
+* dormancyDuration -- sequence of moist cold storage and cold stratification durations (days) given sequentially seperated by `then` (was created in combineStorageChill.R at the end cleanChillTempDuration.R)
 * responseVar -- cleaned column of respvar with cleaned names for the response variables (n = 106)
-* responseValue -- cleaned column of response, but in characters DELETED
 * responseValueNum -- same as responseValue, but numeric, values are the same but with trailing zeros. 
 * responseErrorType -- cleaned the names of the different types of errors, but error values not cleaned.
 * photoperiodCor -- photoperiod simplified to light or dark (because there is not so much other info in photoperiod column)
-* treatmentCor     
-* treatmentDetails
+* treatmentCor -- 
+* treatmentDetails	-- 
 * chemicalConcent -- chemical concentrations, when given sequentially they are separate by `+`, 
 * chemicalConcentUnit -- chemical concentration in units, when given sequentially they are separate by `+`, when the unit is given it is correct (Victor checked), otherwise you can assume ppm (but Victor did not check)
 * datasetIDstudy -- a unique experiment (datasetID and study pasted together)
 * latbi	-- latin binomial (genus and species pasted together, includes subsp.)
 * provLatLon -- provenance latitude and longitude pasted together
-* provLatLonAlt -- provenance altitude??? WTF FIXME
+* provLatLonAlt -- provenance latitude and longitude *and* altitude pasted together
 
