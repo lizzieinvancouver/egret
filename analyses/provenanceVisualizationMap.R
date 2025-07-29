@@ -8,7 +8,7 @@ library(ggplot2)
 library(plotly)
 library(RColorBrewer)
 library(dplyr)
-
+library(viridisLite)
 
 # run cleanall
 source("/Users/christophe_rouleau-desrochers/github/egret/analyses/cleaning/cleanall.R")
@@ -204,42 +204,95 @@ source("analyseSeedCues/summarizeStrat.R")
 
 unique(d$stratSequence_condensed)
 
-warmstratbychilltemp <- subset(d, chillTemp >19)
+# get a smaller df to play around
+strat <- d[, c("datasetID", "provenance.lat", "provenance.long", "provLatLon", "stratSequence_condensed")]
+# add new cols
+strat$coldstrat <- ifelse(grepl("cold", strat$stratSequence_condensed, ignore.case = TRUE), "Y", NA)
+strat$warmstrat <- ifelse(grepl("warm", strat$stratSequence_condensed, ignore.case = TRUE), "Y", NA)
 
-# transform lat long to numeric (will be deleted once clean coordinate is finished)
-warmstrat$provenance.lat <- as.numeric(subbyrespvar$provenance.lat)
-warmstrat$provenance.long <- as.numeric(subbyrespvar$provenance.long)
+# then add a single colum with 3 classes: warmstrat, coldstrat, no strat. wait not now
+strat$stratclasses <- NA
+strat$stratclasses[which(strat$warmstrat == "Y" & strat$coldstrat == "Y")] <- "both"
+strat$stratclasses[which(strat$warmstrat == "Y" & is.na(strat$coldstrat))] <- "warm"
+strat$stratclasses[which(is.na(strat$warmstrat) & strat$coldstrat == "Y")] <- "cold"
+strat$stratclasses[which(is.na(strat$warmstrat) & is.na(strat$coldstrat))] <- "nostrat"
+
+# assign them colors 
+strat$colmap <- NA
+strat$colmap[which(strat$stratclasses == "both")] <- "purple"
+strat$colmap[which(strat$stratclasses == "warm")] <- "#ff3300"
+strat$colmap[which(strat$stratclasses == "cold")] <- "#0066ff"
+strat$colmap[which(strat$stratclasses == "nostrat")] <- "#aaaaaa"
+
+# convert prov to numeric
+strat$provenance.lat <- as.numeric(strat$provenance.lat)
+strat$provenance.long <- as.numeric(strat$provenance.long)
+
 # get rid of nas
-warmstratnona <- warmstrat[!is.na(warmstrat$provenance.lat), ]
-# Select only 1 entry per provenance
-warmstratFormap <- warmstratnona[!duplicated(warmstratnona$provenance.lat), ]
-# clean columns not necessary
-warmstratFormap2 <- warmstratFormap[, c("datasetID", "provenance.lat", "provenance.long", "continent", "responseVar", "treatment")]
+stratnona <- subset(strat, provLatLon != "NA NA")
 
-color <- "red"
-fig <- plot_ly(
-  data = warmstratFormap2,
+# Select only 1 entry per provenance
+stratFormap <- stratnona[!duplicated(stratnona$provLatLon), ]
+
+
+stratmap <- plot_ly(
+  data = stratnona,
   type = 'scattergeo', 
   mode = 'markers',
   lat = ~provenance.lat,
   lon = ~provenance.long,
-  marker = list(size = 5, opacity = 0.8),
-  color = ~responseVar,
-  colors = color,
-  text = ~paste("Dataset ID:", datasetID, "<br>ResponseVar:", responseVar),
-  hoverinfo = "text"
+  text = ~paste("datasetID:", datasetID, "<br>Strat:", stratclasses),
+  hoverinfo = "text",
+  marker = list(
+    size = 5,  
+    sizemode = "area",
+    opacity = 0.8,
+    color = ~I(colmap)
+    # colorscale = unique(stratnona$colmap)
+  )
 )
-
 # Set map layout
-fig <- fig %>% layout(
-  title = "Locations of study using warm strat treatments",
+stratmap <- stratmap %>% layout(
+  title = "Loc of studies of warm, cold, both and no strat treatments",
   geo = list(
     projection = list(type = "natural earth"),
     showland = TRUE,
     landcolor = "rgb(243, 243, 243)"
   )
 )
-fig
+stratmap
+
+# make a small one with just warm strat
+warmstrat <- subset(stratnona, stratclasses == "warm")
+
+warmstratmap <- plot_ly(
+  data = warmstrat,
+  type = 'scattergeo', 
+  mode = 'markers',
+  lat = ~provenance.lat,
+  lon = ~provenance.long,
+  text = ~paste("datasetID:", datasetID, "<br>Strat:", stratclasses),
+  hoverinfo = "text",
+  marker = list(
+    size = 5,  
+    sizemode = "area",
+    opacity = 0.8,
+    color = ~I(colmap)
+    # colorscale = unique(stratnona$colmap)
+  )
+)
+# Set map layout
+warmstratmap <- warmstratmap %>% layout(
+  title = "Loc of studies of warm strat treatments",
+  geo = list(
+    projection = list(type = "natural earth"),
+    showland = TRUE,
+    landcolor = "rgb(243, 243, 243)"
+  )
+)
+warmstratmap
+
+
 
 # === === === === === === === === === === #
 #### Make a map for provenance trials ####
@@ -347,10 +400,10 @@ provbycolormap
 # === === === === === === === === === === === #
 #### Phylogenic tree X multiple provenances ####
 # === === === === === === === === === === === #
-provcount4phy <- aggregate(provnona["provLatLon"], provnona[c("datasetIDstudy", "latbi")], function(x) length(unique(x)))
+provcount4phy <- aggregate(provnona["provLatLon"], provnona[c("datasetID", "datasetIDstudy", "latbi")], function(x) length(unique(x)))
+
+# select only rows with more than 1 provenance
 morethan1 <- subset(provcount4phy, provLatLon != "1")
-
-
 
 # load tree
 library(phytools)
@@ -365,15 +418,44 @@ allspp <- egretTree$tip.label
 # get spp with multiple prov
 vecspp <- unique(morethan1$latbi)
 
+# now color code by dataset ID
+vecids <- unique(morethan1$datasetID)
+
+# set color palet
+colids <- viridis(length(vecids))
+
 # mach both
 tipindex <- match(vecspp, allspp)
 
 # categorize them into splicing and non-splicing for color purpose
 status <- ifelse(allspp %in% vecspp, "multiple", "not multiple")
 status <- factor(status, levels = c("multiple", "not multiple"))
-mycol <- c("blue", "black")[status]
+colprov <- c("blue", "black")[status]
 
-# plot the tree
+# assign col datasetID with multiple provs
+datasetIDs <- unique(morethan1$datasetID)
+dataset_colors <- setNames(rainbow(length(datasetIDs)), datasetIDs)
+
+# Match species to tip labels in the tree
+tip_labels <- egretTree$tip.label
+tip_datasetID <- rep(NA, length(tip_labels))
+species_in_df <- unique(morethan1$latbi)
+
+# fill tip_datasetID with datasetIDs from df
+for (i in 1:nrow(morethan1)) {
+  species <- species_in_df[i]
+  if (species %in% tip_labels) {
+    tip_index <- which(tip_labels == species)
+    tip_datasetID[tip_index] <- morethan1$datasetID[i]
+  }
+}
+
+# Create color vector for tip dots based on datasetID
+colids <- ifelse(!is.na(tip_datasetID), dataset_colors[tip_datasetID], "transparent")
+
+# Plot tree and color-coded tip dots
 pdf("figures/egretTreeXprovenance.pdf", width = 20, height = 80)
-plot(egretTree, cex = 1.5, tip.color = mycol)
+plot(egretTree, cex = 1.5, tip.color = colprov)
+tiplabels(pch = 19, col = colids, adj = 105, cex = 3)
+legend("topright", legend = names(dataset_colors), col = dataset_colors, pch = 19, cex = 0.8)
 dev.off()
