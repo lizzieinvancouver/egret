@@ -1,10 +1,11 @@
 
 # Summarizing stratification treatments in a more handy format
 
+# detailed info
 cold_range <- c(-10, 10)
 warm_range <- c(10, 40) # exclude 10
 
-# detailled info
+# detailed info
 stratSequence <- rep(NA, nrow(d))
 stratTemp <- rep(NA, nrow(d))
 stratDur <- rep(NA, nrow(d))
@@ -169,6 +170,8 @@ for(i in 1:nrow(d)){
 
 d$stratSequence <- stratSequence
 d$stratSequence_condensed <- stratSequence_cdsd
+d$warmTemp <- stratTemp
+d$warmDuration <- stratDur
 
 # For Christophe: grepl('warm', d$stratSequence_condensed)
 
