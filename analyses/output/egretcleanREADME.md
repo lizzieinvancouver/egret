@@ -61,17 +61,15 @@ egret/data/egret.xlsx meta_general tab below (data scraped in data_detailed tab)
 
 They are cleaned in analyses/cleaning/cleanall.R 
 
-Cleaned columns either 
-
-* germTempGen
-* germTemp
-* germDuration
-* germTempClass
-* germTempDay
-* germTempNight
-* germPhotoperiod
-* germPhotoperiodDay
-* germPhotoperiodNight
+* germTempGen -- a column for weighted average temperatures, even for those that alternate, uses photoperiod as our thermoperiod
+* germTemp  -- cleaned column of temperatures during germination, includes alternating values with slashes for alternating for varied temperatures, when alternating temperatures were ranges (eg. 27-29/6-18) vales were averaged for each alternate value
+* germDuration -- cleaned column of germination duration, 
+* germTempClass -- denotes whether germination temperatures varied, with 3 categories: "alternating", "constant" , "three levels"
+* germTempDay -- cleaned day temperature during germination, averaged when a range, coded as tempDay and renamed to germTempDay at end of code
+* germTempNight -- cleaned night temperature during germination, averaged when a range, coded as tempNight and renamed to germTempDay at end of code
+* germPhotoperiod -- cleaned column of photoperiod conditions during germination, includes alternating values with slashes.
+* germPhotoperiodDay -- day time photoperiod conditions taken from germPhotoperiod, usually the first value of the alternating day/night entries, or assumed so if not clear in the paper
+* germPhotoperiodNight -- duration of night photoperiod taken from germPhotoperiod, usually the second value of the alternating day/night entries
 * scarifType -- detailed description of scarification (as of July 2025: this is a slightly cleaned version of scarif.type that we stopped fully cleaning at some point)
 * scarifTypeGen -- detailed description of scarification: NA, chemical, mechanical or soaking (which is in hot water)
 * scarifTypeSpe -- very similar to scarifType, just cleaner **FIXME: clean up this one and delete out scarifType
@@ -82,10 +80,10 @@ Cleaned columns either
 * storageDuration -- storage durations in days given sequentially seperated by `then`
 * dormancyTemp
 * dormancyDuration
-* responseVar
-* responseValue
-* responseValueNum
-* responseErrorType
+* responseVar -- cleaned column of respvar with cleaned names for the response variables (n = 106)
+* responseValue -- cleaned column of response, but in characters DELETED
+* responseValueNum -- same as responseValue, but numeric, values are the same but with trailing zeros. 
+* responseErrorType -- cleaned the names of the different types of errors, but error values not cleaned.
 * photoperiodCor -- photoperiod simplified to light or dark (because there is not so much other info in photoperiod column)
 * treatmentCor     
 * treatmentDetails

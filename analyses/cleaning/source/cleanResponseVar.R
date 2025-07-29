@@ -326,3 +326,5 @@ sort(unique(germCap$datasetID))
 
 ## Lizzie (5 July 2025) renaming 
 names(d)[names(d)=="errorType"] <- "responseErrorType"
+
+d <- d[, -which(names(d) == "responseValue")]

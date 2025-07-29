@@ -60,14 +60,14 @@ modeld <- newd %>%
   dplyr::filter(!is.na(germDuration) & !is.na(germTempGen) & !is.na(dormancyDuration) & !is.na(dormancyTemp)) %>%
   dplyr::filter(germDuration != 'unknown') %>%
   dplyr::filter(genusspecies %in% phylo$tip.label) %>%
-  dplyr::mutate(responseValue = as.numeric(responseValue)/100,
+  dplyr::mutate(responseValueNum = as.numeric(responseValueNum)/100,
                 germDuration = as.numeric(germDuration),
                 germTempGen = as.numeric(germTempGen),
                 dormancyDuration = as.numeric(dormancyDuration),
                 dormancyTemp = as.numeric(dormancyTemp)) %>%
-  dplyr::filter(responseValue < 1.05) %>%
-  dplyr::mutate(responseValue = if_else(responseValue > 1, 1, responseValue),
-                responseValue = if_else(responseValue < 0, 0, responseValue),
+  dplyr::filter(responseValueNum < 1.05) %>%
+  dplyr::mutate(responseValueNum = if_else(responseValueNum > 1, 1, responseValueNum),
+                responseValueNum = if_else(responseValueNum < 0, 0, responseValueNum),
                 germDuration = if_else(germDuration < 0, 0, germDuration),
                 time = scale(germDuration)[,1],
                 forcing = scale(germTempGen)[,1],
@@ -76,7 +76,7 @@ modeld <- newd %>%
   dplyr::filter(!is.na(germDuration) & !is.na(germTempGen) & !is.na(dormancyDuration) & !is.na(dormancyTemp))
 
 # Removing potential duplicates
-modeld_wodup <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValue', 'time', 'forcing', 'chillh10')]),]
+modeld_wodup <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValueNum', 'time', 'forcing', 'chillh10')]),]
 message(paste0("Removing ", nrow(modeld)-nrow(modeld_wodup), ' potential duplicates!'))# 17 rows 
 modeld <- modeld_wodup 
 rm(modeld_wodup)
@@ -95,34 +95,34 @@ cphy <- vcv.phylo(phylo2,corr=TRUE)
 
 # Prepare data for Stan - chilling hours between -20 and 10
 modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
-mdl.data <- list(N_degen = sum(modeld$responseValue %in% c(0,1)),
-                 N_prop = sum(modeld$responseValue>0 & modeld$responseValue<1),
+mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
+                 N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
                  
                  Nsp =  length(unique(modeld$numspp)),
-                 sp_degen = array(modeld$numspp[modeld$responseValue %in% c(0,1)],
-                                  dim = sum(modeld$responseValue%in% c(0,1))),
-                 sp_prop = array(modeld$numspp[modeld$responseValue>0 & modeld$responseValue<1],
-                                 dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 sp_degen = array(modeld$numspp[modeld$responseValueNum %in% c(0,1)],
+                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 sp_prop = array(modeld$numspp[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 y_degen = array(modeld$responseValue[modeld$responseValue %in% c(0,1)],
-                                dim = sum(modeld$responseValue%in% c(0,1))),
-                 y_prop = array(modeld$responseValue[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 y_degen = array(modeld$responseValueNum[modeld$responseValueNum %in% c(0,1)],
+                                dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 y_prop = array(modeld$responseValueNum[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 t_degen = array(modeld$time[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 t_prop = array(modeld$time[modeld$responseValue>0 & modeld$responseValue<1],
-                              dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 t_degen = array(modeld$time[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 t_prop = array(modeld$time[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                              dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 f_degen = array(modeld$forcing[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 f_prop = array(modeld$forcing[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 f_degen = array(modeld$forcing[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 f_prop = array(modeld$forcing[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 c_degen = array(modeld$chillh10[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 c_prop = array(modeld$chillh10[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 c_degen = array(modeld$chillh10[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 c_prop = array(modeld$chillh10[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
                  Vphy = cphy)
 
@@ -145,34 +145,34 @@ saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics_chillh10.rds')
 
 # Prepare data for Stan - chilling hours between -20 and 5
 modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
-mdl.data <- list(N_degen = sum(modeld$responseValue %in% c(0,1)),
-                 N_prop = sum(modeld$responseValue>0 & modeld$responseValue<1),
+mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
+                 N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
                  
                  Nsp =  length(unique(modeld$numspp)),
-                 sp_degen = array(modeld$numspp[modeld$responseValue %in% c(0,1)],
-                                  dim = sum(modeld$responseValue%in% c(0,1))),
-                 sp_prop = array(modeld$numspp[modeld$responseValue>0 & modeld$responseValue<1],
-                                 dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 sp_degen = array(modeld$numspp[modeld$responseValueNum %in% c(0,1)],
+                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 sp_prop = array(modeld$numspp[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 y_degen = array(modeld$responseValue[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 y_prop = array(modeld$responseValue[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 y_degen = array(modeld$responseValueNum[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 y_prop = array(modeld$responseValueNum[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 t_degen = array(modeld$time[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 t_prop = array(modeld$time[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 t_degen = array(modeld$time[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 t_prop = array(modeld$time[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 f_degen = array(modeld$forcing[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 f_prop = array(modeld$forcing[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 f_degen = array(modeld$forcing[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 f_prop = array(modeld$forcing[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 c_degen = array(modeld$chillh5[modeld$responseValue %in% c(0,1)],
-                                 dim = sum(modeld$responseValue%in% c(0,1))),
-                 c_prop = array(modeld$chillh5[modeld$responseValue>0 & modeld$responseValue<1],
-                                dim = sum(modeld$responseValue>0 & modeld$responseValue<1)),
+                 c_degen = array(modeld$chillh5[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 c_prop = array(modeld$chillh5[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
                  Vphy = cphy)
 
