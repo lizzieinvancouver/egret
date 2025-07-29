@@ -9,6 +9,8 @@ What does each colum in egretclean mean? I am so glad you asked....
 These were directly scraped from papers and are described in:
 egret/data/egret.xlsx meta_general tab below (data scraped in data_detailed tab)
 
+Some of them are cleaned, I tried to note that below.
+
 ### I reproduce that information here: 
 
 * datasetID -- short name for each publication
@@ -57,7 +59,7 @@ egret/data/egret.xlsx meta_general tab below (data scraped in data_detailed tab)
 * figure -- figure or table data taken from
 * Notes -- Add notes on assumptions you made, or things you are not sure of
 
-## The next columns are the result of cleaning
+## The next columns are all the result of cleaning
 
 They are cleaned in analyses/cleaning/cleanall.R 
 
@@ -84,8 +86,7 @@ They are cleaned in analyses/cleaning/cleanall.R
 * responseValueNum -- same as responseValue, but numeric, values are the same but with trailing zeros. 
 * responseErrorType -- cleaned the names of the different types of errors, but error values not cleaned.
 * photoperiodCor -- photoperiod simplified to light or dark (because there is not so much other info in photoperiod column)
-* treatmentCor -- 
-* treatmentDetails	-- 
+* treatmentOverview -- (not fully cleaned!) defining the treatment being varied such that you get the smallest possible group of data points (ahola99, for example, the treatmentCor is "light x chilling x germination temperature")
 * chemicalConcent -- chemical concentrations, when given sequentially they are separate by `+`, 
 * chemicalConcentUnit -- chemical concentration in units, when given sequentially they are separate by `+`, when the unit is given it is correct (Victor checked), otherwise you can assume ppm (but Victor did not check)
 * datasetIDstudy -- a unique experiment (datasetID and study pasted together)
