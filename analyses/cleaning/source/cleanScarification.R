@@ -1,12 +1,12 @@
-## Updated 5 July 2024 ##
-## By Britany Wu ##
+## Updated 29 July 2025 ##
+## By Lizzie in the sunshine on Saturna ##
 
 ## This contains code to clean scarification and scarif type ##
 ## Original code taken from file called cleaningDL.R ##
 ## 24 Feb subset each gen group, can start specific grouping ## 
 ## 9 Apr figure out unusual entry and soakin ##
 ## 17 May clarify questions from git issues ##
-## 5 July done ##
+## 5 July done, but then updated by Britany Wu on 5 July 2024 ##
 
 ## 
 #1. Scarification
@@ -52,7 +52,6 @@ d$scarifType[which(d$datasetID == "tilki07" & d$scarif.type == "mechanical")] <-
 d$scarifType[which(d$datasetID == "tilki07" & d$scarif.type == "mechanical")] <- "mechanical - razor"
 d$scarifType[which(d$datasetID == "ghimeray14" & d$scarif.type == "sand")] <- "mechanical - sand"
 d$scarifType[which(d$scarif.type == "partially scarified ")] <- "mechanical - razor" # Lizzie adds: I checked paper, they did it with a scalpel
-
 # Lizzie here! Hi, hi. Cleaning some data we added: al-absi10 and ghimeray14
 # Careful, some of these entries are 0 minutes!
 d$scarifType[grep("H2SO4.98per", d$scarifType)] <- "chemical - H2SO4"
@@ -185,7 +184,7 @@ d$scarifTypeSpe[which(d$datasetID == "irvani12" & d$scarifTypeSpe == "acid")] <-
 d$scarifTypeSpe[which(d$datasetID == "Al-Absi10" & d$scarifTypeSpe == "acid scarification")] <- "chemical - H2SO4"
 
 # soakin
-d$scarifTypeSpe[which(d$scarifTypeSpe == "soaking in water")] <- "soakin - soaking"
+d$scarifTypeSpe[which(d$scarifTypeSpe == "soaking in water")] <- "soaking - soaking"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "hot water 70C")] <- "soaking - 70°C hot water"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "hot water")] <- "soaking - hot water"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "hot water scarification")] <- "soaking - hot water"
@@ -196,3 +195,9 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 70°C hot water")] <- "so
 d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 90°C hot water")] <- "soaking - 90°C hot water"
 
 unique(d$scarifTypeSpe)
+# Lizzie checked differences between scarifTypeSpe and scarif.type and they are all either...
+# mis-labeled so shoudl not be in scarifTypeSpe or 0 min so are 0. Yay.
+
+# Lizzie thinks we can use scarifTypeSpe
+# She checked a couple she was worried about (e.g., diff sandpaper grits) and they seem to happen ACROSS different papers, not within
+d$scarifType <- NULL 
