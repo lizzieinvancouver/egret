@@ -9,6 +9,10 @@ library(plotly)
 library(RColorBrewer)
 library(dplyr)
 
+
+# run cleanall
+source("/Users/christophe_rouleau-desrochers/github/egret/analyses/cleaning/cleanall.R")
+
 #start by subsetting down to the studies that have provenances
 d$idspp <- paste(d$datasetIDstudy, d$latbi, sep = "_")
 
@@ -49,12 +53,12 @@ provcount2$color[which(provcount2$provLatLon < 1)] <- "NA provenance"
 provcount2$color[which(provcount2$provLatLon == 1)] <- "1 provenance"
 provcount2$color[which(provcount2$provLatLon > 1)] <- "More than 1 provenance"
 
-# plotting the number of studies with more than 1 provenance AND NAs
+# plotting the number of studies with more than 1 provenance, 1 prov AND NAs
 count <- ggplot(provcount2, aes(x = provLatLon, fill = color)) +
   geom_histogram(binwidth = 1) +
-  labs(title = "", x = "Number of provenances X datasetIDstudy x spp", y= "Studies count")+
-  scale_color_manual()+
-  theme_minimal()
+  labs(title = "", x = "Number of provenances", y= "count datasetID X study X spp")+
+  scale_color_manual() +
+  theme_minimal() 
 count
 ggsave("figures/provenanceCount.jpeg", count)
 
@@ -194,8 +198,11 @@ fig
 # === === === === === === === === === === === #
 vec <- unique(d$treatmentCor[grepl("warm", d$treatmentCor)])
 warmstrat <- subset(d, treatmentCor %in% vec)
-#
+# source victor's file I am not allowed to use
+# the not condensed one details wether 
+source("analyseSeedCues/summarizeStrat.R")
 
+unique(d$stratSequence_condensed)
 
 warmstratbychilltemp <- subset(d, chillTemp >19)
 
@@ -337,4 +344,36 @@ provbycolormap <- provbycolormap %>% layout(
 )
 provbycolormap
 
+# === === === === === === === === === === === #
+#### Phylogenic tree X multiple provenances ####
+# === === === === === === === === === === === #
+provcount4phy <- aggregate(provnona["provLatLon"], provnona[c("datasetIDstudy", "latbi")], function(x) length(unique(x)))
+morethan1 <- subset(provcount4phy, provLatLon != "1")
 
+
+
+# load tree
+library(phytools)
+library(taxize)
+library(ape)
+
+egretTree <- read.tree("output/egretPhylogenyFull.tre")
+
+# get a vector of egretnames
+allspp <- egretTree$tip.label
+
+# get spp with multiple prov
+vecspp <- unique(morethan1$latbi)
+
+# mach both
+tipindex <- match(vecspp, allspp)
+
+# categorize them into splicing and non-splicing for color purpose
+status <- ifelse(allspp %in% vecspp, "multiple", "not multiple")
+status <- factor(status, levels = c("multiple", "not multiple"))
+mycol <- c("blue", "black")[status]
+
+# plot the tree
+pdf("figures/egretTreeXprovenance.pdf", width = 20, height = 80)
+plot(egretTree, cex = 1.5, tip.color = mycol)
+dev.off()
