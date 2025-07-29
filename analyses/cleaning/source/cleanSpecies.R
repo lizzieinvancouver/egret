@@ -93,6 +93,7 @@ d$species[which(d$genus == "Tradescantia" & d$species == "ohioensis")] <- "ohien
 d$genus[which(d$genus == "Lingularia" & d$species == "sibirica")] <- "Ligularia"
 d$genus[which(d$genus == "Dorema" & d$species == "ammoniacum d.")] <- "Ferula"
 d$species[which(d$genus == "Ferula" & d$species == "ammoniacum d.")] <- "ammoniacum"
+d$species[which(d$genus == "Calligonum" & d$species == "alaschanicum")] <- "mongolicum"
 
 
 
