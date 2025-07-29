@@ -208,9 +208,6 @@ matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Guizotia_scabra
 # Abies marocana. Synonyms: Abies pinsapo
 matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Abies_marocana")] <- "Abies_pinsapo"
 
-# Betula utilis subsp. albosinensis. Synonyms: many,  but none that match the one in the tree. I checked the tree and find the closest sister species to Betula utilis
-matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Betula_utilis_subsp._albosinensis")] <- "Betula_neoalaskana" # TO CHECK: not accepted as a synonym in kew, but utilis fits the tree
-
 # Eucalyptus delegatensis. Synonyms: 
 matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Eucalyptus_delegatensis")] <- "Eucalyptus_delegatensis_subsp._delegatensis"
 
@@ -221,9 +218,6 @@ matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Eucalyptus_ovat
 # Eucalyptus pauciflora. Synonyms: 
 matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Eucalyptus_pauciflora")] <-  "Eucalyptus_pauciflora_subsp._pauciflora"
 
-# Betula pendula subsp. mandshurica, closest sister species on the tree
-matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Betula_pendula_subsp._mandshurica")] <-  "Betula_davurica"
-
 # Celtis pallida. Synonyms: many,  but none that match the one in the tree 
 
 # Echinacea spp.. Synonyms: 
@@ -233,12 +227,6 @@ matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Betula_pendula_
 # Eucomis autumnalis. Synonyms:  many, but none that match the one in the tree
 
 # Thymophylla tephroleuca. Synonyms: many,but none that match the one in the tree
-
-# Tilia platyphyllos subsp. corinthiaca. Synonyms: 
-matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Tilia_platyphyllos_subsp._corinthiaca")] <-  "Tilia_platyphyllos"
-
-# Primula bulleyana subsp. beesiana. Synonyms: 
-matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Primula_bulleyana_subsp._beesiana")] <-  "Primula_beesiana"
 
 # Pyrus glabra. Synonyms: 
 matchednamesegret$sppMatch[which(matchednamesegret$egretname == "Pyrus_glabra")] <-  "Pyrus_syriaca"
@@ -315,7 +303,7 @@ egret[!duplicated(egret$latbi), c("latbi", "sppMatch")]
 egret_sub <- egret[c("latbi","genus","sppMatch")]
 
 set.seed(123)
-vec <- c("Carex", "Eucomis","Leontice", "Maackia", "Penstemon", "Celtis", "Solidago", "Symphyotrichum", "Thymophylla", "Verbesina", "Betonica", "Eupatorium", "Echinacea", "Eucalyptus", "Rosa")
+vec <- c("Carex", "Eucomis","Leontice", "Maackia", "Penstemon", "Celtis", "Solidago", "Symphyotrichum", "Thymophylla", "Verbesina", "Betonica", "Eupatorium", "Echinacea", "Rosa")
 t <- subset(egret_sub, genus %in% vec)
 t <- t$latbi
 spp_smalltree <- unique(t)
@@ -460,13 +448,13 @@ write.tree(egretSpliced,"analyses/output/egretPhylogenyFull.tre")
 usda.sps <- sort(unique(usda$latbi))
 
 ## how many phenobc species are NOT in the phylogeny?
-usda.phenosp.sps.inphylo <- usda.sps[which(!usda.sps%in%phy.sps.uniqu)] #58 out of 437
+usda.phenosp.sps.inphylo <- usda.sps[which(!usda.sps%in%phy.sps.uniqu)] #32 out of 416
 
 # grab a vec for kew spp
 kewvec <- unique(kew$taxon_name)
 # now look up only for the species that we don't have a match with the tree:
 matchestree_usda <- usda.phenosp.sps.inphylo[usda.phenosp.sps.inphylo %in% kewvec] 
-length(matchestree_usda) # 27 out of 77 species in usda are not in kew taxon_name column. Below I will extract all taxon names that return a common accepted parent name ID
+length(matchestree_usda) 
 
 # create df of species names from usda
 sppusdakew <- subset(usda, latbi %in% usda.phenosp.sps.inphylo)
@@ -514,8 +502,7 @@ nrow(nomatchusda)
 #following function is what we used to serch for the possible match in the tree, by ignoring the sub. or var. we try to find if there's anything closer to the species, or we just ignore the sub. and var.
 #phy.sps.uniqu[grepl("Alnus_communis", phy.sps.uniqu)] 
 
-#Alnus_incana_subsp._tenuifolia
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Alnus_incana_subsp._tenuifolia")] <- "Alnus_communis"
+
 #Fagus_sylvatica
 matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Fagus_sylvatica")] <-  "Fagus_sylvatica_subsp._orientalis"
 #Magnolia_acuminata
@@ -526,34 +513,10 @@ matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Magnolia_fraseri")
 matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Quercus_petraea")] <- "Quercus_petraea_subsp._petraea"
 #Quercus_robur
 matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Quercus_robur")] <- "Quercus_robur_subsp._robur"
-#Taxodium_distichum_var._imbricarium
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Taxodium_distichum_var._imbricarium")] <- "Taxodium_distichum"
-#Pinus_contorta_var._contorta
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Pinus_contorta_var._contorta")] <- "Pinus_inops"
-#Pinus_ponderosa_var._ponderosa
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Pinus_ponderosa_var._ponderosa")] <- "Pinus_douglasiana"
-#Ribes_aureum_var._villosum
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Ribes_aureum_var._villosum")] <- "Ribes_palmatum"
-#Symphoricarpos_albus_var._laevigatus
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Symphoricarpos_albus_var._laevigatus")] <- "Symphoricarpos_ovatus"
-#Cercis_canadensis_subsp._texensis
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Cercis_canadensis_subsp._texensis")] <- "Cercis_occidentalis"
-#Alnus_alnobetula_subsp._sinuata
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Alnus_alnobetula_subsp._sinuata")] <- "Alnus_alnobetula"
-#Amelanchier_alnifolia_var._semiintegrifolia
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Amelanchier_alnifolia_var._semiintegrifolia")] <- "Amelanchier_sanguinea"
 #Amorpha_californica
 matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Amorpha_californica")] <- "Amorpha_californica_var._californica"
-#Ericameria_nauseosa_var._hololeuca
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Ericameria_nauseosa_var._hololeuca")] <- "Ericameria_nauseosa"
-#Pseudotsuga_menziesii_var._glauca
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Pseudotsuga_menziesii_var._glauca")] <- "Pseudotsuga_menziesii"
 #Fraxinus_velutina
 matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Fraxinus_velutina")] <- "Fraxinus_velutina_var._toumeyi"
-#Symphoricarpos_albus_var._albus
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Symphoricarpos_albus_var._albus")] <- "Symphoricarpos_albus"
-#Prunus_domestica_var._insititia
-matchednamesusda$sppMatch[which(matchednamesusda$usdaname == "Prunus_domestica_var._insititia")] <- "Prunus_domestica_subsp._insititia"
 
   # look how many species with no match even after this search
   # count how many rows have NA in the column sppMatch
@@ -581,15 +544,12 @@ usda[!duplicated(usda$latbi), c("latbi", "sppMatch")]
 usda_sub <- usda[c("latbi","genus","sppMatch")]
 
 set.seed(123)
-vec <- c("Fagus", "Celtis", "Aronia", "Baccharis", "Ceanothus", "Cercis", "Chrysothamnus", "Ericameria", "Magnolia", "Prunus", "Quercus", "Rosa", "Taxodium", "Aesculus", "Pinus")
+vec <- c("Celtis", "Aronia", "Baccharis", "Ceanothus", "Cercis", "Magnolia", "Prunus", "Rosa", "Pinus")
 t <- subset(usda_sub, genus %in% vec)
 t <- t$latbi
 spp_smalltree <- unique(t)
 studyNosmall <- subset(usda_sub, latbi %in% spp_smalltree)
 
-#phy.sps.uniqu[grepl("Chrysothamnus", phy.sps.uniqu)]#Chrysothamnus_scopulorum
-
-t <- c(t, "Chrysothamnus_scopulorum")
 
 smallTree <- keep.tip(phy.plants, which(phy.plants$tip.label %in% unique(t)))
 
@@ -664,9 +624,6 @@ status <- ifelse(common_species %in% target, "splicing", "non-splicing")
 status <- factor(status, levels = c("non-splicing", "splicing"))
 mycol <- c("black", "red")[status]
 
-# drop the tips we added to assist with single genus in usda
-pruned_tree <- drop.tip(pruned_tree, "Chrysothamnus_scopulorum")
-
 # plot the tree
 pdf("analyses/figures/usdaSpliced.pdf", width = 40, height = 60)
 plot(pruned_tree, cex = 1.5, tip.color = mycol)
@@ -674,7 +631,6 @@ dev.off()
 
 # make the full usda tree
 usdalist <- unique(usda$sppMatch)
-usdalist <- c(usdalist, "Chrysothamnus_scopulorum")
 
 usdaTree <- keep.tip(phy.plants, phy.plants$tip.label[phy.plants$tip.label %in% usdalist])
 matchednamesusda1 <- matchednamesusda[!is.na(matchednamesusda$sppMatch), ]
@@ -696,13 +652,11 @@ for (i in spptoplice) {
   usdaSpliced <- add.species.to.genus(tree = usdaSpliced, species = i, where = "root")
 }
 
-# drop the tips we added to assist with single genus in usda
-usdaSpliced <- drop.tip(usdaSpliced, "Chrysothamnus_scopulorum")
-
 usdaSpliced$tip.label[duplicated(usdaSpliced$tip.label)]
 unique(usdaSpliced$tip.label)
+unique(usda$latbi)
 # plot the tree
-pdf("analyses/figures/usda_phy.pdf", width = 40, height = 100)
+pdf("analyses/figures/usda_phy.pdf", width = 50, height =100 )
 plot(usdaSpliced, cex = 1.5, show.tip.label = TRUE)
 dev.off()
 
