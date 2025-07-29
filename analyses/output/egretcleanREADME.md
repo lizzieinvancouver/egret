@@ -61,6 +61,8 @@ egret/data/egret.xlsx meta_general tab below (data scraped in data_detailed tab)
 
 They are cleaned in analyses/cleaning/cleanall.R 
 
+Cleaned columns either 
+
 * germTempGen
 * germTemp
 * germDuration
@@ -70,27 +72,27 @@ They are cleaned in analyses/cleaning/cleanall.R
 * germPhotoperiod
 * germPhotoperiodDay
 * germPhotoperiodNight
-* scarifType
-* scarifTypeGen
-* scarifTypeSpe
-* chemicalCor
-* storageType
-* storageDetails 
-* storageTemp
-* storageDuration
+* scarifType -- detailed description of scarification (as of July 2025: this is a slightly cleaned version of scarif.type that we stopped fully cleaning at some point)
+* scarifTypeGen -- detailed description of scarification: NA, chemical, mechanical or soaking (which is in hot water)
+* scarifTypeSpe -- very similar to scarifType, just cleaner **FIXME: clean up this one and delete out scarifType
+* chemicalCor -- chemical column cleaned so there *should* be no duplicates that are mis-spelled or ordered differently (but you should double-check this)
+* storageType -- storage information focusing on wet/dry/cold/room temp (around 21 different types)
+* storageDetails -- storage information including substrate/vessel on top of wet/dry/cold/room temp 
+* storageTemp -- storage temperatures given sequentially seperated by `then`
+* storageDuration -- storage durations in days given sequentially seperated by `then`
 * dormancyTemp
 * dormancyDuration
 * responseVar
 * responseValue
 * responseValueNum
 * responseErrorType
-* photoperiodCor
+* photoperiodCor -- photoperiod simplified to light or dark (because there is not so much other info in photoperiod column)
 * treatmentCor     
 * treatmentDetails
-* chemicalConcent
-* chemicalConcentUnit
-* datasetIDstudy
-* latbi   
+* chemicalConcent -- chemical concentrations, when given sequentially they are separate by `+`, 
+* chemicalConcentUnit -- chemical concentration in units, when given sequentially they are separate by `+`, when the unit is given it is correct (Victor checked), otherwise you can assume ppm (but Victor did not check)
+* datasetIDstudy -- a unique experiment (datasetID and study pasted together)
+* latbi	-- latin binomial (genus and species pasted together)
 * provLatLon
 * provLatLonAlt
 
