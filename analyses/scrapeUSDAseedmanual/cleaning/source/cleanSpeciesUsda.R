@@ -211,6 +211,37 @@ d$species_name[which(d$genus_name == "Pinus" & d$species_name == "ponderosa var.
 d$species_name[which(d$genus_name == "Taxodium" & d$species_name == "distichum var. imbricatum")] <- "distichum var. imbricariumm"
 d$genus_name[which(d$genus_name == "Neltuma" & d$species_name == "juliflora")] <- "Prosopis"
 
+d$species <- str_split_fixed(d$species_name, ' ', 2)[,1]
+d$variety <- str_split_fixed(d$species_name, ' ', 2)[,2]
+d$species[which(d$genus_name == "Aronia" & d$species == "x")] <-"x prunifolia"
+d$variety[which(d$genus_name == "Aronia" & d$species == "x prunifolia")] <-""
+
+d$species_name <- d$species
+
+
+d <- d[ , !(names(d) %in% "species")]
+
+d <- d[, c("rowID", "pdf_page_number", "pdf_table_number","genus_name",
+           "species_name","variety","seed_type", "seed_source",
+           "medium", "pregermination_treatment_time_minutes", "pregermination_treatment_hot_water_soak_C", "pretreatment", "cold_stratification_temp_C", "warm_stratification_days", "cold_stratification_days", "dailyl_light_hours", "day_temp_celsius", "night_temp_celsius", "temp_unspecified_time_of_day_celsius"     
+           , "test_duration_in_days"                    
+           , "germination_time_days"                    
+           , "total_germination_percent"                
+           , "avg_germination_percent"                  
+           , "samples"                                  
+           , "germination_rate"                         
+           ,"avg_germinative_energy_percent"           
+           , "germinative_energy_percent"               
+           , "avg_germinative_capacity"                 
+           , "germinative_capacity"                     
+           , "percent_germination_15degC_incubated"     
+           , "percent_germination_20degC_incubated"     
+           , "warm_stratification_temp_C"               
+           , "germ_rate_days"                           
+           , "per50_germ"                               
+           , "Notes")]
+           
+
 # make a new column "spec" to combine genus and species
 d$latbi <- paste(d$genus_name, d$species_name, sep = "_")
 unique(d$latbi)
