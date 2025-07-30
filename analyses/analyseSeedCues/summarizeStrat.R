@@ -187,6 +187,7 @@ d$storageNoStratTemp <- storageNoStratTemp
 d$storageNoStratDur <- storageNoStratDur
 d$stratSequence_condensed <- stratSequence_cdsd
 d$stratTemp_condensed <- stratTemp_cdsd
+d$stratDur_condensed <- stratDur_cdsd
 
 # For Deirdre and merging with USDA
 d$warmStratTemp <- as.numeric(sapply(1:nrow(d), function(i){
