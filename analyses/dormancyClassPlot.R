@@ -3,7 +3,7 @@
 # housekeeping
 rm(list=ls()) 
 options(stringsAsFactors = FALSE)
-
+library(dplyr)
 library(ggplot2)
 # Get the datasets
 
@@ -15,7 +15,6 @@ baskusda <- baskusda[, c("Genus_species","Dormancy.Class")]
 
 egret<-read.csv("output/egretclean.csv")
 egret$Genus_species <- paste(egret$genus, egret$species, sep = " ")
-
 
 ospree <- read.csv("output/ospreeEgretCleaned.csv")
 ospree$Genus_species <- paste(ospree$genus, ospree$species, sep = " ")
@@ -34,7 +33,7 @@ text(x = barplot(freq,
                  main = "Dormancy Class for Egret", 
                  xlab = "Dormancy class", 
                  ylab = "Frequency",
-                 col = "Black",  # Bar color
+                 col = "Black",
                  ylim = c(0, max(freq) + 50)),
      y = freq + 0.5,  
      labels = freq,
@@ -177,7 +176,7 @@ oeu_subset$Dormancy.Class[which(oeu_subset$Dormancy.Class == "PY, PYPD")] <- "PY
 freq <- table(oeu_subset$Dormancy.Class)
 
 text(x = barplot(freq, 
-                 main = "Species with Multiple Dormancy Class for Egret + USDA", 
+                 main = "Species with Multiple Dormancy Class for Egret + USDA x Ospree", 
                  xlab = "Dormancy class", 
                  ylab = "Frequency",
                  col = "Black",  # Bar color
@@ -185,3 +184,4 @@ text(x = barplot(freq,
      y = freq + 0.5,  
      labels = freq,
      pos = 3)
+dev.off()
