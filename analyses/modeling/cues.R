@@ -150,8 +150,6 @@ saveRDS(fit, file = 'modeling/output/3slopes/fit_chillh10.rds')
 saveRDS(summ, file = 'modeling/output/3slopes/summary_chillh10.rds')
 saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics_chillh10.rds')
 
-<<<<<<< HEAD
-=======
 # Prepare data for Stan - chilling hours between -20 and 5
 modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
 mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
@@ -201,7 +199,6 @@ saveRDS(fit, file = 'modeling/output/3slopes/fit_chillh5.rds')
 saveRDS(summ, file = 'modeling/output/3slopes/summary_chillh5.rds')
 saveRDS(diagnostics, file = 'modeling/output/3slopes/diagnostics_chillh5.rds')
 
->>>>>>> ce1ca0417e8ada28d9ec1d0e5e3f7cb878f8b089
 # Make some plots
 summ_df <- data.frame( bf.mean = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "mean"],
                        bf.q2.5 = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "X2.5."],
