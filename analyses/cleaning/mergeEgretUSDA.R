@@ -33,28 +33,28 @@ u <- read.csv("output/usdaGerminationCleaned.csv")
 
 d$dataType <- "egret"
 
-maxV <- u[,c("genus", "species" ,"latbi", "source.population" , "scarifTypeGen", "scarifTypeSpe","reps", 
+maxV <- u[,c("pdf_page_number","genus", "species" ,"latbi", "source.population" , "scarifTypeGen", "scarifTypeSpe","reps", 
              "treatment","responseVarClean", "chillTempMax","chillDurationMax", 
              "warmTempMax", "warmDurationMax", "pregermTrtMax","photoperiodCor", 
              "tempDayMax","tempNightMax", "testDurMax", "responseValueMax")]; maxV$dataType <- "usdaMax"
-names(maxV) <- c("genus", "species" ,"latbi", "source.population" , "scarifTypeGen", "scarifTypeSpe","reps", 
-                 "treatment","responseVarClean", "chillTemp","chillDuration", 
-                 "warmTemp", "warmDuration", "pregermTrt","photoperiodCor", 
+names(maxV) <- c("datasetID","genus", "species" ,"latbi", "source.population" , "scarifTypeGen", "scarifTypeSpe","reps", 
+                 "treatment","responseVar", "chillTemp","chillDuration", 
+                 "warmStrtTemp", "warmDuration", "pregermTrt","photoperiodCor", 
                  "tempDay","tempNight","germDuration",   
-                 "responseValue", "dataType")
-minV <- u[,c("genus", "species" ,"latbi", "source.population" , "scarifTypeGen", "scarifTypeSpe","reps", 
+                 "responseValueNum", "dataType")
+minV <- u[,c("pdf_page_number","genus", "species" ,"latbi", "source.population" , "scarifTypeGen", "scarifTypeSpe","reps", 
              "treatment","responseVarClean", "chillTempMin","chillDurationMin", 
              "warmTempMin", "warmDurationMin", "pregermTrtMin","photoperiodCor", 
              "tempDayMin","tempNightMin", "testDurMin",         
              "responseValueMin")]; minV$dataType <- "usdaMin"
-names(minV) <- c("genus", "species" ,"latbi", "source.population" , "scarifTypeGen", "scarifTypeSpe","reps", 
-                 "treatment","responseVarClean", "chillTemp","chillDuration", 
-                 "warmTemp", "warmDuration", "pregermTrt","photoperiodCor", 
+names(minV) <- c("datasetID","genus", "species" ,"latbi", "source.population" , "scarifTypeGen", "scarifTypeSpe","reps", 
+                 "treatment","responseVar", "chillTemp","chillDuration", 
+                 "warmStratTemp", "warmDuration", "pregermTrt","photoperiodCor", 
                  "tempDay","tempNight","germDuration",        
-                 "responseValue", "dataType")
+                 "responseValueNum", "dataType")
 
 uLong <- rbind(maxV, minV)
-uLong <- subset(uLong, !is.na(responseValue))
+uLong <- subset(uLong, !is.na(responseValueNum))
 
 uLong$woody <- "Y"
 uLong$storageType <- NA
@@ -69,7 +69,6 @@ uLong$storageDuration[which(uLong$storageType == "moist storage")] <- uLong$preg
 uLong$storageDuration[which(uLong$storageType == "storage")] <- uLong$pregermTrt[which(uLong$storageType == "storage")]
 
 uLong$dormancyTemp <- uLong$chillTemp
-uLong$responseValueNum <- uLong$responseValue
 
 colnames(uLong)[colnames(uLong) == "tempDay"] <- "germTempDay"
 colnames(uLong)[colnames(uLong) == "tempNight"] <- "germTempNight"
@@ -78,7 +77,7 @@ colnames(uLong)[colnames(uLong) == "tempNight"] <- "germTempNight"
 #cold strat temp; germ photoperiod; soaking
 usdaEgret <- rbind.fill(d, uLong)
 
-write.csv(usdaEgret, "output/egretUSDA.csv", row.names = FALSE)
+write.csv(usdaEgret, "analyseBudSeed/output/egretUSDA.csv", row.names = FALSE)
 
 length(unique(usdaEgret$latbi))
 

@@ -64,6 +64,7 @@ source("scrapeUSDAseedmanual/cleaning/source/cleanMeanUsda.R")
 source("scrapeUSDAseedmanual/cleaning/source/cleanChillUsda.R")
 
 # 13. Change the column names to fit egret dataset
-source("scrapeUSDAseedmanual/cleaning/source/cleanEgretColUsda.R")
+# source("scrapeUSDAseedmanual/cleaning/source/cleanEgretColUsda.R")
+d[d==""] <- NA
 
 write.csv(d,"output/usdaGerminationCleaned.csv",row.names = FALSE)
