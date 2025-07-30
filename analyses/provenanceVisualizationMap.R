@@ -3,13 +3,6 @@
 
 # goal of this scrip is to check how many studies have more than one provenance, and other visualization on where the studies were conducted
 
-# Package
-library(ggplot2)
-library(plotly)
-library(RColorBrewer)
-library(dplyr)
-library(viridisLite)
-
 # housekeeping
 rm(list=ls()) 
 options(stringsAsFactors = FALSE)
@@ -27,6 +20,16 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } else if(length(grep("victor", getwd())) > 0){
   setwd('~/projects/egret/analyses')
 } 
+
+# packages
+library(ggplot2)
+library(plotly)
+library(RColorBrewer)
+library(dplyr)
+library(viridisLite)
+
+# read egret clean
+d <- read.csv("output/egretclean.csv")
 
 #start by subsetting down to the studies that have provenances
 d$idspp <- paste(d$datasetIDstudy, d$latbi, sep = "_")
@@ -77,14 +80,6 @@ count <- ggplot(provcount2, aes(x = provLatLon, fill = color)) +
 count
 ggsave("figures/provenanceCount.jpeg", count)
 
-# plotting only the ones with NAs 
-count <- ggplot(provcount, aes(x = provLatLon, fill = color)) +
-geom_histogram(binwidth = 1) +
-  labs(title = "", x = "Number of provenances", y= "Studies count")+
-  scale_color_manual()+
-  theme_minimal()
-count
-ggsave("figures/provenanceCount.jpeg", count)
 #### make map with color subsetting by most common treatments ####
 
 # === === === === === === === === === #
@@ -253,7 +248,16 @@ strat$provenance.long <- as.numeric(strat$provenance.long)
 stratnona <- subset(strat, provLatLon != "NA NA")
 
 # drop rows when there is no strat for SOME prov, but that they have either warm or cold
-test <- subset(stratnona, stratclasses)
+nrow(stratnona)
+# work around with a small df
+test <- unique(stratnona[,c("stratSequence_condensed", "datasetID", "provenance.lat", "provenance.long", "provLatLon")])
+
+aggrprov <- aggregate(stratSequence_condensed ~ datasetID + provenance.lat + provenance.long, data = test, FUN = function(i) paste0(i, collapse="_")) 
+
+# create a third column that simplifies the previous one
+aggrprov$stratclass2 <- aggrprov$stratSequence_condensed
+both <- c("cold_warm", "warm then cold_cold_warm")
+strat$stratclass2[which(aggrprov$stratSequence_condensed)]
 
 stratnona$datasetID[which(stratnona$stratclasses == "cold" &
                             stratnona$stratclasses == "warm" &
@@ -451,11 +455,6 @@ provcount4phy <- aggregate(provnona["provLatLon"], provnona[c("datasetID", "data
 # select only rows with more than 1 provenance
 morethan1 <- subset(provcount4phy, provLatLon != "1")
 
-# load tree
-library(phytools)
-library(taxize)
-library(ape)
-
 egretTree <- read.tree("output/egretPhylogenyFull.tre")
 
 # get a vector of egretnames
@@ -480,7 +479,7 @@ colprov <- c("blue", "black")[status]
 
 # assign col datasetID with multiple provs
 datasetIDs <- unique(morethan1$datasetID)
-dataset_colors <- setNames(rainbow(length(datasetIDs)), datasetIDs)
+dataset_colors <- setNames(turbo(length(datasetIDs)), datasetIDs)
 
 # Match species to tip labels in the tree
 tip_labels <- egretTree$tip.label
@@ -505,3 +504,4 @@ plot(egretTree, cex = 1.5, tip.color = colprov)
 tiplabels(pch = 19, col = colids, adj = 105, cex = 3)
 legend("topright", legend = names(dataset_colors), col = dataset_colors, pch = 19, cex = 0.8)
 dev.off()
+
