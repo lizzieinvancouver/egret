@@ -1015,6 +1015,6 @@ if(sub_check){
 
 # Lizzie decided better to use treatment and other.treatment rather than treatmentsDetails (since filling it in fully would take forever)
 # And she decided to rename treatmentCor to better reflect what's in it
-d$treatmentDetails <- NA 
+d$treatmentDetails <- NULL 
 names(d)[names(d)=="treatmentCor"] <- "treatmentOverview"
 

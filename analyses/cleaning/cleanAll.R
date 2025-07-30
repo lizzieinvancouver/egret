@@ -29,7 +29,7 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 
 # 1. Get the data (reads in a dataframe called `egret')
-source("cleaning/source/mergeData.R") # 32801 rows, 45 columns
+source("cleaning/source/mergeData.R") # 34011 rows, 45 columns
 
 # 2. Clean up datasetID issues
 source("cleaning/source/cleandatasetID.R") 
@@ -38,38 +38,37 @@ source("cleaning/source/cleandatasetID.R")
 source("cleaning/source/cleanSpecies.R")
 
 # 4. Clean miscellaneous -- removing redundant data between tables and fig, studies we can't trust data quality after reviewing pdf's again.
-source("cleaning/source/cleanMisc.R") # 30777
+source("cleaning/source/cleanMisc.R") # 31395
 
 # 5. Clean chill duration and temperature
-source("cleaning/source/cleanChillTempDuration.R") # 30777 and 50 columns
+source("cleaning/source/cleanChillTempDuration.R") # 50 columns
 
 # 6. Clean germination temperature
-source("cleaning/source/cleanGerminationTempDuration.R") # 59 columns, see notes in source file as we could cut some
+source("cleaning/source/cleanGerminationTempDuration.R") # 59 columns
 
 # 7. Clean germination scarification
-source("cleaning/source/cleanScarification.R") # 30777  62 columns
+source("cleaning/source/cleanScarification.R") # 61 columns
 
 # 8. Clean chemical
-source("cleaning/source/cleanChemical.R") # 30777 63  
+source("cleaning/source/cleanChemical.R") # 62 columns  
 
 # 9. Clean storage type
-source("cleaning/source/cleanStorage.R") # 30937 69  
-# This code also has source/combineStorageChill.R here, see issue #39
+source("cleaning/source/cleanStorage.R") # 66 columns   
 
 # 10. Clean response variables and response
-source("cleaning/source/cleanResponseVar.R") # 30777    73
+source("cleaning/source/cleanResponseVar.R") # 69 columns 
 
 # 11. Clean photoperiod
-source("cleaning/source/cleanPhotoperiod.R") # 30777    74
+source("cleaning/source/cleanPhotoperiod.R") # 70 columns 
 
 # 12. Clean coordinates seed provenance
-source("cleaning/source/cleanCoordinates.R") # 30777    74
+source("cleaning/source/cleanCoordinates.R") 
 
 # 13. Clean treatment column
-source("cleaning/source/cleanTreatments.R") # 31395 76 (25 July 2025)
+source("cleaning/source/cleanTreatments.R") # 71 columns 
 
 #14. clean chemical concentration
-source("cleaning/source/cleanConcentration.R") # 31395 78 (25 July 2025)
+source("cleaning/source/cleanConcentration.R") # 73 columns 
 
 #15. clean soaked.in (only some studies)
 source("cleaning/source/cleanSoakedIn.R") 
@@ -89,7 +88,7 @@ d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
 d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
 
 # checking sizing ..
-dim(d) # dim on 18 Mar 2025: 80 and 30401 - dim on 29 July 2025: 31395, 78
+dim(d) # dim on 30 July 2025: 31395, 77
 
 if(length(grep("victor", getwd())) == 0){
   write.csv(d, "output/egretclean.csv", row.names=FALSE)
