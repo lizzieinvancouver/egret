@@ -478,6 +478,10 @@ d$chillDuration[which(d$datasetID == "grose57" &
                                        d$treatment == "cold stratification" & 
                                        d$figure == "Table 3")])
 
+# Figure 8, issue with chill duration
+d[d$datasetID %in% 'grose57' & d$figure %in% 'Figure 8' & d$treatment %in% 'cold stratification (6 weeks)', 'chill.duration'] <- 6*7
+d[d$datasetID %in% 'grose57' & d$figure %in% 'Figure 8' & d$treatment %in% 'cold stratification (4 weeks)', 'chill.duration'] <- 4*7
+
 #pipinis09: standardize format of duration, temp and cycle
 d$chillTemp[which(d$chill.temp == "20/25")] <- "20 and 25"
 d$chillTempCycle[which(d$chill.temp == "20/25")] <- "16 and 8"
