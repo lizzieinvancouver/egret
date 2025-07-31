@@ -28,6 +28,10 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
   setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
 } else if(length(grep("victor", getwd())) > 0){
+  setwd('~/projects/egret/analyses/modeling')
+  util <- new.env()
+  source('mcmc_analysis_tools_rstan.R', local=util)
+  source('mcmc_visualization_tools.R', local=util)
   setwd('~/projects/egret/analyses')
 } 
 
@@ -154,7 +158,74 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  
                  Vphy = cphy)
 
+# Posterior quantification
 smordbeta <- stan_model("stan/orderedbetalikelihood_4slopes.stan")
 fit <- sampling(smordbeta, mdl.data, 
                 iter = 2024, warmup = 1000,
                 chains = 4)
+saveRDS(fit, file.path('modeling/output/abundant0model.rds'))
+
+# Diagnostics
+diagnostics <- util$extract_hmc_diagnostics(fit)
+util$check_all_hmc_diagnostics(diagnostics)
+samples <- util$extract_expectand_vals(fit)
+base_samples <- util$filter_expectands(samples,
+                                       c('a_z', 'lambda_a', 'sigma_a', 'a',
+                                         'bt_z', 'lambda_bt', 'sigma_bt', 'bt',
+                                         'bf_z', 'lambda_bf', 'sigma_bf', 'bf',
+                                         'bcs_z', 'lambda_bcs', 'sigma_bcs', 'bcs',
+                                         'bws_z', 'lambda_bws', 'sigma_bws', 'bws',
+                                         'cutpoints', 'kappa'),
+                                       check_arrays=TRUE)
+util$check_all_expectand_diagnostics(base_samples)
+
+util$plot_pairs_by_chain(samples[[paste0('lambda_bws')]], paste0('lambda_bws'), 
+                         samples[[paste0('sigma_bws')]], paste0('sigma_bws'))
+
+util$plot_pairs_by_chain(samples[[paste0('lambda_bcs')]], paste0('lambda_bcs'), 
+                         samples[[paste0('sigma_bcs')]], paste0('sigma_bcs'))
+
+util$plot_pairs_by_chain(samples[[paste0('lambda_bf')]], paste0('lambda_bf'), 
+                         samples[[paste0('sigma_bf')]], paste0('sigma_bf'))
+
+# Posterior 
+par(mfrow=c(5, 1), mar = c(4,4,1,1))
+util$plot_expectand_pushforward(samples[['a_z']], 20,
+                                flim = c(-3,3),
+                                display_name="a_z")
+util$plot_expectand_pushforward(samples[['bt_z']], 20,
+                                flim = c(-3,3),
+                                display_name="bt_z")
+util$plot_expectand_pushforward(samples[['bf_z']], 20,
+                                flim = c(-3,3),
+                                display_name="bf_z")
+util$plot_expectand_pushforward(samples[['bcs_z']], 20,
+                                flim = c(-3,3),
+                                display_name="bcs_z")
+util$plot_expectand_pushforward(samples[['bws_z']], 20,
+                                flim = c(-3,3),
+                                display_name="bws_z")
+
+
+par(mfrow=c(1, 1), mar = c(4,4,1,1))
+names <- sapply(1:mdl.data$Nsp, function(sp) paste0('a[', sp, ']'))
+util$plot_disc_pushforward_quantiles(samples, names,
+                                     xlab="Species",
+                                     ylab="Intercept")
+par(mfrow=c(4, 1), mar = c(4,4,1,1))
+names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bt[', sp, ']'))
+util$plot_disc_pushforward_quantiles(samples, names,
+                                     xlab="Species",
+                                     ylab="Germ. duration")
+names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bf[', sp, ']'))
+util$plot_disc_pushforward_quantiles(samples, names,
+                                     xlab="Species",
+                                     ylab="Germ. temp.")
+names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bcs[', sp, ']'))
+util$plot_disc_pushforward_quantiles(samples, names,
+                                     xlab="Species",
+                                     ylab="Cold stratification")
+names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bws[', sp, ']'))
+util$plot_disc_pushforward_quantiles(samples, names,
+                                     xlab="Species",
+                                     ylab="Warm stratification")
