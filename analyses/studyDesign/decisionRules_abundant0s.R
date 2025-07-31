@@ -25,7 +25,7 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } 
 
 # 0. Get the cleaned data
-source('cleaning/cleanall.R')
+source('cleaning/cleanAll.R')
 source('analyseSeedCues/summarizeStrat.R')
 #d <- read.csv('output/egretclean.csv')
 rm(list=ls()[which(!(ls() %in% c('d', 'idsnotcorrected')))])
@@ -35,13 +35,13 @@ treats <- c('datasetID', 'study',
             
             'provLatLonAlt', # seems useful
             
-            "treatmentCor", # I guess it's a summary?
+            "treatment", # I guess it's a summary?
             
             # STORAGE-RELATED (without conditions equivalent to strat., if last)
             'storageType', 'storageNoStratTemp', "storageNoStratDur", "storageDetails",
             
             # SCARIFICATION-RELATED
-            "scarifType", "scarifTypeGen", "scarifTypeSpe", 
+            "scarifTypeGen", "scarifTypeSpe", #scarifType was discarded?(without any notice...)
             
             # CHEMICAL-RELATED 
             "chemicalCor", "chemicalConcent",
@@ -64,6 +64,7 @@ treats <- c('datasetID', 'study',
             "other.treatment"
             
 )
+
 
 # RESPONSE
 resp <- c("responseVar", "responseValueNum")
@@ -154,6 +155,11 @@ filteredd[filteredd$datasetID == 'barros12' & filteredd$study == 'exp1', 'other.
 
 ## Another particular case of misc. treatment: cold stratification should not be here
 filteredd[filteredd$datasetID == 'veiga-barbosa14' & filteredd$study == 'exp1', 'other.treatment'] <- NA
+
+## But 'after-ripening' should also be in other.treatment
+filteredd[filteredd$datasetID %in% 'tang21'& filteredd$study %in% 'exp1' & grepl('ripening', filteredd$treatment),'other.treatment'] <- 
+  filteredd[filteredd$datasetID %in% 'tang21'& filteredd$study %in% 'exp1' & grepl('ripening', filteredd$treatment),'treatment']
+
 
 # -----------------------------
 # FOR PEOPLE CHECKING: MODIFY HERE
@@ -255,40 +261,34 @@ for(i in allids){
   
   # SCARIFICATION
   ids[i, 'scarif.check']  <- FALSE
-  if(length(unique(di$scarifType)) > 1){
+  if(length(unique(di$scarifTypeSpe)) > 1){
     
-    cat(paste0(" > Number of scarif. treat.: ", length(unique(di$scarifType)), "\n"))
-    cat('   - [');cat(paste(unique(di$scarifType)), sep = ', ');cat(']\n')
+    cat(paste0(" > Number of scarif. treat.: ", length(unique(di$scarifTypeSpe)), "\n"))
+    cat('   - [');cat(paste(unique(di$scarifTypeSpe)), sep = ', ');cat(']\n')
     
-    di$nscarif <- paste0(di$scarifType, di$scarifTypeGen, di$scarifTypeSpe)
     di$nstrat <- paste0(di$stratTemp_condensed, di$stratDur_condensed)
     di$ngerm <- paste0(di$germTempGen, di$germDuration)
-    ntreati <- merge(
-      aggregate(nscarif ~ factor(scarifType, exclude = NULL), data = di, function(x) length(unique(x))),
-      merge(aggregate(nstrat ~ factor(scarifType, exclude = NULL), data = di, function(x) length(unique(x))),
-            aggregate(ngerm ~ factor(scarifType, exclude = NULL), data = di, function(x) length(unique(x))))
-    )
+    ntreati <- merge(aggregate(nstrat ~ factor(scarifTypeSpe, exclude = NULL), data = di, function(x) length(unique(x))),
+                     aggregate(ngerm ~ factor(scarifTypeSpe, exclude = NULL), data = di, function(x) length(unique(x))))
     ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
-    names(ntreati)[1] <- 'scarifType'
-    
-    if(any(ntreati$nscarif > 1)){stop()} # check
+    names(ntreati)[1] <- 'scarifTypeSpe'
     
     if(length(unique(ntreati$ninterest)) == 1){
       
       cat('   - Same number of strat./forc. treat. across scarif. treat.\n')
       
-      if(length(unique(di$scarifType)) == 2 & any(is.na(unique(di$scarifType)))){ # if only two scarif., and one is control
+      if(length(unique(di$scarifTypeSpe)) == 2 & any(is.na(unique(di$scarifTypeSpe)))){ # if only two scarif., and one is control
         
-        treat.tokeep <- unique(di$scarifType)[which(!is.na(unique(di$scarifType)))] # we keep scarified
+        treat.tokeep <- unique(di$scarifTypeSpe)[which(!is.na(unique(di$scarifTypeSpe)))] # we keep scarified
         cat(paste0('   - Keeping: ', treat.tokeep,' (instead of control)\n'))
         
         ids[i, 'scarif.tokeep'] <- as.character(treat.tokeep)
         ids[i, 'scarif.check']  <- TRUE
         
         
-      }else if(length(unique(di$scarifType)) > 2){
+      }else if(length(unique(di$scarifTypeSpe)) > 2){
         
-        treat.tokeep <- unique(di[di$responseValueNum == max(di$responseValueNum), 'scarifType']) # we keep scarif. with max. germ. rate
+        treat.tokeep <- unique(di[di$responseValueNum == max(di$responseValueNum), 'scarifTypeSpe']) # we keep scarif. with max. germ. rate
         
         if(length(treat.tokeep) > 1){
           
@@ -307,7 +307,7 @@ for(i in allids){
     }else if(length(unique(ntreati$ninterest)) > 1){
       
       cat('   - Different number of strat./forc. treat. across scarif. treat.\n')
-      treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'scarifType'] # we keep scarif. with max. no. of chill/forc treatments
+      treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'scarifTypeSpe'] # we keep scarif. with max. no. of chill/forc treatments
       
       if(length(treat.tokeep) > 1){ # then, if needed, we choose the treatment with max. germ. rate
         
@@ -316,8 +316,8 @@ for(i in allids){
         
         if(length(treat.tokeep) > 1){ # if still not enough, we keep the scarified treatment...
           
-          maxresp <- max(di[di$scarifType %in% treat.tokeep, 'responseValueNum'])
-          treat.tokeep <- unique(di[di$scarifType %in% treat.tokeep & di$responseValueNum == maxresp, 'scarifType']) 
+          maxresp <- max(di[di$scarifTypeSpe %in% treat.tokeep, 'responseValueNum'])
+          treat.tokeep <- unique(di[di$scarifTypeSpe %in% treat.tokeep & di$responseValueNum == maxresp, 'scarifTypeSpe']) 
           cat(paste0('  - Keeping: [', treat.tokeep,'] (max. no. of strat./forc. treat. + scarified + max. resp.)\n'))
           
         }
@@ -335,10 +335,10 @@ for(i in allids){
       stop('Missing conditions (line 293)') # check
     }
     
-  }else if(length(unique(di$scarifType)) == 1){
+  }else if(length(unique(di$scarifTypeSpe)) == 1){
     
     cat(paste0(" > Only one scarif. treat.\n"))
-    treat.tokeep <- unique(di$scarifType)
+    treat.tokeep <- unique(di$scarifTypeSpe)
     ids[i, 'scarif.tokeep'] <- as.character(treat.tokeep)
     ids[i, 'scarif.check']  <- TRUE
     
@@ -349,8 +349,8 @@ for(i in allids){
   # Summary
   if(any(!ids$scarif.check, na.rm = TRUE)){stop()} # check
   nrow.before <- nrow(di)
-  di <- di[di$scarifType %in% ids[i, 'scarif.tokeep'], ]
-  if(length(unique(di$scarifType)) > 1){stop()} # check
+  di <- di[di$scarifTypeSpe %in% ids[i, 'scarif.tokeep'], ]
+  if(length(unique(di$scarifTypeSpe)) > 1){stop()} # check
   nrow.after <- nrow(di)
   if(nrow.before!=nrow.after){
     message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
@@ -668,7 +668,7 @@ for(i in 1:nrow(ids)){
   
   di <- filteredd[paste0(filteredd$datasetID,filteredd$study,filteredd$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
   di <- di[di$other.treatment %in% ids[i, 'misc.tokeep'], ]
-  di <- di[di$scarifType %in% ids[i, 'scarif.tokeep'], ]
+  di <- di[di$scarifTypeSpe %in% ids[i, 'scarif.tokeep'], ]
   di <- di[paste0(di$chemicalCor, di$chemicalConcent) %in% ids[i, 'chem.tokeep'], ]
   di <- di[paste0(di$soaked.in, di$soaking.duration) %in% ids[i, 'soak.tokeep'], ]
   

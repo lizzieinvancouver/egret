@@ -117,6 +117,7 @@ for(i in 1:nrow(d)){
   
   # lookup into chilling conditions
   chillTemp_i <- unlist(stringr::str_split(d$chillTemp[i], " then "))
+  chillTemp_i <- unname(sapply(chillTemp_i, function(c) mean(as.numeric(unlist(stringr::str_split(c, " and "))))))
   chillDur_i <- unlist(stringr::str_split(d$chillDuration[i], " then "))
   for(n in 1:length(chillTemp_i)){
     len <- length(stratSequence_i)

@@ -156,5 +156,5 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
 
 smordbeta <- stan_model("stan/orderedbetalikelihood_4slopes.stan")
 fit <- sampling(smordbeta, mdl.data, 
-                iter = 4000, warmup = 3000,
+                iter = 2024, warmup = 1000,
                 chains = 4)
