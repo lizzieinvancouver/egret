@@ -706,6 +706,10 @@ d[d$chillTemp %in% '6/16' & d$datasetID %in% 'pritchard93', 'chillDuration'] <-
   unname(sapply(d[d$chillTemp %in% '6/16' & d$datasetID %in% 'pritchard93', 'chillDuration'],
               function(i) paste0(as.numeric(na.omit(as.numeric(unlist(stringr::str_split(i, pattern = '[()+ ]'))))), collapse = ' then ')))
 
+# Figure 8, issue with chill duration
+d[d$datasetID %in% 'grose57' & d$figure %in% 'Figure 8' & d$treatment %in% 'cold stratification (6 weeks)', 'chillDuration'] <- 6*7
+d[d$datasetID %in% 'grose57' & d$figure %in% 'Figure 8' & d$treatment %in% 'cold stratification (4 weeks)', 'chillDuration'] <- 4*7
+
 #check
 unique(d$chillTemp)
 unique(d$chillDuration)

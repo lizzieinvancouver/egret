@@ -194,6 +194,10 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "hot.water.30min")] <- "soaking - hot w
 d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 70°C hot water")] <- "soaking - 70°C hot water"
 d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 90°C hot water")] <- "soaking - 90°C hot water"
 
+# some info in notes
+d[d$datasetID %in% 'yeom21' & d$study %in% 'exp1' & d$Notes %in% c('without pericarps'), 'scarifTypeGen'] <- 'mechanical'
+d[d$datasetID %in% 'yeom21' & d$study %in% 'exp1' & d$Notes %in% c('without pericarps'), 'scarifTypeSpe'] <- "mechanical - pericarp removal"
+
 unique(d$scarifTypeSpe)
 # Lizzie checked differences between scarifTypeSpe and scarif.type and they are all either...
 # mis-labeled so shoudl not be in scarifTypeSpe or 0 min so are 0. Yay.
