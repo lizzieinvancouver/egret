@@ -27,6 +27,9 @@ library(plotly)
 library(RColorBrewer)
 library(dplyr)
 library(viridisLite)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(sf)
 
 # read egret clean
 d <- read.csv("output/egretclean.csv")
@@ -227,19 +230,6 @@ strat$stratclasses[which(strat$warmstrat == "Y" & is.na(strat$coldstrat))] <- "w
 strat$stratclasses[which(is.na(strat$warmstrat) & strat$coldstrat == "Y")] <- "cold"
 strat$stratclasses[which(is.na(strat$warmstrat) & is.na(strat$coldstrat))] <- "nostrat"
 
-# assign them colors 
-strat$colmap <- NA
-strat$colmap[which(strat$stratclasses == "both")] <- "purple"
-strat$colmap[which(strat$stratclasses == "warm")] <- "#ff3300"
-strat$colmap[which(strat$stratclasses == "cold")] <- "#0066ff"
-strat$colmap[which(strat$stratclasses == "nostrat")] <- "black"
-
-strat$opacityprov <- NA
-strat$opacityprov[which(strat$stratclasses == "both")] <- 1
-strat$opacityprov[which(strat$stratclasses == "warm")] <- 0.5
-strat$opacityprov[which(strat$stratclasses == "cold")] <- 0.5
-strat$opacityprov[which(strat$stratclasses == "nostrat")] <- 0.5
-
 # convert prov to numeric
 strat$provenance.lat <- as.numeric(strat$provenance.lat)
 strat$provenance.long <- as.numeric(strat$provenance.long)
@@ -252,42 +242,53 @@ nrow(stratnona)
 # work around with a small df
 test <- unique(stratnona[,c("stratSequence_condensed", "datasetID", "provenance.lat", "provenance.long", "provLatLon")])
 
+# change NA to no strat because it messes up aggregate function below
+test$stratSequence_condensed[which(is.na(test$stratSequence_condensed))] <- "nostrat"
+
+# double check that all no strat + cold or warm are within strat studies
+sub <- test$datasetID[which(test$stratSequence_condensed == "nostrat")]
+
+# collapse to keep only one start sequence per datasetID
 aggrprov <- aggregate(stratSequence_condensed ~ datasetID + provenance.lat + provenance.long, data = test, FUN = function(i) paste0(i, collapse="_")) 
 
 # create a third column that simplifies the previous one
 aggrprov$stratclass2 <- aggrprov$stratSequence_condensed
-both <- c("cold_warm", "warm then cold_cold_warm")
-strat$stratclass2[which(aggrprov$stratSequence_condensed)]
 
-stratnona$datasetID[which(stratnona$stratclasses == "cold" &
-                            stratnona$stratclasses == "warm" &
-                            stratnona$stratclasses == "both")]
+aggrprov$stratclass2[which(grepl("warm", aggrprov$stratSequence_condensed) & 
+                             grepl("cold", aggrprov$stratSequence_condensed))] <- "both"
+aggrprov$stratclass2[grepl("warm", aggrprov$stratSequence_condensed, ignore.case = TRUE) &
+                       !grepl("cold", aggrprov$stratSequence_condensed, ignore.case = TRUE)] <- "warm"
+aggrprov$stratclass2[grepl("cold", aggrprov$stratSequence_condensed, ignore.case = TRUE) &
+                       !grepl("warm", aggrprov$stratSequence_condensed, ignore.case = TRUE)] <- "cold"
+aggrprov$stratclass2[grepl("nostrat", aggrprov$stratSequence_condensed, ignore.case = TRUE) &
+                       !grepl("cold", aggrprov$stratSequence_condensed, ignore.case = TRUE) &
+                       !grepl("warm", aggrprov$stratSequence_condensed, ignore.case = TRUE)] <- "nostrat"
+aggrprov$stratclass2[grepl("nostrat", aggrprov$stratSequence_condensed, ignore.case = TRUE) &
+                       !grepl("cold", aggrprov$stratSequence_condensed, ignore.case = TRUE) &
+                       !grepl("warm", aggrprov$stratSequence_condensed, ignore.case = TRUE)] <- "nostrat"
+
 color_map <- c(
   "nostrat" = "#aaaaaa",
   "cold"    = "#0066ff",
   "both"    = "purple",
-  "warm"    = "#ff3300"
+  "warm"    = "#ff3300",
+  "undefined" = "darkgreen"
 )
 
-opacityprov <- c(
-  "nostrat" = 0.5,
-  "cold"    = 0.8,
-  "both"    = 1,
-  "warm"    = 0.8
-  # adjust if you have more
-)
+# make a quick check because nnow I have 419 rows in aggrprov, but there are 408 single provenances #### TO CHECK
+vec <- aggrprov$datasetID[which(duplicated(aggrprov$provenance.long) & duplicated(aggrprov$provenance.lat)) ]
 
-unique(stratnona$stratclasses)
+aggrprov$stratclass2
 # Now plot
 stratmap <- plot_ly(
-  data = stratnona,
+  data = aggrprov,
   type = 'scattergeo', 
   mode = 'markers',
   lat = ~provenance.lat,
   lon = ~provenance.long,
-  text = ~paste("datasetID:", datasetID, "<br>Strat:", stratclasses),
+  text = ~paste("datasetID:", datasetID, "<br>Strat:", stratclass2),
   hoverinfo = "text",
-  color = ~stratclasses,           # key step: map color to variable
+  color = ~stratclass2,           # key step: map color to variable
   colors = color_map,              # use your predefined hex color mapping
   marker = list(
     size = 5,
@@ -309,7 +310,6 @@ stratmap <- plot_ly(
       borderwidth = 1
     )
   )
-
 stratmap
 
 # make a small one with just warm strat
@@ -365,7 +365,7 @@ provcountlong <- aggregate(provbycolor["provenance.long"], provbycolor["datasetI
 
 # count number of provenance per datasetIDstudy
 provbycolor$provcount <- 1
-count <- aggregate(provbycolor["count"], provbycolor["datasetIDstudy"], function(x) sum(x))
+count <- aggregate(provbycolor["provcount"], provbycolor["datasetIDstudy"], function(x) sum(x))
 
 ### need to merge them together, but not now
 merged1 <- merge(provcountlat, provcountlong, by = "datasetIDstudy")
@@ -380,65 +380,133 @@ colors <- colorRampPalette(brewer.pal(12, "Paired"))(nbysize)
 provbysize$color <- colors[as.numeric(as.factor(provbysize$datasetIDstudy))]
 
 # scale count larger
-provbysize$countscaled <- provbysize$count*5
+provbysize$countscaled <- provbysize$provcount/3
 
-fig <-plot_ly(
+
+# Get a world map
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+ggmapprov <- ggplot() +
+  geom_sf(data = world, fill = "grey95", color = "white") +
+  geom_point(data = provbysize,
+             aes(x = provenance.long, 
+                 y = provenance.lat, 
+                 size = provcount,
+                 color = datasetIDstudy),
+             alpha = 0.8) +
+  scale_size_continuous(
+    name = "Provenance Count",
+    range = c(1, 5),
+    breaks = pretty(provbysize$provcount, n = 4)
+  ) +
+  scale_color_viridis_d(name = "Dataset ID") +
+  labs(
+    title = "Averaged Provenance by datasetIDstudy",
+    x = "", y = ""
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    legend.box = "vertical",           
+    legend.text = element_text(size = 8),  
+    legend.title = element_text(size = 9),
+    legend.key.size = unit(0.5, "lines"), 
+    panel.grid.major = element_line(color = "grey90")
+  ) +
+  guides(
+    color = guide_legend(ncol = 1) 
+  )
+ggmapprov
+ggsave("figures/provenancemapXscaledbysize.jpeg", ggmapprov, width = 12, height = 8, dpi = 300)
+
+# scale count larger
+provbysize$countscaled <- provbysize$provcount*1.1
+# set colors
+n <- length(unique(provbysize$datasetIDstudy))
+colors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
+provbysize$color <- colors[as.numeric(as.factor(provbysize$datasetID))]
+
+plotlymapprov <- plot_ly(
   data = provbysize,
   type = 'scattergeo',
   mode = 'markers',
   lat = ~provenance.lat,
   lon = ~provenance.long,
+  color = ~datasetIDstudy,
+  colors = colorRampPalette(brewer.pal(12, "Paired"))(length(unique(provbysize$datasetIDstudy))),
   marker = list(
-    size = ~countscaled,  # or ~countscaled if you've pre-scaled
-    sizemode = "area",          # ensures perceptual scaling
-    # sizeref = 2.0 * max(provbysize$count, na.rm = TRUE) / (40^2),  # adjust 40 as max size
+    size = ~countscaled,
+    sizemode = "area",
     sizemin = 2,
-    opacity = 0.8,
-    color = ~datasetIDstudy,
-    colorscale = 'Viridis'  # optional or use your `colors`
+    opacity = 0.8
   ),
-  text = ~paste("datasetIDstudy:", datasetIDstudy, "<br>Provenance count:", count),
+  text = ~paste("datasetIDstudy:", datasetIDstudy, "<br>Provenance count:", provcount),
   hoverinfo = "text"
-)
-
-# Set map layout
-fig <- fig %>% layout(
-  title = "Locations of study using warm strat treatments",
-  geo = list(
-    projection = list(type = "natural earth"),
-    showland = TRUE,
-    landcolor = "rgb(243, 243, 243)"
+) %>%
+  layout(
+    title = "Locations of study using warm strat treatments",
+    geo = list(
+      projection = list(type = "natural earth"),
+      showland = TRUE,
+      landcolor = "rgb(243, 243, 243)"
+    )
   )
-)
-fig
+plotlymapprov
 
 # === === === === === === === === === === === === === #
 ##### All provenances and color code by dataset ID #####
 # === === === === === === === === === === === === === #
 # assign colors to each of the datasetID
 # Create 48 unique colors from a qualitative palette
-
 n <- length(unique(provbycolor))
 colors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
 provbycolor$color <- colors[as.numeric(as.factor(provbycolor$datasetID))]
 
-# make the map!
+# GG!
+ggmapprovbycolor <- ggplot() +
+  geom_sf(data = world, fill = "grey95", color = "white") +
+  geom_point(data = provbycolor,
+             aes(x = provenance.long, 
+                 y = provenance.lat, 
+                 
+                 color = datasetIDstudy),
+             size = 2,
+             alpha = 0.8) +
+  scale_color_viridis_d(name = "datasetIDstudy") +
+  labs(
+    title = "Provenances coloured by datasetIDstudy",
+    x = "", y = ""
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    legend.box = "vertical",           
+    legend.text = element_text(size = 8),  
+    legend.title = element_text(size = 9),
+    legend.key.size = unit(0.5, "lines"), 
+    panel.grid.major = element_line(color = "grey90")
+  ) +
+  guides(
+    color = guide_legend(ncol = 1) 
+  )
+ggmapprovbycolor
+ggsave("figures/provenancemapcoloredIDstudy.jpeg", ggmapprovbycolor, width = 12, height = 8, dpi = 300)
+
+# plotly!
 provbycolormap <- plot_ly(
   data = provbycolor,
   type = 'scattergeo', 
   mode = 'markers',
   lat = ~provenance.lat,
   lon = ~provenance.long,
-  marker = list(size = 5, opacity = 0.8),
-  color = ~datasetID,
+  marker = list(size = 6, opacity = 0.8),
+  color = ~datasetIDstudy,
   colors = colors,
-  text = ~paste("Dataset ID:", datasetID, "<br>datasetID:", datasetID),
+  text = ~paste("Dataset ID:", datasetIDstudy),
   hoverinfo = "text"
-)
-
-# Set map layout
-provbycolormap <- provbycolormap %>% layout(
-  title = "All provenance color-coded by datasetID",
+) %>% 
+  layout(
+  title = "All provenance color-coded by datasetIDstudy",
   geo = list(
     projection = list(type = "natural earth"),
     showland = TRUE,
