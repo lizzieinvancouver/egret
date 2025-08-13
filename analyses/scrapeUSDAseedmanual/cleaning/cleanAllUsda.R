@@ -57,11 +57,12 @@ source("scrapeUSDAseedmanual/cleaning/source/cleanLightUsda.R")
 # 10. Clean response variables
 source("scrapeUSDAseedmanual/cleaning/source/cleanResponseUsda.R")
 
+# 12. Clean chill data
+source("scrapeUSDAseedmanual/cleaning/source/cleanChillUsda.R")
+
 # 11. Calculate mean of columns with ranges data
 source("scrapeUSDAseedmanual/cleaning/source/cleanMeanUsda.R")
 
-# 12. Clean chill data
-source("scrapeUSDAseedmanual/cleaning/source/cleanChillUsda.R")
 
 # 13. Change the column names to fit egret dataset
 # source("scrapeUSDAseedmanual/cleaning/source/cleanEgretColUsda.R")

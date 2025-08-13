@@ -6,7 +6,7 @@
 # Changing column names to better fit EGRET 
 
 # Replacing all blanks with NA
-d[d==""] <- NA
+# d[d==""] <- NA
 
 colnames(d)[colnames(d) == "genus_name"] <- "genus"
 colnames(d)[colnames(d) == "species_name"] <- "species"
