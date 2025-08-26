@@ -2,10 +2,33 @@
 # By Christophe
 
 # goal of this scrip is to check how many studies have more than one provenance
+
+# housekeeping
+rm(list=ls()) 
+options(stringsAsFactors = FALSE)
+options(max.print = 150) 
+
 # Package
 library(ggplot2)
 library(plotly)
 library(RColorBrewer)
+
+if(length(grep("deirdre", getwd()) > 0)) {
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
+} else if(length(grep("Xiaomao", getwd()) > 0)) {
+  setwd("C:/PhD/Project/egret/analyses")
+} else if(length(grep("Ken", getwd())) > 0){
+  setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
+} else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
+  setwd("/Users/christophe_rouleau-desrochers/github/egret/analyses")
+} else if(length(grep("victor", getwd())) > 0){
+  setwd('~/projects/egret/analyses')
+} 
+
+# read csv
+d <- read.csv("output/egretclean.csv", header = TRUE, sep = ",")
 
 # how many provenances per study
 nrow(subset(d, is.na(provenance.lat)))

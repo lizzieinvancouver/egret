@@ -30,7 +30,8 @@ library(viridisLite)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(sf)
-
+library(ape)
+library(scales)
 # read egret clean
 d <- read.csv("output/egretclean.csv")
 
@@ -42,16 +43,15 @@ provnona <- subset(d, provLatLon != "NA NA")
 # how many provenances per study
 provcount <- aggregate(provnona["provLatLon"], provnona[c("idspp")], function(x) length(unique(x)))
 
-# remove duplicates
+# look for nrow non duplicated
 nrow(provcount[!duplicated(provcount$datasetIDstudy),])
 
-
-# # # make some checks
+#make some checks
 test <- subset(provcount, provLatLon == 1)
 nrow(test)
 
 # check how many datasetIDs don't have provenance data
-subby <- unique(d[, c("idspp", "provLatLon")])
+subby <- unique(d[, c("idspp", "datasetIDstudy", "provLatLon")])
 # subset down and get the ones with no provenance data
 subNA <- subset(subby, provLatLon == "NA NA")
 # replace NA NA with NA
@@ -62,20 +62,18 @@ provcount2 <- rbind(provcount, subNA) # recovered appropriate n ofdatasetIDs
 nrow(provcount2)
 # vec <- unique(provcount2$provLatLon)[2:length(unique(provcount2$provLatLon))]
 
-# keep only 1 entry per datasetIDstudy since we want to know how many provenances/datasetIDstudy
-# test <- provcountnodup[!duplicated(provcountnodup$datasetIDstudy),]
-unique(test$provLatLon)
-# morethan1 <- subset(provcount2, provLatLon > 1)
-provcount2$provLatLon <- as.numeric(provcount2$provLatLon)
+# keep only 1 entry per datasetIDstudy since we want to know how many provenance/datasetIDstudy
+provcountnodup <- provcount2[!duplicated(provcount2$datasetIDstudy),]
+provcountnodup$provLatLon <- as.numeric(provcountnodup$provLatLon)
 
 # add column to fit colors in the plot
-provcount2$color <- NA
-provcount2$color[which(provcount2$provLatLon < 1)] <- "NA provenance"
-provcount2$color[which(provcount2$provLatLon == 1)] <- "1 provenance"
-provcount2$color[which(provcount2$provLatLon > 1)] <- "More than 1 provenance"
+provcountnodup$color <- NA
+provcountnodup$color[which(provcountnodup$provLatLon < 1)] <- "NA provenance"
+provcountnodup$color[which(provcountnodup$provLatLon == 1)] <- "1 provenance"
+provcountnodup$color[which(provcountnodup$provLatLon > 1)] <- "More than 1 provenance"
 
 # plotting the number of studies with more than 1 provenance, 1 prov AND NAs
-count <- ggplot(provcount2, aes(x = provLatLon, fill = color)) +
+count <- ggplot(provcountnodup, aes(x = provLatLon, fill = color)) +
   geom_histogram(binwidth = 1) +
   labs(title = "", x = "Number of provenances", y= "count datasetID X study X spp")+
   scale_color_manual() +
@@ -91,6 +89,7 @@ ggsave("figures/provenanceCount.jpeg", count)
 
 # quick check of which treatment happens the most often (for now need to run clean treatments!)
 treatment_counts <- table(d$treatment)
+
 treatment_df <- data.frame(treatment = names(treatment_counts), Frequency = as.numeric(treatment_counts))
 treatment_df <- treatment_df[order(-treatment_df$Frequency), ]
 
@@ -104,7 +103,6 @@ subbytreat <- d[d$treatment %in% vect, ]
 respvar_counts <- table(d$responseVar)
 respvar_df <- data.frame(respvar = names(respvar_counts), Frequency = as.numeric(respvar_counts))
 respvar_df <- respvar_df[order(-respvar_df$Frequency), ]
-
 vecr <- respvar_df$respvar[1:8]
 # subset for the 20 most common respvar and by the 6 most common treatments
 subbyrespvar <- subbytreat[subbytreat$responseVar %in% vecr, ]
@@ -148,6 +146,39 @@ fig <- fig %>% layout(
   )
 )
 fig
+
+##### Variation of treatments across #####
+morethan1 <- subset(provcountnodup, provLatLon > 1)
+vec <- morethan1$datasetIDstudy
+idmultipleprov <- subset(d, datasetIDstudy %in% vec)
+
+treatXprov <- aggregate(treatmentOverview ~ datasetIDstudy + provLatLon,
+          idmultipleprov,
+          FUN = function(x) length(unique(x)))
+#open graph device
+jpeg("figures/treatmentOverview.jpeg", width=800, height=600, units = "px", quality=300)
+hist(treatXprov$treatmentOverview, ,
+     xlab = "Number of unique treatments",
+     ylab = "Count", 
+     main = "N of unique treatment per datasetIDstudy of multiple provenances")
+dev.off()
+
+# grab the datasetIDstudy with more than 1 treatment
+vec2 <- unique(treatXprov$datasetIDstudy[which(treatXprov$treatmentOverview > 1)])
+treatdf <- subset(d, datasetIDstudy %in% vec2)
+
+treatdfnodup <- treatdf[!duplicated(treatdf$datasetIDstudy),]
+ntreatperstudy <- aggregate(datasetIDstudy ~ treatmentOverview, 
+          treatdf,
+          FUN = function(x) length(unique(x)))
+# plot!
+ntreatperstudyplot <- ggplot(ntreatperstudy, aes(x = treatmentOverview, y = datasetIDstudy)) +
+  geom_col() +
+  labs(x = "Treatment", y = "Dataset ID Study value") +
+  coord_flip()
+ntreatperstudyplot
+# save as jpeg!
+ggsave("figures/ntreatperstudy.pdf", ntreatperstudyplot, width = 5, height = 20)
 
 # === === === === === === === === === === === #
 #### Make a map and color code by perc germ ####
@@ -209,8 +240,8 @@ fig
 # === === === === === === === === === === === #
 #### Make a map for warm stratification ####
 # === === === === === === === === === === === #
-vec <- unique(d$treatmentCor[grepl("warm", d$treatmentCor)])
-warmstrat <- subset(d, treatmentCor %in% vec)
+vec <- unique(d$treatmentOverview[grepl("warm", d$treatmentOverview)])
+warmstrat <- subset(d, treatmentOverview %in% vec)
 # source victor's file I am not allowed to use
 # the not condensed one details wether 
 source("analyseSeedCues/summarizeStrat.R")
@@ -292,8 +323,8 @@ stratmap <- plot_ly(
   colors = color_map,              # use your predefined hex color mapping
   marker = list(
     size = 5,
-    sizemode = "area",
-    opacity = ~opacityprov
+    sizemode = "area"
+    # opacity = ~opacityprov
   )
 ) %>%
   layout(
@@ -327,7 +358,7 @@ warmstratmap <- plot_ly(
     size = 5,  
     sizemode = "area",
     opacity = 0.8,
-    color = ~I(colmap)
+    color = ~I(color_map)
     # colorscale = unique(stratnona$colmap)
   )
 )
@@ -348,8 +379,8 @@ warmstratmap
 #### Make a map for provenance trials ####
 # === === === === === === === === === === #
 # get all the datasetIDs that have multiple provenances in at least 1 of their study
-morethan1ids <- unique(morethan1$datasetID)
-dfmorethan1 <- subset(d, datasetID %in% morethan1ids)
+morethan1ids <- unique(morethan1$datasetIDstudy)
+dfmorethan1 <- subset(d, datasetIDstudy %in% morethan1ids)
 
 # remove duplicated locations
 morethan1nona <- dfmorethan1[!duplicated(dfmorethan1$provLatLon),]
@@ -573,3 +604,150 @@ tiplabels(pch = 19, col = colids, adj = 105, cex = 3)
 legend("topright", legend = names(dataset_colors), col = dataset_colors, pch = 19, cex = 0.8)
 dev.off()
 
+
+# === === === === === === === === === === === === === === #
+##### Figure multiple provenances of multiple species#####
+# === === === === === === === === === === === === === === #
+# subset for duplicated datasetIDstudy since they will give me if there is multiple provenances of multiple species
+manysppprov <- morethan1[duplicated(morethan1$datasetIDstudy),]
+manysppprov <- morethan1[duplicated(morethan1$datasetID),]
+
+# === === === === === === === === === === === === === === #
+# How many datasetIDstudy of multiple provenances have multiple treats ####
+# === === === === === === === === === === === === === === #
+
+
+###### Scarification ######
+
+# for this, grab all the datasetIDstudy that have multiple provs
+vec <- unique(morethan1$datasetIDstudy)
+
+# grab a subset of the whole egret dataset
+morethan1all <- subset(d, datasetIDstudy %in% vec)
+
+# look at the 2 cleaned scrarification cols
+unique(morethan1all$scarifTypeGen)
+unique(morethan1all$scarifTypeSpe)
+
+# subset down to the datasetIDstudy that don't have NAs in neither of those two columns
+scarif <- morethan1all[which(!is.na(morethan1all$scarifTypeSpe) & !is.na(morethan1all$scarifTypeGen)), c("idspp", "scarifTypeSpe", "scarifTypeGen")]
+
+# count how many unique scarifTypeSpe there are per datasetIDstudy using aggregate
+scarifcount <- aggregate(scarifTypeSpe ~ datasetIDstudy, scarif, function(x) length(unique(x)))
+
+### for now, only one study has more than 1 scarifTypeSpe
+
+# Plot!
+scarifcount_plot <- ggplot(scarifcount, aes(x = scarifTypeSpe)) +
+  geom_histogram(binwidth = 1) +
+  labs(title = "", 
+       x = "Number of different scarifications", 
+       y= "count datasetIDstudy X scariftype")+
+  scale_x_continuous(
+    breaks = seq(min(scarifcount$scarifTypeSpe), max(scarifcount$scarifTypeSpe), by = 1),
+    labels = label_number(format = 0)) +
+  scale_y_continuous(labels = label_number(accuracy = 1)) +
+  theme_minimal() 
+scarifcount_plot
+ggsave("figures/scarifcount.jpeg", scarifcount_plot, width = 4, height = 4, dpi = 300)
+
+##### Stratification ##### 
+# look at all the stratification cols
+unique(morethan1all$stratDur_condensed)
+unique(morethan1all$stratSequence_condensed)
+unique(morethan1all$stratTemp_condensed)
+unique(morethan1all$warmStratTemp)
+
+strat <- morethan1all[which(!is.na(morethan1all$stratSequence_condensed)), c("datasetIDstudy", "stratDur_condensed", "stratSequence_condensed", "stratTemp_condensed", "warmStratTemp")]
+
+# count how many durations of strat by idspp
+stratdurcount <- aggregate(stratDur_condensed ~ idspp, strat, function(x) length(unique(x)))
+# subset only for the ones >1
+stratdurcountmorethan1 <- subset(stratdurcount, stratDur_condensed > 1)
+
+# Plot stratification durations!
+stratdurcount_plot <- ggplot(stratdurcount, aes(x = stratDur_condensed)) +
+  geom_histogram(binwidth = 1) +
+  labs(title = "", 
+       x = "Number of different strat durations", 
+       y= "count idspp X stratDur_condensed") +
+  scale_x_continuous(
+    breaks = seq(
+      min(stratdurcount$stratDur_condensed), 
+      max(stratdurcount$stratDur_condensed), 
+      by = 1),
+    labels = label_number(format = 0)) +
+  scale_y_continuous(labels = label_number(accuracy = 1)) +
+  theme_minimal() 
+stratdurcount_plot
+ggsave("figures/stratdurcount.jpeg", stratdurcount_plot, width = 6, height = 4, dpi = 300)
+
+# count how many temps of strat by idspp
+strattempcount <- aggregate(stratTemp_condensed ~ idspp, strat, function(x) length(unique(x)))
+# subset only for the ones >1
+strattempcountmorethan1 <- subset(strattempcount, stratTemp_condensed > 1)
+
+# Plot stratification temperatures!
+strattempcount_plot <- ggplot(strattempcount, aes(x = stratTemp_condensed)) +
+  geom_histogram(binwidth = 1) +
+  labs(title = "", 
+       x = "Number of different strat temp", 
+       y= "count idspp X stratTemp_condensed") +
+  scale_x_continuous(
+    breaks = seq(
+      min(strattempcount$stratTemp_condensed), 
+      max(strattempcount$stratTemp_condensed), 
+      by = 1),
+    labels = label_number(format = 0)) +
+  scale_y_continuous(labels = label_number(accuracy = 1)) +
+  theme_minimal() 
+strattempcount_plot
+ggsave("figures/strattempcount.jpeg", strattempcount_plot, width = 4, height = 4, dpi = 300)
+
+# count how many sequences of strat by idspp
+stratseqcount <- aggregate(stratSequence_condensed ~ idspp, strat, function(x) length(unique(x)))
+# subset only for the ones >1
+stratseqcountmorethan1 <- subset(stratseqcount, stratSequence_condensed > 1)
+
+# Plot stratification sequences!
+stratseqcount_plot <- ggplot(stratseqcount, aes(x = stratSequence_condensed)) +
+  geom_histogram(binwidth = 1) +
+  labs(title = "", 
+       x = "Number of different strat temp", 
+       y= "count idspp X stratSequence_condensed") +
+  scale_x_continuous(
+    breaks = seq(
+      min(stratseqcount$stratSequence_condensed), 
+      max(stratseqcount$stratSequence_condensed), 
+      by = 1),
+    labels = label_number(format = 0)) +
+  scale_y_continuous(labels = label_number(accuracy = 1)) +
+  theme_minimal() 
+stratseqcount_plot
+ggsave("figures/stratseqcount.jpeg", stratseqcount_plot, width = 4, height = 4, dpi = 300)
+
+##### Manipulated germ conditions #####
+# check manipulated germ temp cols
+
+
+# count how many sequences of strat by idspp
+stratseqcount <- aggregate(stratSequence_condensed ~ idspp, strat, function(x) length(unique(x)))
+# subset only for the ones >1
+stratseqcountmorethan1 <- subset(stratseqcount, stratSequence_condensed > 1)
+
+# Plot stratification sequences!
+stratseqcount_plot <- ggplot(stratseqcount, aes(x = stratSequence_condensed)) +
+  geom_histogram(binwidth = 1) +
+  labs(title = "", 
+       x = "Number of different strat temp", 
+       y= "count idspp X stratSequence_condensed") +
+  scale_x_continuous(
+    breaks = seq(
+      min(stratseqcount$stratSequence_condensed), 
+      max(stratseqcount$stratSequence_condensed), 
+      by = 1),
+    labels = label_number(format = 0)) +
+  scale_y_continuous(labels = label_number(accuracy = 1)) +
+  theme_minimal() 
+stratseqcount_plot
+ggsave("figures/stratseqcount.jpeg", stratseqcount_plot, width = 4, height = 4, dpi = 300)
