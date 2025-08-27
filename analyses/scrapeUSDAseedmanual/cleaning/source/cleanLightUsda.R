@@ -14,6 +14,7 @@ d$dailyl_light_hours[which(d$dailyl_light_hours == "NDL")] <- "ambient"
 d$dailyl_light_hours[which(d$dailyl_light_hours == "N")] <- "Dark"
 d$dailyl_light_hours[which(d$dailyl_light_hours == "Y")] <- "Light"
 d$dailyl_light_hours[which(d$dailyl_light_hours == "0")] <- "Dark"
+d$dailyl_light_hours[which(d$genus_name == "Amorpha")] <-"8"
 
 
 # unique(d$test_duration_in_days)

@@ -14,9 +14,9 @@ breakbyto <- strsplit(d$pregermination_treatment_time_minutes, " to ", fixed=TRU
 d$pregermTrtMin <- unlist(lapply(breakbyto, function(x) x[1]))
 d$pregermTrtMax <- unlist(lapply(breakbyto, function(x) x[2]))
 
-breakbyto2 <- strsplit(d$cold_stratification_days, " to ", fixed=TRUE)
-d$chillDurationMin <- unlist(lapply(breakbyto2, function(x) x[1]))
-d$chillDurationMax <- unlist(lapply(breakbyto2, function(x) x[2]))
+# breakbyto2 <- strsplit(d$cold_stratification_days, " to ", fixed=TRUE)
+# d$chillDurationMin <- unlist(lapply(breakbyto2, function(x) x[1]))
+# d$chillDurationMax <- unlist(lapply(breakbyto2, function(x) x[2]))
 
 breakbyto3 <- strsplit(d$dailyl_light_hours, " to ", fixed=TRUE)
 d$photoperiodMin <- unlist(lapply(breakbyto3, function(x) x[1]))
@@ -38,19 +38,19 @@ breakbyto7 <- strsplit(d$samples, " to ", fixed=TRUE)
 d$samplesMin <- unlist(lapply(breakbyto7, function(x) x[1]))
 d$samplesMax <- unlist(lapply(breakbyto7, function(x) x[2]))
 
-breakbyto8 <- strsplit(d$pretreatmentChillDuration, " to ", fixed=TRUE)
-d$pretrtChillDurationMin <- unlist(lapply(breakbyto8, function(x) x[1]))
-d$pretrtChillDurationMax <- unlist(lapply(breakbyto8, function(x) x[2]))
+# breakbyto8 <- strsplit(d$pretreatmentChillDuration, " to ", fixed=TRUE)
+# d$pretrtChillDurationMin <- unlist(lapply(breakbyto8, function(x) x[1]))
+# d$pretrtChillDurationMax <- unlist(lapply(breakbyto8, function(x) x[2]))
 
-breakbyto9 <- strsplit(d$responseValue, " to ", fixed=TRUE)
-d$responseValueMin <- unlist(lapply(breakbyto9, function(x) x[1]))
-d$responseValueMax <- unlist(lapply(breakbyto9, function(x) x[2]))
+# breakbyto9 <- strsplit(d$responseValue, " to ", fixed=TRUE)
+# d$responseValueMin <- unlist(lapply(breakbyto9, function(x) x[1]))
+# d$responseValueMax <- unlist(lapply(breakbyto9, function(x) x[2]))
 
-d$cold_stratification_temp_C[which(d$cold_stratification_temp_C == "3-5")] <- "3 to 5"
-d$cold_stratification_temp_C[which(d$cold_stratification_temp_C == "2-4")] <- "2 to 4"
-breakbyto10 <- strsplit(d$cold_stratification_temp_C, " to ", fixed=TRUE)
-d$chillTempMin <- unlist(lapply(breakbyto10, function(x) x[1]))
-d$chillTempMax <- unlist(lapply(breakbyto10, function(x) x[2]))
+# d$cold_stratification_temp_C[which(d$cold_stratification_temp_C == "3-5")] <- "3 to 5"
+# d$cold_stratification_temp_C[which(d$cold_stratification_temp_C == "2-4")] <- "2 to 4"
+# breakbyto10 <- strsplit(d$cold_stratification_temp_C, " to ", fixed=TRUE)
+# d$chillTempMin <- unlist(lapply(breakbyto10, function(x) x[1]))
+# d$chillTempMax <- unlist(lapply(breakbyto10, function(x) x[2]))
 
 d$warm_stratification_temp_C[which(d$warm_stratification_temp_C == "20-30")] <- "20 to 30"
 
@@ -120,6 +120,13 @@ d$chillDurationMin <- as.integer(d$chillDurationMin)
 d$chillDurationMax <- as.integer(d$chillDurationMax)
 d$coldStratDurAvg <- rowMeans(d[, c("chillDurationMin", "chillDurationMax")], na.rm = TRUE)
 d$coldStratDurAvg[which(is.nan(d$coldStratDurAvg))] <- NA
+
+d$pretreatmentChill<-ifelse(!is.na(d$coldStratDurAvg),"Y",d$pretreatmentChill)
+d$pretreatmentChill<-ifelse(!is.na(d$chillDurationMax),"Y",d$pretreatmentChill)
+d$pretreatmentChill<-ifelse(!is.na(d$chillDurationMin),"Y",d$pretreatmentChill)
+
+d$pretrtChillDurAvg <-ifelse(!is.na(d$coldStratDurAvg),d$coldStratDurAvg,d$coldStratDurAvg)#d$pretrtChillDurAvg)
+d$pretreatmentChillDuration<-ifelse(!is.na(d$cold_stratification_days),d$cold_stratification_days,d$pretreatmentChillDuration)
 
 #d$coldStratDurAvg[which(d$chillDurationMin == 99991)] <- "Stratification and germination as a continuum under the same conditions"
 # d$coldStratDurAvg[which(d$chillDurationMin == 99992)] <- "Variable"

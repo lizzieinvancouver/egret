@@ -31,9 +31,58 @@ unique(d$pretreatmentChill)
 # d <- subset(d, !(pretrtChillDurAvg %in% c("Variable","Stratification and germination as a continuum under the same conditions")))
 
 # Add in stratification temp
+d$cold_stratification_temp_C[which(d$genus_name == "Carpinus" & d$species_name == "betulus" & d$cold_stratification_days == "210")] <-"5"
+d$cold_stratification_temp_C[which(d$genus_name == "Carpinus" & d$species_name == "betulus" & d$cold_stratification_days == "120")] <-"4"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Carpinus" & d$species_name == "caroliniana" & d$cold_stratification_days == "60")] <-"5"
+d$cold_stratification_temp_C[which(d$genus_name == "Carpinus" & d$species_name == "caroliniana" & d$cold_stratification_days == "126")] <-"4.5"
+
+d$warm_stratification_temp_C[which(d$genus_name == "Carpinus" & d$species_name == "betulus")] <-"20"
+d$warm_stratification_temp_C[which(d$genus_name == "Carpinus" & d$species_name == "caroliniana")] <-"20 to 30"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Chamaebatiaria" & d$species_name == "millefolium" & d$pdf_page_number == "395")] <-"5"
+d$cold_stratification_temp_C[which(d$genus_name == "Chamaecyparis" & d$species_name == "lawsoniana" & d$pdf_page_number == "395")] <-"5"
+d$cold_stratification_temp_C[which(d$genus_name == "Callitropsis" & d$species_name == "nootkatensis" & d$pdf_page_number == "395")] <-"5"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Elaeagnus" & d$pdf_page_number == "487")] <-"1.1 to 10"
+d$cold_stratification_days[which(d$genus_name == "Elaeagnus" & d$pdf_page_number == "487")] <-"10 to 90"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Gaultheria" & d$species_name == "procumbens" & d$pdf_page_number == "554")] <-"5"
+d$cold_stratification_temp_C[which(d$genus_name == "Gaultheria" & d$species_name == "shallon" & d$pdf_page_number == "554")] <-"3"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Juglans" & d$pdf_page_number == "604")] <-"1 to 5"
+d$warm_stratification_temp_C[which(d$genus_name == "Juglans" & d$pdf_page_number == "604")] <-"NA"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Lindera" & d$pdf_page_number == "668")] <-"1 to 5"
+d$cold_stratification_temp_C[which(d$genus_name == "Lindera" & d$warm_stratification_days == "28")] <-"20 to 30"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Liquidambar" & d$pdf_page_number == "672")] <-"3"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Oemleria" & d$pdf_page_number == "751")] <-"3.3"
+d$day_temp_celsius[which(d$genus_name == "Oemleria" & d$pdf_page_number == "751")] <- "30"
+d$night_temp_celsius[which(d$genus_name == "Oemleria" & d$pdf_page_number == "751")] <- "30"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Philadelphus" & d$pdf_page_number == "788")] <-"3 to 5"
+d$day_temp_celsius[which(d$genus_name == "Philadelphus" & d$responseType == "percent.germ.15degC.incubated")] <- "15"
+d$day_temp_celsius[which(d$genus_name == "Philadelphus" & d$responseType == "percent.germ.20degC.incubated")] <- "20"
+d$night_temp_celsius[which(d$genus_name == "Philadelphus" & d$responseType == "percent.germ.20degC.incubated")] <- "10"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Viburnum" & d$pdf_page_number == "1166")] <-"5 to 10"
+d$day_temp_celsius[which(d$genus_name == "Viburnum" & d$pdf_page_number == "1166")] <-"30"
+d$night_temp_celsius[which(d$genus_name == "Viburnum" & d$pdf_page_number == "1166")] <-"20"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Symphoricarpos" & d$pdf_page_number == "1081")] <-"5 to 10"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Shepherdia" & d$species_name == "argentea" & d$pdf_page_number == "1045")] <-"3"
+d$cold_stratification_days[which(d$genus_name == "Shepherdia" & d$species_name == "argentea" & d$pdf_page_number == "1045")] <-"90"
+d$cold_stratification_temp_C[which(d$genus_name == "Shepherdia" & d$species_name == "rotundifolia" & d$pdf_page_number == "1045")] <-"3"
+d$cold_stratification_days[which(d$genus_name == "Shepherdia" & d$species_name == "rotundifolia" & d$pdf_page_number == "1045")] <-"30 to 60"
+
+
 d$cold_stratification_temp_C[which(d$genus_name == "Aronia")] <-"10"
 d$cold_stratification_temp_C[which(d$genus_name == "Alnus" & d$cold_stratification_days == "180")] <- "5"
 d$cold_stratification_temp_C[which(d$genus_name == "Alnus" & d$cold_stratification_days == "1803")] <- "5"
+
 d$warm_stratification_temp_C[which(d$genus_name == "Alnus" & d$cold_stratification_days == "1803")] <- "20"
 d$warm_stratification_days[which(d$genus_name == "Alnus" & d$cold_stratification_days == "1803")] <- "3"
 d$cold_stratification_days[which(d$genus_name == "Alnus" & d$cold_stratification_days == "1803")] <- "180"
