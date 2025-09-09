@@ -94,4 +94,7 @@ if(length(grep("victor", getwd())) == 0){
   write.csv(d, "output/egretclean.csv", row.names=FALSE)
 } 
 
+subset(d, datasetIDstudy %in% grepl(" ", d$datasetIDstudy))
+d$datasetIDstudy[which(d$datasetID == grepl(" ", d$datasetIDstudy))]
 
+d <- d[grepl("\\s", d$datasetIDstudy), ]

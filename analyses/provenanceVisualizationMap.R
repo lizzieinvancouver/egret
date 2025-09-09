@@ -51,7 +51,7 @@ test <- subset(provcount, provLatLon == 1)
 nrow(test)
 
 # check how many datasetIDs don't have provenance data
-subby <- unique(d[, c("idspp", "datasetIDstudy", "provLatLon")])
+subby <- unique(d[, c("idspp", "provLatLon")])
 # subset down and get the ones with no provenance data
 subNA <- subset(subby, provLatLon == "NA NA")
 # replace NA NA with NA
@@ -63,7 +63,7 @@ nrow(provcount2)
 # vec <- unique(provcount2$provLatLon)[2:length(unique(provcount2$provLatLon))]
 
 # keep only 1 entry per datasetIDstudy since we want to know how many provenance/datasetIDstudy
-provcountnodup <- provcount2[!duplicated(provcount2$datasetIDstudy),]
+provcountnodup <- provcount2[!duplicated(provcount2$idspp),]
 provcountnodup$provLatLon <- as.numeric(provcountnodup$provLatLon)
 
 # add column to fit colors in the plot
@@ -79,7 +79,7 @@ count <- ggplot(provcountnodup, aes(x = provLatLon, fill = color)) +
   scale_color_manual() +
   theme_minimal() 
 count
-ggsave("figures/provenanceCount.jpeg", count)
+ggsave("figures/provenance/provenanceCount.jpeg", count)
 
 #### make map with color subsetting by most common treatments ####
 
@@ -149,36 +149,36 @@ fig
 
 ##### Variation of treatments across #####
 morethan1 <- subset(provcountnodup, provLatLon > 1)
-vec <- morethan1$datasetIDstudy
-idmultipleprov <- subset(d, datasetIDstudy %in% vec)
+vec <- morethan1$idspp
+idmultipleprov <- subset(d, idspp %in% vec)
 
-treatXprov <- aggregate(treatmentOverview ~ datasetIDstudy + provLatLon,
+treatXprov <- aggregate(treatmentOverview ~ idspp + provLatLon,
           idmultipleprov,
           FUN = function(x) length(unique(x)))
 #open graph device
-jpeg("figures/treatmentOverview.jpeg", width=800, height=600, units = "px", quality=300)
+jpeg("figures/provenance/treatmentOverview.jpeg", width=800, height=600, units = "px", quality=300)
 hist(treatXprov$treatmentOverview, ,
      xlab = "Number of unique treatments",
      ylab = "Count", 
-     main = "N of unique treatment per datasetIDstudy of multiple provenances")
+     main = "N of unique treatment per idspp of multiple provenances")
 dev.off()
 
 # grab the datasetIDstudy with more than 1 treatment
-vec2 <- unique(treatXprov$datasetIDstudy[which(treatXprov$treatmentOverview > 1)])
-treatdf <- subset(d, datasetIDstudy %in% vec2)
+vec2 <- unique(treatXprov$idspp[which(treatXprov$treatmentOverview > 1)])
+treatdf <- subset(d, idspp %in% vec2)
 
-treatdfnodup <- treatdf[!duplicated(treatdf$datasetIDstudy),]
-ntreatperstudy <- aggregate(datasetIDstudy ~ treatmentOverview, 
+treatdfnodup <- treatdf[!duplicated(treatdf$idspp),]
+ntreatperstudy <- aggregate(idspp ~ treatmentOverview, 
           treatdf,
           FUN = function(x) length(unique(x)))
 # plot!
-ntreatperstudyplot <- ggplot(ntreatperstudy, aes(x = treatmentOverview, y = datasetIDstudy)) +
+ntreatperstudyplot <- ggplot(ntreatperstudy, aes(x = treatmentOverview, y = idspp)) +
   geom_col() +
   labs(x = "Treatment", y = "Dataset ID Study value") +
   coord_flip()
 ntreatperstudyplot
 # save as jpeg!
-ggsave("figures/ntreatperstudy.pdf", ntreatperstudyplot, width = 5, height = 20)
+ggsave("figures/provenance/ntreatperstudy.pdf", ntreatperstudyplot, width = 5, height = 20)
 
 # === === === === === === === === === === === #
 #### Make a map and color code by perc germ ####
@@ -379,8 +379,8 @@ warmstratmap
 #### Make a map for provenance trials ####
 # === === === === === === === === === === #
 # get all the datasetIDs that have multiple provenances in at least 1 of their study
-morethan1ids <- unique(morethan1$datasetIDstudy)
-dfmorethan1 <- subset(d, datasetIDstudy %in% morethan1ids)
+morethan1ids <- unique(morethan1$idspp)
+dfmorethan1 <- subset(d, idspp %in% morethan1ids)
 
 # remove duplicated locations
 morethan1nona <- dfmorethan1[!duplicated(dfmorethan1$provLatLon),]
@@ -388,19 +388,19 @@ morethan1nona$provenance.lat <- as.numeric(morethan1nona$provenance.lat)
 morethan1nona$provenance.long <- as.numeric(morethan1nona$provenance.long)
 
 # grab the cols I want
-provbycolor <- morethan1nona[,c("datasetIDstudy", "provenance.lat", "provenance.long", "provLatLon")]
+provbycolor <- morethan1nona[,c("idspp", "provenance.lat", "provenance.long", "provLatLon")]
 
 # first average provenance per dataset ID and size by number of different source.population
-provcountlat <- aggregate(provbycolor["provenance.lat"], provbycolor["datasetIDstudy"], function(x) mean(x))
-provcountlong <- aggregate(provbycolor["provenance.long"], provbycolor["datasetIDstudy"], function(x) mean(x))
+provcountlat <- aggregate(provbycolor["provenance.lat"], provbycolor["idspp"], function(x) mean(x))
+provcountlong <- aggregate(provbycolor["provenance.long"], provbycolor["idspp"], function(x) mean(x))
 
-# count number of provenance per datasetIDstudy
+# count number of provenance per idspp
 provbycolor$provcount <- 1
-count <- aggregate(provbycolor["provcount"], provbycolor["datasetIDstudy"], function(x) sum(x))
+count <- aggregate(provbycolor["provcount"], provbycolor["idspp"], function(x) sum(x))
 
 ### need to merge them together, but not now
-merged1 <- merge(provcountlat, provcountlong, by = "datasetIDstudy")
-merged2 <- merge(merged1, count, by = "datasetIDstudy")
+merged1 <- merge(provcountlat, provcountlong, by = "idspp")
+merged2 <- merge(merged1, count, by = "idspp")
 
 # get rid of nas
 provbysize <- merged2[!is.na(merged2$provenance.lat), ]
@@ -408,7 +408,7 @@ provbysize <- merged2[!is.na(merged2$provenance.lat), ]
 # set colors
 nbysize <- nrow(provbysize)
 colors <- colorRampPalette(brewer.pal(12, "Paired"))(nbysize)
-provbysize$color <- colors[as.numeric(as.factor(provbysize$datasetIDstudy))]
+provbysize$color <- colors[as.numeric(as.factor(provbysize$idspp))]
 
 # scale count larger
 provbysize$countscaled <- provbysize$provcount/3
@@ -423,7 +423,7 @@ ggmapprov <- ggplot() +
              aes(x = provenance.long, 
                  y = provenance.lat, 
                  size = provcount,
-                 color = datasetIDstudy),
+                 color = idspp),
              alpha = 0.8) +
   scale_size_continuous(
     name = "Provenance Count",
@@ -432,7 +432,7 @@ ggmapprov <- ggplot() +
   ) +
   scale_color_viridis_d(name = "Dataset ID") +
   labs(
-    title = "Averaged Provenance by datasetIDstudy",
+    title = "Averaged Provenance by idspp",
     x = "", y = ""
   ) +
   theme_minimal() +
@@ -448,14 +448,14 @@ ggmapprov <- ggplot() +
     color = guide_legend(ncol = 1) 
   )
 ggmapprov
-ggsave("figures/provenancemapXscaledbysize.jpeg", ggmapprov, width = 12, height = 8, dpi = 300)
+ggsave("figures/provenance/provenancemapXscaledbysize.jpeg", ggmapprov, width = 12, height = 8, dpi = 300)
 
 # scale count larger
 provbysize$countscaled <- provbysize$provcount*1.1
 # set colors
-n <- length(unique(provbysize$datasetIDstudy))
+n <- length(unique(provbysize$idspp))
 colors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
-provbysize$color <- colors[as.numeric(as.factor(provbysize$datasetID))]
+# provbysize$color <- colors[as.numeric(as.factor(provbysize$datasetID))]
 
 plotlymapprov <- plot_ly(
   data = provbysize,
@@ -463,15 +463,15 @@ plotlymapprov <- plot_ly(
   mode = 'markers',
   lat = ~provenance.lat,
   lon = ~provenance.long,
-  color = ~datasetIDstudy,
-  colors = colorRampPalette(brewer.pal(12, "Paired"))(length(unique(provbysize$datasetIDstudy))),
+  color = ~idspp,
+  colors = colorRampPalette(brewer.pal(12, "Paired"))(length(unique(provbysize$idspp))),
   marker = list(
     size = ~countscaled,
     sizemode = "area",
     sizemin = 2,
     opacity = 0.8
   ),
-  text = ~paste("datasetIDstudy:", datasetIDstudy, "<br>Provenance count:", provcount),
+  text = ~paste("idspp:", idspp, "<br>Provenance count:", provcount),
   hoverinfo = "text"
 ) %>%
   layout(
@@ -500,12 +500,12 @@ ggmapprovbycolor <- ggplot() +
              aes(x = provenance.long, 
                  y = provenance.lat, 
                  
-                 color = datasetIDstudy),
+                 color = idspp),
              size = 2,
              alpha = 0.8) +
-  scale_color_viridis_d(name = "datasetIDstudy") +
+  scale_color_viridis_d(name = "idspp") +
   labs(
-    title = "Provenances coloured by datasetIDstudy",
+    title = "Provenances coloured by idspp",
     x = "", y = ""
   ) +
   theme_minimal() +
@@ -521,7 +521,7 @@ ggmapprovbycolor <- ggplot() +
     color = guide_legend(ncol = 1) 
   )
 ggmapprovbycolor
-ggsave("figures/provenancemapcoloredIDstudy.jpeg", ggmapprovbycolor, width = 12, height = 8, dpi = 300)
+ggsave("figures/provenance/provenancemapcoloredIDstudy.jpeg", ggmapprovbycolor, width = 12, height = 8, dpi = 300)
 
 # plotly!
 provbycolormap <- plot_ly(
@@ -531,13 +531,13 @@ provbycolormap <- plot_ly(
   lat = ~provenance.lat,
   lon = ~provenance.long,
   marker = list(size = 6, opacity = 0.8),
-  color = ~datasetIDstudy,
+  color = ~idspp,
   colors = colors,
-  text = ~paste("Dataset ID:", datasetIDstudy),
+  text = ~paste("Dataset ID:", idspp),
   hoverinfo = "text"
 ) %>% 
   layout(
-  title = "All provenance color-coded by datasetIDstudy",
+  title = "All provenance color-coded by idspp",
   geo = list(
     projection = list(type = "natural earth"),
     showland = TRUE,
@@ -549,7 +549,7 @@ provbycolormap
 # === === === === === === === === === === === #
 #### Phylogenic tree X multiple provenances ####
 # === === === === === === === === === === === #
-provcount4phy <- aggregate(provnona["provLatLon"], provnona[c("datasetID", "datasetIDstudy", "latbi")], function(x) length(unique(x)))
+provcount4phy <- aggregate(provnona["provLatLon"], provnona[c("datasetID", "idspp", "latbi")], function(x) length(unique(x)))
 
 # select only rows with more than 1 provenance
 morethan1 <- subset(provcount4phy, provLatLon != "1")
@@ -598,7 +598,7 @@ for (i in 1:nrow(morethan1)) {
 colids <- ifelse(!is.na(tip_datasetID), dataset_colors[tip_datasetID], "transparent")
 
 # Plot tree and color-coded tip dots
-pdf("figures/egretTreeXprovenance.pdf", width = 20, height = 80)
+pdf("figures/provenance/egretTreeXprovenance.pdf", width = 20, height = 80)
 plot(egretTree, cex = 1.5, tip.color = colprov)
 tiplabels(pch = 19, col = colids, adj = 105, cex = 3)
 legend("topright", legend = names(dataset_colors), col = dataset_colors, pch = 19, cex = 0.8)
@@ -608,48 +608,54 @@ dev.off()
 # === === === === === === === === === === === === === === #
 ##### Figure multiple provenances of multiple species#####
 # === === === === === === === === === === === === === === #
-# subset for duplicated datasetIDstudy since they will give me if there is multiple provenances of multiple species
-manysppprov <- morethan1[duplicated(morethan1$datasetIDstudy),]
+# subset for duplicated idspp since they will give me if there is multiple provenances of multiple species
+manysppprov <- morethan1[duplicated(morethan1$idspp),]
 manysppprov <- morethan1[duplicated(morethan1$datasetID),]
 
 # === === === === === === === === === === === === === === #
-# How many datasetIDstudy of multiple provenances have multiple treats ####
+# How many idspp of multiple provenances have multiple treats ####
 # === === === === === === === === === === === === === === #
 
 
 ###### Scarification ######
 
-# for this, grab all the datasetIDstudy that have multiple provs
-vec <- unique(morethan1$datasetIDstudy)
+# for this, grab all the idspp that have multiple provs
+vec <- unique(morethan1$idspp)
 
 # grab a subset of the whole egret dataset
-morethan1all <- subset(d, datasetIDstudy %in% vec)
+morethan1all <- subset(d, idspp %in% vec)
 
 # look at the 2 cleaned scrarification cols
 unique(morethan1all$scarifTypeGen)
 unique(morethan1all$scarifTypeSpe)
 
-# subset down to the datasetIDstudy that don't have NAs in neither of those two columns
-scarif <- morethan1all[which(!is.na(morethan1all$scarifTypeSpe) & !is.na(morethan1all$scarifTypeGen)), c("idspp", "scarifTypeSpe", "scarifTypeGen")]
+# subset down to the idspp that don't have NAs in neither of those two columns
+scarif <- morethan1all[which(!is.na(morethan1all$scarifTypeSpe) & !is.na(morethan1all$scarifTypeGen)), 
+                       c("idspp", 
+                         "provenance.lat", 
+                         "provenance.long", 
+                         "scarifTypeSpe", 
+                         "scarifTypeGen")]
 
-# count how many unique scarifTypeSpe there are per datasetIDstudy using aggregate
-scarifcount <- aggregate(scarifTypeSpe ~ datasetIDstudy, scarif, function(x) length(unique(x)))
+# count how many unique scarifTypeSpe there are per idspp using aggregate
+scarifcount <- aggregate(scarifTypeSpe ~ idspp, scarif, function(x) length(unique(x)))
 
 ### for now, only one study has more than 1 scarifTypeSpe
 
-# Plot!
+# Histogram!
 scarifcount_plot <- ggplot(scarifcount, aes(x = scarifTypeSpe)) +
   geom_histogram(binwidth = 1) +
   labs(title = "", 
        x = "Number of different scarifications", 
-       y= "count datasetIDstudy X scariftype")+
+       y= "count idspp X scariftype")+
   scale_x_continuous(
     breaks = seq(min(scarifcount$scarifTypeSpe), max(scarifcount$scarifTypeSpe), by = 1),
     labels = label_number(format = 0)) +
   scale_y_continuous(labels = label_number(accuracy = 1)) +
   theme_minimal() 
 scarifcount_plot
-ggsave("figures/scarifcount.jpeg", scarifcount_plot, width = 4, height = 4, dpi = 300)
+ggsave("figures/provenance/scarifcount.jpeg", scarifcount_plot, width = 4, height = 4, dpi = 300)
+
 
 ##### Stratification ##### 
 # look at all the stratification cols
@@ -658,10 +664,18 @@ unique(morethan1all$stratSequence_condensed)
 unique(morethan1all$stratTemp_condensed)
 unique(morethan1all$warmStratTemp)
 
-strat <- morethan1all[which(!is.na(morethan1all$stratSequence_condensed)), c("datasetIDstudy", "stratDur_condensed", "stratSequence_condensed", "stratTemp_condensed", "warmStratTemp")]
+strat <- morethan1all[which(!is.na(morethan1all$stratSequence_condensed)), 
+                      c("idspp", 
+                        "provenance.lat", 
+                        "provenance.long", 
+                        "stratDur_condensed", 
+                        "stratSequence_condensed", 
+                        "stratTemp_condensed", 
+                        "warmStratTemp")]
 
 # count how many durations of strat by idspp
-stratdurcount <- aggregate(stratDur_condensed ~ idspp, strat, function(x) length(unique(x)))
+stratdurcount <- aggregate(stratDur_condensed ~ idspp + provenance.lat + provenance.long, strat, function(x) length(unique(x)))
+
 # subset only for the ones >1
 stratdurcountmorethan1 <- subset(stratdurcount, stratDur_condensed > 1)
 
@@ -680,10 +694,45 @@ stratdurcount_plot <- ggplot(stratdurcount, aes(x = stratDur_condensed)) +
   scale_y_continuous(labels = label_number(accuracy = 1)) +
   theme_minimal() 
 stratdurcount_plot
-ggsave("figures/stratdurcount.jpeg", stratdurcount_plot, width = 6, height = 4, dpi = 300)
+ggsave("figures/provenance/stratdurcount.jpeg", stratdurcount_plot, width = 6, height = 4, dpi = 300)
+
+# MAP strat durations per location
+# scale count larger
+stratdurcount$countscaled <- stratdurcount$stratDur_condensed*3
+# set colors
+n <- length(unique(stratdurcount$idspp))
+colors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
+# provbysize$color <- colors[as.numeric(as.factor(provbysize$datasetID))]
+
+stratDur_plotly <- plot_ly(
+  data = stratdurcount,
+  type = 'scattergeo',
+  mode = 'markers',
+  lat = ~provenance.lat,
+  lon = ~provenance.long,
+  color = ~idspp,
+  colors = colorRampPalette(brewer.pal(12, "Paired"))(length(unique(stratdurcount$idspp))),
+  marker = list(
+    size = ~countscaled,
+    sizemode = "area",
+    sizemin = 2,
+    opacity = 0.8
+  ),
+  text = ~paste("idspp:", idspp, "<br>Strat duration count:", stratDur_condensed),
+  hoverinfo = "text"
+) %>%
+  layout(
+    title = "Locations of multiple prov X multiple spp X multiple strat durations",
+    geo = list(
+      projection = list(type = "natural earth"),
+      showland = TRUE,
+      landcolor = "rgb(243, 243, 243)"
+    )
+  )
+stratDur_plotly
 
 # count how many temps of strat by idspp
-strattempcount <- aggregate(stratTemp_condensed ~ idspp, strat, function(x) length(unique(x)))
+strattempcount <- aggregate(stratTemp_condensed ~ idspp + provenance.lat + provenance.long, strat, function(x) length(unique(x)))
 # subset only for the ones >1
 strattempcountmorethan1 <- subset(strattempcount, stratTemp_condensed > 1)
 
@@ -702,7 +751,40 @@ strattempcount_plot <- ggplot(strattempcount, aes(x = stratTemp_condensed)) +
   scale_y_continuous(labels = label_number(accuracy = 1)) +
   theme_minimal() 
 strattempcount_plot
-ggsave("figures/strattempcount.jpeg", strattempcount_plot, width = 4, height = 4, dpi = 300)
+ggsave("figures/provenance/strattempcount.jpeg", strattempcount_plot, width = 4, height = 4, dpi = 300)
+
+# Map strat temp!
+strattempcount$countscaled <- strattempcount$stratTemp_condensed*3
+# set colors
+n <- length(unique(strattempcount$idspp))
+colors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
+# provbysize$color <- colors[as.numeric(as.factor(provbysize$datasetID))]
+stratTemp_plotly <- plot_ly(
+  data = strattempcount,
+  type = 'scattergeo',
+  mode = 'markers',
+  lat = ~provenance.lat,
+  lon = ~provenance.long,
+  color = ~idspp,
+  colors = colorRampPalette(brewer.pal(12, "Paired"))(length(unique(stratdurcount$idspp))),
+  marker = list(
+    size = ~countscaled,
+    sizemode = "area",
+    sizemin = 2,
+    opacity = 0.8
+  ),
+  text = ~paste("idspp:", idspp, "<br>Strat temp count:", stratTemp_condensed),
+  hoverinfo = "text"
+) %>%
+  layout(
+    title = "Locations of multiple prov X multiple spp X multiple strat temp",
+    geo = list(
+      projection = list(type = "natural earth"),
+      showland = TRUE,
+      landcolor = "rgb(243, 243, 243)"
+    )
+  )
+stratTemp_plotly
 
 # count how many sequences of strat by idspp
 stratseqcount <- aggregate(stratSequence_condensed ~ idspp, strat, function(x) length(unique(x)))
@@ -724,30 +806,54 @@ stratseqcount_plot <- ggplot(stratseqcount, aes(x = stratSequence_condensed)) +
   scale_y_continuous(labels = label_number(accuracy = 1)) +
   theme_minimal() 
 stratseqcount_plot
-ggsave("figures/stratseqcount.jpeg", stratseqcount_plot, width = 4, height = 4, dpi = 300)
+ggsave("figures/provenance/stratseqcount.jpeg", stratseqcount_plot, width = 4, height = 4, dpi = 300)
 
 ##### Manipulated germ conditions #####
+# check cols of interest
+unique(morethan1all$germTemp)
+unique(morethan1all$germDuration)
+
 # check manipulated germ temp cols
+germtemp <- morethan1all[which(!is.na(morethan1all$germTemp)), 
+                      c("idspp", 
+                        "provenance.lat", 
+                        "provenance.long", 
+                        "germTemp", 
+                        "germDuration")]
 
+# count how many durations of strat by idspp
+germTempcount <- aggregate(germTemp ~ idspp + provenance.lat + provenance.long, germtemp, function(x) length(unique(x)))
 
-# count how many sequences of strat by idspp
-stratseqcount <- aggregate(stratSequence_condensed ~ idspp, strat, function(x) length(unique(x)))
-# subset only for the ones >1
-stratseqcountmorethan1 <- subset(stratseqcount, stratSequence_condensed > 1)
+# size scale
+germTempcount$countscaled <- germTempcount$germTemp*10
+# set colors
+n <- length(unique(germTempcount$idspp))
+colors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
 
-# Plot stratification sequences!
-stratseqcount_plot <- ggplot(stratseqcount, aes(x = stratSequence_condensed)) +
-  geom_histogram(binwidth = 1) +
-  labs(title = "", 
-       x = "Number of different strat temp", 
-       y= "count idspp X stratSequence_condensed") +
-  scale_x_continuous(
-    breaks = seq(
-      min(stratseqcount$stratSequence_condensed), 
-      max(stratseqcount$stratSequence_condensed), 
-      by = 1),
-    labels = label_number(format = 0)) +
-  scale_y_continuous(labels = label_number(accuracy = 1)) +
-  theme_minimal() 
-stratseqcount_plot
-ggsave("figures/stratseqcount.jpeg", stratseqcount_plot, width = 4, height = 4, dpi = 300)
+germTemp_plotly <- plot_ly(
+  data = germTempcount,
+  type = 'scattergeo',
+  mode = 'markers',
+  lat = ~provenance.lat,
+  lon = ~provenance.long,
+  color = ~idspp,
+  colors = colorRampPalette(brewer.pal(12, "Paired"))(length(unique(germTempcount$idspp))),
+  marker = list(
+    size = ~countscaled,
+    sizemode = "area",
+    sizemin = 2,
+    opacity = 0.8
+  ),
+  text = ~paste("idspp:", idspp, "<br>Germ temp count:", germTemp),
+  hoverinfo = "text"
+) %>%
+  layout(
+    title = "Locations of multiple prov X multiple spp X multiple germ temp",
+    geo = list(
+      projection = list(type = "natural earth"),
+      showland = TRUE,
+      landcolor = "rgb(243, 243, 243)"
+    )
+  )
+germTemp_plotly
+
