@@ -77,8 +77,7 @@ source("cleaning/source/cleanSoakedIn.R")
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
 # And remove whitespace from same column (second line grabs the trailing ones)
-d$study <- sub("\\s+", "", d$study)
-d$study <- sub("\\s+$", "", d$study)
+d$study <- gsub("\\s+", "", d$study)
 # And make a combined datasetID study column
 d$datasetIDstudy <- paste(d$datasetID,d$study, sep = "")
 
@@ -97,8 +96,3 @@ dim(d) # dim on 30 July 2025: 31395, 77
 if(length(grep("victor", getwd())) == 0){
   write.csv(d, "output/egretclean.csv", row.names=FALSE)
 } 
-
-subset(d, datasetIDstudy %in% grepl(" ", d$datasetIDstudy))
-d$datasetIDstudy[which(d$datasetID == grepl(" ", d$datasetIDstudy))]
-
-d <- d[grepl("\\s", d$datasetIDstudy), ]
