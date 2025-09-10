@@ -76,6 +76,10 @@ source("cleaning/source/cleanSoakedIn.R")
 # And ... some final cleaning
 # Cleaning experiment number, if missing a value add "exp1"
 d$study[which(is.na(d$study))] <- "exp1"
+# And remove whitespace from same column (second line grabs the trailing ones)
+d$study <- sub("\\s+", "", d$study)
+d$study <- sub("\\s+$", "", d$study)
+# And make a combined datasetID study column
 d$datasetIDstudy <- paste(d$datasetID,d$study, sep = "")
 
 # Get a latin binomial
