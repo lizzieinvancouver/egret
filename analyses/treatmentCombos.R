@@ -10,6 +10,8 @@ library(RColorBrewer)
 library(dplyr)
 library(viridisLite)
 library(grDevices)
+library(ape)
+library(viridis)
 
 # housekeeping
 rm(list=ls()) 
@@ -47,11 +49,47 @@ fluctuating <- c(
   "cold then warm then cold then warm then cold then warm then cold then warm then cold then warm then cold then warm then cold then warm then cold"
 )
 stratsp$stratSequence_condensed[stratsp$stratSequence_condensed %in% fluctuating] <- "fluctuating temperature"
+stratsp <- stratsp[!duplicated(stratsp[c("latbi", "stratSequence_condensed")]), ]
 
 # Subset species with storage
 storage <- subset(d, !is.na(d$storage.type))
 storagesp <- storage[!duplicated(storage$latbi), c("latbi","storage.type")]
 
+# Subset species with germ day temperature
+germDay <- subset(d, !is.na(d$germTempDay))
+germDaysp <- germDay[!duplicated(germDay$latbi), c("latbi","germTempDay")]
+
+# Subset species with germ night temperature
+germNight <- subset(d, !is.na(d$germTempNight))
+germNightsp <- germNight[!duplicated(germNight$latbi), c("latbi","germTempNight")]
+
+# Combine germDay and germNight into a single dataframe
+germTemps <- merge(germDaysp, germNightsp, by = "latbi", all = TRUE)
+
+# Create color palette
+temp_palette <- colorRampPalette(c("blue", "red"))
+
+# Combine all temps to get a unified range for consistent coloring
+all_temps <- c(germTemps$germTempDay, germTemps$germTempNight)
+all_temps <- all_temps[!is.na(all_temps)]
+
+# Map temp to color
+n_colors <- 100
+temp_colors <- temp_palette(n_colors)
+
+# Function to map temp to color
+map_temp_to_color <- function(temp) {
+  if (is.na(temp)) return(NA)
+  index <- round((temp - min(all_temps)) / diff(range(all_temps)) * (n_colors - 1)) + 1
+  temp_colors[index]
+}
+
+# Assign colors
+germTemps$color_day <- sapply(germTemps$germTempDay, map_temp_to_color)
+germTemps$color_night <- sapply(germTemps$germTempNight, map_temp_to_color)
+
+# Match species to tree tips
+germTemps$tip_index <- match(germTemps$latbi, allspp)
 # Load tree
 egretTree <- read.tree("output/egretPhylogenyFull.tre")
 allspp <- egretTree$tip.label
@@ -104,7 +142,7 @@ plot(egretTree, cex = 1, tip.color = tip_label_colors)
 for (i in seq_along(tipindex_storage)) {
   tip <- tipindex_storage[i]
   tiplabels(pch = storage_pch, tip = tip,
-            adj = 70,
+            adj = 60,
             col = "black", bg = storage_col, cex = 1.2)
 }
 
@@ -119,7 +157,7 @@ for (i in seq_along(scarsp$latbi)) {
   pch <- shape_map[type]
   
   # Add tip label symbol
-  tiplabels(pch = pch, tip = tip,  adj = 80, col = "black", bg = col, cex = 1.2)
+  tiplabels(pch = pch, tip = tip,  adj = 70, col = "black", bg = col, cex = 1.2)
 }
 
 # Create legend labels, shapes, and colors
@@ -142,9 +180,28 @@ for (i in seq_len(nrow(stratsp))) {
   col <- "lightseagreen"
   
   # Adjust adj for stacking
-  adj_val <- 90 + (rep_id - 1) * base_offset
+  adj_val <- 80 + (rep_id - 1) * base_offset
   
   tiplabels(pch = pch, tip = tip, adj = adj_val, col = "black", bg = col, cex = 1.2)
+}
+
+
+# Plot germTempDay symbols
+for (i in seq_len(nrow(germTemps))) {
+  tip <- germTemps$tip_index[i]
+  if (!is.na(tip) && !is.na(germTemps$color_day[i])) {
+    tiplabels(pch = 21, tip = tip, adj = 100,
+              col = "black", bg = germTemps$color_day[i], cex = 1.2)
+  }
+}
+
+# Plot germTempNight symbols 
+for (i in seq_len(nrow(germTemps))) {
+  tip <- germTemps$tip_index[i]
+  if (!is.na(tip) && !is.na(germTemps$color_night[i])) {
+    tiplabels(pch = 21, tip = tip, adj = 110,
+              col = "black", bg = germTemps$color_night[i], cex = 1.2)
+  }
 }
 
 # scarification legend
@@ -178,7 +235,16 @@ legend(x=20, y=50,
 # Dormancy legend
 legend("topleft", legend = names(dorm_colors), col = dorm_colors, pch = 15,
        title = "Dormancy Class", pt.cex = 1.5, cex = 1.8, bty = "n")
+# temperature gradient legend
+legend_gradient <- colorRampPalette(c("blue", "red"))(10)
+legend_temp_vals <- round(seq(min(all_temps), max(all_temps), length.out = 10), 1)
 
-
+legend(x = 20, y = 80,
+       legend = legend_temp_vals,
+       fill = legend_gradient,
+       border = NA,
+       title = "Germ Temp (°C)",
+       cex = 1.5,
+       bty = "n")
 dev.off()
 
