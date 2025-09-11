@@ -28,4 +28,6 @@ d$photoperiodCor <- d$dailyl_light_hours
 d$photoperiodCor[d$dailyl_light_hours %in% c("<16", ">8", "10","16", "20" ,"24", "6","8","8 to 24", "8<" , "9", "ambient", "Light")] <- "light"
 d$photoperiodCor[d$dailyl_light_hours %in% c("Dark")] <- "dark"
 
+d$dailyl_light_hours[which(d$genus_name == "Alnus")] <-"8"
+d$dailyl_light_hours[which(d$genus_name == "Alnus" &  d$cold_stratification_days == "0 to 60")] <-"10"
 

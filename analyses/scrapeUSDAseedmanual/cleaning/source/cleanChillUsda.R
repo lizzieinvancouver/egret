@@ -109,6 +109,15 @@ d$cold_stratification_temp_C[which(d$cold_stratification_temp_C == "3-7")] <- "3
 
 d$cold_stratification_days[which(d$cold_stratification_days == "l")] <- "1"
 
+d$cold_stratification_temp_C[which(d$genus_name == "Prunus" & d$cold_stratification_days != "0")] <- "0.6 to 5"
+
+d$cold_stratification_temp_C[which(d$genus_name == "Alnus" & d$cold_stratification_temp_C == "5")] <- "1 to 5"
+
+d$temp_unspecified_time_of_day_celsius[which(d$genus_name == "Artemisia" & d$responseType == "percent.germ.total")] <- "15"
+d$temp_unspecified_time_of_day_celsius[which(d$genus_name == "Artemisia" & d$responseType == "50%germ")] <- "1"
+
+d$test_duration_in_days[which(d$genus_name == "Artemisia" & d$responseVarClean == "percent.germ")] <- "14"
+
 
 breakbyto2 <- strsplit(d$cold_stratification_days, " to ", fixed=TRUE)
 d$chillDurationMin <- unlist(lapply(breakbyto2, function(x) x[1]))
