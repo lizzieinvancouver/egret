@@ -117,5 +117,15 @@ d$samples[which(d$latbi == "Baccharis_pilularis" & d$responseValue == "92")] <- 
 d$pdf_table_number[which(d$pdf_page_number == "277")] <- "3"
 d$pdf_table_number[which(d$pdf_page_number == "287")] <- "3"
 
-
+# Cleaning tables by everyone in September 2025 (see issue # 91)
+# By Lizzie below:
+d$samples[which(d$pdf_page_number==301 & d$pdf_table_number==4 & d$samples==25)] <- # 7 # actually was "2+5" but I am adding them up, and -- for this table --  not sure for this paper why B. koreana shows up as three rows instead of one row, but otherwise seems okay
+d$pdf_table_number[which(d$pdf_page_number==309 & d$pdf_table_number=="Table 6")] <- 6
+d$dailyl_light_hours[which(d$pdf_page_number==336 & d$pdf_table_number==5)] <- 8 # see footnote in table which says "* Daily light period was 8 hours." 
+d$medium[which(d$pdf_page_number==368 & d$pdf_table_number==5)] <- "sand, a sand–peat mixture, or a sandy loam soil"
+d$samples[which(d$pdf_page_number==377 & d$pdf_table_number==5 & d$samples=="7t")] <- 7 # the t was a footnote meaning 'Best results from a set of tests on each of 7 seedlots.'
+d$pdf_table_number[which(d$pdf_page_number==411 & d$pdf_table_number=="Table 3")] <- 3
+d$day_temp_celsius[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- 30 # "Temperatures were 30 °C for 8 hours and 20 °C for 16 hours each day. Sand was the medium used on all listed species. "
+d$night_temp_celsius[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- 20
+d$medium[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- "sand"
 

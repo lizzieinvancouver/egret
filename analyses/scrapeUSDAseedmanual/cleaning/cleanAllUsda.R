@@ -18,7 +18,7 @@ if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
 } else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
   setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses/")
 } else if(length(grep("lizzie", getwd()) > 0)) {
-  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
 } else if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("/Users/deirdre/Documents/github/egret/analyses")
 } else if(length(grep("sapph", getwd()) > 0)) { # Justin wd
