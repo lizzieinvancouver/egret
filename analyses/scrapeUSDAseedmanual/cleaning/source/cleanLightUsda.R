@@ -31,3 +31,10 @@ d$photoperiodCor[d$dailyl_light_hours %in% c("Dark")] <- "dark"
 d$dailyl_light_hours[which(d$genus_name == "Alnus")] <-"8"
 d$dailyl_light_hours[which(d$genus_name == "Alnus" &  d$cold_stratification_days == "0 to 60")] <-"10"
 
+# p.1091
+d$dailyl_light_hours[which(d$pdf_page_number == "1085" & d$species_name == "villosa")] <- "8"
+
+# p.1148
+d$dailyl_light_hours[which(d$pdf_page_number == "1148" & d$species_name == "americana" & d$medium == "paper pads")] <- "8"
+
+

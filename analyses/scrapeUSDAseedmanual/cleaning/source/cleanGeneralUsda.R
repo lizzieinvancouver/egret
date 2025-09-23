@@ -113,8 +113,13 @@ d$samples[which(d$latbi == "Baccharis_halimifolia")] <- "1"
 d$samples[which(d$latbi == "Baccharis_pilularis" & d$responseValue == "93")] <- "1"
 d$samples[which(d$latbi == "Baccharis_pilularis" & d$responseValue == "92")] <- "1"
 
-# page 1063: cleaning sample number
+# p.1063: cleaning sample number
 d$samples[which(d$pdf_page_number == "1063" & is.na(d$samples) & d$species_name %in% c("aucuparia", "scopulina", "sitchensis"))] <- "1"
+# p.1096: cleaning sample number
+d$samples[which(d$pdf_page_number == "1096" & is.na(d$samples))] <- "1"
+# p.1134 :cleaning sample number
+d$samples[which(d$pdf_page_number == "1134" & d$species_name == "mertensiana" & d$responseValue == "62")] <- "1" # here using a cleaned column because value not entered before
+
 
 # cleaning table numbers:
 d$pdf_table_number[which(d$pdf_page_number == "277")] <- "3"

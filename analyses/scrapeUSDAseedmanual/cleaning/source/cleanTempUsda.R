@@ -47,5 +47,7 @@ d$temp_unspecified_time_of_day_celsius [which(d$pdf_page_number == "1085" & d$sp
 d$test_duration_in_days[which(d$pdf_page_number == "1085" & d$species_name == "reticulata")] <- "21"
 # p.1085 for vulgaris, not specified which one is embro and other is seed
 # p.1085 for vilosa, only temperature given
-d$tempDayMin[which(d$pdf_page_number == "1085" & d$species_name == "villosa")] <- "20"
-d$tempDayMax[which(d$pdf_page_number == "1085" & d$species_name == "villosa")] <- "30"
+d$day_temp_celsius[which(d$pdf_page_number == "1085" & d$species_name == "villosa")] <- "20 to 30"
+
+d$test_duration_in_days[which(d$pdf_page_number == "1091" & d$variety == "var. imbricariumm")] <- "28"
+

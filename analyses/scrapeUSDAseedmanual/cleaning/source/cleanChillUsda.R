@@ -118,10 +118,17 @@ d$temp_unspecified_time_of_day_celsius[which(d$genus_name == "Artemisia" & d$res
 
 d$test_duration_in_days[which(d$genus_name == "Artemisia" & d$responseVarClean == "percent.germ")] <- "14"
 
-# pdf page 1063: clean the ones in table as they were entered as NAs
+# p.1063: clean the ones in table as they were entered as NAs
 d$cold_stratification_temp_C[which(d$pdf_page_number == "1063" & d$species_name == "aucuparia" & d$medium == "Peat moss")] <- "1"
 
-# pdf page 1063: germination test needs to be changed
+# p.1091: adding strat conditions given in the text
+d$cold_stratification_days[which(d$pdf_page_number == "1091" & d$variety == "var. imbricariumm")] <- "30"
+d$cold_stratification_temp_C[which(d$pdf_page_number == "1091" & d$variety == "var. imbricariumm")] <- "3 to 5"
+# p.1096
+d$warm_stratification_temp_C[which(d$pdf_page_number == "1096" & is.na(d$warm_stratification_days))] <- NA
+# p.1184: assuming conditions in text and citations fit the data in table
+d$cold_stratification_days[which(d$pdf_page_number == "1184" & d$species_name == "jujuba")] <- "60 to 90"
+d$cold_stratification_temp_C[which(d$pdf_page_number == "1184" & d$species_name == "jujuba")] <- "5"
 
 
 breakbyto2 <- strsplit(d$cold_stratification_days, " to ", fixed=TRUE)
