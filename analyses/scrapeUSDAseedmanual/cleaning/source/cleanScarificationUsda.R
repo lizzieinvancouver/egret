@@ -48,4 +48,5 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "No scarification")] <- NA
 
 # page 1063: adding acid scarif
 d$scarifTypeSpe[which(d$pdf_page_number == "1063" & d$species_name == "sitchensis" & d$cold_stratification_days == "90")] <- "chemical - H2SO4"
+d$pregermination_treatment_time_minutes[which(d$pdf_page_number == "1063" & d$species_name == "sitchensis" & d$cold_stratification_days == "90")] <- "10"
 

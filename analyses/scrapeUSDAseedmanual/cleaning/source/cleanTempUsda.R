@@ -38,3 +38,14 @@ d$night_temp_celsius <- gsub("-"," to ",d$night_temp_celsius)
 d$day_temp_celsius[which(d$day_temp_celsius == "na")] <- NA
 d$night_temp_celsius[which(d$night_temp_celsius == "na")] <- NA
 d$temp_unspecified_time_of_day_celsius[which(d$temp_unspecified_time_of_day_celsius == "na")] <- NA
+
+# p. 1063: adding ones
+d$temp_unspecified_time_of_day_celsius[which(d$pdf_page_number == "1063" & d$species_name == "aucuparia" & d$medium == "Peat moss")] <- 1 
+
+# p.1085 info given in text
+d$temp_unspecified_time_of_day_celsius [which(d$pdf_page_number == "1085" & d$species_name == "reticulata")] <- "20"
+d$test_duration_in_days[which(d$pdf_page_number == "1085" & d$species_name == "reticulata")] <- "21"
+# p.1085 for vulgaris, not specified which one is embro and other is seed
+# p.1085 for vilosa, only temperature given
+d$tempDayMin[which(d$pdf_page_number == "1085" & d$species_name == "villosa")] <- "20"
+d$tempDayMax[which(d$pdf_page_number == "1085" & d$species_name == "villosa")] <- "30"
