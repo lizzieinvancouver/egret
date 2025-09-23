@@ -26,9 +26,10 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 # 0. Get the cleaned data
 source('cleaning/cleanAll.R')
+originald <- d
 source('analyseSeedCues/summarizeStrat.R')
 #d <- read.csv('output/egretclean.csv')
-rm(list=ls()[which(!(ls() %in% c('d', 'idsnotcorrected')))])
+rm(list=ls()[which(!(ls() %in% c('originald', 'd', 'idsnotcorrected')))])
 
 treats <- c('datasetID', 'study',
             'genus', 'species', 'variety',
@@ -159,6 +160,9 @@ filteredd[filteredd$datasetID == 'veiga-barbosa14' & filteredd$study == 'exp1', 
 ## But 'after-ripening' should also be in other.treatment
 filteredd[filteredd$datasetID %in% 'tang21'& filteredd$study %in% 'exp1' & grepl('ripening', filteredd$treatment),'other.treatment'] <- 
   filteredd[filteredd$datasetID %in% 'tang21'& filteredd$study %in% 'exp1' & grepl('ripening', filteredd$treatment),'treatment']
+
+## In this study, there is a problem of thermoperiod vs. photoperiod, so doing this for now
+filteredd[filteredd$datasetID == 'alhelal96' & filteredd$study == 'exp1', 'other.treatment'] <- filteredd[filteredd$datasetID == 'alhelal96' & filteredd$study == 'exp1', 'treatment'] 
 
 
 # -----------------------------
@@ -679,5 +683,5 @@ for(i in 1:nrow(ids)){
   
 }
 
-rm(list=ls()[which(!(ls() %in% c('d', 'newd', 'oldids')))])
+rm(list=ls()[which(!(ls() %in% c('originald','d', 'newd', 'oldids')))])
 newids <- unique(newd[c('datasetID', 'study', 'genusspecies')])

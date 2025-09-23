@@ -26,10 +26,9 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 # 0. Get the cleaned data
 source('cleaning/cleanAll.R')
-originald <- d
 source('analyseSeedCues/summarizeStrat.R')
 #d <- read.csv('output/egretclean.csv')
-rm(list=ls()[which(!(ls() %in% c('originald', 'd', 'idsnotcorrected')))])
+rm(list=ls()[which(!(ls() %in% c('d', 'idsnotcorrected')))])
 
 treats <- c('datasetID', 'study',
             'genus', 'species', 'variety',
@@ -52,10 +51,9 @@ treats <- c('datasetID', 'study',
             
             # STRATIFICATION-RELATED
             "chillTemp", "chillDuration", "chillTempUnc", "chillTempCycle", "chillLightCycle",
-            'stratSequence_condensed', # new fancy column
             
             # STRAT + STORAGE
-            "stratTemp_condensed", "stratDur_condensed",
+            'stratSequence_condensed', "stratTemp_condensed", "stratDur_condensed",
             
             # GERMINATION-RELATED
             "germTempGen", "germTemp", "germDuration", "germTempClass", "germTempDay", "germTempNight",
@@ -108,8 +106,9 @@ filteredd <- filteredd[!(filteredd$chemicalCor %in% misc.toremove),]
 ids <- unique(filteredd[c('datasetID', 'study', 'genusspecies')])
 write.csv(ids, file.path('studyDesign', 'ids_for_ken', 'ids_after_step3.csv'))
 
-# Fourth veto: no info on germination temperature
+# Fourth veto: no info on germination temperature, or germination duration
 filteredd <- filteredd[!(filteredd$germTempGen %in% c(NA, 'NA')),]
+filteredd <- filteredd[!(filteredd$germDuration %in% c(NA, 'NA')),]
 
 # Here I'm discarding studies where I knopw the germTempGen could not be corrected earlier (~ 300 rows, who cares?!)
 for(i in 1:nrow(idsnotcorrected)){
@@ -127,7 +126,6 @@ ids$chem.tokeep <- ids$chem.check <- NA
 ids$soak.tokeep <- ids$soak.check <- NA
 ids$stor.tokeep <- ids$stor.check <- NA
 ids$photo.tokeep <- ids$photo.check <- NA
-ids$warmstrat.tokeep <- ids$warmstrat.check <- NA 
 
 ## A particular case of misc. treatment: the color of the seeds
 # We want to keep both brown and black, so we're dealing with this
@@ -162,16 +160,34 @@ filteredd[filteredd$datasetID == 'veiga-barbosa14' & filteredd$study == 'exp1', 
 filteredd[filteredd$datasetID %in% 'tang21'& filteredd$study %in% 'exp1' & grepl('ripening', filteredd$treatment),'other.treatment'] <- 
   filteredd[filteredd$datasetID %in% 'tang21'& filteredd$study %in% 'exp1' & grepl('ripening', filteredd$treatment),'treatment']
 
-## In this study, there is a problem of thermoperiod vs. photoperiod, so doing this for now
-filteredd[filteredd$datasetID == 'alhelal96' & filteredd$study == 'exp1', 'other.treatment'] <- filteredd[filteredd$datasetID == 'alhelal96' & filteredd$study == 'exp1', 'treatment'] 
+
+## Deirdre's definition of incubation
+countermod <- 0
+for(r in 1:nrow(filteredd)){
+  di <- filteredd[r,]
+  
+  strat_steps <- unlist(stringr::str_split(di$stratSequence_condensed, ' then '))
+  last_step <- tail(strat_steps, n=1)
+  
+  if(last_step %in% 'warm'){
+    di$germTempGen
+    di$germDuration
+    
+    last_step_dur <- as.numeric(stringr::str_split_i(di$stratDur_condensed, ' then ', length(strat_steps)))
+    last_step_temp <- as.numeric(stringr::str_split_i(di$stratTemp_condensed, ' then ', length(strat_steps)))
+    
+    if(is.na(last_step_dur) | is.na(last_step_temp) | last_step_temp < 10){stop()} # check
+    
+    di$germDuration <- last_step_dur + as.numeric(di$germDuration)
+    di$germTempGen <- weighted.mean(c(last_step_temp, as.numeric(di$germTempGen)), c(last_step_dur, as.numeric(di$germDur)))
+    countermod <- countermod + 1
+  }
+  
+  filteredd[r,] <- di
+}
 
 
-# -----------------------------
-# FOR PEOPLE CHECKING: MODIFY HERE
 allids <- 1:nrow(ids)
-# example: Lizzie is doing 1:100
-# allids <- 201:250
-
 for(i in allids){
   
   di <- filteredd[paste0(filteredd$datasetID,filteredd$study,filteredd$genusspecies) == paste0(ids[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
@@ -514,6 +530,7 @@ for(i in allids){
   
   # STORAGE
   ids[i, 'stor.check']  <- FALSE
+  
   di$storConditions <- paste(di$storageType, di$storageNoStratTemp, di$storageNoStratDur)
   if(length(unique(di$storConditions)) > 1){
     
@@ -663,108 +680,6 @@ for(i in allids){
     message(paste0('   => Loosing ', nrow.before-nrow.after,' rows (out of ',nrow.before,')'))
   }
   
-  # And now: WARM STRAT!
-  ids[i, 'warmstrat.check']  <- FALSE
-  # first, is there some warm. strat.?
-  if(any(grepl('warm', di$stratSequence_condensed))){
-    
-    # We want to consider only warm. strat. treatments in the process
-    di$warmStratConditions <- unlist(lapply(1:nrow(di), function(i){
-      temp <- stringr::str_split(di$stratTemp_condensed[i], " then ")
-      dur <- stringr::str_split(di$stratDur_condensed[i], " then ")
-      warmstrat <- grepl('warm', stringr::str_split(di$stratSequence_condensed[i], " then ")[[1]])
-      
-      if(length(temp[[1]][!warmstrat]) > 0){
-        temp[[1]][!warmstrat] <- rep('chill', length(temp[[1]][!warmstrat])) 
-        dur[[1]][!warmstrat] <- rep('chill', length(dur[[1]][!warmstrat])) 
-      }
-      return(paste(paste0(temp[[1]], collapse =  ' then '), paste0(dur[[1]], collapse =  ' then ')))
-    }))
-    
-    cat(paste0(" > Number of warm. strat. treat.: ", length(unique(di$warmStratConditions)), "\n"))
-    cat('   - [');cat(paste(unique(di$warmStratConditions)), sep = ', ');cat(']\n')
-    
-    if(length(unique(di$warmStratConditions)) == 1){
-      
-      cat(paste0(" > Only one warm. strat. treat.\n"))
-      treat.tokeep <- unique(di$warmStratConditions)
-      ids[i, 'warmstrat.tokeep'] <- as.character(treat.tokeep)
-      ids[i, 'warmstrat.check'] <- TRUE
-      
-    }else if(length(unique(di$warmStratConditions)) > 1){
-      
-      di$nstrat <- paste0(di$stratTemp_condensed, di$stratDur_condensed)
-      di$ngerm <- paste0(di$germTempGen, di$germDuration)
-      ntreati <- merge(
-        aggregate(nstrat ~ factor(warmStratConditions, exclude = NULL), data = di, function(x) length(unique(x))),
-        aggregate(ngerm ~ factor(warmStratConditions, exclude = NULL), data = di, function(x) length(unique(x)))
-      )
-      ntreati$ninterest <- ntreati$nstrat + ntreati$ngerm
-      names(ntreati)[1] <- 'warmStratConditions'
-      
-      # we keep misc. with max. no. of forc. treatments
-      treat.tokeep <- ntreati[ntreati$ninterest == max(ntreati$ninterest),'warmStratConditions']
-      
-      if(length(treat.tokeep) == 1){
-        
-        if(sum(grepl('chill', stringr::str_split(treat.tokeep, ' ')[[1]])) == length(stringr::str_split(treat.tokeep, ' ')[[1]])){
-          treat.tokeep <- NA
-          ids[i, 'warmstrat.tokeep'] <- NA
-          ids[i, 'warmstrat.check'] <- TRUE
-          cat(paste0('   - Discarding all warm. strat. treatments (max. no. of chill./forc. treat.)\n'))
-          
-        }else{
-          cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of strat./forc. treat.)\n'))
-          ids[i, 'warmstrat.tokeep'] <- as.character(treat.tokeep)
-          ids[i, 'warmstrat.check'] <- TRUE
-        }
-        
-        
-      }else if(length(treat.tokeep) > 1){
-        
-        maxresp <- max(di[di$warmStratConditions %in% treat.tokeep, 'responseValueNum'], na.rm = TRUE)
-        treat.tokeep <- unique(di[di$warmStratConditions %in% treat.tokeep & di$responseValueNum %in% maxresp, 'warmStratConditions']) 
-        
-        if(length(treat.tokeep) == 1){
-          
-          if(sum(grepl('chill', stringr::str_split(treat.tokeep, ' ')[[1]])) == length(stringr::str_split(treat.tokeep, ' ')[[1]])){
-            treat.tokeep <- NA
-            ids[i, 'warmstrat.tokeep'] <- NA
-            ids[i, 'warmstrat.check'] <- TRUE
-            cat(paste0('   - Discarding all warm. strat. treatments (max. no. of chill./forc. treat. +  max. resp.)\n'))
-            
-          }else{
-            cat(paste0('   - Keeping: [', treat.tokeep,'] (max. no. of strat./forc. treat. +  max. resp.)\n'))
-            ids[i, 'warmstrat.tokeep'] <- as.character(treat.tokeep)
-            ids[i, 'warmstrat.check'] <- TRUE
-          }
-          
-          
-        }else if(length(treat.tokeep) > 1){
-          
-          stop('Missing conditions line 745')
-          
-        }
-      }
-      
-    }else{
-      
-      
-      stop('Missing conditions line 753')
-      
-    }
-  
-    
-  }else if(all(!grepl('warm', di$stratSequence_condensed))){
-    
-    cat(paste0(" > No warm. strat. treat.\n"))
-    ids[i, 'warmstrat.tokeep'] <- NA
-    ids[i, 'warmstrat.check'] <- TRUE
-    
-  }else{
-    stop("Missing conditions (line 765)") # check
-  }
-  
 }
 
 # Create the new dataset
@@ -781,38 +696,9 @@ for(i in 1:nrow(ids)){
   di$storConditions <- paste(di$storageType, di$storageNoStratTemp, di$storageNoStratDur)
   di <- di[di$storConditions %in% ids[i, 'stor.tokeep'], ]
   di <- di[di$germPhotoperiod %in% ids[i, 'photo.tokeep'], ]
-  
-  if(is.na(ids[i, 'warmstrat.tokeep'])){
-    
-    if(all(grepl('warm', di$stratSequence_condensed))){
-      stop('Something went wrong')
-    }
-    
-    di <- di[!grepl('warm', di$stratSequence_condensed), ]
-    
-  }else{
-    
-    # We recreate this column (temporarily)
-    di$warmStratConditions <- unlist(lapply(1:nrow(di), function(i){
-      temp <- stringr::str_split(di$stratTemp_condensed[i], " then ")
-      dur <- stringr::str_split(di$stratDur_condensed[i], " then ")
-      warmstrat <- grepl('warm', stringr::str_split(di$stratSequence_condensed[i], " then ")[[1]])
-      
-      if(length(temp[[1]][!warmstrat]) > 0){
-        temp[[1]][!warmstrat] <- rep('chill', length(temp[[1]][!warmstrat])) 
-        dur[[1]][!warmstrat] <- rep('chill', length(dur[[1]][!warmstrat])) 
-      }
-      return(paste(paste0(temp[[1]], collapse =  ' then '), paste0(dur[[1]], collapse =  ' then ')))
-    }))
-    
-    di <- di[di$warmStratConditions %in% ids[i, 'warmstrat.tokeep'], ]
-    di$warmStratConditions <- NULL # and then we remove the column
-    
-  }
-
   newd <- rbind(newd, di)
   
 }
 
-rm(list=ls()[which(!(ls() %in% c('originald','d', 'newd', 'oldids')))])
+rm(list=ls()[which(!(ls() %in% c('d', 'newd', 'oldids')))])
 newids <- unique(newd[c('datasetID', 'study', 'genusspecies')])
