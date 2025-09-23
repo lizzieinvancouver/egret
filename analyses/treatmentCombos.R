@@ -85,7 +85,7 @@ tip_label_colors <- tip_colors[allspp]
 tipindex_storage <- match(storagesp$latbi, allspp)
 
 # Assign a single color and shape
-storage_col <- "#AA83AF"
+storage_col <- "#586085"
 storage_pch <- 21
 
 # Match species to tips
@@ -111,7 +111,7 @@ shapes1 <- c(21,22,23,1,24,25)
 shape_map1 <- setNames(shapes1[1:length(vecids1)], vecids1)
 
 # Create color palette
-temp_palette <- colorRampPalette(c("#397979", "white"))
+temp_palette <- colorRampPalette(c("white", "#D65B5A"))
 
 # Combine all temps to get a unified range for consistent coloring
 all_temps <- c(germTemps$germTempDay, germTemps$germTempNight)
@@ -154,7 +154,7 @@ for (i in seq_along(scarsp$latbi)) {
   type <- scarsp$scarifTypeGen[i]
   
   # Get color and shape
-  col <- "#832A1A"
+  col <- "#659794"
   pch <- shape_map[type]
   
   # Add tip label symbol
@@ -178,7 +178,7 @@ for (i in seq_len(nrow(stratsp))) {
   rep_id <- stratsp$rep_count[i]
   
   pch <- shape_map1[type1]
-  col <- "#E5A69A"
+  col <- "#F5C98E"
   
   # Adjust adj for stacking
   off_val <- 80 + (rep_id - 1) * base_offset
@@ -208,7 +208,7 @@ for (i in seq_len(nrow(germTemps))) {
 # scarification legend
 legend(x=-70, y=-70,
        legend = legend_labels,
-       pt.bg = "#EEA2AD",     
+       pt.bg = "#659794",     
        pch = legend_shapes,        
        pt.cex = 1.2,               
        cex = 1.8,                  
@@ -217,7 +217,7 @@ legend(x=-70, y=-70,
 # stratification legend
 legend(x=0, y=140,
        legend = names(colids1),
-       pt.bg = "#66CDAA",
+       pt.bg = "#F5C98E",
        pch = shape_map1[names(colids1)],
        pt.cex = 1.2,
        cex = 1.8,
@@ -237,7 +237,7 @@ legend(x=-130, y=140,
 legend(x = -130, y =70, legend = names(dorm_colors), col = dorm_colors, pch = 15,
        title = "Dormancy Class", pt.cex = 1.5, cex = 1.8, bty = "n")
 # temperature gradient legend
-legend_gradient <- colorRampPalette(c("#397979", "white"))(10)
+legend_gradient <- colorRampPalette(c("white", "#D65B5A"))(10)
 legend_temp_vals <- round(seq(min(all_temps), max(all_temps), length.out = 10), 1)
 
 legend("bottomright",
