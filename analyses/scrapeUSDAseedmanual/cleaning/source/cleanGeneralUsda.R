@@ -113,6 +113,9 @@ d$samples[which(d$latbi == "Baccharis_halimifolia")] <- "1"
 d$samples[which(d$latbi == "Baccharis_pilularis" & d$responseValue == "93")] <- "1"
 d$samples[which(d$latbi == "Baccharis_pilularis" & d$responseValue == "92")] <- "1"
 
+# page 1063: cleaning sample number
+d$samples[which(d$pdf_page_number == "1063" & is.na(d$samples) & d$species_name %in% c("aucuparia", "scopulina", "sitchensis"))] <- "1"
+
 # cleaning table numbers:
 d$pdf_table_number[which(d$pdf_page_number == "277")] <- "3"
 d$pdf_table_number[which(d$pdf_page_number == "287")] <- "3"

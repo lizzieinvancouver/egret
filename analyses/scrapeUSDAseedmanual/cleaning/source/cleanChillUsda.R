@@ -118,6 +118,11 @@ d$temp_unspecified_time_of_day_celsius[which(d$genus_name == "Artemisia" & d$res
 
 d$test_duration_in_days[which(d$genus_name == "Artemisia" & d$responseVarClean == "percent.germ")] <- "14"
 
+# pdf page 1063: clean the ones in table as they were entered as NAs
+d$cold_stratification_temp_C[which(d$pdf_page_number == "1063" & d$species_name == "aucuparia" & d$medium == "Peat moss")] <- "1"
+
+# pdf page 1063: germination test needs to be changed
+
 
 breakbyto2 <- strsplit(d$cold_stratification_days, " to ", fixed=TRUE)
 d$chillDurationMin <- unlist(lapply(breakbyto2, function(x) x[1]))

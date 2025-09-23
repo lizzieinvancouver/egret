@@ -14,7 +14,7 @@ library(plyr)
 # library(WorldFlora)
 
 if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
-  setwd("~/Documents/github/egret/analyses")
+  setwd("/Users/christophe_rouleau-desrochers/github/egret/analyses")
 } else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
   setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses/")
 } else if(length(grep("lizzie", getwd()) > 0)) {
