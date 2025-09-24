@@ -155,3 +155,23 @@ d$sample[which(d$pdf_page_number == "936" & d$species_name == "vaccinifolia")] <
 d$sample[which(d$pdf_page_number == "936" & d$species_name == "wislizenii")] <- "1"
 
 d$sample[which(d$genus_name == "Ribes", d$species_name == "oxyacanthoides ssp. irriguum")] <- "11"
+
+# By Victor below:
+d$pretreatment[which(d$pdf_page_number==646 & d$pdf_table_number==8 & d$species_name == 'lyallii')] <- 'USP 3% H2O2' # "seeds were soaked up in USP 3% H2O2 for 24 jours in lieu of stratification"
+d$pdf_table_number[which(d$pdf_page_number==687 & d$pdf_table_number=="Table.5")] <- 5
+d$pdf_table_number[which(d$pdf_page_number==692 & d$pdf_table_number=="Table.2")] <- 2
+d$medium[which(d$pdf_page_number==703 & d$pdf_table_number==4 & d$medium == 'na')] <- NA
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('pe, S', "pe  S"))] <- "Peat, sand or soil"
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('P'))] <- 'Absorbent medium in covered petri dish'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('P, S'))] <- 'Absorbent medium in covered petri dish, sand or soil'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('S'))] <- 'Sand or soil'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c("S  V", 'S, V', 'S V', 'sv'))] <- 'Sand or soil, vermiculite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('V'))] <- 'Vermiculite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('pl'))] <- 'Perlite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('P, pl'))] <- 'Absorbent medium in covered petri dish, perlite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('pl  S'))] <- 'Perlite, sand or soil'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('A, P'))] <- 'Absorbent paper (filter, blotter), absorbent medium in covered petri dish'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('A'))] <- 'Absorbent paper (filter, blotter)'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('A, P, v'))] <- 'Absorbent paper (filter, blotter), absorbent medium in covered petri dish, vermiculite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('K'))] <- 'Kimpak'
+
