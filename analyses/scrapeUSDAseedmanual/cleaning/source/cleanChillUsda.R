@@ -130,6 +130,15 @@ d$warm_stratification_temp_C[which(d$pdf_page_number == "1096" & is.na(d$warm_st
 d$cold_stratification_days[which(d$pdf_page_number == "1184" & d$species_name == "jujuba")] <- "60 to 90"
 d$cold_stratification_temp_C[which(d$pdf_page_number == "1184" & d$species_name == "jujuba")] <- "5"
 
+# p.993
+d$cold_stratification_temp_C[which(d$pdf_page_number == "993" & d$pretreatment == "Stratification")] <- "5"
+d$cold_stratification_days[which(d$pdf_page_number == "993" & d$species_name == "idaeus" &  !is.na(d$pretreatment))] <- "60 to 180"
+d$test_duration_in_days[which(d$pdf_page_number == "993" & d$species_name == "idaeus" &  !is.na(d$pretreatment))] <- "30"
+d$cold_stratification_temp_C[which(d$pdf_page_number == "993" & d$species_name == "spectabilis")] <- "2 to 5"
+d$cold_stratification_temp_C[which(d$pdf_page_number == "993" & d$species_name == "chamemorus")] <- "1"
+
+
+
 
 breakbyto2 <- strsplit(d$cold_stratification_days, " to ", fixed=TRUE)
 d$chillDurationMin <- unlist(lapply(breakbyto2, function(x) x[1]))

@@ -137,3 +137,21 @@ d$day_temp_celsius[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- 30 
 d$night_temp_celsius[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- 20
 d$medium[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- "sand"
 
+# Fix ones problem
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "acutissima")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "agrifolia")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "gambelii")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "kelloggii")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "laurifolia" & d$medium == "Soil")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "lyrata" & d$test_duration_in_days == "160")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "macrocarpa")] <- "11"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "marilandica")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "michauxii"& d$test_duration_in_days == "50")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "pagoda")] <- "11"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "phellos" & d$medium == "Soil")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "rubra" & d$medium == "Sand")] <- "11"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "rubra" & d$medium == "Sand/peat")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "vaccinifolia")] <- "1"
+d$sample[which(d$pdf_page_number == "936" & d$species_name == "wislizenii")] <- "1"
+
+d$sample[which(d$genus_name == "Ribes", d$species_name == "oxyacanthoides ssp. irriguum")] <- "11"

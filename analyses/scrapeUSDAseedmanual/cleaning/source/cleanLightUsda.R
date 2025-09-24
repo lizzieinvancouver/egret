@@ -37,4 +37,6 @@ d$dailyl_light_hours[which(d$pdf_page_number == "1085" & d$species_name == "vill
 # p.1148
 d$dailyl_light_hours[which(d$pdf_page_number == "1148" & d$species_name == "americana" & d$medium == "paper pads")] <- "8"
 
+# p.899
+d$dailyl_light_hours[which(d$pdf_page_number == "899" & d$genus_name == "Pseudotsuga")] <- "8"
 

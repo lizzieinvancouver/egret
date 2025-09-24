@@ -12,8 +12,8 @@ d$day_temp_celsius[which(d$day_temp_celsius == "al")] <- "1"
 d$night_temp_celsius[which(d$night_temp_celsius == "a7")] <- "7"
 
 # Ribes aureum var. villosum has day or night temps in the temp_unspecified_time_of_day_celsius column = "20/0 (D/N)"; updating specific day night coln
-d$day_temp_celsius[which(d$species_name == "aureum var. villosum")] <- "20"
-d$night_temp_celsius[which(d$species_name == "aureum var. villosum")] <- "0"
+d$day_temp_celsius[which(d$genus_name == "Ribes", d$species_name == "aureum")] <- "20"
+d$night_temp_celsius[which(d$genus_name == "Ribes", d$species_name == "aureum")] <- "0"
 d$temp_unspecified_time_of_day_celsius <- gsub("20/0 (D/N)","NA", d$temp_unspecified_time_of_day_celsius)
 
 d$temp_unspecified_time_of_day_celsius <- gsub("-"," to ", d$temp_unspecified_time_of_day_celsius)
