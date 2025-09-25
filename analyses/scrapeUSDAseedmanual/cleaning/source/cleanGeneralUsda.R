@@ -136,6 +136,12 @@ d$pdf_table_number[which(d$pdf_page_number==411 & d$pdf_table_number=="Table 3")
 d$day_temp_celsius[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- 30 # "Temperatures were 30 °C for 8 hours and 20 °C for 16 hours each day. Sand was the medium used on all listed species. "
 d$night_temp_celsius[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- 20
 d$medium[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- "sand"
+# fixing some 1s 
+d$cold_stratification_temp_C[which(d$pdf_page_number== 377 & d$pdf_table_number==5 & d$cold_stratification_days %in% c(0,28))] <- 1 
+d$samples[which(d$pdf_page_number==309 & d$pdf_table_number=="Table 6" & d$cold_stratification_days=="over winter" & d$species_name=="nana")] <- 1 
+d$samples[which(d$pdf_page_number==336 & d$pdf_table_number=="5" & d$test_duration_in_days==63 & d$species_name=="aquatica")] <- 1 
+d$samples[which(d$pdf_page_number==336 & d$pdf_table_number=="5" & d$medium=="Soil" & d$species_name=="cordiformis")] <- 1
+
 
 # Fix ones problem
 d$sample[which(d$pdf_page_number == "936" & d$species_name == "acutissima")] <- "1"
