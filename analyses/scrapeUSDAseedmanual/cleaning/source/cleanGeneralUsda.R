@@ -163,7 +163,7 @@ d$sample[which(d$pdf_page_number == "936" & d$species_name == "wislizenii")] <- 
 d$sample[which(d$genus_name == "Ribes", d$species_name == "oxyacanthoides ssp. irriguum")] <- "11"
 
 # By Victor below:
-d$pretreatment[which(d$pdf_page_number==646 & d$pdf_table_number==8 & d$species_name == 'lyallii')] <- 'USP 3% H2O2' # "seeds were soaked up in USP 3% H2O2 for 24 jours in lieu of stratification"
+d$pretreatment[which(d$pdf_page_number==646 & d$pdf_table_number==8 & d$species_name == 'lyallii')] <- 'USP 3% H2O2' # "seeds were soaked up in USP 3% H2O2 for 24 days in lieu of stratification"
 d$pdf_table_number[which(d$pdf_page_number==687 & d$pdf_table_number=="Table.5")] <- 5
 d$pdf_table_number[which(d$pdf_page_number==692 & d$pdf_table_number=="Table.2")] <- 2
 d$medium[which(d$pdf_page_number==703 & d$pdf_table_number==4 & d$medium == 'na')] <- NA
@@ -180,7 +180,11 @@ d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c
 d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('A'))] <- 'Absorbent paper (filter, blotter)'
 d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('A, P, v'))] <- 'Absorbent paper (filter, blotter), absorbent medium in covered petri dish, vermiculite'
 d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('K'))] <- 'Kimpak'
-
+# 'Both the Association of Official Seed Analysts (AOSA 1993) and the International Seed Testing Association (ISTA 1993) 
+# recommend the same germination test procedures: germination on top of moist blotters or other paper products for 21 days 
+# at temperatures alternating diurnally from 20 °C during a 16-hour dark period to 30°C during an 8-hour light period'
+# We thus assume that the table rows with 21 days of 20C/30C applied this photoperiod
+d$dailyl_light_hours[which(d$pdf_page_number == 646 & d$pdf_table_number == 8 & d$day_temp_celsius == '30' & d$night_temp_celsius == '20' & d$test_duration_in_days == '21')] <- 8
 
 ### by Dan
 d$dailyl_light_hours[which(d$pdf_page_number==440 & d$pdf_table_number==3 & d$day_temp_celsius==30)] <- 8 
