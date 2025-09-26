@@ -181,3 +181,19 @@ d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c
 d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('A, P, v'))] <- 'Absorbent paper (filter, blotter), absorbent medium in covered petri dish, vermiculite'
 d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('K'))] <- 'Kimpak'
 
+
+### by Dan
+d$dailyl_light_hours[which(d$pdf_page_number==440 & d$pdf_table_number==3 & d$day_temp_celsius==30)] <- 8 
+d$genus_name[which(d$pdf_page_number==464 & d$pdf_table_number==4)] <- "Cupressus"
+d$species_name[which(d$pdf_page_number==464 & d$pdf_table_number==4 & d$speciesnames=="nevadensis")] <- "arizonica ssp. nevadensis"
+d$species_name[which(d$pdf_page_number==464 & d$pdf_table_number==4 & d$speciesnames=="pygmaea")] <- "goveniana ssp. pygmaea"
+d$cold_stratification_temp_C[which(d$pdf_page_number==464 & d$pdf_table_number==4)] <- 1
+d$cold_stratification_days[which(d$pdf_page_number==464 & d$pdf_table_number==4)] <- 30
+d$Notes[which(d$pdf_page_number==518 & d$pdf_table_number==8)] <- "The table references that the seeds were stratified, but there is no information about the pre-treatment"
+d$Notes[which(d$pdf_page_number==523 & d$pdf_table_number==5)] <- "The table references that the seeds were stratified, but there is no information about the pre-treatment"
+d$Notes[which(d$pdf_page_number==542 & d$pdf_table_number==6)] <- "The table references that the seeds were stratified, but there is no information about the pre-treatment"
+d$pretreatment[which(d$pdf_page_number==612 & d$pdf_table_number==6 & d$pregermination_treatment_time_minutes==240)]<- "1% citric acid"
+d$pretreatment[which(d$pdf_page_number==612 & d$pdf_table_number==6 & d$pregermination_treatment_time_minutes==45)]<- "sulfuric acid"
+d$pregermination_treatment_time_minutes[which(d$pdf_page_number==612 & d$pdf_table_number==6 & d$pregermination_treatment_time_minutes==240)]<- 5760
+d$day_temp_celsius[which(d$pdf_page_number==622 & d$pdf_table_number==2)]<- 2
+d$night_temp_celsius[which(d$pdf_page_number==622 & d$pdf_table_number==2)]<- 2
