@@ -928,38 +928,3 @@ strattempdurgerm_plotly <- plot_ly(
     )
   )
 strattempdurgerm_plotly
-
-
-# ggplot equivalent
-ggplot() +
-  geom_sf(data = world, fill = "grey95", color = "white") +
-  geom_point(data = strattempdurgerm,
-             aes(x = provenance.long, 
-                 y = provenance.lat, 
-                 size = countscaled,
-                 color = idspp),
-             alpha = 0.8) +
-  scale_size_continuous(
-    name = "Provenance Count",
-    range = c(1, 5),
-    breaks = pretty(strattempdurgerm$totalcount, n = 4)
-  ) +
-  scale_color_viridis_d(name = "Dataset ID") +
-  labs(
-    title = "Averaged Provenance by idspp",
-    x = "", y = ""
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "right",
-    legend.box = "vertical",           
-    legend.text = element_text(size = 8),  
-    legend.title = element_text(size = 9),
-    legend.key.size = unit(0.5, "lines"), 
-    panel.grid.major = element_line(color = "grey90")
-  ) +
-  guides(
-    color = guide_legend(ncol = 1) 
-  )
-# save ggplot with jpeg
-ggsave("figures/provenance/strattempdurgerm_ggplot.jpeg", width = 12, height = 8, dpi = 300)
