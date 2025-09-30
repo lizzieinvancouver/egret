@@ -491,7 +491,7 @@ plotlymapprov
 # Create 48 unique colors from a qualitative palette
 n <- length(unique(provbycolor))
 colors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
-provbycolor$color <- colors[as.numeric(as.factor(provbycolor$datasetID))]
+provbycolor$color <- colors[as.numeric(as.factor(provbycolor$idspp))]
 
 # GG!
 ggmapprovbycolor <- ggplot() +
@@ -630,7 +630,7 @@ unique(morethan1all$scarifTypeGen)
 unique(morethan1all$scarifTypeSpe)
 
 # subset down to the idspp that don't have NAs in neither of those two columns
-scarif <- morethan1all[which(!is.na(morethan1all$scarifTypeSpe) & !is.na(morethan1all$scarifTypeGen)), 
+scarif <- morethan1all[which(!is.na(morethan1all$scarifTypeSpe) & !is.na(morethan1all$scarifTypeGen)),
                        c("idspp", 
                          "provenance.lat", 
                          "provenance.long", 
@@ -857,3 +857,109 @@ germTemp_plotly <- plot_ly(
   )
 germTemp_plotly
 
+
+##### Strat temp, strat duration and germ temperature COMBINED #####
+# check cols of interest
+
+# check manipulated germ temp cols
+comb <- morethan1all[which(!duplicated(morethan1all$idspp)), 
+                         c("idspp", 
+                           "provenance.lat", 
+                           "provenance.long", 
+                           "stratTemp_condensed",
+                           "stratDur_condensed",
+                           "germTemp")]
+comb
+
+# empty dataframe to store the number of different start temp, dur and germ temp
+df <- data.frame(
+  idspp = comb$idspp
+  # ,
+  # stratTempCount = NA,
+  # stratDurCount = NA,
+  # germTempCount = NA
+)
+df1 <- merge(df, 
+             strattempcount[, c("idspp", 
+                                "provenance.lat", "provenance.long",
+                                "stratTemp_condensed")], 
+             by = "idspp", all.x = TRUE)
+df1
+df2 <- merge(df1, 
+             stratdurcount[, c("idspp", "stratDur_condensed")], 
+             by = "idspp")
+strattempdurgerm <- merge(df2, 
+             germTempcount[, c("idspp", "germTemp")], 
+             by = "idspp")
+
+strattempdurgerm$totalcount <- strattempdurgerm$stratTemp_condensed +
+  strattempdurgerm$stratDur_condensed +
+  strattempdurgerm$germTemp
+
+# size scale
+strattempdurgerm$countscaled <- strattempdurgerm$totalcount*10
+# set colors
+n <- length(unique(strattempdurgerm$idspp))
+colors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
+
+strattempdurgerm_plotly <- plot_ly(
+  data = strattempdurgerm,
+  type = 'scattergeo',
+  mode = 'markers',
+  lat = ~provenance.lat,
+  lon = ~provenance.long,
+  color = ~idspp,
+  colors = colorRampPalette(brewer.pal(12, "Paired"))(length(unique(strattempdurgerm$idspp))),
+  marker = list(
+    size = ~countscaled,
+    sizemode = "area",
+    sizemin = 0.5,
+    opacity = 0.8
+  ),
+  text = ~paste("idspp:", idspp, "<br>Start temp, dur and germ temp count:", totalcount),
+  hoverinfo = "text"
+) %>%
+  layout(
+    title = "Locations of multiple prov per spp X multiple strat temp + strat dur + germ temp",
+    geo = list(
+      projection = list(type = "natural earth"),
+      showland = TRUE,
+      landcolor = "rgb(243, 243, 243)"
+    )
+  )
+strattempdurgerm_plotly
+
+
+# ggplot equivalent
+ggplot() +
+  geom_sf(data = world, fill = "grey95", color = "white") +
+  geom_point(data = strattempdurgerm,
+             aes(x = provenance.long, 
+                 y = provenance.lat, 
+                 size = countscaled,
+                 color = idspp),
+             alpha = 0.8) +
+  scale_size_continuous(
+    name = "Provenance Count",
+    range = c(1, 5),
+    breaks = pretty(strattempdurgerm$totalcount, n = 4)
+  ) +
+  scale_color_viridis_d(name = "Dataset ID") +
+  labs(
+    title = "Averaged Provenance by idspp",
+    x = "", y = ""
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    legend.box = "vertical",           
+    legend.text = element_text(size = 8),  
+    legend.title = element_text(size = 9),
+    legend.key.size = unit(0.5, "lines"), 
+    panel.grid.major = element_line(color = "grey90")
+  ) +
+  guides(
+    color = guide_legend(ncol = 1) 
+  )
+# save ggplot with jpeg
+ggsave("figures/provenance/strattempdurgerm_ggplot.jpeg", width = 12, height = 8, dpi = 300)
