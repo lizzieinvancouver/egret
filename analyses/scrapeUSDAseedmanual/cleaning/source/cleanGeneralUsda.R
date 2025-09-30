@@ -136,6 +136,12 @@ d$pdf_table_number[which(d$pdf_page_number==411 & d$pdf_table_number=="Table 3")
 d$day_temp_celsius[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- 30 # "Temperatures were 30 °C for 8 hours and 20 °C for 16 hours each day. Sand was the medium used on all listed species. "
 d$night_temp_celsius[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- 20
 d$medium[which(d$pdf_page_number==432 & d$pdf_table_number==6)] <- "sand"
+# fixing some 1s 
+d$cold_stratification_temp_C[which(d$pdf_page_number== 377 & d$pdf_table_number==5 & d$cold_stratification_days %in% c(0,28))] <- 1 
+d$samples[which(d$pdf_page_number==309 & d$pdf_table_number=="Table 6" & d$cold_stratification_days=="over winter" & d$species_name=="nana")] <- 1 
+d$samples[which(d$pdf_page_number==336 & d$pdf_table_number=="5" & d$test_duration_in_days==63 & d$species_name=="aquatica")] <- 1 
+d$samples[which(d$pdf_page_number==336 & d$pdf_table_number=="5" & d$medium=="Soil" & d$species_name=="cordiformis")] <- 1
+
 
 # Fix ones problem
 d$sample[which(d$pdf_page_number == "936" & d$species_name == "acutissima")] <- "1"
@@ -155,3 +161,43 @@ d$sample[which(d$pdf_page_number == "936" & d$species_name == "vaccinifolia")] <
 d$sample[which(d$pdf_page_number == "936" & d$species_name == "wislizenii")] <- "1"
 
 d$sample[which(d$genus_name == "Ribes", d$species_name == "oxyacanthoides ssp. irriguum")] <- "11"
+
+# By Victor below:
+d$pretreatment[which(d$pdf_page_number==646 & d$pdf_table_number==8 & d$species_name == 'lyallii')] <- 'USP 3% H2O2' # "seeds were soaked up in USP 3% H2O2 for 24 days in lieu of stratification"
+d$pdf_table_number[which(d$pdf_page_number==687 & d$pdf_table_number=="Table.5")] <- 5
+d$pdf_table_number[which(d$pdf_page_number==692 & d$pdf_table_number=="Table.2")] <- 2
+d$medium[which(d$pdf_page_number==703 & d$pdf_table_number==4 & d$medium == 'na')] <- NA
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('pe, S', "pe  S"))] <- "Peat, sand or soil"
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('P'))] <- 'Absorbent medium in covered petri dish'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('P, S'))] <- 'Absorbent medium in covered petri dish, sand or soil'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('S'))] <- 'Sand or soil'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c("S  V", 'S, V', 'S V', 'sv'))] <- 'Sand or soil, vermiculite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('V'))] <- 'Vermiculite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('pl'))] <- 'Perlite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('P, pl'))] <- 'Absorbent medium in covered petri dish, perlite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('pl  S'))] <- 'Perlite, sand or soil'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('A, P'))] <- 'Absorbent paper (filter, blotter), absorbent medium in covered petri dish'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('A'))] <- 'Absorbent paper (filter, blotter)'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('A, P, v'))] <- 'Absorbent paper (filter, blotter), absorbent medium in covered petri dish, vermiculite'
+d$medium[which(d$pdf_page_number==837 & d$pdf_table_number==10 & d$medium %in% c('K'))] <- 'Kimpak'
+# 'Both the Association of Official Seed Analysts (AOSA 1993) and the International Seed Testing Association (ISTA 1993) 
+# recommend the same germination test procedures: germination on top of moist blotters or other paper products for 21 days 
+# at temperatures alternating diurnally from 20 °C during a 16-hour dark period to 30°C during an 8-hour light period'
+# We thus assume that the table rows with 21 days of 20C/30C applied this photoperiod
+d$dailyl_light_hours[which(d$pdf_page_number == 646 & d$pdf_table_number == 8 & d$day_temp_celsius == '30' & d$night_temp_celsius == '20' & d$test_duration_in_days == '21')] <- 8
+
+### by Dan
+d$dailyl_light_hours[which(d$pdf_page_number==440 & d$pdf_table_number==3 & d$day_temp_celsius==30)] <- 8 
+d$genus_name[which(d$pdf_page_number==464 & d$pdf_table_number==4)] <- "Cupressus"
+d$species_name[which(d$pdf_page_number==464 & d$pdf_table_number==4 & d$speciesnames=="nevadensis")] <- "arizonica ssp. nevadensis"
+d$species_name[which(d$pdf_page_number==464 & d$pdf_table_number==4 & d$speciesnames=="pygmaea")] <- "goveniana ssp. pygmaea"
+d$cold_stratification_temp_C[which(d$pdf_page_number==464 & d$pdf_table_number==4)] <- 1
+d$cold_stratification_days[which(d$pdf_page_number==464 & d$pdf_table_number==4)] <- 30
+d$Notes[which(d$pdf_page_number==518 & d$pdf_table_number==8)] <- "The table references that the seeds were stratified, but there is no information about the pre-treatment"
+d$Notes[which(d$pdf_page_number==523 & d$pdf_table_number==5)] <- "The table references that the seeds were stratified, but there is no information about the pre-treatment"
+d$Notes[which(d$pdf_page_number==542 & d$pdf_table_number==6)] <- "The table references that the seeds were stratified, but there is no information about the pre-treatment"
+d$pretreatment[which(d$pdf_page_number==612 & d$pdf_table_number==6 & d$pregermination_treatment_time_minutes==240)]<- "1% citric acid"
+d$pretreatment[which(d$pdf_page_number==612 & d$pdf_table_number==6 & d$pregermination_treatment_time_minutes==45)]<- "sulfuric acid"
+d$pregermination_treatment_time_minutes[which(d$pdf_page_number==612 & d$pdf_table_number==6 & d$pregermination_treatment_time_minutes==240)]<- 5760
+d$day_temp_celsius[which(d$pdf_page_number==622 & d$pdf_table_number==2)]<- 2
+d$night_temp_celsius[which(d$pdf_page_number==622 & d$pdf_table_number==2)]<- 2
