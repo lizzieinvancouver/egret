@@ -113,14 +113,6 @@ d$samples[which(d$latbi == "Baccharis_halimifolia")] <- "1"
 d$samples[which(d$latbi == "Baccharis_pilularis" & d$responseValue == "93")] <- "1"
 d$samples[which(d$latbi == "Baccharis_pilularis" & d$responseValue == "92")] <- "1"
 
-# p.1063: cleaning sample number
-d$samples[which(d$pdf_page_number == "1063" & is.na(d$samples) & d$species_name %in% c("aucuparia", "scopulina", "sitchensis"))] <- "1"
-# p.1096: cleaning sample number
-d$samples[which(d$pdf_page_number == "1096" & is.na(d$samples))] <- "1"
-# p.1134 :cleaning sample number
-d$samples[which(d$pdf_page_number == "1134" & d$species_name == "mertensiana" & d$responseValue == "62")] <- "1" # here using a cleaned column because value not entered before
-
-
 # cleaning table numbers:
 d$pdf_table_number[which(d$pdf_page_number == "277")] <- "3"
 d$pdf_table_number[which(d$pdf_page_number == "287")] <- "3"
@@ -201,3 +193,64 @@ d$pretreatment[which(d$pdf_page_number==612 & d$pdf_table_number==6 & d$pregermi
 d$pregermination_treatment_time_minutes[which(d$pdf_page_number==612 & d$pdf_table_number==6 & d$pregermination_treatment_time_minutes==240)]<- 5760
 d$day_temp_celsius[which(d$pdf_page_number==622 & d$pdf_table_number==2)]<- 2
 d$night_temp_celsius[which(d$pdf_page_number==622 & d$pdf_table_number==2)]<- 2
+
+### By Christophe
+# page 1063: adding acid scarif
+d$pretreatment[which(d$pdf_page_number == "1063" & d$species_name == "sitchensis" & d$cold_stratification_days == "90")] <- "chemical - H2SO4"
+d$pregermination_treatment_time_minutes[which(d$pdf_page_number == "1063" & d$species_name == "sitchensis" & d$cold_stratification_days == "90")] <- "10"
+
+# p.1063: clean the ones in table as they were entered as NAs
+d$cold_stratification_temp_C[which(d$pdf_page_number == "1063" & d$species_name == "aucuparia" & d$medium == "Peat moss")] <- "1"
+
+# p.1091: adding strat conditions given in the text
+d$cold_stratification_days[which(d$pdf_page_number == "1091" & d$species_name == "distichum")] <- "30"
+d$cold_stratification_temp_C[which(d$pdf_page_number == "1091" & d$species_name == "distichum")] <- "3 to 5"
+d$cold_stratification_days[which(d$pdf_page_number == "1091" & d$species_name == "ascendens")] <- "60 to 90"
+d$cold_stratification_days[which(d$pdf_page_number == "1091" & d$species_name == "ascendens")] <- "4"
+
+# p.1091: adding chemical scarification
+d$pretreatment[which(d$pdf_page_number == "1091" & d$species_name == "ascendens")] <- "0.01% citric acid for 24-48h"
+
+# p.1096
+d$warm_stratification_temp_C[which(d$pdf_page_number == "1096" & is.na(d$warm_stratification_days))] <- NA
+
+# p.1184: assuming conditions in text and citations fit the data in table
+d$cold_stratification_days[which(d$pdf_page_number == "1184" & d$species_name == "jujuba")] <- "60 to 90"
+d$cold_stratification_temp_C[which(d$pdf_page_number == "1184" & d$species_name == "jujuba")] <- "5"
+
+# p.993 adding strat
+d$cold_stratification_temp_C[which(d$pdf_page_number == "993" & d$pretreatment == "Stratification")] <- "5"
+d$cold_stratification_days[which(d$pdf_page_number == "993" & d$species_name == "idaeus" &  !is.na(d$pretreatment))] <- "60 to 180"
+d$test_duration_in_days[which(d$pdf_page_number == "993" & d$species_name == "idaeus" &  !is.na(d$pretreatment))] <- "30"
+d$cold_stratification_temp_C[which(d$pdf_page_number == "993" & d$species_name == "spectabilis")] <- "2 to 5"
+d$cold_stratification_temp_C[which(d$pdf_page_number == "993" & d$species_name == "chamemorus")] <- "1"
+
+# p.1091: photoperiod
+d$dailyl_light_hours[which(d$pdf_page_number == "1085" & d$species_name == "villosa")] <- "8"
+
+# p.1148: photoperiod
+d$dailyl_light_hours[which(d$pdf_page_number == "1148" & d$species_name == "americana" & d$medium == "paper pads")] <- "8"
+
+# p.899: photoperiod
+d$dailyl_light_hours[which(d$pdf_page_number == "899" & d$genus_name == "Pseudotsuga")] <- "8"
+
+# p.1063: cleaning sample number
+d$samples[which(d$pdf_page_number == "1063" & is.na(d$samples) & d$species_name %in% c("aucuparia", "scopulina", "sitchensis"))] <- "1"
+# p.1096: cleaning sample number
+d$samples[which(d$pdf_page_number == "1096" & is.na(d$samples))] <- "1"
+# p.1134 :cleaning sample number
+d$samples[which(d$pdf_page_number == "1134" & d$species_name == "mertensiana" & d$germination_rate == "61")] <- "1"
+
+# p. 1063: adding ones
+d$temp_unspecified_time_of_day_celsius[which(d$pdf_page_number == "1063" & d$species_name == "aucuparia" & d$medium == "Peat moss")] <- 1 
+
+# p.1085 info given in text
+d$temp_unspecified_time_of_day_celsius[which(d$pdf_page_number == "1085" & d$species_name == "reticulata var. amurensis")] <- "20"
+d$test_duration_in_days[which(d$pdf_page_number == "1085" & d$species_name == "reticulata var. amurensis")] <- "21"
+# p.1085 for vulgaris, not specified which one is embro and other is seed
+
+# p.1085 for vilosa, only temperature given
+d$day_temp_celsius[which(d$pdf_page_number == "1085" & d$species_name == "villosa")] <- "20 to 30"
+
+# p.1091: assuming same test duration even though its not clear in the text which is for which spp
+d$test_duration_in_days[which(d$pdf_page_number == "1091")] <- "28"
