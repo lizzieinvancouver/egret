@@ -625,6 +625,8 @@ vec <- unique(morethan1$idspp)
 # grab a subset of the whole egret dataset
 morethan1all <- subset(d, idspp %in% vec)
 
+write.csv(morethan1all, "output/moreThan1Prov.csv", row.names = FALSE)
+
 # look at the 2 cleaned scrarification cols
 unique(morethan1all$scarifTypeGen)
 unique(morethan1all$scarifTypeSpe)
