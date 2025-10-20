@@ -34,7 +34,7 @@ d <- read.csv("scrapeUSDAseedmanual/cleaning/germPreCleanedMasterSheet.csv", na 
 source("scrapeUSDAseedmanual/cleaning/source/cleanGeneralUsda.R")
 
 # 3. Clean species names
-source("scrapeUSDAseedmanual/cleaning/source/cleanSpeciesUsda.R")
+#source("scrapeUSDAseedmanual/cleaning/source/cleanSpeciesUsda.R")
 
 # 4. Clean seed type
 source("scrapeUSDAseedmanual/cleaning/source/cleanSeedTypeUsda.R")
