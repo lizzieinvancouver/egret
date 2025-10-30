@@ -15,7 +15,7 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 } else if(length(grep("sapph", getwd()) > 0)) {
   setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
 } else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
-  setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses/")
+  setwd("/Users/dbuona/Documents/git/egret/analyses/")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
 }
@@ -26,14 +26,13 @@ library(phytools)
 library(caper)
 library(pez)
 
-if(FALSE){
 ###read in ospree
 osp<-read.csv("input/ospreeforegret.csv")
 
 
 phylo <- read.tree("input/ospreeforegret.tre")
-todrop<-setdiff(egr$latbi,osp$spps)
-phyloegr<-drop.tip(phylo,todrop)
+#todrop<-setdiff(egr$latbi,osp$spps)
+#phyloegr<-drop.tip(phylo,todrop)
 
 
 #plot(phylo, cex=0.7)
@@ -58,7 +57,11 @@ fit <- stan("stan/uber_threeslopeintercept_modified_cholesky_updatedpriors.stan"
             chains = 4,
             seed = 117 
 )
-}
+library(tidybayes)
+parameters(fit)
+posterior_draws <- fit %>%
+  spread_draws( b_chill, r_spnum[spnum, term])
+
 ##next steps
 ###run phylogeny model on ospree and extract posteriors
 
