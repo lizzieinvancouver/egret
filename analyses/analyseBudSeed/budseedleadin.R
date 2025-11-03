@@ -90,6 +90,26 @@ table(egr$responseVarClean)
 library(dplyr)
 egr<-dplyr::filter(egr,responseVarClean=="percent.germ")
 
+
+
+USDA<-egr %>%group_by(latbi) %>% summarise(meanStrat=mean(chillDurationAvg),meanInc=mean(tempDayAvg))
+
+USDA<-left_join(USDA,chill)
+USDA<-left_join(USDA,force)
+
+#USDA$mean_chill<-USDA$mean_chill*-1 #make postive
+#USDA$mean_force<-USDA$mean_force*-1 #make postive
+
+USDA$inc.z<-(USDA$meanInc-mean(USDA$meanInc,na.rm=TRUE))/sd(USDA$meanInc,na.rm=TRUE)
+USDA$strat.z<-(USDA$meanStrat-mean(USDA$meanStrat,na.rm=TRUE))/sd(USDA$meanStrat,na.rm=TRUE)
+
+jpeg("figures/USDAvOSP.jpeg")
+ggpubr::ggarrange(ggplot(USDA,aes(mean_chill,meanStrat))+geom_point()+geom_smooth(method="lm"),
+ggplot(USDA,aes(mean_force,meanInc))+geom_point(color="firebrick")+geom_smooth(method="lm"))
+dev.off()
+
+
+
 sort(unique(egr$latbi))
 
 intersect(unique(egr$latbi),unique(chill$latbi))# 18
