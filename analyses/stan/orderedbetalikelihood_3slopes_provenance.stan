@@ -5,6 +5,8 @@
 // Beta regression with proportion and degenerate responses (i.e. 0 and 1)
 // Original code from R. Kubinec, https://github.com/saudiwin/ordbetareg
 
+// Modified Nov. 18 to add provenance effect
+
 functions {
   
   // prior from Michael Betancourt for ordered cutpoints
@@ -45,6 +47,10 @@ data {
   array[N_prop] int<lower=1, upper=Nsp> sp_prop; // species ID for prop. observations
   array[N_degen] int<lower=1, upper=Nsp> sp_degen; // species ID for degen. observations
   
+  int<lower=1> Nprov; // number of species
+  array[N_prop] int<lower=1, upper=Nprov> prov_prop; // species ID for prop. observations
+  array[N_degen] int<lower=1, upper=Nprov> prov_degen; // species ID for degen. observations
+  
   array[N_prop] real y_prop; // Y in (0,1)
   array[N_degen] int<lower=0, upper=1> y_degen; // Y in {0,1}
   
@@ -67,24 +73,32 @@ parameters {
   real a_z; // root value
   real<lower=0, upper=1> lambda_a; // phylogenetic structure      
   real<lower=0> sigma_a; // overall rate of change (brownian motion?)
+  vector[Nprov] a_prov; 
+  real<lower=0> sigma_a_prov;
   
   // slope of time effect
   vector[Nsp] bt; 
   real bt_z; // root value
   real<lower=0, upper=1> lambda_bt;  // phylogenetic structure        
   real<lower=0> sigma_bt; // overall rate of change (brownian motion?)
+  vector[Nprov] bt_prov; 
+  real<lower=0> sigma_bt_prov;
   
   // slope of forcing effect
   vector[Nsp] bf; 
   real bf_z; // root value
   real<lower=0, upper=1> lambda_bf;  // phylogenetic structure        
   real<lower=0> sigma_bf; // overall rate of change (brownian motion?)
+  vector[Nprov] bf_prov; 
+  real<lower=0> sigma_bf_prov;
   
   // slope of chilling effect
   vector[Nsp] bcs; 
   real bcs_z; // root value
   real<lower=0, upper=1> lambda_bcs;  // phylogenetic structure        
   real<lower=0> sigma_bcs; // overall rate of change (brownian motion?)
+  vector[Nprov] bcs_prov; 
+  real<lower=0> sigma_bcs_prov;
   
   ordered[2] cutpoints; // cutpoints on ordered (latent) variable (also stand in as intercepts)
   real<lower=0> kappa; // scale parameter for beta regression
@@ -97,13 +111,19 @@ transformed parameters {
   
   if(N_degen>0) {
     for(i in 1:N_degen){
-      calc_degen[i] = a[sp_degen[i]] + bt[sp_degen[i]] * t_degen[i] + bf[sp_degen[i]] * f_degen[i] + bcs[sp_degen[i]] * cs_degen[i];
+      calc_degen[i] = (a[sp_degen[i]] + a_prov[prov_degen[i]])
+      + (bt[sp_degen[i]] + bt_prov[prov_degen[i]]) * t_degen[i] 
+      + (bf[sp_degen[i]] + bf_prov[prov_degen[i]]) * f_degen[i] 
+      + (bcs[sp_degen[i]] + bcs_prov[prov_degen[i]]) * cs_degen[i];
     }
   }
   
   for(i in 1:N_prop){
     
-    calc_prop[i] = a[sp_prop[i]] + bt[sp_prop[i]] * t_prop[i] + bf[sp_prop[i]] * f_prop[i] + bcs[sp_prop[i]] * cs_prop[i];
+    calc_prop[i] = (a[sp_prop[i]] + a_prov[prov_prop[i]])
+    + (bt[sp_prop[i]] + bt_prov[prov_prop[i]]) * t_prop[i] 
+    + (bf[sp_prop[i]] + bf_prov[prov_prop[i]]) * f_prop[i] 
+    + (bcs[sp_prop[i]] + bcs_prov[prov_prop[i]]) * cs_prop[i];
     
   }
 
@@ -131,6 +151,11 @@ model {
   bt ~ multi_normal_cholesky(rep_vector(bt_z,Nsp), L_bt); 
   bf ~ multi_normal_cholesky(rep_vector(bf_z,Nsp), L_bf); 
   bcs ~ multi_normal_cholesky(rep_vector(bcs_z,Nsp), L_bcs); 
+  
+  a_prov ~ normal(0, sigma_a_prov); 
+  bt_prov ~ normal(0, sigma_bt_prov); 
+  bf_prov ~ normal(0, sigma_bf_prov); 
+  bcs_prov ~ normal(0, sigma_bcs_prov); 
   
   target += induced_dirichlet_lpdf(cutpoints | rep_vector(1, 3), 0);
   
