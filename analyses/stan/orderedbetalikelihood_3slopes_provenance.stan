@@ -81,7 +81,7 @@ parameters {
   real bt_z; // root value
   real<lower=0, upper=1> lambda_bt;  // phylogenetic structure        
   real<lower=0> sigma_bt; // overall rate of change (brownian motion?)
-  vector[Nprov] bt_prov; 
+  vector[Nprov] bt_tilde_prov; 
   real<lower=0> sigma_bt_prov;
   
   // slope of forcing effect
@@ -89,7 +89,7 @@ parameters {
   real bf_z; // root value
   real<lower=0, upper=1> lambda_bf;  // phylogenetic structure        
   real<lower=0> sigma_bf; // overall rate of change (brownian motion?)
-  vector[Nprov] bf_prov; 
+  vector[Nprov] bf_tilde_prov; 
   real<lower=0> sigma_bf_prov;
   
   // slope of chilling effect
@@ -97,7 +97,7 @@ parameters {
   real bcs_z; // root value
   real<lower=0, upper=1> lambda_bcs;  // phylogenetic structure        
   real<lower=0> sigma_bcs; // overall rate of change (brownian motion?)
-  vector[Nprov] bcs_prov; 
+  vector[Nprov] bcs_tilde_prov; 
   real<lower=0> sigma_bcs_prov;
   
   ordered[2] cutpoints; // cutpoints on ordered (latent) variable (also stand in as intercepts)
@@ -105,6 +105,10 @@ parameters {
 }
 
 transformed parameters {
+  
+  vector[Nprov] bt_prov = 0 + sigma_bt_prov * bt_tilde_prov;
+  vector[Nprov] bf_prov = 0 + sigma_bf_prov * bf_tilde_prov;
+  vector[Nprov] bcs_prov = 0 + sigma_bcs_prov * bcs_tilde_prov;
   
   array[N_degen] real calc_degen;
   array[N_prop] real calc_prop;
@@ -153,9 +157,9 @@ model {
   bcs ~ multi_normal_cholesky(rep_vector(bcs_z,Nsp), L_bcs); 
   
   a_prov ~ normal(0, sigma_a_prov); 
-  bt_prov ~ normal(0, sigma_bt_prov); 
-  bf_prov ~ normal(0, sigma_bf_prov); 
-  bcs_prov ~ normal(0, sigma_bcs_prov); 
+  bt_tilde_prov ~ normal(0, 1); 
+  bf_tilde_prov ~ normal(0, 1); 
+  bcs_tilde_prov ~ normal(0, 1); 
   
   target += induced_dirichlet_lpdf(cutpoints | rep_vector(1, 3), 0);
   
