@@ -825,5 +825,6 @@ for(i in 1:nrow(ids)){
 rm(list=ls()[which(!(ls() %in% c('originald','d', 'newd', 'oldids')))])
 newids <- unique(newd[c('datasetID', 'study', 'genusspecies')])
 
-countprov <- aggregate(provLatLonAlt ~ datasetID + study, data = newd, FUN = function(x) length(unique(x)))
+countprov <- aggregate(provLatLonAlt ~ datasetID + study + genusspecies, data = newd, FUN = function(x) length(unique(x)))
 countprov <- countprov[countprov$provLatLonAlt > 1,]
+newd <- newd[paste0(newd$datasetID, newd$study, newd$genusspecies) %in% paste0(countprov$datasetID, countprov$study, countprov$genusspecies),]

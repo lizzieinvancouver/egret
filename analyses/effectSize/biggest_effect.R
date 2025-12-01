@@ -107,7 +107,7 @@ filteredd <- filteredd[!(filteredd$chemicalCor %in% misc.toremove),]
 
 
 
-subsetd <- filteredd[filteredd$datasetID %in% unique(filteredd$datasetID)[1:3],]
+subsetd <- filteredd[filteredd$datasetID %in% unique(filteredd$datasetID)[1:30],]
 
 
 treats <- c(
@@ -174,6 +174,7 @@ for(i in 1:nrow(idxs)){
   }
 }
 
+biggest_effect <- data.frame()
 for(i in 1:nrow(idxs)){
   
   resp_i <- treat_responses[treat_responses$id == i,]
@@ -182,7 +183,26 @@ for(i in 1:nrow(idxs)){
   min_resps_t <- merge(aggregate(resp ~ treat, data = resp_i, FUN = min), resp_i)
   
   max_resp <- max_resps_t[max_resps_t$resp == max(max_resps_t$resp),]
-  min_resp <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp),]
+  
+  if(nrow(max_resp) > 1){
+    cat('What to do with several max.?\n')
+    next()
+  }
+  
+  min_resp <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp) & min_resps_t$dur %in% max_resp$dur,]
+  print(nrow(min_resp))
+  
+  biggest_effect_i <- data.frame(
+    id = i, 
+    treat_collapsed = max_resp$treat,
+    response = max_resp$resp, 
+    minresp = ifelse(nrow(min_resp) > 0, min(min_resp$resp), NA),
+    dur = max_resp$dur
+  ) 
+  
+  biggest_effect <- rbind(biggest_effect, biggest_effect_i)
+  
+  
   
 }
 

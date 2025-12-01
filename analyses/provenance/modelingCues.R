@@ -1,5 +1,5 @@
-# Started 29 July 2025
-# by the team!
+# Started 18 Nov 2025
+# by the provenance model subgroup!
 
 library(stringr)
 library(ape)
@@ -36,7 +36,7 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } 
 
 # Load data, discard some experiments following various decision rules
-source('studyDesign/decisionRules_abundant0s.R')
+source('provenance/decisionRules.R')
 # source('studyDesign/decisionRules_abundant0s_Deirdre.R')
 
 # Prepare phylogeny
@@ -94,7 +94,7 @@ modeld$responseValueNum <- ifelse(modeld$responseValueNum > 1, 1, modeld$respons
 modeld$responseValueNum <- ifelse(modeld$responseValueNum < 0, 0, modeld$responseValueNum)
 modeld$germDuration <- ifelse(modeld$germDuration < 0, 0, modeld$germDuration)
 
-modeld <- modeld[, c('datasetID', 'study', 'genusspecies', 'responseValueNum', 'warmStratDur', 'coldStratDur', 'germTempGen', 'germDuration')]
+modeld <- modeld[, c('datasetID', 'study', 'genusspecies', 'provLatLonAlt', 'responseValueNum', 'warmStratDur', 'coldStratDur', 'germTempGen', 'germDuration')]
 modeld <- na.omit(modeld) 
 
 # Removing potential duplicates
@@ -118,11 +118,12 @@ modeld$germTempGen <- scale(modeld$germTempGen)[,1]
 spp <-  unique(modeld$genusspecies)
 length(spp)
 length(phylo$node.label)
-phylo2 <- keep.tip(phylo, spp)
-cphy <- vcv.phylo(phylo2,corr=TRUE)
+phylo2 <- ape::keep.tip(phylo, spp)
+cphy <- ape::vcv.phylo(phylo2,corr=TRUE)
 
 # Prepare data for Stan
 modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
+modeld$numprov = as.integer(factor(modeld$provLatLonAlt))
 mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
                  
@@ -130,6 +131,12 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  sp_degen = array(modeld$numspp[modeld$responseValueNum %in% c(0,1)],
                                   dim = sum(modeld$responseValueNum%in% c(0,1))),
                  sp_prop = array(modeld$numspp[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 Nprov =  length(unique(modeld$numprov)),
+                 prov_degen = array(modeld$numprov[modeld$responseValueNum %in% c(0,1)],
+                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 prov_prop = array(modeld$numprov[modeld$responseValueNum>0 & modeld$responseValueNum<1],
                                  dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
                  y_degen = array(modeld$responseValueNum[modeld$responseValueNum %in% c(0,1)],
@@ -152,50 +159,49 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  cs_prop = array(modeld$coldStratDur[modeld$responseValueNum>0 & modeld$responseValueNum<1],
                                  dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 ws_degen = array(modeld$warmStratDur[modeld$responseValueNum %in% c(0,1)],
-                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 ws_prop = array(modeld$warmStratDur[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
                  Vphy = cphy)
 
 # Posterior quantification
-# smordbeta <- stan_model("stan/orderedbetalikelihood_4slopes.stan")
-# fit <- sampling(smordbeta, mdl.data, 
-#                 iter = 2024, warmup = 1000,
-#                 chains = 4)
-# saveRDS(fit, file.path('modeling/output/abundant0model.rds'))
-fit <- readRDS(file.path('modeling/output/abundant0model.rds'))
+smordbeta <- stan_model("stan/orderedbetalikelihood_3slopes_provenance.stan")
+fit <- sampling(smordbeta, mdl.data,
+                iter = 2024, warmup = 1000,
+                chains = 4)
+
+smordbeta_nophy <- stan_model("stan/orderedbetalikelihood_3slopes_provenance_nophylo.stan")
+fit_nophy <- sampling(smordbeta_nophy, mdl.data,
+                iter = 2024, warmup = 1000,
+                chains = 4)
 
 # Diagnostics
-diagnostics <- util$extract_hmc_diagnostics(fit)
+diagnostics <- util$extract_hmc_diagnostics(fit_nophy)
 util$check_all_hmc_diagnostics(diagnostics)
-samples <- util$extract_expectand_vals(fit)
+samples <- util$extract_expectand_vals(fit_nophy)
+
+# for(prov in 1:mdl.data$Nprov){
+#   util$plot_div_pairs(paste0('a_prov[',prov,']'), 'sigma_a_prov', samples, diagnostics, transforms=list('sigma_a_prov' = 1))
+# }
+# for(prov in 1:mdl.data$Nprov){
+#   util$plot_div_pairs(paste0('bf_prov[',prov,']'), 'sigma_bf_prov', samples, diagnostics, transforms=list('sigma_bf_prov' = 1))
+# }
+# for(prov in 1:mdl.data$Nprov){
+#   util$plot_div_pairs(paste0('bt_prov[',prov,']'), 'sigma_bt_prov', samples, diagnostics, transforms=list('sigma_bt_prov' = 1))
+# }
+
 base_samples <- util$filter_expectands(samples,
                                        c('a_z', 'lambda_a', 'sigma_a', 'a',
                                          'bt_z', 'lambda_bt', 'sigma_bt', 'bt',
                                          'bf_z', 'lambda_bf', 'sigma_bf', 'bf',
                                          'bcs_z', 'lambda_bcs', 'sigma_bcs', 'bcs',
-                                         'bws_z', 'lambda_bws', 'sigma_bws', 'bws',
+                                         'sigma_a_prov', 'a_prov',
+                                         'sigma_bt_prov', 'bt_tilde_prov',
+                                         'sigma_bf_prov', 'bf_tilde_prov',
+                                         'sigma_bcs_prov', 'bcs_tilde_prov',
                                          'cutpoints', 'kappa'),
                                        check_arrays=TRUE)
 util$check_all_expectand_diagnostics(base_samples)
 
-util$plot_pairs_by_chain(samples[[paste0('lambda_bws')]], paste0('lambda_bws'), 
-                         samples[[paste0('sigma_bws')]], paste0('sigma_bws'))
-
-util$plot_pairs_by_chain(samples[[paste0('lambda_bcs')]], paste0('lambda_bcs'), 
-                         samples[[paste0('sigma_bcs')]], paste0('sigma_bcs'))
-
-util$plot_pairs_by_chain(samples[[paste0('lambda_bf')]], paste0('lambda_bf'), 
-                         samples[[paste0('sigma_bf')]], paste0('sigma_bf'))
-
 # Retrodictive check
 par(mfrow=c(1, 1), mar = c(4,4,2,2))
-# names <- sapply(1:mdl.data$N_prop, function(n) paste0('y_prop_gen[',n,']'))
-# util$plot_hist_quantiles(samples, 'y_prop_gen', 0, 1, 0.1,
-#                          baseline_values=mdl.data$y_prop, 
-#                          xlab="Seed counts")
 names <- c(sapply(1:mdl.data$N_prop, function(n) paste0('y_prop_gen[',n,']')),
            sapply(1:mdl.data$N_degen, function(n) paste0('y_degen_gen[',n,']')))
 preds <- samples[names]
@@ -204,83 +210,55 @@ util$plot_hist_quantiles(preds, 'y_gen', 0, 1, 0.1,
                          baseline_values=c(mdl.data$y_prop, mdl.data$y_degen), 
                          xlab="Germination perc.")
 
+# Posterior inference
+par(mfrow=c(4, 2), mar = c(4,4,1,1))
+util$plot_expectand_pushforward(samples[['sigma_a']], 20,
+                                flim = c(0,6),
+                                display_name="sigma_a")
+util$plot_expectand_pushforward(samples[['sigma_a_prov']], 20,
+                                flim = c(0,6),
+                                display_name="sigma_a_prov")
+util$plot_expectand_pushforward(samples[['sigma_bt']], 20,
+                                flim = c(0,6),
+                                display_name="sigma_bt")
+util$plot_expectand_pushforward(samples[['sigma_bt_prov']], 20,
+                                flim = c(0,6),
+                                display_name="sigma_bt_prov")
+util$plot_expectand_pushforward(samples[['sigma_bf']], 20,
+                                flim = c(0,6),
+                                display_name="sigma_bf")
+util$plot_expectand_pushforward(samples[['sigma_bf_prov']], 20,
+                                flim = c(0,6),
+                                display_name="sigma_bf_prov")
+util$plot_expectand_pushforward(samples[['sigma_bcs']], 20,
+                                flim = c(0,6),
+                                display_name="sigma_bcs")
+util$plot_expectand_pushforward(samples[['sigma_bcs_prov']], 20,
+                                flim = c(0,6),
+                                display_name="sigma_bcs_prov")
 
-# Posterior inferience
-par(mfrow=c(5, 1), mar = c(4,4,1,1))
-util$plot_expectand_pushforward(samples[['a_z']], 20,
-                                flim = c(-3,3),
-                                display_name="a_z")
-util$plot_expectand_pushforward(samples[['bt_z']], 20,
-                                flim = c(-3,3),
-                                display_name="bt_z")
-util$plot_expectand_pushforward(samples[['bf_z']], 20,
-                                flim = c(-3,3),
-                                display_name="bf_z")
-util$plot_expectand_pushforward(samples[['bcs_z']], 20,
-                                flim = c(-3,3),
-                                display_name="bcs_z")
-util$plot_expectand_pushforward(samples[['bws_z']], 20,
-                                flim = c(-3,3),
-                                display_name="bws_z")
+#  
 
+sp <- 15
+provs <- c(mdl.data$prov_prop[which(mdl.data$sp_prop == sp)], mdl.data$prov_degen[which(mdl.data$sp_degen == sp)])
+par(mfrow=c(2, 2), mar = c(4,4,4,1), cex.main = 1.1)
+for(p in unique(provs)){
+  idx_prop <- which(mdl.data$sp_prop == sp & mdl.data$prov_prop == p)
+  idx_degen <- which(mdl.data$sp_degen == sp & mdl.data$prov_degen == p)
+  names <- unlist(c(sapply(idx_prop, function(n) paste0('y_prop_gen[',n,']')),
+             sapply(idx_degen, function(n) paste0('y_degen_gen[',n,']'))))
+  c <- c(mdl.data$cs_prop[idx_prop], mdl.data$cs_degen[idx_degen])
+  orderx <- order(c)
+  names <- names[orderx]
+  c <- c[orderx]
+  util$plot_conn_pushforward_quantiles(samples, names, plot_xs = c, main = paste0('Provenance: ', levels(factor(modeld$provLatLonAlt))[p]),
+                                       xlab = 'Chilling (scaled)', ylab = 'Germination perc.(marginal quantiles)',
+                                       display_xlim = c(-0.5,1.1), display_ylim = c(0,1))
+  y <- c(mdl.data$y_prop[idx_prop], mdl.data$y_degen[idx_degen])
+  y <- y[orderx]
+  points(c, y, pch=16, cex=1.2, col="white")
+  points(c, y, pch=16, cex=0.8, col="black")
+}
 
-par(mfrow=c(1, 1), mar = c(4,4,1,1))
-names <- sapply(1:mdl.data$Nsp, function(sp) paste0('a[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species",
-                                     ylab="Intercept")
-par(mfrow=c(4, 1), mar = c(4,4,1,1))
-names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bt[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species",
-                                     ylab="Germ. duration")
-names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bf[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species",
-                                     ylab="Germ. temp.")
-names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bcs[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species",
-                                     ylab="Cold stratification")
-names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bws[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species",
-                                     ylab="Warm stratification")
-
-# Quick selection
-mean_bws <- unlist(lapply(samples[names], mean))
-max10 <- sort(mean_bws, decreasing = TRUE)[1:5]
-which(mean_bws %in% max10) # c(112, 113, 125, 134, 186, 187, 189, 191, 192, 217)
-min10 <- sort(mean_bws, decreasing = FALSE)[1:5]
-which(mean_bws %in% min10) # c(2, 46, 56, 61, 66, 123, 200, 201, 204, 218)
-
-sp_of_interest <- c(112, 113, 125, 134, 186, 
-                    2, 46, 56, 61, 66)
-par(mfrow=c(3, 1), mar = c(4,4,2,1))
-names <- sapply(sp_of_interest, function(sp) paste0('bt[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species", xticklabs= sp_of_interest,
-                                     ylab="Germ. duration")
-
-
-names <- sapply(sp_of_interest, function(sp) paste0('bf[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species", xticklabs= sp_of_interest,
-                                     ylab="Germ. temp.")
-names <- sapply(sp_of_interest, function(sp) paste0('bcs[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species", xticklabs= sp_of_interest,
-                                     ylab="Cold stratification")
-title("Abundant 0s model", line = -1.4, outer = TRUE)
-
-names <- sapply(sp_of_interest, function(sp) paste0('bws[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species",
-                                     ylab="Warm stratification")
-
-
-
-
-
-
+  
 

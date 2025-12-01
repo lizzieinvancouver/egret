@@ -36,7 +36,7 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } 
 
 # Load data, discard some experiments following various decision rules
-source('studyDesign/decisionRules_abundant0s.R')
+source('studyDesign/decisionRules.R')
 # source('studyDesign/decisionRules_abundant0s_Deirdre.R')
 
 # Prepare phylogeny
@@ -76,7 +76,7 @@ modeld$coldStratDur <- as.numeric(sapply(1:nrow(modeld), function(i){
   return(ifelse(is.null(id), NA, temp[id]))
 }))
 # (3) - assuming NA strat. mean 0
-modeld$warmStratDur <- ifelse(is.na(modeld$warmStratDur), 0, modeld$warmStratDur)
+# modeld$warmStratDur <- ifelse(is.na(modeld$warmStratDur), 0, modeld$warmStratDur) # we don't need this
 modeld$coldStratDur <- ifelse(is.na(modeld$coldStratDur), 0, modeld$coldStratDur)
 # (4) - removing species not present in the phylo tree
 modeld$genusspecies <- sapply(modeld$genusspecies, function(i) stringr::str_split_i(i, ' ', 1))
@@ -89,12 +89,12 @@ modeld$germDuration <- as.numeric(modeld$germDuration)
 modeld$germTempGen <- as.numeric(modeld$germTempGen)
 # temporary - need to check whether odd values (>>> scrapping uncertainty) have been corrected
 # modeld[modeld$responseValueNum < 1.05,] # not needed anymore!
-# (5) - transform values a bit above or below 0 (due to scrapping uncertainty)
+# (5) - transform values a bit above or below 0 (due to scrapping uncertainty)---this is not great
 modeld$responseValueNum <- ifelse(modeld$responseValueNum > 1, 1, modeld$responseValueNum)
 modeld$responseValueNum <- ifelse(modeld$responseValueNum < 0, 0, modeld$responseValueNum)
 modeld$germDuration <- ifelse(modeld$germDuration < 0, 0, modeld$germDuration)
 
-modeld <- modeld[, c('datasetID', 'study', 'genusspecies', 'responseValueNum', 'warmStratDur', 'coldStratDur', 'germTempGen', 'germDuration')]
+modeld <- modeld[, c('datasetID', 'study', 'genusspecies', 'responseValueNum', 'coldStratDur', 'germTempGen', 'germDuration')]
 modeld <- na.omit(modeld) 
 
 # Removing potential duplicates
@@ -102,13 +102,13 @@ modeld_wodup <- modeld[!duplicated(modeld),]
 message(paste0("Removing ", nrow(modeld)-nrow(modeld_wodup), ' potential duplicates!'))# 137 rows 
 # Other test for duplicate removal
 modeld$responseValueRounded <- round(modeld$responseValueNum,3) # rounded to 3 digits, ie percentage with 1 digits (data scraping uncertainty...?)
-modeld_wodup <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValueRounded', 'warmStratDur', 'coldStratDur', 'germTempGen', 'germDuration')]),]
+modeld_wodup <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValueRounded', 'coldStratDur', 'germTempGen', 'germDuration')]),]
 nrow(modeld)-nrow(modeld_wodup) # 14() when responseValue rounded to 3 digits (XX.X%)
 modeld <- modeld_wodup 
 rm(modeld_wodup)
 
 # I hate doing this, but I want to go swimmmmmiiiiing
-modeld$warmStratDur <- scale(modeld$warmStratDur)[,1]
+# modeld$warmStratDur <- scale(modeld$warmStratDur)[,1]
 modeld$coldStratDur <- scale(modeld$coldStratDur)[,1]
 modeld$germDuration <- scale(modeld$germDuration)[,1]
 modeld$germTempGen <- scale(modeld$germTempGen)[,1]
@@ -152,20 +152,14 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  cs_prop = array(modeld$coldStratDur[modeld$responseValueNum>0 & modeld$responseValueNum<1],
                                  dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
                  
-                 ws_degen = array(modeld$warmStratDur[modeld$responseValueNum %in% c(0,1)],
-                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 ws_prop = array(modeld$warmStratDur[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
                  Vphy = cphy)
 
 # Posterior quantification
-# smordbeta <- stan_model("stan/orderedbetalikelihood_4slopes.stan")
-# fit <- sampling(smordbeta, mdl.data, 
-#                 iter = 2024, warmup = 1000,
-#                 chains = 4)
-# saveRDS(fit, file.path('modeling/output/abundant0model.rds'))
-fit <- readRDS(file.path('modeling/output/abundant0model.rds'))
+smordbeta <- stan_model("stan/orderedbetalikelihood_3slopes.stan")
+fit <- sampling(smordbeta, mdl.data, 
+                iter = 2024, warmup = 1000,
+                chains = 4)
+saveRDS(fit, file.path('modeling/output/warmStratCollapse.R'))
 
 # Diagnostics
 diagnostics <- util$extract_hmc_diagnostics(fit)
@@ -176,19 +170,10 @@ base_samples <- util$filter_expectands(samples,
                                          'bt_z', 'lambda_bt', 'sigma_bt', 'bt',
                                          'bf_z', 'lambda_bf', 'sigma_bf', 'bf',
                                          'bcs_z', 'lambda_bcs', 'sigma_bcs', 'bcs',
-                                         'bws_z', 'lambda_bws', 'sigma_bws', 'bws',
+                                         # 'bws_z', 'lambda_bws', 'sigma_bws', 'bws',
                                          'cutpoints', 'kappa'),
                                        check_arrays=TRUE)
 util$check_all_expectand_diagnostics(base_samples)
-
-util$plot_pairs_by_chain(samples[[paste0('lambda_bws')]], paste0('lambda_bws'), 
-                         samples[[paste0('sigma_bws')]], paste0('sigma_bws'))
-
-util$plot_pairs_by_chain(samples[[paste0('lambda_bcs')]], paste0('lambda_bcs'), 
-                         samples[[paste0('sigma_bcs')]], paste0('sigma_bcs'))
-
-util$plot_pairs_by_chain(samples[[paste0('lambda_bf')]], paste0('lambda_bf'), 
-                         samples[[paste0('sigma_bf')]], paste0('sigma_bf'))
 
 # Retrodictive check
 par(mfrow=c(1, 1), mar = c(4,4,2,2))
@@ -200,13 +185,12 @@ names <- c(sapply(1:mdl.data$N_prop, function(n) paste0('y_prop_gen[',n,']')),
            sapply(1:mdl.data$N_degen, function(n) paste0('y_degen_gen[',n,']')))
 preds <- samples[names]
 names(preds) <- sapply(1:length(preds), function(n) paste0('y_gen[',n,']'))
-util$plot_hist_quantiles(preds, 'y_gen', 0, 1, 0.1,
+util$plot_hist_quantiles(preds, 'y_gen', 0, 1, 0.05,
                          baseline_values=c(mdl.data$y_prop, mdl.data$y_degen), 
                          xlab="Germination perc.")
 
-
 # Posterior inferience
-par(mfrow=c(5, 1), mar = c(4,4,1,1))
+par(mfrow=c(4, 1), mar = c(4,4,1,1))
 util$plot_expectand_pushforward(samples[['a_z']], 20,
                                 flim = c(-3,3),
                                 display_name="a_z")
@@ -219,17 +203,13 @@ util$plot_expectand_pushforward(samples[['bf_z']], 20,
 util$plot_expectand_pushforward(samples[['bcs_z']], 20,
                                 flim = c(-3,3),
                                 display_name="bcs_z")
-util$plot_expectand_pushforward(samples[['bws_z']], 20,
-                                flim = c(-3,3),
-                                display_name="bws_z")
-
 
 par(mfrow=c(1, 1), mar = c(4,4,1,1))
 names <- sapply(1:mdl.data$Nsp, function(sp) paste0('a[', sp, ']'))
 util$plot_disc_pushforward_quantiles(samples, names,
                                      xlab="Species",
                                      ylab="Intercept")
-par(mfrow=c(4, 1), mar = c(4,4,1,1))
+par(mfrow=c(3, 1), mar = c(4,4,1,1))
 names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bt[', sp, ']'))
 util$plot_disc_pushforward_quantiles(samples, names,
                                      xlab="Species",
@@ -242,45 +222,53 @@ names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bcs[', sp, ']'))
 util$plot_disc_pushforward_quantiles(samples, names,
                                      xlab="Species",
                                      ylab="Cold stratification")
-names <- sapply(1:mdl.data$Nsp, function(sp) paste0('bws[', sp, ']'))
+
+
+# For comparison witrh abundant0s model
+sp_of_interest <- c(112, 113, 125, 134, 186, 
+                    2, 46, 56, 61, 66)
+par(mfrow=c(3, 1), mar = c(4,4,2,1))
+names <- sapply(sp_of_interest, function(sp) paste0('bt[', sp, ']'))
 util$plot_disc_pushforward_quantiles(samples, names,
                                      xlab="Species",
-                                     ylab="Warm stratification")
+                                     ylab="Germ. duration")
+names <- sapply(sp_of_interest, function(sp) paste0('bf[', sp, ']'))
+util$plot_disc_pushforward_quantiles(samples, names,
+                                     xlab="Species",
+                                     ylab="Germ. temp.")
+names <- sapply(sp_of_interest, function(sp) paste0('bcs[', sp, ']'))
+util$plot_disc_pushforward_quantiles(samples, names,
+                                     xlab="Species",
+                                     ylab="Cold stratification")
+title("Decision rule model", line = -1.4, outer = TRUE)
 
-# Quick selection
-mean_bws <- unlist(lapply(samples[names], mean))
-max10 <- sort(mean_bws, decreasing = TRUE)[1:5]
-which(mean_bws %in% max10) # c(112, 113, 125, 134, 186, 187, 189, 191, 192, 217)
-min10 <- sort(mean_bws, decreasing = FALSE)[1:5]
-which(mean_bws %in% min10) # c(2, 46, 56, 61, 66, 123, 200, 201, 204, 218)
+
+fit_ab0 <- readRDS(file.path('modeling/output/abundant0model.rds'))
+samples_ab0 <- util$extract_expectand_vals(fit_ab0)
 
 sp_of_interest <- c(112, 113, 125, 134, 186, 
                     2, 46, 56, 61, 66)
 par(mfrow=c(3, 1), mar = c(4,4,2,1))
 names <- sapply(sp_of_interest, function(sp) paste0('bt[', sp, ']'))
 util$plot_disc_pushforward_quantiles(samples, names,
+                                     baseline_values = sapply(names, function(n){
+                                       util$ensemble_mcmc_quantile_est(samples_ab0[[n]], c(0.5))
+                                     }),
                                      xlab="Species", xticklabs= sp_of_interest,
                                      ylab="Germ. duration")
-
-
 names <- sapply(sp_of_interest, function(sp) paste0('bf[', sp, ']'))
 util$plot_disc_pushforward_quantiles(samples, names,
+                                     baseline_values = sapply(names, function(n){
+                                       util$ensemble_mcmc_quantile_est(samples_ab0[[n]], c(0.5))
+                                     }),
                                      xlab="Species", xticklabs= sp_of_interest,
                                      ylab="Germ. temp.")
 names <- sapply(sp_of_interest, function(sp) paste0('bcs[', sp, ']'))
 util$plot_disc_pushforward_quantiles(samples, names,
+                                     baseline_values = sapply(names, function(n){
+                                       util$ensemble_mcmc_quantile_est(samples_ab0[[n]], c(0.5))
+                                     }),
                                      xlab="Species", xticklabs= sp_of_interest,
                                      ylab="Cold stratification")
-title("Abundant 0s model", line = -1.4, outer = TRUE)
-
-names <- sapply(sp_of_interest, function(sp) paste0('bws[', sp, ']'))
-util$plot_disc_pushforward_quantiles(samples, names,
-                                     xlab="Species",
-                                     ylab="Warm stratification")
-
-
-
-
-
-
+title("Decision rule model", line = -1.4, outer = TRUE)
 
