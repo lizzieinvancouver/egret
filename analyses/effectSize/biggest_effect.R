@@ -191,6 +191,7 @@ for(i in 1:nrow(idxs)){
   
   min_resp <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp) & min_resps_t$dur %in% max_resp$dur,]
   print(nrow(min_resp))
+  if(nrow(min_resp) == 0){stop()}
   
   biggest_effect_i <- data.frame(
     id = i, 
@@ -201,8 +202,6 @@ for(i in 1:nrow(idxs)){
   ) 
   
   biggest_effect <- rbind(biggest_effect, biggest_effect_i)
-  
-  
   
 }
 
