@@ -372,8 +372,8 @@ warmstratmap
 #### Map for provenance trials ####
 # === === === === === === === === === === #
 # get all the datasetIDs that have multiple provenances in at least 1 of their study
-morethan1ids <- unique(morethan1$idspp)
-dfmorethan1 <- subset(d, idspp %in% morethan1ids)
+morethan1ids <- unique(idmultipleprov$idspp)
+dfmorethan1 <- subset(idmultipleprov, idspp %in% morethan1ids)
 
 # remove duplicated locations
 morethan1nona <- dfmorethan1[!duplicated(dfmorethan1$provLatLon),]
@@ -408,7 +408,6 @@ provbysize$color <- colors[as.numeric(as.factor(provbysize$idspp))]
 
 # scale count larger
 provbysize$countscaled <- provbysize$provcount/3
-
 
 # Get a world map
 world <- ne_countries(scale = "medium", returnclass = "sf")
