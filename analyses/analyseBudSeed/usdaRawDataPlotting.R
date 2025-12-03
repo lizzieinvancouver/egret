@@ -25,12 +25,11 @@ library(chillR)
 
 d <- read.csv("output/usdaGerminationCleaned.csv")
 
-names(d)
+osp<-read.csv("input/ospreeforegret.csv")
+ospSp <- unique(osp$latbi)
 
 d$datasetID <- paste(d$pdf_page_number, d$pdf_table_number, sep = "_")
 # we want data on: chilling, germ temps, light
-
-head(d$X) # needs to be cleaned out
 
 keep <- c("datasetID", "latbi", "cold_stratification_temp_C", "cold_stratification_days", "dailyl_light_hours", "photoperiodCor",
           "day_temp_celsius", "night_temp_celsius", "temp_unspecified_time_of_day_celsius", "test_duration_in_days",
@@ -55,18 +54,25 @@ dMaxMin <- rbind(dMax, dMin)
 dMaxMin$tempDay[which(is.na(dMaxMin$tempDay))] <- dMaxMin$unspecTemp[is.na(dMaxMin$tempDay)]
 # with max and min values: 1532 rows of data 426 species
 
-dMaxMin <- dMaxMin[complete.cases(c(dMaxMin$chillTemp)),] 
+dMaxMin <- dMaxMin[complete.cases(c(dMaxMin$chillDuration)),] 
+# with only chill duration n = 733, nspp = 220
 # with chilling data, if chillTemp included also always includes duration, n = 567, nspp = 179
 
-dMaxMin$tempDay[which(dMaxMin$tempDay == "20 and 10 then 20")] <- 16.67
-dMaxMin$tempDay <- as.numeric(dMaxMin$tempDay)
-
-dMaxMin <- dMaxMin[complete.cases(c(dMaxMin$tempDay)),] 
+# dMaxMin$tempDay[which(dMaxMin$tempDay == "20 and 10 then 20")] <- 16.67
+# dMaxMin$tempDay <- as.numeric(dMaxMin$tempDay)
+# 
+# dMaxMin <- dMaxMin[complete.cases(c(dMaxMin$tempDay)),] 
 # complete data for chilling and day temp: n = 446, 
 
 # percent germination:
 dPer <- subset(dMaxMin, responseVarClean == "percent.germ")
-# n = 267; nspp = 132
+length(unique(dPer$latbi))
+# n = 465; nspp = 218
+
+## How much overlap do we have between USDA and OSPREE if just chill duration data?
+dOspree <- dPer[dPer$latbi %in% ospSp,] 
+length(unique(dOspree$latbi))
+# n = 95; nspp = 36
 
 plot(dPer$responseValue ~ dPer$chillTemp)
 plot(dPer$responseValue ~ dPer$chillDuration)
@@ -74,32 +80,67 @@ plot(dPer$responseValue ~ dPer$tempDay)
 plot(dPer$responseValue ~ dPer$chillTemp, bg = dPer$tempDay, pch = 21)
 plot(dPer$chillTemp, dPer$tempDay, bg = dPer$chillDuration, pch = 21)
 
-## How much overlap do we have between USDA and OSPREE?
-osp<-read.csv("input/ospreeforegret.csv")
-ospSp <- unique(osp$latbi)
 
-dOspree <- dPer[dPer$latbi %in% ospSp,] # n = 53, nspp = 22
-viridis_colors <- viridis(length(unique(dOspree$chillDuration)))
-dOspree$vCol <- viridis_colors[as.numeric(factor(dOspree$chillDuration))]
+viridis_colors <- viridis(length(unique(dOspree$datasetID)))
+dOspree$vCol <- viridis_colors[as.numeric(factor(dOspree$datasetID))]
 
-pdf("analyseBudSeed/figures/ospreeSppChillTemp.pdf", width = 8, height = 5)
-plot(dOspree$responseValue ~ dOspree$chillTemp, bg = dOspree$vCol, pch = 21, cex =1.5,
-     main = "% germ with chill temp, with colors showing chill duration for 22 OSPEE spp.",
-     xlab = "Chill Temp",
+pdf("analyseBudSeed/figures/ospreeSppChillDuration.pdf", width = 8, height = 5)
+plot(dOspree$responseValue ~ dOspree$chillDuration, bg = dOspree$vCol, pch = 21, cex =1.5,
+     main = "% germ with chill temp",
+     xlab = "Chill Duration",
      ylab = "Percent germination")
 dev.off()
 
-# day temp: 
-viridis_colors <- viridis(length(unique(dOspree$tempDay)))
-dOspree$vCol <- viridis_colors[as.numeric(factor(dOspree$tempDay))]
+## How much overlap do we have between USDA and OSPREE if just chill duration data AND germ temp?
+dMaxMin$tempDay[which(dMaxMin$tempDay == "20 and 10 then 20")] <- 16.67
+dMaxMin$tempDay <- as.numeric(dMaxMin$tempDay)
 
-plot(dOspree$responseValue ~ dOspree$chillTemp, bg = dOspree$vCol, pch = 21, cex =1.5, cex.lab = 1.5,
-     main = "Percent germ with chill temp, with colors showing chill duration for 22 OSPEE spp.",
-     xlab = "Chill Temp",
+dMaxMinT <- dMaxMin[complete.cases(c(dMaxMin$tempDay)),]
+# complete data for chilling and day temp: n = 446,
+
+dPerCT <- subset(dMaxMinT, responseVarClean == "percent.germ")
+length(unique(dPerCT$latbi))
+# n = 325; nspp = 163
+
+## How much overlap do we have between USDA and OSPREE if just chill duration data?
+dOspreeCT <- dPerCT[dPerCT$latbi %in% ospSp,] 
+length(unique(dOspreeCT$latbi))
+# n = 77; nspp = 33
+
+viridis_colors <- viridis(length(unique(dOspreeCT$datasetID)))
+dOspreeCT$vCol <- viridis_colors[as.numeric(factor(dOspreeCT$datasetID))]
+
+pdf("analyseBudSeed/figures/ospreeSppTemp.pdf", width = 8, height = 5)
+plot(dOspreeCT$responseValue ~ dOspreeCT$tempDay, bg = dOspreeCT$vCol, pch = 21, cex =1.5,
+     main = "% germ with germination temp",
+     xlab = "Germ temp",
      ylab = "Percent germination")
+dev.off()
+
+viridis_colors <- viridis(length(unique(dPer$datasetID)))
+dPer$vCol <- viridis_colors[as.numeric(factor(dPer$datasetID))]
+
+pdf("analyseBudSeed/figures/allSppChillDuration.pdf", width = 8, height = 5)
+plot(dPer$responseValue ~ dPer$chillDuration, bg = dPer$vCol, pch = 21, cex =1.5,
+     main = "% germ with chill temp",
+     xlab = "Chill Duration",
+     ylab = "Percent germination")
+dev.off()
 
 
-######################################### More generally, how many ospree spp are there in the usda data:
+## How many species have more than one chilling duration?
+multiChill <- aggregate(dOspree["chillDuration"], dOspree[c("latbi")], FUN = function(x)length(unique(x)))
+nrow(subset(multiChill, chillDuration == 1))/dim(multiChill)[1] 
+# 20 or 55% of the spp only has one chill Duration
 
-dOspree <- dMaxMin[dMaxMin$latbi %in% ospSp,]
-# n= 107; nspp 24
+pdf("analyseBudSeed/figures/hisSppMultiChill.pdf", width = 8, height = 5)
+hist(multiChill$chillDuration, main = "")
+dev.off()
+
+## How many ospree spp are there in the egret data:
+egret <- read.csv("output/egretclean.csv")
+
+dEgret <- egret[egret$latbi %in% ospSp,]
+dEgret <- subset(dEgret, responseVar == "percent.germ")
+
+dEgret <- dEgret[complete.cases(c(dEgret$chillDuration)),] 
