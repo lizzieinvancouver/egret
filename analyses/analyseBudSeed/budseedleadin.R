@@ -14,7 +14,7 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
 } else if(length(grep("sapph", getwd()) > 0)) {
   setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
-} else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
+} else if(length(grep("dbuona", getwd()) > 0)) {
   setwd("/Users/dbuona/Documents/git/egret/analyses/")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
@@ -38,8 +38,9 @@ phylo <- read.tree("input/ospreeforegret.tre")
 #plot(phylo, cex=0.7)
 VCVPHY <- vcv.phylo(phylo,corr=TRUE)
 nspecies <- max(osp$sppnum)
+bask<-data.frame(osp_sps=sort(unique(osp$spps)),optimum_chilling=NA,optimum_forcing=NA,baskin_table=NA)
 
-
+write.csv(bask,"analyseBudSeed/baskin_opt_cues4ospree.csv")
 
 
 
