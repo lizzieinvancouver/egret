@@ -153,18 +153,18 @@ for(i in 1:nrow(idxs)){
   uniq_treats <- unique(di[,treats])
   cat(paste0(nrow(di), ' lines of data, ',  nrow(uniq_treats), ' unique treats.\n'))
   
-  di$temp <- sapply(1:nrow(di), function(x) paste0(di[x,treats], collapse =''))
+  di$temp <- sapply(1:nrow(di), function(x) paste0(di[x,treats], collapse ='|'))
   
   
   for(t in 1:nrow(uniq_treats)){
     
-    treat <-  paste0(uniq_treats[t,], collapse ='')
+    treat <-  paste0(uniq_treats[t,], collapse ='|')
     di_tr <- di[ di$temp == treat,]
     
     if(nrow(di_tr) == 1){
       resp_di <- data.frame(id = i, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
     }else if(nrow(di_tr) > 1){
-      di_tr <- di_tr[di_tr$responseValueNum %in% range(di_tr$responseValueNum),]
+      di_tr <- di_tr[di_tr$responseValueNum %in% range(di_tr$responseValueNum),] # keep min and max
       resp_di <- data.frame(id = i, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
     }else{
       stop()
@@ -179,28 +179,34 @@ for(i in 1:nrow(idxs)){
   
   resp_i <- treat_responses[treat_responses$id == i,]
   
-  max_resps_t <- merge(aggregate(resp ~ treat, data = resp_i, FUN = max), resp_i)
-  min_resps_t <- merge(aggregate(resp ~ treat, data = resp_i, FUN = min), resp_i)
+  max_resps_t <- aggregate(resp ~ treat, data = resp_i, FUN = max)
+  max_resp <- merge(max_resps_t[max_resps_t$resp == max(max_resps_t$resp),], resp_i)
   
-  max_resp <- max_resps_t[max_resps_t$resp == max(max_resps_t$resp),]
-  
-  if(nrow(max_resp) > 1){
-    cat('What to do with several max.?\n')
-    next()
+  min_resps_t <- aggregate(resp ~ treat, data = resp_i[resp_i$dur %in% max_resp$dur,], FUN = min)
+  min_resp <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp),]
+
+  if(nrow(min_resp) == 0 & length(unique(resp_i$treat)) > 1){
+    min_resp_diffdur <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp),]
   }
+
   
-  min_resp <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp) & min_resps_t$dur %in% max_resp$dur,]
-  print(nrow(min_resp))
-  if(nrow(min_resp) == 0){stop()}
+  # biggest_effect_i <- data.frame(
+  #   id = i,
+  #   treat_collapsed = max_resp$treat,
+  #   response = max_resp$resp,
+  #   minresp = ifelse(nrow(min_resp) > 0, min(min_resp$resp), NA),
+  #   dur = max_resp$dur
+  # )
   
   biggest_effect_i <- data.frame(
-    id = i, 
-    treat_collapsed = max_resp$treat,
-    response = max_resp$resp, 
-    minresp = ifelse(nrow(min_resp) > 0, min(min_resp$resp), NA),
-    dur = max_resp$dur
-  ) 
-  
+    id = i,
+    n_treats = length(unique(resp_i$treat)),
+    n_max = nrow(max_resp),
+    max_resp = ifelse(nrow(max_resp) == 1, max_resp$resp, NA),
+    n_min = nrow(min_resp),
+    min_resp = ifelse(nrow(min_resp) == 1, min_resp$resp, NA)
+  )
+
   biggest_effect <- rbind(biggest_effect, biggest_effect_i)
   
 }
