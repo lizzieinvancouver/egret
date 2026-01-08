@@ -105,10 +105,8 @@ filteredd <- filteredd[!(filteredd$soaked.in %in% chem.toremove),]
 misc.toremove <- unique(d[grepl('stress', d$other.treatment),'other.treatment'])
 filteredd <- filteredd[!(filteredd$chemicalCor %in% misc.toremove),]
 
-
-
-subsetd <- filteredd[filteredd$datasetID %in% unique(filteredd$datasetID)[1:30],]
-
+# subsetd <- filteredd[filteredd$datasetID %in% unique(filteredd$datasetID)[1:30],]
+subsetd <- filteredd
 
 treats <- c(
             # GEO. OR GENETIC-RELATED
