@@ -180,7 +180,16 @@ for(i in 1:nrow(idxs)){
   resp_i <- treat_responses[treat_responses$id == i,]
   
   max_resps_t <- aggregate(resp ~ treat, data = resp_i, FUN = max)
-  max_resp <- merge(max_resps_t[max_resps_t$resp == max(max_resps_t$resp),], resp_i)
+  max_resp <- max_resps_t[max_resps_t$resp == max(max_resps_t$resp),] # no duration
+  max_resp_wdur <- merge(max_resp, resp_i[c('treat', 'resp', 'dur')]) # merge to get duration back
+  
+  if(nrow(max_resp_wdur) > nrow(max_resp)){
+    max_resp_wdur <- aggregate(dur ~ treat + resp, data = max_resp_wdur, FUN = min) # if plateau, keep the first 
+    # time when max. is obtained
+  }
+  
+  max_resp <- max_resp_wdur
+  
   
   min_resps_t <- aggregate(resp ~ treat, data = resp_i[resp_i$dur %in% max_resp$dur,], FUN = min)
   min_resp <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp),]
@@ -189,7 +198,6 @@ for(i in 1:nrow(idxs)){
     min_resp_diffdur <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp),]
   }
 
-  
   # biggest_effect_i <- data.frame(
   #   id = i,
   #   treat_collapsed = max_resp$treat,
@@ -202,9 +210,9 @@ for(i in 1:nrow(idxs)){
     id = i,
     n_treats = length(unique(resp_i$treat)),
     n_max = nrow(max_resp),
-    max_resp = ifelse(nrow(max_resp) == 1, max_resp$resp, NA),
+    max_resp = ifelse(nrow(max_resp) == 1, max_resp$resp, unique(max_resp$resp)),
     n_min = nrow(min_resp),
-    min_resp = ifelse(nrow(min_resp) == 1, min_resp$resp, NA)
+    min_resp = ifelse(nrow(min_resp) == 1, min_resp$resp, unique(min_resp$resp))
   )
 
   biggest_effect <- rbind(biggest_effect, biggest_effect_i)
