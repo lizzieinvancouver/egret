@@ -5,6 +5,7 @@ library(cmdstanr)
 library(stringr)
 library(ape)
 library(phytools)
+library(pez)
 # library(rstan)
 options(mc.cores = parallel::detectCores())
 library(dplyr) # oops
@@ -33,65 +34,60 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd('~/projects/egret/analyses')
 } 
 
-phylo <- ape::read.tree("output/ospreeUsdaTree.tre")
-gymno <- c('Pseudotsuga_menziesii', 'Pinus_roxburghii','Pinus_sylvestris','Pinus_halepensis',
-           'Pinus_brutia','Pinus_canariensis','Pinus_bungeana','Pinus_koraiensis','Pinus_wallichiana',
-           'Pinus_strobus','Picea_orientalis','Picea_abies','Picea_sitchensis','Picea_glauca',
-           'Abies_amabilis','Abies_procera','Abies_grandis','Abies_nordmanniana','Abies_chensiensis',
-           'Abies_lasiocarpa','Tsuga_heterophylla','Tsuga_mertensiana','Ginkgo_biloba', 'Juniperus_oxycedrus',
-           'Juniperus_communis')
+d <- read.csv("output/usdaChillGermTemp.csv")
+
+d$latbi[which(d$latbi == "Aronia_x prunifolia")] <-"Aronia_x_prunifolia"
+
+
+phylo <- ape::read.tree("output/usdaPhylogenyFull.tre")
+missing <- c("Quercus_falcata","Quercus_nigra","Quercus_chrysolepis", "Quercus_dumosa", "Quercus_ilicifolia",
+              "Quercus_imbricaria", "Quercus_pagoda","Quercus_shumardii","Quercus_texana")
+d <- d[!d$latbi %in% missing,]
+subby <- unique(d$latbi)
+
 namesphy <- phylo$tip.label
 phylo <- phytools::force.ultrametric(phylo, method="extend")
 phylo$node.label <- seq(1,length(phylo$node.label),1)
 ape::is.ultrametric(phylo)
 # plot(phylo, cex=0.7)
-phylo <- ape::drop.tip(phylo, gymno) # exclude gymnosperms
+
+phylo <- ape::keep.tip(phylo, subby) # exclude gymnosperms
 # plot(phylo, cex=0.7)
 cphy <- ape::vcv.phylo(phylo,corr=TRUE)
-rm(gymno)
+rm(subby)
 
-# Trim the phylo tree with species present in the dataset
-spp <-  unique(modeld$genusspecies)
-length(spp)
-length(phylo$node.label)
-phylo2 <- keep.tip(phylo, spp)
-cphy <- vcv.phylo(phylo2,corr=TRUE)
+cphy <- vcv.phylo(phylo,corr=TRUE)
 
 # Prepare data for Stan - chilling hours between -20 and 10
-modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
-mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
-                 N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
+d$numspp = as.integer(factor(d$latbi, levels = colnames(cphy)))
+
+mdl.data <- list(N_degen = sum(d$responseValue %in% c(0,1)),
+                 N_prop = sum(d$responseValue>0 & d$responseValue<100),
                  
-                 Nsp =  length(unique(modeld$numspp)),
-                 sp_degen = array(modeld$numspp[modeld$responseValueNum %in% c(0,1)],
-                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 sp_prop = array(modeld$numspp[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 Nsp =  length(unique(d$latbi)),
+                 sp_degen = array(d$numspp[d$responseValue %in% c(0,1)],
+                                  dim = sum(d$responseValue%in% c(0,1))),
+                 sp_prop = array(d$numspp[d$responseValue>0 & d$responseValue<1],
+                                 dim = sum(d$responseValue>0 & d$responseValue<1)),
                  
-                 y_degen = array(modeld$responseValueNum[modeld$responseValueNum %in% c(0,1)],
-                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 y_prop = array(modeld$responseValueNum[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 y_degen = array(d$responseValue[d$responseValue %in% c(0,1)],
+                                 dim = sum(d$responseValue%in% c(0,1))),
+                 y_prop = array(d$responseValue[d$responseValue>0 & d$responseValue<1],
+                                dim = sum(d$responseValue>0 & d$responseValue<1)),
                  
-                 t_degen = array(modeld$time[modeld$responseValueNum %in% c(0,1)],
-                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 t_prop = array(modeld$time[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 t_degen = array(d$chillDuration[d$responseValue %in% c(0,1)],
+                                 dim = sum(d$responseValue%in% c(0,1))),
+                 t_prop = array(d$chillDuration[d$responseValue>0 & d$responseValue<1],
+                                dim = sum(d$responseValue>0 & d$responseValue<1)),
                  
-                 f_degen = array(modeld$forcing[modeld$responseValueNum %in% c(0,1)],
-                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 f_prop = array(modeld$forcing[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
-                 c_degen = array(modeld$chillh10[modeld$responseValueNum %in% c(0,1)],
-                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 c_prop = array(modeld$chillh10[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
+                 f_degen = array(d$tempDay[d$responseValue %in% c(0,1)],
+                                 dim = sum(d$responseValue%in% c(0,1))),
+                 f_prop = array(d$tempDay[d$responseValue>0 & d$responseValue<1],
+                                dim = sum(d$responseValue>0 & d$responseValue<1)),
                  Vphy = cphy)
 
 # Compile and run model
-smordbeta <- cmdstan_model("stan/orderedbetalikelihood_3slopes.stan")
+smordbeta <-stan_model("stan/orderedbetalikelihood_usda.stan")
 fit <- sampling(smordbeta, mdl.data, 
                 iter = 4000, warmup = 3000,
                 chains = 4)
