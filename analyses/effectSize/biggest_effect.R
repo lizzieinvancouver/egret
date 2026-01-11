@@ -148,11 +148,19 @@ for(i in 1:nrow(idxs)){
   di <- subsetd[paste0(subsetd$datasetID,subsetd$study,subsetd$genusspecies) == 
                   paste0(idxs[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
   
-  uniq_treats <- unique(di[,treats])
+  treats_di <- di[,treats]
+  coltokeep <- which(sapply(treats_di, function(x) return(length(unique(x)) != 1)))
+  name_diff_treats <- names(which(sapply(treats_di, function(x) return(length(unique(x)) != 1))))
+  diff_treats_di <- as.data.frame(treats_di[,coltokeep])
+  names(diff_treats_di) <- name_diff_treats
+  
+  uniq_treats <- unique(diff_treats_di)
   cat(paste0(nrow(di), ' lines of data, ',  nrow(uniq_treats), ' unique treats.\n'))
   
-  di$temp <- sapply(1:nrow(di), function(x) paste0(di[x,treats], collapse ='|'))
   
+  
+  di$temp <- sapply(1:nrow(di), function(x) paste0(di[x,name_diff_treats], collapse ='|'))
+  name_diff_treats <- paste0(name_diff_treats, collapse ='|')
   
   for(t in 1:nrow(uniq_treats)){
     
@@ -160,10 +168,10 @@ for(i in 1:nrow(idxs)){
     di_tr <- di[ di$temp == treat,]
     
     if(nrow(di_tr) == 1){
-      resp_di <- data.frame(id = i, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
+      resp_di <- data.frame(id = i,  name_treat = name_diff_treats, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
     }else if(nrow(di_tr) > 1){
       di_tr <- di_tr[di_tr$responseValueNum %in% range(di_tr$responseValueNum),] # keep min and max
-      resp_di <- data.frame(id = i, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
+      resp_di <- data.frame(id = i,  name_treat = name_diff_treats, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
     }else{
       stop()
     }
