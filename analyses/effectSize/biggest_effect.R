@@ -190,6 +190,10 @@ for(i in 1:nrow(idxs)){
   max_resp_wdur <- merge(max_resp, resp_i[c('treat', 'resp', 'dur')]) # merge to get duration back
   
   if(nrow(max_resp_wdur) > nrow(max_resp)){
+    if(all(is.na(max_resp_wdur$dur))){
+      max_resp_wdur <- max_resp_wdur[1,]
+      next
+    }
     max_resp_wdur <- aggregate(dur ~ treat + resp, data = max_resp_wdur, FUN = min) # if plateau, keep the first 
     # time when max. is obtained
   }
@@ -227,95 +231,123 @@ for(i in 1:nrow(idxs)){
 
 
 # What if we consider 'any scarification'?
+# treat_responses <- data.frame()
+# for(i in 1:nrow(idxs)){
+#   di <- subsetd[paste0(subsetd$datasetID,subsetd$study,subsetd$genusspecies) == 
+#                   paste0(idxs[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
+#   
+#   # we discard scarifTypeSpe, and consider all scarification treatments identical
+#   di$scarifTypeSpe <- NA
+#   di$scarifTypeGen <- ifelse(!is.na(di$scarifTypeGen), 'notNA', NA)
+#   
+#   treats_di <- di[,treats]
+#   coltokeep <- which(sapply(treats_di, function(x) return(length(unique(x)) != 1)))
+#   name_diff_treats <- names(which(sapply(treats_di, function(x) return(length(unique(x)) != 1))))
+#   diff_treats_di <- as.data.frame(treats_di[,coltokeep])
+#   names(diff_treats_di) <- name_diff_treats
+#   
+#   uniq_treats <- unique(diff_treats_di)
+#   cat(paste0(nrow(di), ' lines of data, ',  nrow(uniq_treats), ' unique treats.\n'))
+#   
+#   di$temp <- sapply(1:nrow(di), function(x) paste0(di[x,name_diff_treats], collapse ='|'))
+#   name_diff_treats <- paste0(name_diff_treats, collapse ='|')
+#   
+#   for(t in 1:nrow(uniq_treats)){
+#     
+#     treat <-  paste0(uniq_treats[t,], collapse ='|')
+#     di_tr <- di[ di$temp == treat,]
+#     
+#     if(nrow(di_tr) == 1){
+#       resp_di <- data.frame(id = i,  name_treat = name_diff_treats, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
+#     }else if(nrow(di_tr) > 1){
+#       di_tr <- di_tr[di_tr$responseValueNum %in% range(di_tr$responseValueNum),] # keep min and max
+#       resp_di <- data.frame(id = i,  name_treat = name_diff_treats, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
+#     }else{
+#       stop()
+#     }
+#     
+#     treat_responses <- rbind(treat_responses, resp_di)
+#   }
+# }
+# 
+# biggest_effect <- data.frame()
+# for(i in 1:nrow(idxs)){
+#   
+#   resp_i <- treat_responses[treat_responses$id == i,]
+#   
+#   max_resps_t <- aggregate(resp ~ treat, data = resp_i, FUN = max)
+#   max_resp <- max_resps_t[max_resps_t$resp == max(max_resps_t$resp),] # no duration
+#   max_resp_wdur <- merge(max_resp, resp_i[c('treat', 'resp', 'dur')]) # merge to get duration back
+#   
+#   if(nrow(max_resp_wdur) > nrow(max_resp)){
+#     if(all(is.na(max_resp_wdur$dur))){
+#       max_resp_wdur <- max_resp_wdur[1,]
+#       next
+#     }
+#     max_resp_wdur <- aggregate(dur ~ treat + resp, data = max_resp_wdur, FUN = min) # if plateau, keep the first 
+#     # time when max. is obtained
+#   }
+#   
+#   max_resp <- max_resp_wdur
+#   
+#   
+#   min_resps_t <- aggregate(resp ~ treat, data = resp_i[resp_i$dur %in% max_resp$dur,], FUN = min)
+#   min_resp <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp),]
+#   
+#   if(nrow(min_resp) == 0 & length(unique(resp_i$treat)) > 1){
+#     min_resp_diffdur <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp),]
+#   }
+#   
+#   # biggest_effect_i <- data.frame(
+#   #   id = i,
+#   #   treat_collapsed = max_resp$treat,
+#   #   response = max_resp$resp,
+#   #   minresp = ifelse(nrow(min_resp) > 0, min(min_resp$resp), NA),
+#   #   dur = max_resp$dur
+#   # )
+#   
+#   biggest_effect_i <- data.frame(
+#     id = i,
+#     n_treats = length(unique(resp_i$treat)),
+#     n_max = nrow(max_resp),
+#     max_resp = ifelse(nrow(max_resp) == 1, max_resp$resp, unique(max_resp$resp)),
+#     n_min = nrow(min_resp),
+#     min_resp = ifelse(nrow(min_resp) == 1, min_resp$resp, unique(min_resp$resp))
+#   )
+#   
+#   biggest_effect <- rbind(biggest_effect, biggest_effect_i)
+#   
+# }
 
-treat_responses <- data.frame()
-for(i in 1:nrow(idxs)){
-  di <- subsetd[paste0(subsetd$datasetID,subsetd$study,subsetd$genusspecies) == 
-                  paste0(idxs[i,c('datasetID', 'study', 'genusspecies')], collapse = ''),]
-  
-  # we discard scarifTypeSpe, and consider all scarification treatments identical
-  di$scarifTypeSpe <- NA
-  di$scarifTypeGen <- ifelse(!is.na(di$scarifTypeGen), 'notNA', NA)
-  
-  treats_di <- di[,treats]
-  coltokeep <- which(sapply(treats_di, function(x) return(length(unique(x)) != 1)))
-  name_diff_treats <- names(which(sapply(treats_di, function(x) return(length(unique(x)) != 1))))
-  diff_treats_di <- as.data.frame(treats_di[,coltokeep])
-  names(diff_treats_di) <- name_diff_treats
-  
-  uniq_treats <- unique(diff_treats_di)
-  cat(paste0(nrow(di), ' lines of data, ',  nrow(uniq_treats), ' unique treats.\n'))
-  
-  di$temp <- sapply(1:nrow(di), function(x) paste0(di[x,name_diff_treats], collapse ='|'))
-  name_diff_treats <- paste0(name_diff_treats, collapse ='|')
-  
-  for(t in 1:nrow(uniq_treats)){
-    
-    treat <-  paste0(uniq_treats[t,], collapse ='|')
-    di_tr <- di[ di$temp == treat,]
-    
-    if(nrow(di_tr) == 1){
-      resp_di <- data.frame(id = i,  name_treat = name_diff_treats, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
-    }else if(nrow(di_tr) > 1){
-      di_tr <- di_tr[di_tr$responseValueNum %in% range(di_tr$responseValueNum),] # keep min and max
-      resp_di <- data.frame(id = i,  name_treat = name_diff_treats, treat, dur = di_tr$germDuration, resp = di_tr$responseValueNum)
-    }else{
-      stop()
-    }
-    
-    treat_responses <- rbind(treat_responses, resp_di)
+# Let's take a quick look at treatments that were applied in the studies?
+# Example, only chemical?
+chemical_treats <- c(	
+  'chemicalCor|chemicalConcent',
+  'chemicalConcent|soaked.in|other.treatment',
+  'chemicalConcent|other.treatment',
+  'chemicalConcent')
+subset_treats <- treat_responses[treat_responses$name_treat %in% chemical_treats,]
+length(unique(subset_treats$id))
+
+# Example: only scarif
+scarif_treats <- c(
+  'scarifTypeGen|scarifTypeSpe|chemicalCor|chemicalConcent',
+  'scarifTypeGen|scarifTypeSpe|chemicalConcent|other.treatment',
+  'scarifTypeGen|scarifTypeSpe',
+  'scarifTypeGen|scarifTypeSpe|other.treatment',
+  'scarifTypeGen|scarifTypeSpe|soaking.duration|other.treatment'
+)
+subset_treats <- treat_responses[treat_responses$name_treat %in% scarif_treats,]
+length(unique(subset_treats$id))
+
+chillstrat_treats <- c()
+for(m in unique(treat_responses$name_treat)){
+  n_treat <- length(unlist(stringr::str_split(m, '\\|')))
+  n_chillstrat <- length(unlist(stringr::str_extract_all(m, 'strat|chill|other')))
+  if(n_treat == n_chillstrat){
+    chillstrat_treats <- c(chillstrat_treats, m)
   }
 }
-
-biggest_effect <- data.frame()
-for(i in 1:nrow(idxs)){
-  
-  resp_i <- treat_responses[treat_responses$id == i,]
-  
-  max_resps_t <- aggregate(resp ~ treat, data = resp_i, FUN = max)
-  max_resp <- max_resps_t[max_resps_t$resp == max(max_resps_t$resp),] # no duration
-  max_resp_wdur <- merge(max_resp, resp_i[c('treat', 'resp', 'dur')]) # merge to get duration back
-  
-  if(nrow(max_resp_wdur) > nrow(max_resp)){
-    if(all(is.na(max_resp_wdur$dur))){
-      max_resp_wdur <- max_resp_wdur[1,]
-      next
-    }
-    max_resp_wdur <- aggregate(dur ~ treat + resp, data = max_resp_wdur, FUN = min) # if plateau, keep the first 
-    # time when max. is obtained
-  }
-  
-  max_resp <- max_resp_wdur
-  
-  
-  min_resps_t <- aggregate(resp ~ treat, data = resp_i[resp_i$dur %in% max_resp$dur,], FUN = min)
-  min_resp <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp),]
-  
-  if(nrow(min_resp) == 0 & length(unique(resp_i$treat)) > 1){
-    min_resp_diffdur <- min_resps_t[min_resps_t$resp == min(min_resps_t$resp),]
-  }
-  
-  # biggest_effect_i <- data.frame(
-  #   id = i,
-  #   treat_collapsed = max_resp$treat,
-  #   response = max_resp$resp,
-  #   minresp = ifelse(nrow(min_resp) > 0, min(min_resp$resp), NA),
-  #   dur = max_resp$dur
-  # )
-  
-  biggest_effect_i <- data.frame(
-    id = i,
-    n_treats = length(unique(resp_i$treat)),
-    n_max = nrow(max_resp),
-    max_resp = ifelse(nrow(max_resp) == 1, max_resp$resp, unique(max_resp$resp)),
-    n_min = nrow(min_resp),
-    min_resp = ifelse(nrow(min_resp) == 1, min_resp$resp, unique(min_resp$resp))
-  )
-  
-  biggest_effect <- rbind(biggest_effect, biggest_effect_i)
-  
-}
-
-
-
-
+chillstrat_treats <- chillstrat_treats[chillstrat_treats != 'other.treatment']
+subset_treats <- treat_responses[treat_responses$name_treat %in% chillstrat_treats,]
+length(unique(subset_treats$id))
