@@ -34,6 +34,7 @@ usda <- read.csv("analyses/output/usdaGerminationCleaned.csv")
 ## load phylo (from Smith and Brown 2018)
 phy.plants<-read.tree("analyses/input/ALLMB.tre")
 
+
 ## made S&B2018 tree ultrametric!
 # added by vvdm on 17June2025
 # largely inspired by Isidora code
@@ -437,6 +438,8 @@ pdf("analyses/figures/egret_phy.pdf", width = 20, height = 50)
 plot(egretSpliced, cex = 0.4, show.tip.label = TRUE)
 dev.off()
 
+setdiff(unique(egret$latbi), egretSpliced$tip.label)
+setdiff(egretSpliced$tip.label, unique(egret$latbi))
 # write out the tree
 write.tree(egretSpliced,"analyses/output/egretPhylogenyFull.tre")
 
@@ -461,7 +464,7 @@ sppusdakew <- subset(usda, latbi %in% usda.phenosp.sps.inphylo)
 # remove duplicated rows
 sppusdakew <- sppusdakew[!duplicated(sppusdakew$latbi), ]
 # select only interesting columns for now
-sppusdakew2 <- sppusdakew[, c("rowID","latbi", "genus","species")]
+sppusdakew2 <- sppusdakew[, c("rowID","latbi", "genus_name","species_name")]
 
 # subset in kew's for all species that we don't have a match in the tree
 kewsub_usda <- subset(kew, taxon_name %in% usda.phenosp.sps.inphylo)
@@ -541,11 +544,11 @@ usda$sppMatch[missing_idx] <- matchnona$sppMatch[matched_values]
 # check
 usda[!duplicated(usda$latbi), c("latbi", "sppMatch")]
 
-usda_sub <- usda[c("latbi","genus","sppMatch")]
+usda_sub <- usda[c("latbi","genus_name","sppMatch")]
 
 set.seed(123)
-vec <- c("Celtis", "Aronia", "Baccharis", "Ceanothus", "Cercis", "Magnolia", "Prunus", "Rosa", "Pinus")
-t <- subset(usda_sub, genus %in% vec)
+vec <- c("Celtis", "Aronia", "Baccharis", "Ceanothus", "Cercis", "Magnolia", "Prunus", "Rosa", "Pinus","Quercus")
+t <- subset(usda_sub, genus_name %in% vec)
 t <- t$latbi
 spp_smalltree <- unique(t)
 studyNosmall <- subset(usda_sub, latbi %in% spp_smalltree)
@@ -660,5 +663,7 @@ pdf("analyses/figures/usda_phy.pdf", width = 50, height =100 )
 plot(usdaSpliced, cex = 1.5, show.tip.label = TRUE)
 dev.off()
 
+setdiff(unique(usda$latbi), usdaSpliced$tip.label)
+setdiff(usdaSpliced$tip.label, unique(usda$latbi))
 # write out the tree
 write.tree(usdaSpliced,"analyses/output/usdaPhylogenyFull.tre")

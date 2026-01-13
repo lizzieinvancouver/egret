@@ -58,39 +58,44 @@ rm(subby)
 
 cphy <- vcv.phylo(phylo,corr=TRUE)
 
+# numsp
 # Prepare data for Stan - chilling hours between -20 and 10
 d$numspp = as.integer(factor(d$latbi, levels = colnames(cphy)))
+d$responseValueProp <- d$responseValue/100
+d$chillDurationS <- scale(d$chillDuration)
+d$tempDayS <- scale(d$tempDay)
 
-mdl.data <- list(N_degen = sum(d$responseValue %in% c(0,1)),
-                 N_prop = sum(d$responseValue>0 & d$responseValue<100),
+mdl.dataUSDA <- list(N_degen = sum(d$responseValueProp %in% c(0,1)),
+                 N_prop = sum(d$responseValueProp>0 & d$responseValueProp<1),
                  
                  Nsp =  length(unique(d$latbi)),
-                 sp_degen = array(d$numspp[d$responseValue %in% c(0,1)],
-                                  dim = sum(d$responseValue%in% c(0,1))),
-                 sp_prop = array(d$numspp[d$responseValue>0 & d$responseValue<1],
-                                 dim = sum(d$responseValue>0 & d$responseValue<1)),
+                 sp_degen = array(d$numspp[d$responseValueProp %in% c(0,1)],
+                                  dim = sum(d$responseValueProp%in% c(0,1))),
+                 sp_prop = array(d$numspp[d$responseValueProp>0 & d$responseValueProp<1],
+                                 dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
                  
-                 y_degen = array(d$responseValue[d$responseValue %in% c(0,1)],
-                                 dim = sum(d$responseValue%in% c(0,1))),
-                 y_prop = array(d$responseValue[d$responseValue>0 & d$responseValue<1],
-                                dim = sum(d$responseValue>0 & d$responseValue<1)),
+                 y_degen = array(d$responseValueProp[d$responseValueProp %in% c(0,1)],
+                                 dim = sum(d$responseValueProp%in% c(0,1))),
+                 y_prop = array(d$responseValueProp[d$responseValueProp>0 & d$responseValueProp<1],
+                                dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
                  
-                 t_degen = array(d$chillDuration[d$responseValue %in% c(0,1)],
-                                 dim = sum(d$responseValue%in% c(0,1))),
-                 t_prop = array(d$chillDuration[d$responseValue>0 & d$responseValue<1],
-                                dim = sum(d$responseValue>0 & d$responseValue<1)),
+                 t_degen = array(d$chillDurationS[d$responseValueProp %in% c(0,1)],
+                                 dim = sum(d$responseValueProp%in% c(0,1))),
+                 t_prop = array(d$chillDurationS[d$responseValueProp>0 & d$responseValueProp<1],
+                                dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
                  
-                 f_degen = array(d$tempDay[d$responseValue %in% c(0,1)],
-                                 dim = sum(d$responseValue%in% c(0,1))),
-                 f_prop = array(d$tempDay[d$responseValue>0 & d$responseValue<1],
-                                dim = sum(d$responseValue>0 & d$responseValue<1)),
+                 f_degen = array(d$tempDayS[d$responseValueProp %in% c(0,1)],
+                                 dim = sum(d$responseValueProp%in% c(0,1))),
+                 f_prop = array(d$tempDayS[d$responseValueProp>0 & d$responseValueProp<1],
+                                dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
                  Vphy = cphy)
 
 # Compile and run model
-smordbeta <-stan_model("stan/orderedbetalikelihood_usda.stan")
+smordbeta <-stan_model("stan/orderedbetalikelihood_2slopes.stan")
 fit <- sampling(smordbeta, mdl.data, 
                 iter = 4000, warmup = 3000,
                 chains = 4)
+
 summ <- data.frame(summary(fit)[["summary"]])
 sampler_params  <- get_sampler_params(fit, inc_warmup = FALSE)
 diagnostics <- list(
@@ -99,3 +104,8 @@ diagnostics <- list(
   max_rhat = max(summ$Rhat, na.rm = TRUE),
   min_ess = min(summ$n_eff, na.rm = TRUE)
 )
+
+saveRDS(fit, file = 'analyseBudSeed/output/fit_usda.rds')
+saveRDS(summ, file = 'analyseBudSeed/output/summary_usda.rds')
+saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_usda.rds')
+

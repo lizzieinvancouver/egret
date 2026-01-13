@@ -42,12 +42,12 @@ data {
   int<lower=0> N_degen; // number of 0/1 observations
   
   int<lower=1> Nsp; // number of species
-  int<lower=1, upper=Nsp> sp_prop[N_prop]; // species ID for prop. observations
-  int<lower=1, upper=Nsp> sp_degen[N_degen]; // species ID for degen. observations
-  
+array[N_prop] int<lower=1, upper=Nsp> sp_prop;
+array[N_degen] int<lower=1, upper=Nsp> sp_degen;
+
   vector[N_prop] y_prop; // Y in (0,1)
-  int<lower=0,upper = 1> y_degen[N_degen]; // Y in {0,1}
-  
+array[N_degen] int<lower=0, upper=1> y_degen;
+
   vector[N_prop] t_prop; // covariate time for proportion outcome
   vector[N_degen] t_degen; // covariate time for degenerate (0,1) outcome
   
@@ -97,9 +97,9 @@ transformed parameters {
   matrix[Nsp,Nsp] L_bt =  cholesky_decompose(sigma_bt^2*C_bt); 
   matrix[Nsp,Nsp] L_bf =  cholesky_decompose(sigma_bf^2*C_bf); 
   
-  real calc_degen[N_degen];
-  real calc_prop[N_prop];
-  
+array[N_degen] real calc_degen;
+array[N_prop] real calc_prop;
+
   if(N_degen>0) {
     for(i in 1:N_degen){
       calc_degen[i] = a[sp_degen[i]] + bt[sp_degen[i]] * t_degen[i] + bf[sp_degen[i]] * f_degen[i];
