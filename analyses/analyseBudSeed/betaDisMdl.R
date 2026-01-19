@@ -1,12 +1,12 @@
 # January 7, 2026
 # started by D. Loughnan with the aim to model the USDA data using the main egret model
 # but USDA data just has stratification and germination temps
-library(cmdstanr)
+# library(cmdstanr)
 library(stringr)
 library(ape)
 library(phytools)
 library(pez)
-# library(rstan)
+library(rstan)
 options(mc.cores = parallel::detectCores())
 library(dplyr) # oops
 # this preliminary version uses dplyr, will soon take the time to move to a full base R version
@@ -92,7 +92,7 @@ mdl.dataUSDA <- list(N_degen = sum(d$responseValueProp %in% c(0,1)),
 
 # Compile and run model
 smordbeta <-stan_model("stan/orderedbetalikelihood_2slopes.stan")
-fit <- sampling(smordbeta, mdl.data, 
+fit <- sampling(smordbeta, mdl.dataUSDA, 
                 iter = 4000, warmup = 3000,
                 chains = 4)
 
@@ -108,4 +108,180 @@ diagnostics <- list(
 saveRDS(fit, file = 'analyseBudSeed/output/fit_usda.rds')
 saveRDS(summ, file = 'analyseBudSeed/output/summary_usda.rds')
 saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_usda.rds')
+
+source('modeling/mcmc_analysis_tools_rstan.R', local=util)
+
+samples <- util$extract_expectand_vals(fit)
+f_names <- sapply(1:mdl.dataUSDA$N_degen,
+                  function(n) paste0('y_degen_gen[', n, ']'))
+d$y_gen_mean <- NA
+
+d[d$responseValueProp %in% c(0,1), 'y_gen_mean'] <-
+  sapply(f_names, function(n){
+    mean(rowMeans(samples[[n]]))})
+
+
+f_names <- sapply(1:mdl.data$N_prop,
+                  function(n) paste0('y_prop_gen[', n, ']'))
+modeld[modeld$responseValue>0 & modeld$responseValue<1, 'y_gen_mean'] <-
+  sapply(f_names, function(n){
+    mean(rowMeans(samples[[n]]))})
+
+library(paletteer)
+nColor <- 100
+colors = paletteer_c("viridis::inferno", n=nColor)
+rank <- as.factor( as.numeric( cut(ppcheck$numspp, nColor)))
+
+ppcheck <- d[c('numspp', 'responseValueProp', 'y_gen_mean', 'tempDayS', 'chillDurationS')]
+plot(ppcheck$responseValueProp ~ ppcheck$y_gen_mean, 
+     col = colors[ rank ], cex = 0.5)
+abline(a=0, b=1, col = 'white', lwd = 4)
+abline(a=0, b=1, col = 'black', lwd = 1)
+
+
+
+s <- sample(unique(ppcheck$numspp), 1)
+ppchecks <- ppcheck[ppcheck$numspp ==s, ]
+plot(ppchecks$responseValue ~ ppchecks$time, 
+     col = 'grey', cex = 1)
+points(ppchecks$y_gen_mean ~ ppchecks$time, cex = 0.5)
+
+
+
+sp <- 94
+idxs_degen <- which(mdl.data$sp_degen == sp)
+idxs_prop <- which(mdl.data$sp_prop == sp)
+y_prop_names <- sapply(idxs_prop, function(n) paste0('y_prop_gen[', n, ']'))
+
+
+
+par(mfrow=c(1, 1))
+plot.new()
+xlim=c(0, 1)
+ylim=c(0, 1)
+abline(a=0, b=1, col = 'white', lwd = 4)
+abline(a=0, b=1, col = 'black', lwd = 1)
+points(x= mdl.data$y_prop[idxs_prop], y =  summ[y_prop_names, 'mean'], pch=16, cex=1.0, col="white")
+points(x= mdl.data$y_prop[idxs_prop], y =  summ[y_prop_names, 'mean'], pch=16, cex=0.8, col="black")
+
+sub <- modeld[modeld$numspp == sp, ]
+sub <- d[d$genusspecies == 'Clematis_vitalba',]
+
+par(mfrow=c(1, 3))
+mdl.data$dataID_prop <- as.integer(factor(modeld$datasetID[modeld$responseValue>0 & modeld$responseValue<1]))
+idxs_prop <- which(mdl.data$sp_prop == sp)
+
+for(id in unique(mdl.data$dataID_prop[idxs_prop])){
+  
+  idxs_prop_sp <- which(mdl.data$dataID_prop[idxs_prop] == id)
+  plot(mdl.data$y_prop[idxs_prop_sp] ~ mdl.data$t_prop[idxs_prop_sp], pch = 16, cex = 0.5,
+       col = unique(mdl.data$dataID_prop[idxs_prop_sp]))
+  
+  
+}
+
+length(unique(modeld$numspp))
+
+
+
+summ_df <- data.frame( bf.mean = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "mean"],
+                       bf.q2.5 = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "X2.5."],
+                       bf.q97.5 = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "X97.5."],
+                       bf.q25 = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "X25."],
+                       bf.q75 = summ[paste0("bf[", 1:mdl.data$Nsp, "]"), "X75."],
+                       bt.mean = summ[paste0("bt[", 1:mdl.data$Nsp, "]"), "mean"],
+                       bt.q2.5 = summ[paste0("bt[", 1:mdl.data$Nsp, "]"), "X2.5."],
+                       bt.q97.5 = summ[paste0("bt[", 1:mdl.data$Nsp, "]"), "X97.5."],
+                       bt.q25 = summ[paste0("bt[", 1:mdl.data$Nsp, "]"), "X25."],
+                       bt.q75 = summ[paste0("bt[", 1:mdl.data$Nsp, "]"), "X75."],
+                       species = colnames(cphy))
+
+# Add baskin data, at species-level, or at genus-level when required (= the most frequent in the genus)
+
+summ_df <- data.frame( lambda.mean = summ[paste0("lambda_", c('bf',  'bt')), "mean"],
+                       lambda.q2.5 = summ[paste0("lambda_", c('bf',  'bt')), "X2.5."],
+                       lambda.q97.5 = summ[paste0("lambda_", c('bf',  'bt')), "X97.5."],
+                       lambda.q25 = summ[paste0("lambda_", c('bf',  'bt')), "X25."],
+                       lambda.q75 = summ[paste0("lambda_", c('bf',  'bt')), "X75."],
+                       sigma.mean = summ[paste0("sigma_", c('bf',  'bt')), "mean"],
+                       sigma.q2.5 = summ[paste0("sigma_", c('bf',  'bt')), "X2.5."],
+                       sigma.q97.5 = summ[paste0("sigma_", c('bf',  'bt')), "X97.5."],
+                       sigma.q25 = summ[paste0("sigma_", c('bf',  'bt')), "X25."],
+                       sigma.q75 = summ[paste0("sigma_", c('bf',  'bt')), "X75."],
+                       broot.mean = summ[paste0("b", c('f',  't'), '_z'), "mean"],
+                       broot.q2.5 = summ[paste0("b", c('f',  't'), '_z'), "X2.5."],
+                       broot.q97.5 = summ[paste0("b", c('f',  't'), '_z'), "X97.5."],
+                       broot.q25 = summ[paste0("b", c('f',  't'), '_z'), "X25."],
+                       broot.q75 = summ[paste0("b", c('f',  't'), '_z'), "X75."],
+                       aroot.mean = summ['a_z', "mean"],
+                       aroot.q2.5 = summ['a_z', "X2.5."],
+                       aroot.q97.5 = summ['a_z', "X97.5."],
+                       aroot.q25 = summ['a_z', "X25."],
+                       aroot.q75 = summ['a_z', "X75."],
+                       var = c('forcing',  'chill'))
+
+ggplot(data = summ_df) +
+  geom_pointrange(aes(xmin = lambda.q25, xmax = lambda.q75, x = lambda.mean, y = var,
+                      col = ifelse(lambda.q25 > 0, 'pos', ifelse(lambda.q97.5 < 0, 'neg', 'nothing'))), 
+                  size = 0.07, linewidth = 0.7) +
+  geom_pointrange(aes(xmin = lambda.q2.5, xmax = lambda.q97.5, x = lambda.mean, y = var,
+                      col = ifelse(lambda.q25 > 0, 'pos', ifelse(lambda.q97.5 < 0, 'neg', 'nothing'))), 
+                  size = 0.05, linewidth = 0.5, alpha = 0.5) +
+  geom_point(aes(x = lambda.mean, y = var), col = 'white', size = 0.01) +
+  theme_bw() +
+  scale_color_manual(values = c('#a7495c', 'grey', '#498ba7'), breaks = c('neg', 'nothing', 'pos')) +
+  theme(legend.position = 'none', 
+        axis.title.y = element_blank(), axis.text.y = element_text(size = 7),
+        axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank()) +
+  labs(x = "Lambda")
+
+ggplot(data = summ_df) +
+  geom_pointrange(aes(xmin = sigma.q25, xmax = sigma.q75, x = sigma.mean, y = var,
+                      col = ifelse(sigma.q25 > 0, 'pos', ifelse(sigma.q97.5 < 0, 'neg', 'nothing'))), 
+                  size = 0.07, linewidth = 0.7) +
+  geom_pointrange(aes(xmin = sigma.q2.5, xmax = sigma.q97.5, x = sigma.mean, y = var,
+                      col = ifelse(sigma.q25 > 0, 'pos', ifelse(sigma.q97.5 < 0, 'neg', 'nothing'))), 
+                  size = 0.05, linewidth = 0.5, alpha = 0.5) +
+  geom_point(aes(x = sigma.mean, y = var), col = 'white', size = 0.01) +
+  theme_bw() +
+  scale_color_manual(values = c('#a7495c', 'grey', '#498ba7'), breaks = c('neg', 'nothing', 'pos')) +
+  theme(legend.position = 'none', 
+        axis.title.y = element_blank(), axis.text.y = element_text(size = 7),
+        axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank()) +
+  labs(x = "Sigma")
+
+ggplot(data = summ_df) +
+  geom_pointrange(aes(xmin = broot.q25, xmax = broot.q75, x = broot.mean, y = var,
+                      col = ifelse(broot.q25 > 0, 'pos', ifelse(broot.q75 < 0, 'neg', 'nothing'))), 
+                  size = 0.07, linewidth = 0.7) +
+  geom_pointrange(aes(xmin = broot.q2.5, xmax = broot.q97.5, x = broot.mean, y = var,
+                      col = ifelse(broot.q25 > 0, 'pos', ifelse(broot.q75 < 0, 'neg', 'nothing'))), 
+                  size = 0.05, linewidth = 0.5, alpha = 0.5) +
+  geom_point(aes(x = broot.mean, y = var), col = 'white', size = 0.01) +
+  theme_bw() +
+  scale_color_manual(values = c('#a7495c', 'grey', '#498ba7'), breaks = c('neg', 'nothing', 'pos')) +
+  theme(legend.position = 'none', 
+        axis.title.y = element_blank(), axis.text.y = element_text(size = 7),
+        axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank()) +
+  labs(x = "Root slope")
+
+
+ggplot(data = summ_df) +
+  geom_pointrange(aes(xmin = aroot.q25, xmax = aroot.q75, x = aroot.mean, y = var,
+                      col = ifelse(aroot.q25 > 0, 'pos', ifelse(aroot.q75 < 0, 'neg', 'nothing'))), 
+                  size = 0.07, linewidth = 0.7) +
+  geom_pointrange(aes(xmin = aroot.q2.5, xmax = aroot.q97.5, x = aroot.mean, y = var,
+                      col = ifelse(aroot.q25 > 0, 'pos', ifelse(aroot.q75 < 0, 'neg', 'nothing'))), 
+                  size = 0.05, linewidth = 0.5, alpha = 0.5) +
+  geom_point(aes(x = broot.mean, y = var), col = 'white', size = 0.01) +
+  theme_bw() +
+  scale_color_manual(values = c('#a7495c', 'grey', '#498ba7'), breaks = c('neg', 'nothing', 'pos')) +
+  theme(legend.position = 'none', 
+        axis.title.y = element_blank(), axis.text.y = element_text(size = 7),
+        axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank()) +
+  labs(x = "Root intercept")
 

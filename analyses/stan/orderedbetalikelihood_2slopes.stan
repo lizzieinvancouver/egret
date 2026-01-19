@@ -1,6 +1,7 @@
 // Feb 3, 2025
 // Started by V Van der Meersch
 // Inspired by previous works on PPMs in the lab
+// Jan 19 revised for 2 factors by Deirdre and annotated for clarity
 
 // Beta regression with proportion and degenerate responses (i.e. 0 and 1)
 // Original code from R. Kubinec, https://github.com/saudiwin/ordbetareg
@@ -42,14 +43,14 @@ data {
   int<lower=0> N_degen; // number of 0/1 observations
   
   int<lower=1> Nsp; // number of species
-array[N_prop] int<lower=1, upper=Nsp> sp_prop;
-array[N_degen] int<lower=1, upper=Nsp> sp_degen;
+  array[N_prop] int<lower=1, upper=Nsp> sp_prop;
+  array[N_degen] int<lower=1, upper=Nsp> sp_degen;
 
   vector[N_prop] y_prop; // Y in (0,1)
-array[N_degen] int<lower=0, upper=1> y_degen;
+  array[N_degen] int<lower=0, upper=1> y_degen;
 
-  vector[N_prop] t_prop; // covariate time for proportion outcome
-  vector[N_degen] t_degen; // covariate time for degenerate (0,1) outcome
+  vector[N_prop] c_prop; // covariate time for proportion outcome
+  vector[N_degen] c_degen; // covariate time for degenerate (0,1) outcome
   
   vector[N_prop] f_prop; // covariate forcing for proportion outcome
   vector[N_degen] f_degen; // covariate forcing for degenerate (0,1) outcome
@@ -66,10 +67,10 @@ parameters {
   real<lower=0> sigma_a; // overall rate of change (brownian motion?)
   
   // slope of time effect
-  vector[Nsp] bt; 
-  real bt_z; // root value
-  real<lower=0, upper=1> lambda_bt;  // phylogenetic structure        
-  real<lower=0> sigma_bt; // overall rate of change (brownian motion?)
+  vector[Nsp] bc; 
+  real bc_z; // root value
+  real<lower=0, upper=1> lambda_bc;  // phylogenetic structure        
+  real<lower=0> sigma_bc; // overall rate of change (brownian motion?)
   
   // slope of forcing effect
   vector[Nsp] bf; 
@@ -83,40 +84,41 @@ parameters {
 
 transformed parameters {
   
-  corr_matrix[Nsp] C_a = lambda_a * Vphy;
-  C_a = C_a - diag_matrix(diagonal(C_a)) + diag_matrix(diagonal(Vphy));
-  
-  corr_matrix[Nsp] C_bt = lambda_bt * Vphy;
-  C_bt = C_bt - diag_matrix(diagonal(C_bt)) + diag_matrix(diagonal(Vphy));
-  
-  corr_matrix[Nsp] C_bf = lambda_bf * Vphy;
-  C_bf = C_bf - diag_matrix(diagonal(C_bf)) + diag_matrix(diagonal(Vphy));
-  
-  // more numerically stable and more efficient to use pre-factored covariance matrices (i.e. multi_normal_cholesky in the following
-  matrix[Nsp,Nsp] L_a = cholesky_decompose(sigma_a^2*C_a);
-  matrix[Nsp,Nsp] L_bt =  cholesky_decompose(sigma_bt^2*C_bt); 
-  matrix[Nsp,Nsp] L_bf =  cholesky_decompose(sigma_bf^2*C_bf); 
-  
-array[N_degen] real calc_degen;
-array[N_prop] real calc_prop;
+  array[N_degen] real calc_degen;
+ array[N_prop] real calc_prop;
 
   if(N_degen>0) {
     for(i in 1:N_degen){
-      calc_degen[i] = a[sp_degen[i]] + bt[sp_degen[i]] * t_degen[i] + bf[sp_degen[i]] * f_degen[i];
+      calc_degen[i] = a[sp_degen[i]] + bc[sp_degen[i]] * c_degen[i] + bf[sp_degen[i]] * f_degen[i];
     }
   }
   
   for(i in 1:N_prop){
     
-    calc_prop[i] = a[sp_prop[i]] + bt[sp_prop[i]] * t_prop[i] + bf[sp_prop[i]] * f_prop[i];
+    calc_prop[i] = a[sp_prop[i]] + bc[sp_prop[i]] * c_prop[i] + bf[sp_prop[i]] * f_prop[i];
     
   }
 
 }
+
 model {
   
+  matrix[Nsp,Nsp] C_a = lambda_a * Vphy;
+  C_a = C_a - diag_matrix(diagonal(C_a)) + diag_matrix(diagonal(Vphy));
+  
+  matrix[Nsp,Nsp] C_bc = lambda_bc * Vphy;
+  C_bc = C_bc - diag_matrix(diagonal(C_bc)) + diag_matrix(diagonal(Vphy));
+  
+  matrix[Nsp,Nsp] C_bf = lambda_bf * Vphy;
+  C_bf = C_bf - diag_matrix(diagonal(C_bf)) + diag_matrix(diagonal(Vphy));
+  
+  // more numerically stable and more efficient to use pre-factored covariance matrices (i.e. multi_normal_cholesky in the following
+  matrix[Nsp,Nsp] L_a = cholesky_decompose(sigma_a^2*C_a);
+  matrix[Nsp,Nsp] L_bc =  cholesky_decompose(sigma_bc^2*C_bc); 
+  matrix[Nsp,Nsp] L_bf =  cholesky_decompose(sigma_bf^2*C_bf); 
+  
   a ~ multi_normal_cholesky(rep_vector(a_z,Nsp), L_a); 
-  bt ~ multi_normal_cholesky(rep_vector(bt_z,Nsp), L_bt); 
+  bc ~ multi_normal_cholesky(rep_vector(bc_z,Nsp), L_bc); 
   bf ~ multi_normal_cholesky(rep_vector(bf_z,Nsp), L_bf); 
   
   target += induced_dirichlet_lpdf(cutpoints | rep_vector(1, 3), 0);
@@ -143,14 +145,14 @@ model {
   
   // priors
   a_z ~ normal(0, 1.5); 
-  bt_z ~ normal(0.5, 1); 
+  bc_z ~ normal(0.5, 1); 
   bf_z ~ normal(0.5, 1); 
   
   lambda_a ~ beta(1.5, 1.5);
   sigma_a ~ normal(0, 1);
   
-  lambda_bt ~ beta(1.5, 1.5);
-  sigma_bt ~ normal(0, 1);
+  lambda_bc ~ beta(1.5, 1.5);
+  sigma_bc ~ normal(0, 1);
   
   lambda_bf ~ beta(1.5, 1.5);
   sigma_bf ~ normal(0, 1);
