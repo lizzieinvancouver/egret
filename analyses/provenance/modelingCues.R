@@ -2,8 +2,8 @@
 # by the provenance model subgroup!
 
 library(stringr)
-# library(ape)
-# library(phytools)
+library(ape)
+library(phytools)
 library(rstan)
 options(mc.cores = parallel::detectCores())
 
@@ -41,9 +41,6 @@ if(length(grep("deirdre", getwd()) > 0)) {
   source('provenance/decisionRules.R')
 # source('studyDesign/decisionRules_abundant0s_Deirdre.R')
 
-# comment out phylogeny for now
-phylogeny <- FALSE
-if (phylogeny) {
 # Prepare phylogeny
 phylo <- ape::read.tree("output/egretPhylogenyFull.tre")
 phylo$tip.label <- sapply(phylo$tip.label, function(i) paste0(unlist(stringr::str_split(i, '_'))[1:2], collapse = '_')) # remove subspecies or whatever
@@ -63,7 +60,6 @@ phylo <- ape::drop.tip(phylo, gymno) # exclude gymnosperms
 # plot(phylo, cex=0.7)
 cphy <- ape::vcv.phylo(phylo,corr=TRUE)
 rm(gymno)
-}
 
 # Process data 
 # (1) - removing rows where we do not have any info on forcing) 
@@ -119,15 +115,12 @@ modeld$coldStratDur <- scale(modeld$coldStratDur)[,1]
 modeld$germDuration <- scale(modeld$germDuration)[,1]
 modeld$germTempGen <- scale(modeld$germTempGen)[,1]
 
-
-if (phylogeny){
 # Trim the phylo tree with species present in the dataset
 spp <-  unique(modeld$genusspecies)
 length(spp)
 length(phylo$node.label)
 phylo2 <- ape::keep.tip(phylo, spp)
 cphy <- ape::vcv.phylo(phylo2,corr=TRUE)
-}
 
 # Prepare data for Stan
 modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
@@ -295,35 +288,35 @@ for(p in unique(provs)){
 
 
 
-# sp <- 7
-# provs <- c(mdl.data$prov_prop[which(mdl.data$sp_prop == sp)], mdl.data$prov_degen[which(mdl.data$sp_degen == sp)])
-# par(mfrow=c(2, 3), mar = c(4,4,4,1), cex.main = 1.1)
-# p <- 1
-# 
-# idx_prop <- which(mdl.data$sp_prop == sp & mdl.data$prov_prop == p)
-# idx_degen <- which(mdl.data$sp_degen == sp & mdl.data$prov_degen == p)
-# names <- unlist(c(sapply(idx_prop, function(n) paste0('y_prop_gen[',n,']')),
-#                   sapply(idx_degen, function(n) paste0('y_degen_gen[',n,']'))))
-# t <- c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen])
-# cs <- c(mdl.data$cs_prop[idx_prop], mdl.data$cs_degen[idx_degen])
-# f <- c(mdl.data$f_prop[idx_prop], mdl.data$f_degen[idx_degen])
-# y <- c(mdl.data$y_prop[idx_prop], mdl.data$y_degen[idx_degen])
-# 
-# for(c in unique(cs)){
-#   
-#   names_c <- names[which(cs == c)]
-#   t_c <- t[which(cs == c)]
-#   
-#   orderx <- order(t_c)
-#   names_c <- names_c[orderx]
-#   t_c <- t_c[orderx]
-#   util$plot_conn_pushforward_quantiles(samples, names_c, plot_xs = t_c, main = paste0('Chilling (scaled): ', round(c,2)),
-#                                        xlab = 'Time (scaled)', ylab = 'Germination perc.(marginal quantiles)',
-#                                        display_xlim = c(-0.6, -0.3), display_ylim = c(0,1))
-#   y_c <- y[which(cs == c)]
-#   y_c <- y_c[orderx]
-#   points(t_c, y_c, pch=16, cex=1.2, col="white")
-#   points(t_c, y_c, pch=16, cex=0.8, col="black")
-#   
-# }
+sp <- 7
+provs <- c(mdl.data$prov_prop[which(mdl.data$sp_prop == sp)], mdl.data$prov_degen[which(mdl.data$sp_degen == sp)])
+par(mfrow=c(2, 3), mar = c(4,4,4,1), cex.main = 1.1)
+p <- 1
+
+idx_prop <- which(mdl.data$sp_prop == sp & mdl.data$prov_prop == p)
+idx_degen <- which(mdl.data$sp_degen == sp & mdl.data$prov_degen == p)
+names <- unlist(c(sapply(idx_prop, function(n) paste0('y_prop_gen[',n,']')),
+                  sapply(idx_degen, function(n) paste0('y_degen_gen[',n,']'))))
+t <- c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen])
+cs <- c(mdl.data$cs_prop[idx_prop], mdl.data$cs_degen[idx_degen])
+f <- c(mdl.data$f_prop[idx_prop], mdl.data$f_degen[idx_degen])
+y <- c(mdl.data$y_prop[idx_prop], mdl.data$y_degen[idx_degen])
+
+for(c in unique(cs)){
+
+  names_c <- names[which(cs == c)]
+  t_c <- t[which(cs == c)]
+
+  orderx <- order(t_c)
+  names_c <- names_c[orderx]
+  t_c <- t_c[orderx]
+  util$plot_conn_pushforward_quantiles(samples, names_c, plot_xs = t_c, main = paste0('Chilling (scaled): ', round(c,2)),
+                                       xlab = 'Time (scaled)', ylab = 'Germination perc.(marginal quantiles)',
+                                       display_xlim = c(-0.6, -0.3), display_ylim = c(0,1))
+  y_c <- y[which(cs == c)]
+  y_c <- y_c[orderx]
+  points(t_c, y_c, pch=16, cex=1.2, col="white")
+  points(t_c, y_c, pch=16, cex=0.8, col="black")
+
+}
 
