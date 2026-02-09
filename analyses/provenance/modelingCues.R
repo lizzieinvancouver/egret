@@ -26,7 +26,9 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } else if(length(grep("Ken", getwd())) > 0){
   setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
 } else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
-  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+  setwd("/Users/christophe_rouleau-desrochers/github/egret/analyses")
+} else if(length(grep("crouleau", getwd())) > 0){
+  setwd("/home/crouleau/egret/analyses")
 } else if(length(grep("victor", getwd())) > 0){
   setwd('~/projects/egret/analyses/modeling')
   util <- new.env()
@@ -36,7 +38,7 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } 
 
 # Load data, discard some experiments following various decision rules
-source('provenance/decisionRules.R')
+  source('provenance/decisionRules.R')
 # source('studyDesign/decisionRules_abundant0s_Deirdre.R')
 
 # Prepare phylogeny
