@@ -30,12 +30,13 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } else if(length(grep("crouleau", getwd())) > 0){
   setwd("/home/crouleau/egret/analyses")
 } else if(length(grep("victor", getwd())) > 0){
-  setwd('~/projects/egret/analyses/modeling')
-  util <- new.env()
-  source('mcmc_analysis_tools_rstan.R', local=util)
-  source('mcmc_visualization_tools.R', local=util)
   setwd('~/projects/egret/analyses')
 } 
+
+# load Mike's diagnostic tools
+util <- new.env()
+source('mcmc_analysis_tools_rstan.R', local=util)
+source('mcmc_visualization_tools.R', local=util)
 
 # Load data, discard some experiments following various decision rules
   source('provenance/decisionRules.R')
