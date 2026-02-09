@@ -2,8 +2,8 @@
 # by the provenance model subgroup!
 
 library(stringr)
-library(ape)
-library(phytools)
+# library(ape)
+# library(phytools)
 library(rstan)
 options(mc.cores = parallel::detectCores())
 
@@ -41,6 +41,9 @@ if(length(grep("deirdre", getwd()) > 0)) {
   source('provenance/decisionRules.R')
 # source('studyDesign/decisionRules_abundant0s_Deirdre.R')
 
+# comment out phylogeny for now
+phylogeny <- FALSE
+if (phylogeny) {
 # Prepare phylogeny
 phylo <- ape::read.tree("output/egretPhylogenyFull.tre")
 phylo$tip.label <- sapply(phylo$tip.label, function(i) paste0(unlist(stringr::str_split(i, '_'))[1:2], collapse = '_')) # remove subspecies or whatever
@@ -60,6 +63,7 @@ phylo <- ape::drop.tip(phylo, gymno) # exclude gymnosperms
 # plot(phylo, cex=0.7)
 cphy <- ape::vcv.phylo(phylo,corr=TRUE)
 rm(gymno)
+}
 
 # Process data 
 # (1) - removing rows where we do not have any info on forcing) 
@@ -116,12 +120,14 @@ modeld$germDuration <- scale(modeld$germDuration)[,1]
 modeld$germTempGen <- scale(modeld$germTempGen)[,1]
 
 
+if (phylogeny){
 # Trim the phylo tree with species present in the dataset
 spp <-  unique(modeld$genusspecies)
 length(spp)
 length(phylo$node.label)
 phylo2 <- ape::keep.tip(phylo, spp)
 cphy <- ape::vcv.phylo(phylo2,corr=TRUE)
+}
 
 # Prepare data for Stan
 modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
