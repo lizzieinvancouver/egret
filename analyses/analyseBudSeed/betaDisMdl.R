@@ -38,11 +38,30 @@ d <- read.csv("output/usdaChillGermTemp.csv")
 
 d$latbi[which(d$latbi == "Aronia_x prunifolia")] <-"Aronia_x_prunifolia"
 
+# Checking for the unique response values
+#result <- d %>%
+#  dplyr::group_by(latbi, responseType, chillDuration, chillTemp, tempDay, tempNight, unspecTemp) %>%
+#  dplyr::summarise(
+#    unique_values = n_distinct(responseValue),
+#    .groups = "drop"
+#  )
+
+#subset_result <- result %>% filter(unique_values > 1)
+
+#Take only the max value for rows with same chilling and forcing, keep the ones with only one value
+d <- d %>%
+  dplyr::group_by(latbi,responseType, chillDuration, chillTemp, tempDay, tempNight, unspecTemp) %>%
+  dplyr::filter(
+    n_distinct(responseValue) == 1 | 
+      responseValue == max(responseValue, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
 
 phylo <- ape::read.tree("output/usdaPhylogenyFull.tre")
-missing <- c("Quercus_falcata","Quercus_nigra","Quercus_chrysolepis", "Quercus_dumosa", "Quercus_ilicifolia",
-              "Quercus_imbricaria", "Quercus_pagoda","Quercus_shumardii","Quercus_texana")
-d <- d[!d$latbi %in% missing,]
+#missing <- c("Quercus_falcata","Quercus_nigra","Quercus_chrysolepis", "Quercus_dumosa", "Quercus_ilicifolia","Quercus_imbricaria", "Quercus_pagoda","Quercus_shumardii,"Quercus_texana")
+
+#d <- d[!d$latbi %in% missing,]
 subby <- unique(d$latbi)
 
 namesphy <- phylo$tip.label
@@ -79,9 +98,9 @@ mdl.dataUSDA <- list(N_degen = sum(d$responseValueProp %in% c(0,1)),
                  y_prop = array(d$responseValueProp[d$responseValueProp>0 & d$responseValueProp<1],
                                 dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
                  
-                 t_degen = array(d$chillDurationS[d$responseValueProp %in% c(0,1)],
+                 c_degen = array(d$chillDurationS[d$responseValueProp %in% c(0,1)],
                                  dim = sum(d$responseValueProp%in% c(0,1))),
-                 t_prop = array(d$chillDurationS[d$responseValueProp>0 & d$responseValueProp<1],
+                 c_prop = array(d$chillDurationS[d$responseValueProp>0 & d$responseValueProp<1],
                                 dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
                  
                  f_degen = array(d$tempDayS[d$responseValueProp %in% c(0,1)],
