@@ -2,7 +2,7 @@
 # started by D. Loughnan with the aim to model the USDA data using the main egret model
 # but USDA data just has stratification and germination temps
 # library(cmdstanr)
-library(stringr)
+#library(stringr)
 library(ape)
 library(phytools)
 library(pez)
