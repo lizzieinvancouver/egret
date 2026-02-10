@@ -38,14 +38,13 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 source("analyseBudSeed/prepEgretUsda.R")
 # removing the rows with incomplete data:
-dComp <- d[complete.cases(d),] 
+d <- d[complete.cases(d),] 
 # 372 spp
-
 phylo <- ape::read.tree("output/egretPhylogenyFull.tre")
 #missing <- c("Quercus_falcata","Quercus_nigra","Quercus_chrysolepis", "Quercus_dumosa", "Quercus_ilicifolia","Quercus_imbricaria", "Quercus_pagoda","Quercus_shumardii,"Quercus_texana")
 
 #d <- d[!d$latbi %in% missing,]
-subby <- unique(dComp$latbi)
+subby <- unique(d$latbi)
 
 namesphy <- phylo$tip.label
 phylo <- phytools::force.ultrametric(phylo, method="extend")
@@ -65,7 +64,7 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 d$numspp = as.integer(factor(d$latbi, levels = colnames(cphy)))
 d$responseValueProp <- d$responseValue/100
 d$chillDurationS <- scale(d$chillDuration)
-d$tempDayS <- scale(d$tempDay)
+d$tempDayS <- scale(d$germTempGen)
 
 mdl.dataUSDA <- list(N_degen = sum(d$responseValueProp %in% c(0,1)),
                  N_prop = sum(d$responseValueProp>0 & d$responseValueProp<1),
@@ -107,9 +106,9 @@ diagnostics <- list(
   min_ess = min(summ$n_eff, na.rm = TRUE)
 )
 
-saveRDS(fit, file = 'analyseBudSeed/output/fit_usda.rds')
-saveRDS(summ, file = 'analyseBudSeed/output/summary_usda.rds')
-saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_usda.rds')
+saveRDS(fit, file = 'analyseBudSeed/output/fit_egret.rds')
+saveRDS(summ, file = 'analyseBudSeed/output/summary_egret.rds')
+saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_egret.rds')
 
 diagnostic <- FALSE
 if(diagnostic){
