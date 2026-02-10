@@ -34,35 +34,16 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd('~/projects/egret/analyses')
 } 
 
-d <- read.csv("output/usdaChillGermTemp.csv")
+source("analyseBudSeed/prepEgretUsda.R")
+# removing the rows with incomplete data:
+dComp <- d[complete.cases(d),] 
+# 372 spp
 
-d$latbi[which(d$latbi == "Aronia_x prunifolia")] <-"Aronia_x_prunifolia"
-
-# Checking for the unique response values
-#result <- d %>%
-#  dplyr::group_by(latbi, responseType, chillDuration, chillTemp, tempDay, tempNight, unspecTemp) %>%
-#  dplyr::summarise(
-#    unique_values = n_distinct(responseValue),
-#    .groups = "drop"
-#  )
-
-#subset_result <- result %>% filter(unique_values > 1)
-
-#Take only the max value for rows with same chilling and forcing, keep the ones with only one value
-d <- d %>%
-  dplyr::group_by(latbi,responseType, chillDuration, chillTemp, tempDay, tempNight, unspecTemp) %>%
-  dplyr::filter(
-    n_distinct(responseValue) == 1 | 
-      responseValue == max(responseValue, na.rm = TRUE)
-  ) %>%
-  ungroup()
-
-
-phylo <- ape::read.tree("output/usdaPhylogenyFull.tre")
+phylo <- ape::read.tree("output/egretPhylogenyFull.tre")
 #missing <- c("Quercus_falcata","Quercus_nigra","Quercus_chrysolepis", "Quercus_dumosa", "Quercus_ilicifolia","Quercus_imbricaria", "Quercus_pagoda","Quercus_shumardii,"Quercus_texana")
 
 #d <- d[!d$latbi %in% missing,]
-subby <- unique(d$latbi)
+subby <- unique(dComp$latbi)
 
 namesphy <- phylo$tip.label
 phylo <- phytools::force.ultrametric(phylo, method="extend")
