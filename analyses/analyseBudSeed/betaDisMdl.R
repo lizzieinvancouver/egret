@@ -24,6 +24,8 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
+} else if(length(grep("xiaomao", getwd()) > 0)) {
+  setwd("home/xiaomao/egret/analyses")  
 } else if(length(grep("britanywuuu", getwd()) > 0)) {
   setwd("/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
 } else if(length(grep("Ken", getwd())) > 0){
@@ -128,6 +130,8 @@ saveRDS(fit, file = 'analyseBudSeed/output/fit_usda.rds')
 saveRDS(summ, file = 'analyseBudSeed/output/summary_usda.rds')
 saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_usda.rds')
 
+diagnostic <- FALSE
+if(diagnostic){
 source('modeling/mcmc_analysis_tools_rstan.R', local=util)
 
 samples <- util$extract_expectand_vals(fit)
@@ -304,3 +308,4 @@ ggplot(data = summ_df) +
         panel.grid.major.y = element_blank()) +
   labs(x = "Root intercept")
 
+}
