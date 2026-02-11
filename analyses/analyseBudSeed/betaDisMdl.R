@@ -41,10 +41,10 @@ source("analyseBudSeed/prepEgretUsda.R")
 d <- usdaData[complete.cases(usdaData),] 
 
 # 372 spp
-set.seed(123)
+#set.seed(123)
 phylo <- ape::read.tree("output/usdaPhylogenyFull.tre")
-plot(phylo, show.node.label = TRUE)  # shows nodes on the plot
-nodelabels()  # adds node numbers above nodes
+#plot(phylo, show.node.label = TRUE)  # shows nodes on the plot
+#nodelabels()  # adds node numbers above nodes
 
 # Get the node to seperate gym and angio
 tipsGym <- getDescendants(phylo, node = 705)
