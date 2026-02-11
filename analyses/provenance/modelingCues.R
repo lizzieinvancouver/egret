@@ -39,7 +39,7 @@ source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
 
 # Load data, discard some experiments following various decision rules
-  source('provenance/decisionRules.R')
+source('provenance/decisionRules.R')
 # source('studyDesign/decisionRules_abundant0s_Deirdre.R')
 
 # Prepare phylogeny
@@ -173,6 +173,11 @@ smordbeta_nophy <- stan_model("stan/orderedbetalikelihood_3slopes_provenance_nop
 fit_nophy <- sampling(smordbeta_nophy, mdl.data,
                 iter = 2024, warmup = 1000,
                 chains = 4)
+
+smordbeta_nophy_noprov <- stan_model("stan/orderedbetalikelihood_3slopes_noprovenance_nophylo.stan")
+fit_nophy_noprov <- sampling(smordbeta_nophy_noprov, mdl.data,
+                      iter = 2024, warmup = 1000,
+                      chains = 4)
 
 # Diagnostics
 diagnostics <- util$extract_hmc_diagnostics(fit_nophy)
