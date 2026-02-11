@@ -47,9 +47,9 @@ data {
   array[N_prop] int<lower=1, upper=Nsp> sp_prop; // species ID for prop. observations
   array[N_degen] int<lower=1, upper=Nsp> sp_degen; // species ID for degen. observations
   
-  int<lower=1> Nprov; // number of species
-  array[N_prop] int<lower=1, upper=Nprov> prov_prop; // species ID for prop. observations
-  array[N_degen] int<lower=1, upper=Nprov> prov_degen; // species ID for degen. observations
+  int<lower=1> Nprov; // number of provenances
+  array[N_prop] int<lower=1, upper=Nprov> prov_prop; // provenances ID for prop. observations
+  array[N_degen] int<lower=1, upper=Nprov> prov_degen; // provenances ID for degen. observations
   
   array[N_prop] real y_prop; // Y in (0,1)
   array[N_degen] int<lower=0, upper=1> y_degen; // Y in {0,1}
