@@ -710,6 +710,10 @@ d[d$chillTemp %in% '6/16' & d$datasetID %in% 'pritchard93', 'chillDuration'] <-
 d[d$datasetID %in% 'grose57' & d$figure %in% 'Figure 8' & d$treatment %in% 'cold stratification (6 weeks)', 'chillDuration'] <- 6*7
 d[d$datasetID %in% 'grose57' & d$figure %in% 'Figure 8' & d$treatment %in% 'cold stratification (4 weeks)', 'chillDuration'] <- 4*7
 
+# dry-chilling is not considered as stratification 
+d[d$datasetID %in% 'washitani85' & d$study %in% 'exp2' & d$treatment %in% 'dry-chilling pretreatment', 'chillTemp'] <- NA
+d[d$datasetID %in% 'washitani85' & d$study %in% 'exp2' & d$treatment %in% 'dry-chilling pretreatment', 'chillDuration'] <- NA
+
 #check
 unique(d$chillTemp)
 unique(d$chillDuration)
