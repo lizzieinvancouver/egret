@@ -667,3 +667,30 @@ setdiff(unique(usda$latbi), usdaSpliced$tip.label)
 setdiff(usdaSpliced$tip.label, unique(usda$latbi))
 # write out the tree
 write.tree(usdaSpliced,"analyses/output/usdaPhylogenyFull.tre")
+
+# make the full egret tree
+egretlist <- egret$sppMatch
+egretlist <- c(egretlist, "Eucomis_zambesiaca","Leontice_leontopetalum","Maackia_amurensis","Celtis_schippii","Thymophylla_setifolia","Verbesina_occidentalis","Betonica_officinalis","Eupatorium_fernaldii")
+
+egretTree1 <- keep.tip(phy.plants, phy.plants$tip.label[phy.plants$tip.label %in% egretlist])
+matchednamesegret1 <- matchednamesegret[!is.na(matchednamesegret$sppMatch), ]
+name_map <- setNames(matchednamesegret1$egretname, matchednamesegret1$sppMatch)
+
+# replace the tip name with the name in egret
+egretTree1$tip.label <- ifelse(egretTree1$tip.label %in% names(name_map),
+                               name_map[egretTree1$tip.label],
+                               egretTree1$tip.label)
+
+
+egretUltra <- force.ultrametric(
+  egretTree1,
+  method = "extend"  # Extends terminal branches
+)
+
+# splicing
+egretSpliced <- egretUltra
+for (i in spptoplice) {
+  egretSpliced <- add.species.to.genus(tree = egretSpliced, species = i, where = "root")
+}
+# drop the tips we added to assist with single genus in egret
+egretSpliced <- drop.tip(egretSpliced, c("Eucomis_zambesiaca","Leontice_leontopetalum","Maackia_amurensis","Celtis_schippii","Thymophylla_setifolia","Verbesina_occidentalis","Betonica_officinalis","Eupatorium_fernaldii"))

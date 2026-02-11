@@ -57,7 +57,7 @@ angioPhy <- drop.tip(phylo, phylo$tip.label[tipsGym])
 gymPhy <- keep.tip(phylo, phylo$tip.label[tipsGym])
 
 angio <- d[d$latbi %in% angioPhy$tip.label, ]
-gym <- d[d$latbi %in% angioPhy$tip.label, ]
+gym <- d[d$latbi %in% gymPhy$tip.label, ]
 
 #d <- d[!d$latbi %in% missing,]
 
