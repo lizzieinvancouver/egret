@@ -198,6 +198,11 @@ d$scarifTypeSpe[which(d$scarifTypeSpe == "mechanical - 90°C hot water")] <- "so
 d[d$datasetID %in% 'yeom21' & d$study %in% 'exp1' & d$Notes %in% c('without pericarps'), 'scarifTypeGen'] <- 'mechanical'
 d[d$datasetID %in% 'yeom21' & d$study %in% 'exp1' & d$Notes %in% c('without pericarps'), 'scarifTypeSpe'] <- "mechanical - pericarp removal"
 
+# added by Victor
+d[d$datasetID %in% 'boscagli01' & d$study %in% 'exp2' & d$treatment %in% c('piercing'), 'scarifTypeGen'] <- 'mechanical'
+d[d$datasetID %in% 'boscagli01' & d$study %in% 'exp2' & d$treatment %in% c('piercing'), 'scarifTypeSpe'] <- "mechanical - piercing"
+
+
 unique(d$scarifTypeSpe)
 # Lizzie checked differences between scarifTypeSpe and scarif.type and they are all either...
 # mis-labeled so shoudl not be in scarifTypeSpe or 0 min so are 0. Yay.
