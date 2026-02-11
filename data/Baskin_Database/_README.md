@@ -1,0 +1,2 @@
+# baskin_opt_cues4ospree.csv
+Data scraped from Baskin by Dan. We originally thought this could add more chilling and forcing data, but since it is not very clear in the book, we decided to not use this for now.
