@@ -693,6 +693,10 @@ d$provenance.altitude[which(d$datasetID == "olmez09" & d$provenance.altitude == 
 # cuena-Lombrana18: the mean of the altitude range mentionned in the paper was calculated
 d$provenance.altitude[which(d$datasetID == "cuena-lombrana18" & d$source.population == "Gennargentu Massif, Sardinia, Trainu Murcunieddu")] <- "1348"
 d$provenance.altitude[which(d$datasetID == "cuena-lombrana18" & d$source.population == "Gennargentu Massif, Sardinia, Is Terre Molentes")] <- "1483"
+# borghetti86: adding the different altitudes to the corresponding sources pop
+d$provenance.altitude[which(d$datasetID == "borghetti86" & d$source.population == "Valle Torta, Monte Pollino, Italy")] <- "900"
+d$provenance.altitude[which(d$datasetID == "borghetti86" & d$source.population == "Valle Gaudolino, Monte Pollino, Italy")] <- "1400"
+d$provenance.altitude[which(d$datasetID == "borghetti86" & d$source.population == "Pollinello, Monte Pollino, Italy")] <- "1800"
 # gremer20: replacing unicode dash to -
 d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Table Mountain, USA")] <- "-121.551"
 d$provenance.long[which(d$datasetID == "gremer20" & d$source.population == "Iowa Hill, USA")] <- "-120.921"
