@@ -78,6 +78,7 @@ d$treatmentCor[which(d$datasetID == "barnhill82")] <- "stratification x germinat
 d$treatmentCor[which(d$datasetID == "barros12")] <- "stratification x hormone x germination temperature"
 
 #basbag09
+d[d$datasetID %in% "basbag09" & d$treatment %in% c('control', 'control '), 'treatment'] <- 'control' # remove a useless space
 d$treatmentCor[which(d$datasetID == "basbag09")] <- "germination temperature x germination duration"
 
 #batlla03
