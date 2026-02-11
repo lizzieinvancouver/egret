@@ -199,8 +199,8 @@ d[d$datasetID %in% 'yeom21' & d$study %in% 'exp1' & d$Notes %in% c('without peri
 d[d$datasetID %in% 'yeom21' & d$study %in% 'exp1' & d$Notes %in% c('without pericarps'), 'scarifTypeSpe'] <- "mechanical - pericarp removal"
 
 # added by Victor
-d[d$datasetID %in% 'boscagli01' & d$study %in% 'exp2' & d$treatment %in% c('piercing'), 'scarifTypeGen'] <- 'mechanical'
-d[d$datasetID %in% 'boscagli01' & d$study %in% 'exp2' & d$treatment %in% c('piercing'), 'scarifTypeSpe'] <- "mechanical - piercing"
+d[d$datasetID %in% 'boscagli01' & d$study %in% 'exp 2' & d$treatment %in% c('piercing'), 'scarifTypeGen'] <- 'mechanical'
+d[d$datasetID %in% 'boscagli01' & d$study %in% 'exp 2' & d$treatment %in% c('piercing'), 'scarifTypeSpe'] <- "mechanical - piercing"
 
 
 unique(d$scarifTypeSpe)
