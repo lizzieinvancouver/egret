@@ -546,3 +546,125 @@ spp_y <- tapply(dbf_prov$y_pos, dbf_prov$spp, mean)
 species_legend_order <- names(sort(spp_y, decreasing = TRUE))
 
 dev.off()
+
+
+# === === === === === === === === === === === === === === === === === === === 
+##### bcs_prov ##### 
+# === === === === === === === === === === === === === === === === === === === 
+# get bcs_prov
+bcsprovvec <- paste("bcs_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+dbcs_prov <- subset(dwithprov2, prmID %in% bcsprovvec)
+dbcs_prov$numprov <- as.character(sub(".*\\[(\\d+)\\]", "\\1", dbcs_prov$prmID))
+dbcs_prov$numspp <- modeld$numspp[match(dbcs_prov$numprov, modeld$numprov)]
+
+# get b
+bcsvec <- paste("bcs", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+dbcs <- subset(dwithprov2, prmID %in% bcsvec)
+dbcs$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbcs$prmID))
+
+# add species name to df
+dbcs_prov$sppname <- modeld$genusspecies[match(dbcs_prov$numspp, modeld$numspp)]
+dbcs$sppname <- modeld$genusspecies[match(dbcs$numspp, modeld$numspp)]
+
+jpeg(
+  filename = "provenance/figures/muPlotProv_bcsprov.jpeg",
+  width = 2400,      
+  height = 2400,
+  res = 300         
+)
+par(mar = c(4, 6, 4, 5))
+
+# define a gap between species clusters
+gap <- 3
+
+# y positions
+dbcs_prov$y_pos <- NA
+current_y <- 1
+
+species_order <- as.character(1 : max(dbcs_prov$numspp))
+
+dbcs_prov$spp  <- factor(dbcs_prov$numspp, levels = species_order)
+
+dbcs_prov <- dbcs_prov[order(dbcs_prov$spp),]
+
+dbcs_prov$y_pos <- seq_len(nrow(dbcs_prov))
+
+for(sp in species_order){
+  idx <- which(dbcs_prov$spp == sp)
+  n <- length(idx)
+  # assign sequential positions for this species
+  dbcs_prov$y_pos[idx] <- current_y:(current_y + n - 1)
+  # move cursor down with a gap before next species cluster
+  current_y <- current_y + n + gap
+}
+
+dbcs_prov$y_pos
+
+# set up empty plot
+plot(NA, NA,
+     xlim = range(c(dbcs$fit_per5-0.5, dbcs$fit_per95+0.5)),
+     ylim = c(0.5, max(dbcs_prov$y_pos) + 0.5),
+     xlab = "Days to germinate?",
+     ylab = "",
+     yaxt = "n",
+     main = "bcs and bcs_prov"
+)
+
+# add error bars
+segments(
+  x0 = dbcs_prov$fit_per25,
+  x1 = dbcs_prov$fit_per75,
+  y0 = dbcs_prov$y_pos,
+  col = adjustcolor(my_colors[dbcs_prov$spp], alpha.f = 0.7),
+  lwd = 1
+)
+
+# Add the points
+points(
+  dbcs_prov$fit_mean,
+  dbcs_prov$y_pos,
+  cex = 0.8,
+  pch = 19,
+  col = adjustcolor(my_colors[dbcs_prov$spp], alpha.f = 1)
+)
+
+# Add species intervals and mean
+dbcs$spp <- dbcs$spp_name
+spp_y <- tapply(dbcs_prov$y_pos, dbcs_prov$spp, mean)
+dbcs$y_pos <- spp_y[dbcs$numspp]
+
+segments(
+  x0 = dbcs$fit_per25,
+  x1 = dbcs$fit_per75,
+  y0 = dbcs$y_pos,
+  col = adjustcolor(my_colors[dbcs$numspp], alpha.f = 1),
+  lwd = 2
+)
+
+points(
+  dbcs$fit_mean,
+  dbcs$y_pos,
+  pch = 19,
+  col  = adjustcolor(my_colors[dbcs$numspp], alpha.f = 1),
+  # col = "black",
+  cex = 0.8
+)
+
+# add vertical line at 0 
+abline(v = 0, lty = 2)
+
+# Add custom y-axis labels (reverse order if needed)
+axis(
+  side = 2,
+  at = dbcs$y_pos,
+  labels = dbcs$sppname,
+  cex.axis = 0.5,
+  las = 1
+)
+# spp mean
+spp_y <- tapply(dbcs_prov$y_pos, dbcs_prov$spp, mean)
+
+## order species by mean y descending (top of plot first)
+species_legend_order <- names(sort(spp_y, decreasing = TRUE))
+
+dev.off()
