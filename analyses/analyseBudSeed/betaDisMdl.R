@@ -38,16 +38,19 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 source("analyseBudSeed/prepEgretUsda.R")
 # removing the rows with incomplete data:
-d <- usdaData[complete.cases(usdaData),] 
+d <- d[complete.cases(d),] 
 
 # 372 spp
 #set.seed(123)
-phylo <- ape::read.tree("output/usdaPhylogenyFull.tre")
+phylo <- ape::read.tree("output/usdaEgretFull.tre")
 #plot(phylo, show.node.label = TRUE)  # shows nodes on the plot
 #nodelabels()  # adds node numbers above nodes
 
 # Get the node to seperate gym and angio
-tipsGym <- getDescendants(phylo, node = 705)
+#For egret only
+#tipsGym <- getDescendants(phylo, node = 705)
+#For egret+usda
+tipsGym <- getDescendants(phylo, node = 1264)
 tipsGym <- tipsGym[tipsGym <= Ntip(phylo)]
 
 # Get only angio
@@ -126,9 +129,9 @@ diagnostics <- list(
   min_ess = min(summ$n_eff, na.rm = TRUE)
 )
 
-saveRDS(fit, file = 'analyseBudSeed/output/fit_usda_angio.rds')
-saveRDS(summ, file = 'analyseBudSeed/output/summary_usda_angio.rds')
-saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_usda_angio.rds')
+saveRDS(fit, file = 'analyseBudSeed/output/fit_full_angio.rds')
+saveRDS(summ, file = 'analyseBudSeed/output/summary_full_angio.rds')
+saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_full_angio.rds')
 
 # For gymnosperm
 d <- gym
@@ -195,9 +198,9 @@ diagnostics <- list(
   min_ess = min(summ$n_eff, na.rm = TRUE)
 )
 
-saveRDS(fit, file = 'analyseBudSeed/output/fit_usda_gymno.rds')
-saveRDS(summ, file = 'analyseBudSeed/output/summary_usda_gymno.rds')
-saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_usda_gymno.rds')
+saveRDS(fit, file = 'analyseBudSeed/output/fit_full_gymno.rds')
+saveRDS(summ, file = 'analyseBudSeed/output/summary_full_gymno.rds')
+saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_full_gymno.rds')
 
 diagnostic <- FALSE
 if(diagnostic){
