@@ -38,6 +38,8 @@ util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
 
+runmodels <- FALSE
+
 # Load data, discard some experiments following various decision rules
 source('provenance/decisionRules.R')
 # source('studyDesign/decisionRules_abundant0s_Deirdre.R')
@@ -179,6 +181,7 @@ length(unique(modeld$genusspecies))
 # fit <- sampling(smordbeta, mdl.data,
 #                 iter = 2024, warmup = 1000,
 #                 chains = 4)
+if(runmodels){
 
 smordbeta_nophy <- stan_model("stan/orderedbetalikelihood_3slopes_provenance_nophylo.stan")
 fit_nophy <- sampling(smordbeta_nophy, mdl.data,
@@ -336,4 +339,4 @@ for(c in unique(cs)){
   points(t_c, y_c, pch=16, cex=0.8, col="black")
 
 }
-
+}
