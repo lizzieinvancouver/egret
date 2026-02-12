@@ -579,11 +579,11 @@ smallTreeUltra <- force.ultrametric(
 )
 
 unique(nomatchusda$usdaname)
-spptoplice <- c()
+spptoplice1 <- c()
 
 for (genus in vec) {
   matches <- nomatchAfterKewcheck$usdaname[grepl(genus, nomatchAfterKewcheck$usdaname)]
-  spptoplice <- c(spptoplice, matches)
+  spptoplice1 <- c(spptoplice1, matches)
 }
 
 smallTreeUltraSpliced <- smallTreeUltra
@@ -671,26 +671,37 @@ write.tree(usdaSpliced,"analyses/output/usdaPhylogenyFull.tre")
 # make the full egret tree
 egretlist <- egret$sppMatch
 egretlist <- c(egretlist, "Eucomis_zambesiaca","Leontice_leontopetalum","Maackia_amurensis","Celtis_schippii","Thymophylla_setifolia","Verbesina_occidentalis","Betonica_officinalis","Eupatorium_fernaldii")
+fulllist <- union(egretlist, usdalist)
 
-egretTree1 <- keep.tip(phy.plants, phy.plants$tip.label[phy.plants$tip.label %in% egretlist])
+fullTree <- keep.tip(phy.plants, phy.plants$tip.label[phy.plants$tip.label %in% fulllist])
 matchednamesegret1 <- matchednamesegret[!is.na(matchednamesegret$sppMatch), ]
-name_map <- setNames(matchednamesegret1$egretname, matchednamesegret1$sppMatch)
+colnames(matchednamesegret1)[2] <- "name"
+colnames(matchednamesusda1)[2] <- "name"
+matchednamesfull <- rbind(matchednamesegret1, matchednamesusda1)
+name_map <- setNames(matchednamesfull$name, matchednamesfull$sppMatch)
 
 # replace the tip name with the name in egret
-egretTree1$tip.label <- ifelse(egretTree1$tip.label %in% names(name_map),
-                               name_map[egretTree1$tip.label],
-                               egretTree1$tip.label)
+fullTree$tip.label <- ifelse(fullTree$tip.label %in% names(name_map),
+                               name_map[fullTree$tip.label],
+                               fullTree$tip.label)
 
 
-egretUltra <- force.ultrametric(
-  egretTree1,
+fulltreeUltra <- force.ultrametric(
+  fullTree,
   method = "extend"  # Extends terminal branches
 )
 
 # splicing
-egretSpliced <- egretUltra
-for (i in spptoplice) {
-  egretSpliced <- add.species.to.genus(tree = egretSpliced, species = i, where = "root")
+spptoplicefull <- union(spptoplice, spptoplice1)
+
+fullSpliced <- fulltreeUltra
+for (i in spptoplicefull) {
+  fullSpliced <- add.species.to.genus(tree = fullSpliced, species = i, where = "root")
 }
 # drop the tips we added to assist with single genus in egret
-egretSpliced <- drop.tip(egretSpliced, c("Eucomis_zambesiaca","Leontice_leontopetalum","Maackia_amurensis","Celtis_schippii","Thymophylla_setifolia","Verbesina_occidentalis","Betonica_officinalis","Eupatorium_fernaldii"))
+fullSpliced <- drop.tip(fullSpliced, c("Eucomis_zambesiaca","Leontice_leontopetalum","Maackia_amurensis","Celtis_schippii","Thymophylla_setifolia","Verbesina_occidentalis","Betonica_officinalis","Eupatorium_fernaldii"))
+fullSpecies <- unique(c(egret$latbi, usda$latbi))
+setdiff(unique(fullSpecies), fullSpliced$tip.label)
+setdiff(fullSpliced$tip.label, unique(fullSpecies))
+
+write.tree(fullSpliced,"analyses/output/usdaEgretFull.tre")
