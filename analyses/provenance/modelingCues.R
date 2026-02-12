@@ -42,6 +42,8 @@ source('mcmc_visualization_tools.R', local=util)
 source('provenance/decisionRules.R')
 # source('studyDesign/decisionRules_abundant0s_Deirdre.R')
 
+runmodels <- FALSE
+
 # Prepare phylogeny
 phylo <- ape::read.tree("output/egretPhylogenyFull.tre")
 phylo$tip.label <- sapply(phylo$tip.label, function(i) paste0(unlist(stringr::str_split(i, '_'))[1:2], collapse = '_')) # remove subspecies or whatever
@@ -64,7 +66,8 @@ rm(gymno)
 
 # Process data 
 # (1) - removing rows where we do not have any info on forcing) 
-modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] 
+modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] # we loose 142 rows of data and 4 species here
+
 # (2) - separating warm and cold strat. durations
 modeld$warmStratDur <- as.numeric(sapply(1:nrow(modeld), function(i){
   seq <-  unlist(stringr::str_split(modeld$stratSequence_condensed[i], ' then '))
@@ -85,7 +88,10 @@ modeld$coldStratDur <- ifelse(is.na(modeld$coldStratDur), 0, modeld$coldStratDur
 modeld$genusspecies <- sapply(modeld$genusspecies, function(i) stringr::str_split_i(i, ' ', 1))
 # test <- modeld[!(modeld$genusspecies %in% phylo$tip.label), ]
 # unique(test$genusspecies) # check only Gymno!
-modeld <- modeld[(modeld$genusspecies %in% phylo$tip.label), ]
+
+### CRD 10 FEB 2026: check why species get dropped out
+# modeld <- modeld[(modeld$genusspecies %in% phylo$tip.label), ] # UNCOMMENT FOR PHYLOGENY
+
 # (4) - transform response to proportion and germ. covariates to numeric
 modeld$responseValueNum <- as.numeric(modeld$responseValueNum)/100
 modeld$germDuration <- as.numeric(modeld$germDuration)
@@ -120,11 +126,13 @@ modeld$germTempGen <- scale(modeld$germTempGen)[,1]
 spp <-  unique(modeld$genusspecies)
 length(spp)
 length(phylo$node.label)
-phylo2 <- ape::keep.tip(phylo, spp)
-cphy <- ape::vcv.phylo(phylo2,corr=TRUE)
+setdiff(unique(newd$genusspecies), unique(modeld$genusspecies))
+# phylo2 <- ape::keep.tip(phylo, spp) # UNCOMMENT FOR PHYLOGENY
+# cphy <- ape::vcv.phylo(phylo2,corr=TRUE) # UNCOMMENT FOR PHYLOGENY
 
 # Prepare data for Stan
-modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy)))
+# modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy))) # UNCOMMENT FOR PHYLOGENY
+modeld$numspp <-  match(modeld$genusspecies, unique(modeld$genusspecies))# COMMENT FOR PHYLOGENY
 modeld$numprov = as.integer(factor(modeld$provLatLonAlt))
 mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
@@ -163,11 +171,18 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  
                  Vphy = cphy)
 
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# some checks to figure out where species get dropped out
+length(unique(newd$genusspecies)) # 4 species lost when phylogeny gets dropped out because of forcing
+length(unique(modeld$genusspecies))
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
 # Posterior quantification
-smordbeta <- stan_model("stan/orderedbetalikelihood_3slopes_provenance.stan")
-fit <- sampling(smordbeta, mdl.data,
-                iter = 2024, warmup = 1000,
-                chains = 4)
+# smordbeta <- stan_model("stan/orderedbetalikelihood_3slopes_provenance.stan")
+# fit <- sampling(smordbeta, mdl.data,
+#                 iter = 2024, warmup = 1000,
+#                 chains = 4)
+if(runmodels){
 
 smordbeta_nophy <- stan_model("stan/orderedbetalikelihood_3slopes_provenance_nophylo.stan")
 fit_nophy <- sampling(smordbeta_nophy, mdl.data,
@@ -325,4 +340,4 @@ for(c in unique(cs)){
   points(t_c, y_c, pch=16, cex=0.8, col="black")
 
 }
-
+}

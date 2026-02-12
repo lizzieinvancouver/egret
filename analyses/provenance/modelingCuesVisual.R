@@ -44,6 +44,9 @@ source('mcmc_visualization_tools.R', local=util)
 # load decision rules
 source('provenance/decisionRules.R')
 
+# load modeling cues (without running the models for now)
+source('provenance/modelingCues.R')
+
 # Save the object 'fit_nophy' as an RDS file
 fit_withprov <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy.rds")
 fit_nophy_noprov <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noprov.rds")
@@ -52,8 +55,8 @@ fit_nophy_noprov <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/eg
 df_withprov <- as.data.frame(fit_withprov)
 
 colswithprov <- colnames(df_withprov)
-colswithprov <- colswithprov[!grepl("tilde", colswithprov)]
-colswithprov <- colswithprov[!grepl("prov", colswithprov)]
+# colswithprov <- colswithprov[grepl("prov", colswithprov)]
+# colswithprov <- colswithprov[!grepl("tilde", colswithprov)]
 
 dwithprov <- df_withprov[, colnames(df_withprov) %in% colswithprov]
 
@@ -76,17 +79,22 @@ for (i in 1:ncol(dwithprov)) { # i = 1
 }
 dwithprov2
 
+# dwithprov2$num <- sub(".*\\[(\\d+)\\]", "\\1", dwithprov2$prmID)
+
+# dwithprov2$numspp <- modeld$numspp[modeld$num]
+
 # get a subset for just the slope and intercepts 
-vec <- c(paste("a", "[", 1:25, "]", sep = ""),
-         paste("bt", "[", 1:25, "]", sep = ""),
-         paste("bf", "[", 1:25, "]", sep = ""),
-         paste("bcs", "[", 1:25, "]", sep = ""),
-         dwithprov2$prmID[grepl("sigma", dwithprov2$prmID)])
-prmvec <- c(rep("a", each = 25),
-         rep("sigma", each =  4),
-         rep("bt", each = 25), 
-         rep("bf", each = 25), 
-         rep("bcs", each =  25))
+vec <- c(paste("a", "[", 1:27, "]", sep = ""),
+         paste("bt", "[", 1:27, "]", sep = ""),
+         paste("bf", "[", 1:27, "]", sep = ""),
+         paste("bcs", "[", 1:27, "]", sep = ""))
+         # dwithprov2$prmID[grepl("sigma", dwithprov2$prmID)])
+
+prmvec <- c(rep("a", each = 27),
+         # rep("sigma", each =  4),
+         rep("bt", each = 27), 
+         rep("bf", each = 27), 
+         rep("bcs", each =  27))
 
 dwithprov3 <- subset(dwithprov2, prmID %in% vec)
 
@@ -145,16 +153,12 @@ dforplot <- merge(dwithprov3, dnoprov3, by = "prmID")
 # Get the number of provenances per species
 # count the number of unique provenance per species
 provcounts <- aggregate(provLatLonAlt ~ genusspecies,
-          newd,
-          function(x) length(unique(x)))
+          newd, function(x) length(unique(x)))
 
 dforplot$numspp <- sub(".*\\[(\\d+)\\]", "\\1", dforplot$prmID)
 dforplot$spp <- modeld$genusspecies[match(dforplot$numspp, modeld$numspp)]
 
 dforplot$provperspp <- provcounts$provLatLonAlt[match(dforplot$spp, provcounts$genusspecies)]
-
-# which species are not modeled?
-View(subset(newd, genusspecies %in% setdiff(unique(newd$genusspecies), unique(dforplot$spp))))
 
 # Plot!
 ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noprov)) +
@@ -165,7 +169,506 @@ ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noprov)) +
   geom_point(aes(color = provperspp), size = 1.5) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#B40F20", linewidth = 0.8) +
   facet_wrap(~prm, scales = "free") +
-  
   labs(x = "with prov", y = "no prov", title = "") +
   theme_minimal()
   
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# Plot provenance and color code by spp #### 
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+my_colors <- c("#9E3D22FF", "#AA4422FF", "#B74B22FF",
+               "#C35222FF", "#D05921FF", "#D96324FF",
+               "#E17028FF", "#E97C2DFF", "#F18832FF",
+               "#F69542FF", "#F3A665FF", "#EDB686FF",
+               "#E5C5A7FF", "#D9D5C9FF", "#C5CBCCFF",
+               "#B0C2CEFF", "#99B8D0FF", "#80AFD2FF",
+               "#71A5CDFF", "#689BC5FF", "#5F91BDFF",
+               "#5587B4FF", "#4C7EACFF", "#4475A3FF",
+               "#3C6D9BFF", "#346492FF", "#2B5C8AFF")
+
+# === === === === === === === === === === === === === === === === === === === 
+##### a_prov ##### 
+# === === === === === === === === === === === === === === === === === === === 
+# get a_prov
+aprovvec <- paste("a_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+da_prov <- subset(dwithprov2, prmID %in% aprovvec)
+da_prov$numprov <- as.character(sub(".*\\[(\\d+)\\]", "\\1", da_prov$prmID))
+da_prov$numspp <- modeld$numspp[match(da_prov$numprov, modeld$numprov)]
+
+# get a
+avec <- paste("a", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+da <- subset(dwithprov2, prmID %in% avec)
+da$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", da$prmID))
+
+# add species name to df
+da_prov$sppname <- modeld$genusspecies[match(da_prov$numspp, modeld$numspp)]
+da$sppname <- modeld$genusspecies[match(da$numspp, modeld$numspp)]
+
+jpeg(
+  filename = "provenance/figures/muPlotProv_aprov.jpeg",
+  width = 2400,      
+  height = 2400,
+  res = 300         
+)
+par(mar = c(4, 6, 4, 5))
+
+# define a gap between species clusters
+gap <- 3
+
+# y positions
+da_prov$y_pos <- NA
+current_y <- 1
+
+species_order <- as.character(1 : max(da_prov$numspp))
+
+da_prov$spp  <- factor(da_prov$numspp, levels = species_order)
+
+da_prov <- da_prov[order(da_prov$spp),]
+
+da_prov$y_pos <- seq_len(nrow(da_prov))
+
+for(sp in species_order){
+  idx <- which(da_prov$spp == sp)
+  n <- length(idx)
+  # assign sequential positions for this species
+  da_prov$y_pos[idx] <- current_y:(current_y + n - 1)
+  # move cursor down with a gap before next species cluster
+  current_y <- current_y + n + gap
+}
+
+da_prov$y_pos
+
+# set up empty plot
+plot(NA, NA,
+  xlim = range(c(da$fit_per5-0.5, da$fit_per95+0.5)),
+  ylim = c(0.5, max(da_prov$y_pos) + 0.5),
+  xlab = "Days to germinate?",
+  ylab = "",
+  yaxt = "n",
+  main = "a and a_prov"
+)
+
+# add error bars
+segments(
+  x0 = da_prov$fit_per25,
+  x1 = da_prov$fit_per75,
+  y0 = da_prov$y_pos,
+  col = adjustcolor(my_colors[da_prov$spp], alpha.f = 0.7),
+  lwd = 1
+)
+
+# Add the points
+points(
+  da_prov$fit_mean,
+  da_prov$y_pos,
+  cex = 0.8,
+  pch = 19,
+  col = adjustcolor(my_colors[da_prov$spp], alpha.f = 1)
+)
+
+# Add species intervals and mean
+da$spp <- da$spp_name
+spp_y <- tapply(da_prov$y_pos, da_prov$spp, mean)
+da$y_pos <- spp_y[da$numspp]
+
+segments(
+  x0 = da$fit_per25,
+  x1 = da$fit_per75,
+  y0 = da$y_pos,
+  col = adjustcolor(my_colors[da$numspp], alpha.f = 1),
+  lwd = 2
+)
+
+points(
+  da$fit_mean,
+  da$y_pos,
+  pch = 19,
+  col  = adjustcolor(my_colors[da$numspp], alpha.f = 1),
+  # col = "black",
+  cex = 0.8
+)
+
+# add vertical line at 0 
+abline(v = 0, lty = 2)
+
+# Add custom y-axis labels (reverse order if needed)
+axis(
+  side = 2,
+  at = da$y_pos,
+  labels = da$sppname,
+  cex.axis = 0.5,
+  las = 1
+)
+# spp mean
+spp_y <- tapply(da_prov$y_pos, da_prov$spp, mean)
+
+## order species by mean y descending (top of plot first)
+species_legend_order <- names(sort(spp_y, decreasing = TRUE))
+
+dev.off()
+
+
+# === === === === === === === === === === === === === === === === === === === 
+##### bt_prov ##### 
+# === === === === === === === === === === === === === === === === === === === 
+# get bt_prov
+btprovvec <- paste("bt_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+dbt_prov <- subset(dwithprov2, prmID %in% btprovvec)
+dbt_prov$numprov <- as.character(sub(".*\\[(\\d+)\\]", "\\1", dbt_prov$prmID))
+dbt_prov$numspp <- modeld$numspp[match(dbt_prov$numprov, modeld$numprov)]
+
+# get b
+btvec <- paste("bt", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+dbt <- subset(dwithprov2, prmID %in% btvec)
+dbt$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbt$prmID))
+
+# add species name to df
+dbt_prov$sppname <- modeld$genusspecies[match(dbt_prov$numspp, modeld$numspp)]
+dbt$sppname <- modeld$genusspecies[match(dbt$numspp, modeld$numspp)]
+
+jpeg(
+  filename = "provenance/figures/muPlotProv_btprov.jpeg",
+  width = 2400,      
+  height = 2400,
+  res = 300         
+)
+par(mar = c(4, 6, 4, 5))
+
+# define a gap between species clusters
+gap <- 3
+
+# y positions
+dbt_prov$y_pos <- NA
+current_y <- 1
+
+species_order <- as.character(1 : max(dbt_prov$numspp))
+
+dbt_prov$spp  <- factor(dbt_prov$numspp, levels = species_order)
+
+dbt_prov <- dbt_prov[order(dbt_prov$spp),]
+
+dbt_prov$y_pos <- seq_len(nrow(dbt_prov))
+
+for(sp in species_order){
+  idx <- which(dbt_prov$spp == sp)
+  n <- length(idx)
+  # assign sequential positions for this species
+  dbt_prov$y_pos[idx] <- current_y:(current_y + n - 1)
+  # move cursor down with a gap before next species cluster
+  current_y <- current_y + n + gap
+}
+
+dbt_prov$y_pos
+
+# set up empty plot
+plot(NA, NA,
+     xlim = range(c(dbt$fit_per5-0.5, dbt$fit_per95+0.5)),
+     ylim = c(0.5, max(dbt_prov$y_pos) + 0.5),
+     xlab = "Days to germinate?",
+     ylab = "",
+     yaxt = "n",
+     main = "bt and bt_prov"
+)
+
+# add error bars
+segments(
+  x0 = dbt_prov$fit_per25,
+  x1 = dbt_prov$fit_per75,
+  y0 = dbt_prov$y_pos,
+  col = adjustcolor(my_colors[dbt_prov$spp], alpha.f = 0.7),
+  lwd = 1
+)
+
+# Add the points
+points(
+  dbt_prov$fit_mean,
+  dbt_prov$y_pos,
+  cex = 0.8,
+  pch = 19,
+  col = adjustcolor(my_colors[dbt_prov$spp], alpha.f = 1)
+)
+
+# Add species intervals and mean
+dbt$spp <- dbt$spp_name
+spp_y <- tapply(dbt_prov$y_pos, dbt_prov$spp, mean)
+dbt$y_pos <- spp_y[dbt$numspp]
+
+segments(
+  x0 = dbt$fit_per25,
+  x1 = dbt$fit_per75,
+  y0 = dbt$y_pos,
+  col = adjustcolor(my_colors[dbt$numspp], alpha.f = 1),
+  lwd = 2
+)
+
+points(
+  dbt$fit_mean,
+  dbt$y_pos,
+  pch = 19,
+  col  = adjustcolor(my_colors[dbt$numspp], alpha.f = 1),
+  # col = "black",
+  cex = 0.8
+)
+
+# add vertical line at 0 
+abline(v = 0, lty = 2)
+
+# Add custom y-axis labels (reverse order if needed)
+axis(
+  side = 2,
+  at = dbt$y_pos,
+  labels = dbt$sppname,
+  cex.axis = 0.5,
+  las = 1
+)
+# spp mean
+spp_y <- tapply(dbt_prov$y_pos, dbt_prov$spp, mean)
+
+## order species by mean y descending (top of plot first)
+species_legend_order <- names(sort(spp_y, decreasing = TRUE))
+
+dev.off()
+
+
+# === === === === === === === === === === === === === === === === === === === 
+##### bf_prov ##### 
+# === === === === === === === === === === === === === === === === === === === 
+# get bf_prov
+bfprovvec <- paste("bf_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+dbf_prov <- subset(dwithprov2, prmID %in% bfprovvec)
+dbf_prov$numprov <- as.character(sub(".*\\[(\\d+)\\]", "\\1", dbf_prov$prmID))
+dbf_prov$numspp <- modeld$numspp[match(dbf_prov$numprov, modeld$numprov)]
+
+# get b
+bfvec <- paste("bf", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+dbf <- subset(dwithprov2, prmID %in% bfvec)
+dbf$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbf$prmID))
+
+# add species name to df
+dbf_prov$sppname <- modeld$genusspecies[match(dbf_prov$numspp, modeld$numspp)]
+dbf$sppname <- modeld$genusspecies[match(dbf$numspp, modeld$numspp)]
+
+jpeg(
+  filename = "provenance/figures/muPlotProv_bfprov.jpeg",
+  width = 2400,      
+  height = 2400,
+  res = 300         
+)
+par(mar = c(4, 6, 4, 5))
+
+# define a gap between species clusters
+gap <- 3
+
+# y positions
+dbf_prov$y_pos <- NA
+current_y <- 1
+
+species_order <- as.character(1 : max(dbf_prov$numspp))
+
+dbf_prov$spp  <- factor(dbf_prov$numspp, levels = species_order)
+
+dbf_prov <- dbf_prov[order(dbf_prov$spp),]
+
+dbf_prov$y_pos <- seq_len(nrow(dbf_prov))
+
+for(sp in species_order){
+  idx <- which(dbf_prov$spp == sp)
+  n <- length(idx)
+  # assign sequential positions for this species
+  dbf_prov$y_pos[idx] <- current_y:(current_y + n - 1)
+  # move cursor down with a gap before next species cluster
+  current_y <- current_y + n + gap
+}
+
+dbf_prov$y_pos
+
+# set up empty plot
+plot(NA, NA,
+     xlim = range(c(dbf$fit_per5-0.5, dbf$fit_per95+0.5)),
+     ylim = c(0.5, max(dbf_prov$y_pos) + 0.5),
+     xlab = "Days to germinate?",
+     ylab = "",
+     yaxt = "n",
+     main = "bf and bf_prov"
+)
+
+# add error bars
+segments(
+  x0 = dbf_prov$fit_per25,
+  x1 = dbf_prov$fit_per75,
+  y0 = dbf_prov$y_pos,
+  col = adjustcolor(my_colors[dbf_prov$spp], alpha.f = 0.7),
+  lwd = 1
+)
+
+# Add the points
+points(
+  dbf_prov$fit_mean,
+  dbf_prov$y_pos,
+  cex = 0.8,
+  pch = 19,
+  col = adjustcolor(my_colors[dbf_prov$spp], alpha.f = 1)
+)
+
+# Add species intervals and mean
+dbf$spp <- dbf$spp_name
+spp_y <- tapply(dbf_prov$y_pos, dbf_prov$spp, mean)
+dbf$y_pos <- spp_y[dbf$numspp]
+
+segments(
+  x0 = dbf$fit_per25,
+  x1 = dbf$fit_per75,
+  y0 = dbf$y_pos,
+  col = adjustcolor(my_colors[dbf$numspp], alpha.f = 1),
+  lwd = 2
+)
+
+points(
+  dbf$fit_mean,
+  dbf$y_pos,
+  pch = 19,
+  col  = adjustcolor(my_colors[dbf$numspp], alpha.f = 1),
+  # col = "black",
+  cex = 0.8
+)
+
+# add vertical line at 0 
+abline(v = 0, lty = 2)
+
+# Add custom y-axis labels (reverse order if needed)
+axis(
+  side = 2,
+  at = dbf$y_pos,
+  labels = dbf$sppname,
+  cex.axis = 0.5,
+  las = 1
+)
+# spp mean
+spp_y <- tapply(dbf_prov$y_pos, dbf_prov$spp, mean)
+
+## order species by mean y descending (top of plot first)
+species_legend_order <- names(sort(spp_y, decreasing = TRUE))
+
+dev.off()
+
+
+# === === === === === === === === === === === === === === === === === === === 
+##### bcs_prov ##### 
+# === === === === === === === === === === === === === === === === === === === 
+# get bcs_prov
+bcsprovvec <- paste("bcs_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+dbcs_prov <- subset(dwithprov2, prmID %in% bcsprovvec)
+dbcs_prov$numprov <- as.character(sub(".*\\[(\\d+)\\]", "\\1", dbcs_prov$prmID))
+dbcs_prov$numspp <- modeld$numspp[match(dbcs_prov$numprov, modeld$numprov)]
+
+# get b
+bcsvec <- paste("bcs", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+dbcs <- subset(dwithprov2, prmID %in% bcsvec)
+dbcs$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbcs$prmID))
+
+# add species name to df
+dbcs_prov$sppname <- modeld$genusspecies[match(dbcs_prov$numspp, modeld$numspp)]
+dbcs$sppname <- modeld$genusspecies[match(dbcs$numspp, modeld$numspp)]
+
+jpeg(
+  filename = "provenance/figures/muPlotProv_bcsprov.jpeg",
+  width = 2400,      
+  height = 2400,
+  res = 300         
+)
+par(mar = c(4, 6, 4, 5))
+
+# define a gap between species clusters
+gap <- 3
+
+# y positions
+dbcs_prov$y_pos <- NA
+current_y <- 1
+
+species_order <- as.character(1 : max(dbcs_prov$numspp))
+
+dbcs_prov$spp  <- factor(dbcs_prov$numspp, levels = species_order)
+
+dbcs_prov <- dbcs_prov[order(dbcs_prov$spp),]
+
+dbcs_prov$y_pos <- seq_len(nrow(dbcs_prov))
+
+for(sp in species_order){
+  idx <- which(dbcs_prov$spp == sp)
+  n <- length(idx)
+  # assign sequential positions for this species
+  dbcs_prov$y_pos[idx] <- current_y:(current_y + n - 1)
+  # move cursor down with a gap before next species cluster
+  current_y <- current_y + n + gap
+}
+
+dbcs_prov$y_pos
+
+# set up empty plot
+plot(NA, NA,
+     xlim = range(c(dbcs$fit_per5-0.5, dbcs$fit_per95+0.5)),
+     ylim = c(0.5, max(dbcs_prov$y_pos) + 0.5),
+     xlab = "Days to germinate?",
+     ylab = "",
+     yaxt = "n",
+     main = "bcs and bcs_prov"
+)
+
+# add error bars
+segments(
+  x0 = dbcs_prov$fit_per25,
+  x1 = dbcs_prov$fit_per75,
+  y0 = dbcs_prov$y_pos,
+  col = adjustcolor(my_colors[dbcs_prov$spp], alpha.f = 0.7),
+  lwd = 1
+)
+
+# Add the points
+points(
+  dbcs_prov$fit_mean,
+  dbcs_prov$y_pos,
+  cex = 0.8,
+  pch = 19,
+  col = adjustcolor(my_colors[dbcs_prov$spp], alpha.f = 1)
+)
+
+# Add species intervals and mean
+dbcs$spp <- dbcs$spp_name
+spp_y <- tapply(dbcs_prov$y_pos, dbcs_prov$spp, mean)
+dbcs$y_pos <- spp_y[dbcs$numspp]
+
+segments(
+  x0 = dbcs$fit_per25,
+  x1 = dbcs$fit_per75,
+  y0 = dbcs$y_pos,
+  col = adjustcolor(my_colors[dbcs$numspp], alpha.f = 1),
+  lwd = 2
+)
+
+points(
+  dbcs$fit_mean,
+  dbcs$y_pos,
+  pch = 19,
+  col  = adjustcolor(my_colors[dbcs$numspp], alpha.f = 1),
+  # col = "black",
+  cex = 0.8
+)
+
+# add vertical line at 0 
+abline(v = 0, lty = 2)
+
+# Add custom y-axis labels (reverse order if needed)
+axis(
+  side = 2,
+  at = dbcs$y_pos,
+  labels = dbcs$sppname,
+  cex.axis = 0.5,
+  las = 1
+)
+# spp mean
+spp_y <- tapply(dbcs_prov$y_pos, dbcs_prov$spp, mean)
+
+## order species by mean y descending (top of plot first)
+species_legend_order <- names(sort(spp_y, decreasing = TRUE))
+
+dev.off()
+
