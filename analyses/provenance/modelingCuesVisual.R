@@ -44,6 +44,9 @@ source('mcmc_visualization_tools.R', local=util)
 # load decision rules
 source('provenance/decisionRules.R')
 
+# load modeling cues (without running the models for now)
+source('provenance/modelingCues.R')
+
 # Save the object 'fit_nophy' as an RDS file
 fit_withprov <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy.rds")
 fit_nophy_noprov <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noprov.rds")
@@ -76,9 +79,9 @@ for (i in 1:ncol(dwithprov)) { # i = 1
 }
 dwithprov2
 
-dwithprov2$num <- sub(".*\\[(\\d+)\\]", "\\1", dwithprov2$prmID)
+# dwithprov2$num <- sub(".*\\[(\\d+)\\]", "\\1", dwithprov2$prmID)
 
-dwithprov2$numspp <- modeld$numspp[modeld$num]
+# dwithprov2$numspp <- modeld$numspp[modeld$num]
 
 # get a subset for just the slope and intercepts 
 vec <- c(paste("a", "[", 1:27, "]", sep = ""),
@@ -236,11 +239,11 @@ da_prov$y_pos
 
 # set up empty plot
 plot(NA, NA,
-  xlim = range(c(da_prov$fit_per5-0.5, da_prov$fit_per95+0.5)),
+  xlim = range(c(da$fit_per5-0.5, da$fit_per95+0.5)),
   ylim = c(0.5, max(da_prov$y_pos) + 0.5),
   xlab = "Days to germinate?",
   ylab = "",
-  yaxt = "",
+  yaxt = "n",
   main = "a and a_prov"
 )
 
@@ -668,3 +671,4 @@ spp_y <- tapply(dbcs_prov$y_pos, dbcs_prov$spp, mean)
 species_legend_order <- names(sort(spp_y, decreasing = TRUE))
 
 dev.off()
+

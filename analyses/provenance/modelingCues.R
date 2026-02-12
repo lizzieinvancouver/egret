@@ -38,11 +38,11 @@ util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
 
-runmodels <- FALSE
-
 # Load data, discard some experiments following various decision rules
 source('provenance/decisionRules.R')
 # source('studyDesign/decisionRules_abundant0s_Deirdre.R')
+
+runmodels <- FALSE
 
 # Prepare phylogeny
 phylo <- ape::read.tree("output/egretPhylogenyFull.tre")
@@ -126,8 +126,9 @@ modeld$germTempGen <- scale(modeld$germTempGen)[,1]
 spp <-  unique(modeld$genusspecies)
 length(spp)
 length(phylo$node.label)
-phylo2 <- ape::keep.tip(phylo, spp)
-cphy <- ape::vcv.phylo(phylo2,corr=TRUE)
+setdiff(unique(newd$genusspecies), unique(modeld$genusspecies))
+# phylo2 <- ape::keep.tip(phylo, spp) # UNCOMMENT FOR PHYLOGENY
+# cphy <- ape::vcv.phylo(phylo2,corr=TRUE) # UNCOMMENT FOR PHYLOGENY
 
 # Prepare data for Stan
 # modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy))) # UNCOMMENT FOR PHYLOGENY
