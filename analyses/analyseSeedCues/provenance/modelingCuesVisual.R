@@ -41,11 +41,8 @@ util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
 
-# load decision rules
-source('provenance/decisionRules.R')
-
 # load modeling cues (without running the models for now)
-source('provenance/modelingCues.R')
+source('analyseSeedCues/provenance/modelingCues.R')
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Compare models with and without provenance ####
@@ -143,8 +140,6 @@ prmvec <- c(rep("a", each = 27),
 
 dnoprov3 <- subset(dnoprov2, prmID %in% vec)
 
-
-
 # Merge!
 colnames(dnoprov3)[2:ncol(dnoprov3)] <- paste(
   colnames(dnoprov3)[2:ncol(dnoprov3)], "noprov", sep = "_")
@@ -159,6 +154,7 @@ provcounts <- aggregate(provLatLonAlt ~ genusspecies,
                         newd, function(x) length(unique(x)))
 
 dforplot$numspp <- sub(".*\\[(\\d+)\\]", "\\1", dforplot$prmID)
+
 dforplot$spp <- modeld$genusspecies[match(dforplot$numspp, modeld$numspp)]
 
 dforplot$provperspp <- provcounts$provLatLonAlt[match(dforplot$spp, provcounts$genusspecies)]
@@ -203,7 +199,7 @@ ggplot(dsigmas, aes(x = fit_mean, y = prmID)) +
   ) +
   theme_minimal() +
   scale_y_discrete(limits = rev)  
-ggsave("provenance/figures/sigmaVals.jpeg", width = 5, height = 5, 
+ggsave("analyseSeedCues/provenance/figures/sigmaVals.jpeg", width = 5, height = 5, 
        units = "in", dpi = 300)
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -227,30 +223,79 @@ my_shapes <- c(
 # add column for woody
 dmain <- read.csv("output/egretclean.csv")
 
+# get a small df of which provenance correspond to which species
+xindex <- unique(modeld[,c("datasetID", "genusspecies", "numspp", "numprov")])
+
+# remove the parameters were not interested in for now
+cols <- colnames(df_withprov)
+cols <- cols[!grepl("z", cols) &
+               !grepl("calc", cols) &
+               !grepl("sigma", cols) &
+               !grepl("kappa", cols) &
+               !grepl("logistic", cols) &
+               !grepl("tilde", cols)]
 
 # === === === === === === === === === === === === === === === === === === === 
 ##### a_prov ##### 
 # === === === === === === === === === === === === === === === === === === === 
-# get a_prov
-aprovvec <- paste("a_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
-da_prov <- subset(dwithprov2, prmID %in% aprovvec)
-da_prov$numprov <- as.character(sub(".*\\[(\\d+)\\]", "\\1", da_prov$prmID))
-da_prov$numspp <- modeld$numspp[match(da_prov$numprov, modeld$numprov)]
+# start with the intercept
+amtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_withprov)))
 
-# get a
-avec <- paste("a", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
-da <- subset(dwithprov2, prmID %in% avec)
-da$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", da$prmID))
+colnames(amtrx) <- xindex$numprov
+colsa <- cols[grepl("a", cols) &
+                !grepl("prov", cols)]
+colsaprov <- cols[grepl("a_prov", cols) ]
+
+da <- subset(df_withprov, select = colsa)
+colnames(da) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(da))
+
+daprov <- subset(df_withprov, select = colsaprov)
+colnames(daprov) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(daprov))
+
+for (i in seq_len(ncol(amtrx))) { # i = 30
+  prov_id <- as.integer(colnames(amtrx)[i])
+  spp_id <- xindex$numspp[match(prov_id, xindex$numprov)]
+  amtrx[, i] <- da[, spp_id]
+}
+amtrx
+
+# sum spp values in matrix to provenance value
+aprovspp <- amtrx + daprov[, colnames(amtrx)]
+
+aprovspp2 <- data.frame(
+  prmID = character(ncol(aprovspp)),
+  fit_mean  = numeric(ncol(aprovspp)),  
+  fit_per5  = NA, 
+  fit_per25 = NA,
+  fit_per75 = NA,
+  fit_per95 = NA
+)
+
+for (i in 1:ncol(aprovspp)) { # i = 1
+  aprovspp2$prmID[i] <- colnames(aprovspp)[i]         
+  aprovspp2$fit_mean[i] <- round(mean(aprovspp[[i]]),3)  
+  aprovspp2$fit_per5[i] <- round(quantile(aprovspp[[i]], probs = 0.05), 3)
+  aprovspp2$fit_per25[i] <- round(quantile(aprovspp[[i]], probs = 0.25), 3)
+  aprovspp2$fit_per75[i] <- round(quantile(aprovspp[[i]], probs = 0.75), 3)
+  aprovspp2$fit_per95[i] <- round(quantile(aprovspp[[i]], probs = 0.95), 3)
+}
+
+# get just a
+avec <- paste("a", "[", 1:length(unique(modeld$numspp)), "]", sep = "")
+da2 <- subset(dwithprov2, prmID %in% avec)
+da2$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", da2$prmID))
+da2$sppname <- modeld$genusspecies[match(da2$numspp, modeld$numspp)]
 
 # add species name to df
-da_prov$sppname <- modeld$genusspecies[match(da_prov$numspp, modeld$numspp)]
-da$sppname <- modeld$genusspecies[match(da$numspp, modeld$numspp)]
+aprovspp2$numspp <- modeld$numspp[match(aprovspp2$prmID, modeld$numprov)]
+aprovspp2$sppname <- modeld$genusspecies[match(aprovspp2$prmID, modeld$numprov)]
 
 # add woody
-da$woody <- dmain$woody[match(da$sppname, dmain$latbi)]
+da2$woody <- dmain$woody[match(da2$sppname, dmain$latbi)]
+aprovspp2$woody <- dmain$woody[match(aprovspp2$sppname, dmain$latbi)]
 
 jpeg(
-  filename = "provenance/figures/muPlotProv_aprov.jpeg",
+  filename = "analyseSeedCues/provenance/figures/muPlotProv_aprov.jpeg",
   width = 2400,      
   height = 2400,
   res = 300         
@@ -261,32 +306,32 @@ par(mar = c(4, 6, 4, 5))
 gap <- 3
 
 # y positions
-da_prov$y_pos <- NA
+aprovspp2$y_pos <- NA
 current_y <- 1
 
-species_order <- as.character(1 : max(da_prov$numspp))
+species_order <- as.character(1 : max(aprovspp2$numspp))
 
-da_prov$spp  <- factor(da_prov$numspp, levels = species_order)
+aprovspp2$spp  <- factor(aprovspp2$numspp, levels = species_order)
 
-da_prov <- da_prov[order(da_prov$spp),]
+aprovspp2 <- aprovspp2[order(aprovspp2$spp),]
 
-da_prov$y_pos <- seq_len(nrow(da_prov))
+aprovspp2$y_pos <- seq_len(nrow(aprovspp2))
 
 for(sp in species_order){
-  idx <- which(da_prov$spp == sp)
+  idx <- which(aprovspp2$spp == sp)
   n <- length(idx)
   # assign sequential positions for this species
-  da_prov$y_pos[idx] <- current_y:(current_y + n - 1)
+  aprovspp2$y_pos[idx] <- current_y:(current_y + n - 1)
   # move cursor down with a gap before next species cluster
   current_y <- current_y + n + gap
 }
 
-da_prov$y_pos
+aprovspp2$y_pos
 
 # set up empty plot
 plot(NA, NA,
-     xlim = range(c(da$fit_per5-0.5, da$fit_per95+0.5)),
-     ylim = c(0.5, max(da_prov$y_pos) + 0.5),
+     xlim = range(c(da2$fit_per5-0.5, da2$fit_per95+0.5)),
+     ylim = c(0.5, max(aprovspp2$y_pos) + 0.5),
      xlab = "Days to germinate?",
      ylab = "",
      yaxt = "n",
@@ -295,40 +340,40 @@ plot(NA, NA,
 
 # add error bars
 segments(
-  x0 = da_prov$fit_per25,
-  x1 = da_prov$fit_per75,
-  y0 = da_prov$y_pos,
-  col = adjustcolor(my_colors[da_prov$spp], alpha.f = 0.7),
+  x0 = aprovspp2$fit_per25,
+  x1 = aprovspp2$fit_per75,
+  y0 = aprovspp2$y_pos,
+  col = adjustcolor(my_colors[aprovspp2$spp], alpha.f = 0.7),
   lwd = 1
 )
 
 # Add the points
 points(
-  da_prov$fit_mean,
-  da_prov$y_pos,
-  cex = 0.7,
-  pch = 19,
-  col = adjustcolor(my_colors[da_prov$spp], alpha.f = 1)
+  aprovspp2$fit_mean,
+  aprovspp2$y_pos,
+  cex = 0.5,
+  pch = 21,
+  col = adjustcolor(my_colors[aprovspp2$spp], alpha.f = 1)
 )
 
 # Add species intervals and mean
-da$spp <- da$spp_name
-spp_y <- tapply(da_prov$y_pos, da_prov$spp, mean)
-da$y_pos <- spp_y[da$numspp]
+da2$spp <- da2$spp_name
+spp_y <- tapply(aprovspp2$y_pos, aprovspp2$spp, mean)
+da2$y_pos <- spp_y[da2$numspp]
 
 segments(
-  x0 = da$fit_per25,
-  x1 = da$fit_per75,
-  y0 = da$y_pos,
-  col = adjustcolor(my_colors[da$numspp], alpha.f = 1),
+  x0 = da2$fit_per25,
+  x1 = da2$fit_per75,
+  y0 = da2$y_pos,
+  col = adjustcolor(my_colors[da2$numspp], alpha.f = 1),
   lwd = 2
 )
 
 points(
-  da$fit_mean,
-  da$y_pos,
-  pch = my_shapes[da$woody],
-  col  = adjustcolor(my_colors[da$numspp], alpha.f = 1),
+  da2$fit_mean,
+  da2$y_pos,
+  pch = my_shapes[da2$woody],
+  col  = adjustcolor(my_colors[da2$numspp], alpha.f = 1),
   # col = "black",
   cex = 1
 )
@@ -339,19 +384,20 @@ abline(v = 0, lty = 2)
 # Add custom y-axis labels (reverse order if needed)
 axis(
   side = 2,
-  at = da$y_pos,
-  labels = da$sppname,
+  at = da2$y_pos,
+  labels = da2$sppname,
   cex.axis = 0.5,
   las = 1
 )
+
 # spp mean
-spp_y <- tapply(da_prov$y_pos, da_prov$spp, mean)
+spp_y <- tapply(aprovspp2$y_pos, aprovspp2$spp, mean)
 
 woody_legend_order <- c("Y", "N")
 # woody legend
 legend(
-  x = max(da$fit_per95) - 5,
-  y = max(da$y_pos) - 2,
+  x = max(da2$fit_per95) - 5,
+  y = max(da2$y_pos) - 2,
   legend = woody_legend_order,
   pch = my_shapes[woody_legend_order],
   pt.cex = 1.2,
@@ -364,26 +410,64 @@ dev.off()
 # === === === === === === === === === === === === === === === === === === === 
 ##### bt_prov ##### 
 # === === === === === === === === === === === === === === === === === === === 
-# get bt_prov
-btprovvec <- paste("bt_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
-dbt_prov <- subset(dwithprov2, prmID %in% btprovvec)
-dbt_prov$numprov <- as.character(sub(".*\\[(\\d+)\\]", "\\1", dbt_prov$prmID))
-dbt_prov$numspp <- modeld$numspp[match(dbt_prov$numprov, modeld$numprov)]
+# start with the intercept
+btmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_withprov)))
 
-# get b
-btvec <- paste("bt", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
-dbt <- subset(dwithprov2, prmID %in% btvec)
-dbt$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbt$prmID))
+colnames(btmtrx) <- xindex$numprov
+colsbt <- cols[grepl("bt", cols) &
+                !grepl("prov", cols)]
+colsbtprov <- cols[grepl("bt_prov", cols) ]
+
+dbt <- subset(df_withprov, select = colsbt)
+colnames(dbt) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbt))
+
+dbtprov <- subset(df_withprov, select = colsbtprov)
+colnames(dbtprov) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbtprov))
+
+for (i in seq_len(ncol(btmtrx))) { # i = 30
+  prov_id <- as.integer(colnames(btmtrx)[i])
+  spp_id <- xindex$numspp[match(prov_id, xindex$numprov)]
+  btmtrx[, i] <- dbt[, spp_id]
+}
+btmtrx
+
+# sum spp values in matrix to provenance value
+dbtprovspp <- btmtrx + dbtprov[, colnames(btmtrx)]
+
+dbtprovspp2 <- data.frame(
+  prmID = character(ncol(dbtprovspp)),
+  fit_mean  = numeric(ncol(dbtprovspp)),  
+  fit_per5  = NA, 
+  fit_per25 = NA,
+  fit_per75 = NA,
+  fit_per95 = NA
+)
+
+for (i in 1:ncol(dbtprovspp)) { # i = 1
+  dbtprovspp2$prmID[i] <- colnames(dbtprovspp)[i]         
+  dbtprovspp2$fit_mean[i] <- round(mean(dbtprovspp[[i]]),3)  
+  dbtprovspp2$fit_per5[i] <- round(quantile(dbtprovspp[[i]], probs = 0.05), 3)
+  dbtprovspp2$fit_per25[i] <- round(quantile(dbtprovspp[[i]], probs = 0.25), 3)
+  dbtprovspp2$fit_per75[i] <- round(quantile(dbtprovspp[[i]], probs = 0.75), 3)
+  dbtprovspp2$fit_per95[i] <- round(quantile(dbtprovspp[[i]], probs = 0.95), 3)
+}
+
+# get just bt
+btvec <- paste("bt", "[", 1:length(unique(modeld$numspp)), "]", sep = "")
+dbt2 <- subset(dwithprov2, prmID %in% btvec)
+dbt2$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbt2$prmID))
+dbt2$sppname <- modeld$genusspecies[match(dbt2$numspp, modeld$numspp)]
 
 # add species name to df
-dbt_prov$sppname <- modeld$genusspecies[match(dbt_prov$numspp, modeld$numspp)]
-dbt$sppname <- modeld$genusspecies[match(dbt$numspp, modeld$numspp)]
+dbtprovspp2$numspp <- modeld$numspp[match(dbtprovspp2$prmID, modeld$numprov)]
+dbtprovspp2$sppname <- modeld$genusspecies[match(dbtprovspp2$prmID, modeld$numprov)]
 
 # add woody
-dbt$woody <- dmain$woody[match(dbt$sppname, dmain$latbi)]
+dbt2$woody <- dmain$woody[match(dbt2$sppname, dmain$latbi)]
+dbtprovspp2$woody <- dmain$woody[match(dbtprovspp2$sppname, dmain$latbi)]
 
 jpeg(
-  filename = "provenance/figures/muPlotProv_btprov.jpeg",
+  filename = "analyseSeedCues/provenance/figures/muPlotProv_btprov.jpeg",
   width = 2400,      
   height = 2400,
   res = 300         
@@ -394,32 +478,32 @@ par(mar = c(4, 6, 4, 5))
 gap <- 3
 
 # y positions
-dbt_prov$y_pos <- NA
+dbtprovspp2$y_pos <- NA
 current_y <- 1
 
-species_order <- as.character(1 : max(dbt_prov$numspp))
+species_order <- as.character(1 : max(dbtprovspp2$numspp))
 
-dbt_prov$spp  <- factor(dbt_prov$numspp, levels = species_order)
+dbtprovspp2$spp  <- factor(dbtprovspp2$numspp, levels = species_order)
 
-dbt_prov <- dbt_prov[order(dbt_prov$spp),]
+dbtprovspp2 <- dbtprovspp2[order(dbtprovspp2$spp),]
 
-dbt_prov$y_pos <- seq_len(nrow(dbt_prov))
+dbtprovspp2$y_pos <- seq_len(nrow(dbtprovspp2))
 
 for(sp in species_order){
-  idx <- which(dbt_prov$spp == sp)
+  idx <- which(dbtprovspp2$spp == sp)
   n <- length(idx)
   # assign sequential positions for this species
-  dbt_prov$y_pos[idx] <- current_y:(current_y + n - 1)
+  dbtprovspp2$y_pos[idx] <- current_y:(current_y + n - 1)
   # move cursor down with a gap before next species cluster
   current_y <- current_y + n + gap
 }
 
-dbt_prov$y_pos
+dbtprovspp2$y_pos
 
 # set up empty plot
 plot(NA, NA,
-     xlim = range(c(dbt$fit_per5-0.5, dbt$fit_per95+0.5)),
-     ylim = c(0.5, max(dbt_prov$y_pos) + 0.5),
+     xlim = range(c(dbt2$fit_per5-0.5, dbt2$fit_per95+0.5)),
+     ylim = c(0.5, max(dbtprovspp2$y_pos) + 0.5),
      xlab = "Days to germinate?",
      ylab = "",
      yaxt = "n",
@@ -428,42 +512,42 @@ plot(NA, NA,
 
 # add error bars
 segments(
-  x0 = dbt_prov$fit_per25,
-  x1 = dbt_prov$fit_per75,
-  y0 = dbt_prov$y_pos,
-  col = adjustcolor(my_colors[dbt_prov$spp], alpha.f = 0.7),
+  x0 = dbtprovspp2$fit_per25,
+  x1 = dbtprovspp2$fit_per75,
+  y0 = dbtprovspp2$y_pos,
+  col = adjustcolor(my_colors[dbtprovspp2$spp], alpha.f = 0.7),
   lwd = 1
 )
 
 # Add the points
 points(
-  dbt_prov$fit_mean,
-  dbt_prov$y_pos,
-  cex = 0.8,
-  pch = 19,
-  col = adjustcolor(my_colors[dbt_prov$spp], alpha.f = 1)
+  dbtprovspp2$fit_mean,
+  dbtprovspp2$y_pos,
+  cex = 0.5,
+  pch = 21,
+  col = adjustcolor(my_colors[dbtprovspp2$spp], alpha.f = 1)
 )
 
 # Add species intervals and mean
-dbt$spp <- dbt$spp_name
-spp_y <- tapply(dbt_prov$y_pos, dbt_prov$spp, mean)
-dbt$y_pos <- spp_y[dbt$numspp]
+dbt2$spp <- dbt2$spp_name
+spp_y <- tapply(dbtprovspp2$y_pos, dbtprovspp2$spp, mean)
+dbt2$y_pos <- spp_y[dbt2$numspp]
 
 segments(
-  x0 = dbt$fit_per25,
-  x1 = dbt$fit_per75,
-  y0 = dbt$y_pos,
-  col = adjustcolor(my_colors[dbt$numspp], alpha.f = 1),
+  x0 = dbt2$fit_per25,
+  x1 = dbt2$fit_per75,
+  y0 = dbt2$y_pos,
+  col = adjustcolor(my_colors[dbt2$numspp], alpha.f = 1),
   lwd = 2
 )
 
 points(
-  dbt$fit_mean,
-  dbt$y_pos,
-  pch = 19,
-  col  = adjustcolor(my_colors[dbt$numspp], alpha.f = 1),
+  dbt2$fit_mean,
+  dbt2$y_pos,
+  pch = my_shapes[dbt2$woody],
+  col  = adjustcolor(my_colors[dbt2$numspp], alpha.f = 1),
   # col = "black",
-  cex = 0.8
+  cex = 1
 )
 
 # add vertical line at 0 
@@ -472,43 +556,89 @@ abline(v = 0, lty = 2)
 # Add custom y-axis labels (reverse order if needed)
 axis(
   side = 2,
-  at = dbt$y_pos,
-  labels = dbt$sppname,
+  at = dbt2$y_pos,
+  labels = dbt2$sppname,
   cex.axis = 0.5,
   las = 1
 )
+
 # spp mean
-spp_y <- tapply(dbt_prov$y_pos, dbt_prov$spp, mean)
+spp_y <- tapply(dbtprovspp2$y_pos, dbtprovspp2$spp, mean)
 
-## order species by mean y descending (top of plot first)
-species_legend_order <- names(sort(spp_y, decreasing = TRUE))
-
+woody_legend_order <- c("Y", "N")
+# woody legend
+legend(
+  x = max(dbt2$fit_per95) - 5,
+  y = max(dbt2$y_pos) - 2,
+  legend = woody_legend_order,
+  pch = my_shapes[woody_legend_order],
+  pt.cex = 1.2,
+  title = "Woody (Y/N)",
+  bty = "n"
+)
 dev.off()
-
 
 # === === === === === === === === === === === === === === === === === === === 
 ##### bf_prov ##### 
 # === === === === === === === === === === === === === === === === === === === 
-# get bf_prov
-bfprovvec <- paste("bf_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
-dbf_prov <- subset(dwithprov2, prmID %in% bfprovvec)
-dbf_prov$numprov <- as.character(sub(".*\\[(\\d+)\\]", "\\1", dbf_prov$prmID))
-dbf_prov$numspp <- modeld$numspp[match(dbf_prov$numprov, modeld$numprov)]
+# start with the intercept
+bfmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_withprov)))
 
-# get b
-bfvec <- paste("bf", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
-dbf <- subset(dwithprov2, prmID %in% bfvec)
-dbf$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbf$prmID))
+colnames(bfmtrx) <- xindex$numprov
+colsbf <- cols[grepl("bf", cols) &
+                 !grepl("prov", cols)]
+colsbfprov <- cols[grepl("bf_prov", cols) ]
+
+dbf <- subset(df_withprov, select = colsbf)
+colnames(dbf) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbf))
+
+dbfprov <- subset(df_withprov, select = colsbfprov)
+colnames(dbfprov) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbfprov))
+
+for (i in seq_len(ncol(bfmtrx))) { # i = 30
+  prov_id <- as.integer(colnames(bfmtrx)[i])
+  spp_id <- xindex$numspp[match(prov_id, xindex$numprov)]
+  bfmtrx[, i] <- dbf[, spp_id]
+}
+bfmtrx
+
+# sum spp values in matrix to provenance value
+dbfprovspp <- bfmtrx + dbfprov[, colnames(bfmtrx)]
+
+dbfprovspp2 <- data.frame(
+  prmID = character(ncol(dbfprovspp)),
+  fit_mean  = numeric(ncol(dbfprovspp)),  
+  fit_per5  = NA, 
+  fit_per25 = NA,
+  fit_per75 = NA,
+  fit_per95 = NA
+)
+
+for (i in 1:ncol(dbfprovspp)) { # i = 1
+  dbfprovspp2$prmID[i] <- colnames(dbfprovspp)[i]         
+  dbfprovspp2$fit_mean[i] <- round(mean(dbfprovspp[[i]]),3)  
+  dbfprovspp2$fit_per5[i] <- round(quantile(dbfprovspp[[i]], probs = 0.05), 3)
+  dbfprovspp2$fit_per25[i] <- round(quantile(dbfprovspp[[i]], probs = 0.25), 3)
+  dbfprovspp2$fit_per75[i] <- round(quantile(dbfprovspp[[i]], probs = 0.75), 3)
+  dbfprovspp2$fit_per95[i] <- round(quantile(dbfprovspp[[i]], probs = 0.95), 3)
+}
+
+# get just bf
+bfvec <- paste("bf", "[", 1:length(unique(modeld$numspp)), "]", sep = "")
+dbf2 <- subset(dwithprov2, prmID %in% bfvec)
+dbf2$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbf2$prmID))
+dbf2$sppname <- modeld$genusspecies[match(dbf2$numspp, modeld$numspp)]
 
 # add species name to df
-dbf_prov$sppname <- modeld$genusspecies[match(dbf_prov$numspp, modeld$numspp)]
-dbf$sppname <- modeld$genusspecies[match(dbf$numspp, modeld$numspp)]
+dbfprovspp2$numspp <- modeld$numspp[match(dbfprovspp2$prmID, modeld$numprov)]
+dbfprovspp2$sppname <- modeld$genusspecies[match(dbfprovspp2$prmID, modeld$numprov)]
 
 # add woody
-dbf$woody <- dmain$woody[match(dbf$sppname, dmain$latbi)]
+dbf2$woody <- dmain$woody[match(dbf2$sppname, dmain$latbi)]
+dbfprovspp2$woody <- dmain$woody[match(dbfprovspp2$sppname, dmain$latbi)]
 
 jpeg(
-  filename = "provenance/figures/muPlotProv_bfprov.jpeg",
+  filename = "analyseSeedCues/provenance/figures/muPlotProv_bfprov.jpeg",
   width = 2400,      
   height = 2400,
   res = 300         
@@ -519,32 +649,32 @@ par(mar = c(4, 6, 4, 5))
 gap <- 3
 
 # y positions
-dbf_prov$y_pos <- NA
+dbfprovspp2$y_pos <- NA
 current_y <- 1
 
-species_order <- as.character(1 : max(dbf_prov$numspp))
+species_order <- as.character(1 : max(dbfprovspp2$numspp))
 
-dbf_prov$spp  <- factor(dbf_prov$numspp, levels = species_order)
+dbfprovspp2$spp  <- factor(dbfprovspp2$numspp, levels = species_order)
 
-dbf_prov <- dbf_prov[order(dbf_prov$spp),]
+dbfprovspp2 <- dbfprovspp2[order(dbfprovspp2$spp),]
 
-dbf_prov$y_pos <- seq_len(nrow(dbf_prov))
+dbfprovspp2$y_pos <- seq_len(nrow(dbfprovspp2))
 
 for(sp in species_order){
-  idx <- which(dbf_prov$spp == sp)
+  idx <- which(dbfprovspp2$spp == sp)
   n <- length(idx)
   # assign sequential positions for this species
-  dbf_prov$y_pos[idx] <- current_y:(current_y + n - 1)
+  dbfprovspp2$y_pos[idx] <- current_y:(current_y + n - 1)
   # move cursor down with a gap before next species cluster
   current_y <- current_y + n + gap
 }
 
-dbf_prov$y_pos
+dbfprovspp2$y_pos
 
 # set up empty plot
 plot(NA, NA,
-     xlim = range(c(dbf$fit_per5-0.5, dbf$fit_per95+0.5)),
-     ylim = c(0.5, max(dbf_prov$y_pos) + 0.5),
+     xlim = range(c(dbf2$fit_per5-0.5, dbf2$fit_per95+0.5)),
+     ylim = c(0.5, max(dbfprovspp2$y_pos) + 0.5),
      xlab = "Days to germinate?",
      ylab = "",
      yaxt = "n",
@@ -553,42 +683,42 @@ plot(NA, NA,
 
 # add error bars
 segments(
-  x0 = dbf_prov$fit_per25,
-  x1 = dbf_prov$fit_per75,
-  y0 = dbf_prov$y_pos,
-  col = adjustcolor(my_colors[dbf_prov$spp], alpha.f = 0.7),
+  x0 = dbfprovspp2$fit_per25,
+  x1 = dbfprovspp2$fit_per75,
+  y0 = dbfprovspp2$y_pos,
+  col = adjustcolor(my_colors[dbfprovspp2$spp], alpha.f = 0.7),
   lwd = 1
 )
 
 # Add the points
 points(
-  dbf_prov$fit_mean,
-  dbf_prov$y_pos,
-  cex = 0.8,
-  pch = 19,
-  col = adjustcolor(my_colors[dbf_prov$spp], alpha.f = 1)
+  dbfprovspp2$fit_mean,
+  dbfprovspp2$y_pos,
+  cex = 0.5,
+  pch = 21,
+  col = adjustcolor(my_colors[dbfprovspp2$spp], alpha.f = 1)
 )
 
 # Add species intervals and mean
-dbf$spp <- dbf$spp_name
-spp_y <- tapply(dbf_prov$y_pos, dbf_prov$spp, mean)
-dbf$y_pos <- spp_y[dbf$numspp]
+dbf2$spp <- dbf2$spp_name
+spp_y <- tapply(dbfprovspp2$y_pos, dbfprovspp2$spp, mean)
+dbf2$y_pos <- spp_y[dbf2$numspp]
 
 segments(
-  x0 = dbf$fit_per25,
-  x1 = dbf$fit_per75,
-  y0 = dbf$y_pos,
-  col = adjustcolor(my_colors[dbf$numspp], alpha.f = 1),
+  x0 = dbf2$fit_per25,
+  x1 = dbf2$fit_per75,
+  y0 = dbf2$y_pos,
+  col = adjustcolor(my_colors[dbf2$numspp], alpha.f = 1),
   lwd = 2
 )
 
 points(
-  dbf$fit_mean,
-  dbf$y_pos,
-  pch = 19,
-  col  = adjustcolor(my_colors[dbf$numspp], alpha.f = 1),
+  dbf2$fit_mean,
+  dbf2$y_pos,
+  pch = my_shapes[dbf2$woody],
+  col  = adjustcolor(my_colors[dbf2$numspp], alpha.f = 1),
   # col = "black",
-  cex = 0.8
+  cex = 1
 )
 
 # add vertical line at 0 
@@ -597,43 +727,90 @@ abline(v = 0, lty = 2)
 # Add custom y-axis labels (reverse order if needed)
 axis(
   side = 2,
-  at = dbf$y_pos,
-  labels = dbf$sppname,
+  at = dbf2$y_pos,
+  labels = dbf2$sppname,
   cex.axis = 0.5,
   las = 1
 )
+
 # spp mean
-spp_y <- tapply(dbf_prov$y_pos, dbf_prov$spp, mean)
+spp_y <- tapply(dbfprovspp2$y_pos, dbfprovspp2$spp, mean)
 
-## order species by mean y descending (top of plot first)
-species_legend_order <- names(sort(spp_y, decreasing = TRUE))
-
+woody_legend_order <- c("Y", "N")
+# woody legend
+legend(
+  x = max(dbf2$fit_per95) - 5,
+  y = max(dbf2$y_pos) - 2,
+  legend = woody_legend_order,
+  pch = my_shapes[woody_legend_order],
+  pt.cex = 1.2,
+  title = "Woody (Y/N)",
+  bty = "n"
+)
 dev.off()
 
 
 # === === === === === === === === === === === === === === === === === === === 
 ##### bcs_prov ##### 
 # === === === === === === === === === === === === === === === === === === === 
-# get bcs_prov
-bcsprovvec <- paste("bcs_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
-dbcs_prov <- subset(dwithprov2, prmID %in% bcsprovvec)
-dbcs_prov$numprov <- as.character(sub(".*\\[(\\d+)\\]", "\\1", dbcs_prov$prmID))
-dbcs_prov$numspp <- modeld$numspp[match(dbcs_prov$numprov, modeld$numprov)]
+# start with the intercept
+bcsmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_withprov)))
 
-# get b
-bcsvec <- paste("bcs", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
-dbcs <- subset(dwithprov2, prmID %in% bcsvec)
-dbcs$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbcs$prmID))
+colnames(bcsmtrx) <- xindex$numprov
+colsbcs <- cols[grepl("bcs", cols) &
+                  !grepl("prov", cols)]
+colsbcsprov <- cols[grepl("bcs_prov", cols) ]
+
+dbcs <- subset(df_withprov, select = colsbcs)
+colnames(dbcs) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbcs))
+
+dbcsprov <- subset(df_withprov, select = colsbcsprov)
+colnames(dbcsprov) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbcsprov))
+
+for (i in seq_len(ncol(bcsmtrx))) { # i = 30
+  prov_id <- as.integer(colnames(bcsmtrx)[i])
+  spp_id <- xindex$numspp[match(prov_id, xindex$numprov)]
+  bcsmtrx[, i] <- dbcs[, spp_id]
+}
+bcsmtrx
+
+# sum spp values in matrix to provenance value
+dbcsprovspp <- bcsmtrx + dbcsprov[, colnames(bcsmtrx)]
+
+dbcsprovspp2 <- data.frame(
+  prmID = character(ncol(dbcsprovspp)),
+  fit_mean  = numeric(ncol(dbcsprovspp)),  
+  fit_per5  = NA, 
+  fit_per25 = NA,
+  fit_per75 = NA,
+  fit_per95 = NA
+)
+
+for (i in 1:ncol(dbcsprovspp)) { # i = 1
+  dbcsprovspp2$prmID[i] <- colnames(dbcsprovspp)[i]         
+  dbcsprovspp2$fit_mean[i] <- round(mean(dbcsprovspp[[i]]),3)  
+  dbcsprovspp2$fit_per5[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.05), 3)
+  dbcsprovspp2$fit_per25[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.25), 3)
+  dbcsprovspp2$fit_per75[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.75), 3)
+  dbcsprovspp2$fit_per95[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.95), 3)
+}
+
+# get just bcs
+bcsvec <- paste("bcs", "[", 1:length(unique(modeld$numspp)), "]", sep = "")
+dbcs2 <- subset(dwithprov2, prmID %in% bcsvec)
+dbcs2$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbcs2$prmID))
+dbcs2$sppname <- modeld$genusspecies[match(dbcs2$numspp, modeld$numspp)]
 
 # add species name to df
-dbcs_prov$sppname <- modeld$genusspecies[match(dbcs_prov$numspp, modeld$numspp)]
-dbcs$sppname <- modeld$genusspecies[match(dbcs$numspp, modeld$numspp)]
+dbcsprovspp2$numspp <- modeld$numspp[match(dbcsprovspp2$prmID, modeld$numprov)]
+dbcsprovspp2$sppname <- modeld$genusspecies[match(dbcsprovspp2$prmID, modeld$numprov)]
 
 # add woody
-dbcs$woody <- dmain$woody[match(dbcs$sppname, dmain$latbi)]
+dbcs2$woody <- dmain$woody[match(dbcs2$sppname, dmain$latbi)]
+dbcsprovspp2$woody <- dmain$woody[match(dbcsprovspp2$sppname, dmain$latbi)]
 
 jpeg(
-  filename = "provenance/figures/muPlotProv_bcsprov.jpeg",
+  filename = "analyseSeedCues/provenance/figures/muPlotProv_bcsprov.jpeg",
   width = 2400,      
   height = 2400,
   res = 300         
@@ -644,32 +821,32 @@ par(mar = c(4, 6, 4, 5))
 gap <- 3
 
 # y positions
-dbcs_prov$y_pos <- NA
+dbcsprovspp2$y_pos <- NA
 current_y <- 1
 
-species_order <- as.character(1 : max(dbcs_prov$numspp))
+species_order <- as.character(1 : max(dbcsprovspp2$numspp))
 
-dbcs_prov$spp  <- factor(dbcs_prov$numspp, levels = species_order)
+dbcsprovspp2$spp  <- factor(dbcsprovspp2$numspp, levels = species_order)
 
-dbcs_prov <- dbcs_prov[order(dbcs_prov$spp),]
+dbcsprovspp2 <- dbcsprovspp2[order(dbcsprovspp2$spp),]
 
-dbcs_prov$y_pos <- seq_len(nrow(dbcs_prov))
+dbcsprovspp2$y_pos <- seq_len(nrow(dbcsprovspp2))
 
 for(sp in species_order){
-  idx <- which(dbcs_prov$spp == sp)
+  idx <- which(dbcsprovspp2$spp == sp)
   n <- length(idx)
   # assign sequential positions for this species
-  dbcs_prov$y_pos[idx] <- current_y:(current_y + n - 1)
+  dbcsprovspp2$y_pos[idx] <- current_y:(current_y + n - 1)
   # move cursor down with a gap before next species cluster
   current_y <- current_y + n + gap
 }
 
-dbcs_prov$y_pos
+dbcsprovspp2$y_pos
 
 # set up empty plot
 plot(NA, NA,
-     xlim = range(c(dbcs$fit_per5-0.5, dbcs$fit_per95+0.5)),
-     ylim = c(0.5, max(dbcs_prov$y_pos) + 0.5),
+     xlim = range(c(dbcs2$fit_per5-0.5, dbcs2$fit_per95+0.5)),
+     ylim = c(0.5, max(dbcsprovspp2$y_pos) + 0.5),
      xlab = "Days to germinate?",
      ylab = "",
      yaxt = "n",
@@ -678,42 +855,42 @@ plot(NA, NA,
 
 # add error bars
 segments(
-  x0 = dbcs_prov$fit_per25,
-  x1 = dbcs_prov$fit_per75,
-  y0 = dbcs_prov$y_pos,
-  col = adjustcolor(my_colors[dbcs_prov$spp], alpha.f = 0.7),
+  x0 = dbcsprovspp2$fit_per25,
+  x1 = dbcsprovspp2$fit_per75,
+  y0 = dbcsprovspp2$y_pos,
+  col = adjustcolor(my_colors[dbcsprovspp2$spp], alpha.f = 0.7),
   lwd = 1
 )
 
 # Add the points
 points(
-  dbcs_prov$fit_mean,
-  dbcs_prov$y_pos,
-  cex = 0.8,
-  pch = 19,
-  col = adjustcolor(my_colors[dbcs_prov$spp], alpha.f = 1)
+  dbcsprovspp2$fit_mean,
+  dbcsprovspp2$y_pos,
+  cex = 0.5,
+  pch = 21,
+  col = adjustcolor(my_colors[dbcsprovspp2$spp], alpha.f = 1)
 )
 
 # Add species intervals and mean
-dbcs$spp <- dbcs$spp_name
-spp_y <- tapply(dbcs_prov$y_pos, dbcs_prov$spp, mean)
-dbcs$y_pos <- spp_y[dbcs$numspp]
+dbcs2$spp <- dbcs2$spp_name
+spp_y <- tapply(dbcsprovspp2$y_pos, dbcsprovspp2$spp, mean)
+dbcs2$y_pos <- spp_y[dbcs2$numspp]
 
 segments(
-  x0 = dbcs$fit_per25,
-  x1 = dbcs$fit_per75,
-  y0 = dbcs$y_pos,
-  col = adjustcolor(my_colors[dbcs$numspp], alpha.f = 1),
+  x0 = dbcs2$fit_per25,
+  x1 = dbcs2$fit_per75,
+  y0 = dbcs2$y_pos,
+  col = adjustcolor(my_colors[dbcs2$numspp], alpha.f = 1),
   lwd = 2
 )
 
 points(
-  dbcs$fit_mean,
-  dbcs$y_pos,
-  pch = 19,
-  col  = adjustcolor(my_colors[dbcs$numspp], alpha.f = 1),
+  dbcs2$fit_mean,
+  dbcs2$y_pos,
+  pch = my_shapes[dbcs2$woody],
+  col  = adjustcolor(my_colors[dbcs2$numspp], alpha.f = 1),
   # col = "black",
-  cex = 0.8
+  cex = 1
 )
 
 # add vertical line at 0 
@@ -722,17 +899,26 @@ abline(v = 0, lty = 2)
 # Add custom y-axis labels (reverse order if needed)
 axis(
   side = 2,
-  at = dbcs$y_pos,
-  labels = dbcs$sppname,
+  at = dbcs2$y_pos,
+  labels = dbcs2$sppname,
   cex.axis = 0.5,
   las = 1
 )
+
 # spp mean
-spp_y <- tapply(dbcs_prov$y_pos, dbcs_prov$spp, mean)
+spp_y <- tapply(dbcsprovspp2$y_pos, dbcsprovspp2$spp, mean)
 
-## order species by mean y descending (top of plot first)
-species_legend_order <- names(sort(spp_y, decreasing = TRUE))
-
+woody_legend_order <- c("Y", "N")
+# woody legend
+legend(
+  x = max(dbcs2$fit_per95) - 5,
+  y = max(dbcs2$y_pos) - 2,
+  legend = woody_legend_order,
+  pch = my_shapes[woody_legend_order],
+  pt.cex = 1.2,
+  title = "Woody (Y/N)",
+  bty = "n"
+)
 dev.off()
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -873,5 +1059,5 @@ ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noforcing)) +
   facet_wrap(~prm, scales = "free") +
   labs(x = "with forcing", y = "no forcing", title = "") +
   theme_minimal()
-ggsave("provenance/figures/forcingComparison.jpeg", width = 12, height = 6, 
+ggsave("analyseSeedCues/provenance/figures/forcingComparison.jpeg", width = 12, height = 6, 
        units = "in", dpi = 300)
