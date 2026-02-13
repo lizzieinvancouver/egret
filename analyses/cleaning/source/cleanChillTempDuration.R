@@ -376,6 +376,12 @@ d$chillTemp[which(d$datasetID == "cousins10" & d$response == "76.4")] <- 10
 d$chillTemp[which(d$datasetID == "cousins10" & d$response == "76.9")] <- 10
 d$chillTemp[which(d$datasetID == "cousins10" & d$response == "68.5")] <- 10
 
+
+#cicek08 -- warm strat is not properly entered (hi! It's Lizzie in Feb 2026, listening to U2)
+#see issue 105
+d$chill.temp[which(d$datasetID == "cicek08" & d$treatment == "warm stratification")] <- "20/4"
+d$chill.duration[which(d$datasetID == "cicek08" & d$treatment == "warm stratification")] <- 21
+
 #zadeh15
 d$chillTemp[which(d$datasetID == "zadeh15" & d$chill.duration != 10)] <- 5
 d$chillDuration[which(d$datasetID == "zadeh15" & is.na(d$chill.duration))] <- 0
