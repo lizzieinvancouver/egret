@@ -697,6 +697,33 @@ d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'ch
          d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillTemp'])
 d[d$datasetID %in% c('meyer94', 'meyer95') & d$other.treatment %in% pattern, 'chillDuration'] <- '56 then 28 then 28'
 
+# dehgan84
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "69.33")] <- 4
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "69.33")] <- 42
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "63")] <- 4
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "63")] <- 84
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "2")] <- 30
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "2")] <- 42
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "0" & d$chemical == "GA3")] <- 30
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "0" & d$chemical == "GA3")] <- 84
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "0" & is.na(d$chemical))] <- 30
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "0" & is.na(d$chemical))]  <- 84
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "34.66")] <- "4 then 30"
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "34.66")] <- "42 then 42"
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "14.33")] <- "30 then 4"
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "14.33")] <- "42 then 42"
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "28.66" & d$resp.error == "11.59")] <- "4"
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "28.66"& d$resp.error == "11.59")] <- "84"
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "31" )] <- "4"
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "31")] <- "84"
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "9" )] <- "30"
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "9")] <- "42"
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "0.33" )] <- "30"
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "0.33")] <- "84"
+d$chillTemp[which(d$datasetID == "dehgan84" & d$response == "2.66" )] <- "30"
+d$chillDuration[which(d$datasetID == "dehgan84" & d$response == "2.66")] <- "42"
+
+
 # al-absi10
 d[d$chillTemp %in% '05-Apr' & d$datasetID %in% 'al-absi10', 'chillTemp'] <- 4.5
 

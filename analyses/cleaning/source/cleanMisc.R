@@ -147,6 +147,21 @@ d$figure[which(d$datasetID == "edwards73a" & d$figure == "table 2")] <-
 d$photoperiod[which(d$datasetID == "redondo-gomez11" & d$figure == "Table 1")] <- 
 c(rep("16/8", 5), rep("dark", 5), rep("16/8", 5))
 
+# dehgan84
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "2")] <- "warm stratification"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "0" & d$chemical == "GA3")] <- "warm stratification + chemical"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "34.66")] <- "cold+warm stratification"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "14.33")] <- "warm+cold stratification"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "28.66" & d$resp.error == "2.08")] <- "cold stratification + chemical"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "31")] <- "cold stratification + chemical"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "9")] <- "warm stratification + chemical"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "0.33")] <- "warm stratification + chemical"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "20.66")] <- "cold stratification + chemical"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "28.66"& d$resp.error == "11.59")] <- "cold stratification + chemical"
+d$treatment[which(d$datasetID == "dehgan84" & d$response == "2.66")] <- "warm stratification + chemical"
+
+
+
 if(FALSE){
 ##	
 ## From clean_other.R, Original file called coordinate_cleaning_JS.R
