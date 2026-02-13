@@ -1061,3 +1061,27 @@ ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noforcing)) +
   theme_minimal()
 ggsave("analyseSeedCues/provenance/figures/forcingComparison.jpeg", width = 12, height = 6, 
        units = "in", dpi = 300)
+
+# checks if the ones that diverge had forcing treatments
+dforplot$diff <- dforplot$fit_mean-dforplot$fit_mean_noforcing
+dsub <- subset(dforplot, diff > 2 | diff < -0.2)
+spptocheck <- unique(dsub$spp)
+
+dsub2 <- subset(dmain, latbi %in% spptocheck)
+spptocheck2 <- c(spptocheck, "llex_maximowicziana", "Degenia_velebitica")
+
+smalldsub <- data.frame(
+  datasetIDstudy = unique(dsub2$datasetIDstudy)
+)
+smalldsub$latbi <- dsub2$latbi[match(smalldsub$datasetIDstudy, dsub2$datasetIDstudy)]
+
+lookup <- aggregate(germTempGen ~ datasetIDstudy, 
+                   data = dsub2, 
+                   FUN = function(x) any(!is.na(x)))
+
+smalldsub <- merge(smalldsub, lookup, by = "datasetIDstudy", all.x = TRUE)
+
+# Convert TRUE/FALSE to Y/N
+smalldsub$germTempGen <- ifelse(smalldsub$germTempGen, "Y", "N")
+
+
