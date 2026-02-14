@@ -66,7 +66,11 @@ rm(gymno)
 
 # Process data 
 # (1) - removing rows where we do not have any info on forcing) 
-modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] # we loose 142 rows of data and 4 species here
+nrow(newd)
+modeld <- newd[!is.na(newd$germDuration) & newd$germDuration != 'unknown' ,] 
+nrow(modeld)
+modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] 
+nrow(modeld)
 
 # (2) - separating warm and cold strat. durations
 modeld$warmStratDur <- as.numeric(sapply(1:nrow(modeld), function(i){
@@ -346,7 +350,35 @@ for(c in unique(cs)){
 if (FALSE) {
 # Process data 
 # (1) - removing rows where we do not have any info on forcing) 
-modeld <- newd
+# write.csv(newd, "analyseSeedCues/provenance/bfrDropForcing.csv")
+newd_noforc <- read.csv("analyseSeedCues/provenance/bfrDropForcing.csv")
+
+nrow(newd_noforc)
+modeld_noforc <- newd_noforc[!is.na(newd_noforc$germDuration) & newd_noforc$germDuration != 'unknown' ,] 
+nrow(modeld_noforc)
+
+# no forcing --- removed in decisionRules
+modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] 
+
+nrow(modeld_noforc)- nrow(modeld)
+
+setdiff(modeld_noforc$genusspecies, modeld$genusspecies)
+setdiff(modeld$genusspecies, modeld_noforc$genusspecies)
+
+modeld_noforc_nogymno <- subset(modeld_noforc, !genusspecies %in% c("Juniperus_communis", "Tsuga_heterophylla"))
+
+nrow(modeld_noforc_nogymno) - nrow(modeld)
+
+
+
+
+# forcing 
+nrow(newd[is.na(newd$germTempGen),])
+nrow(modeld[is.na(modeld$germDuration),])
+nrow(modeld)
+modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] 
+nrow(modeld)
+
 
 # (2) - separating warm and cold strat. durations
 modeld$warmStratDur <- as.numeric(sapply(1:nrow(modeld), function(i){
@@ -375,9 +407,8 @@ modeld$genusspecies <- sapply(modeld$genusspecies, function(i) stringr::str_spli
 # (4) - transform response to proportion and germ. covariates to numeric
 modeld$responseValueNum <- as.numeric(modeld$responseValueNum)/100
 modeld$germDuration <- as.numeric(modeld$germDuration)
-modeld$germTempGen <- as.numeric(modeld$germTempGen)
-# temporary - need to check whether odd values (>>> scrapping uncertainty) have been corrected
-# modeld[modeld$responseValueNum < 1.05,] # not needed anymore!
+# modeld$germTempGen <- as.numeric(modeld$germTempGen)
+
 # (5) - transform values a bit above or below 0 (due to scrapping uncertainty)
 modeld$responseValueNum <- ifelse(modeld$responseValueNum > 1, 1, modeld$responseValueNum)
 modeld$responseValueNum <- ifelse(modeld$responseValueNum < 0, 0, modeld$responseValueNum)
@@ -389,6 +420,7 @@ modeld <- na.omit(modeld)
 # Removing potential duplicates
 modeld_wodup <- modeld[!duplicated(modeld),]
 message(paste0("Removing ", nrow(modeld)-nrow(modeld_wodup), ' potential duplicates!'))# 137 rows 
+
 # Other test for duplicate removal
 modeld$responseValueRounded <- round(modeld$responseValueNum,3) # rounded to 3 digits, ie percentage with 1 digits (data scraping uncertainty...?)
 modeld_wodup <- modeld[!duplicated(modeld[c('datasetID', 'study', 'genusspecies', 'responseValueRounded', 'warmStratDur', 'coldStratDur', 'germTempGen', 'germDuration')]),]
@@ -400,15 +432,12 @@ rm(modeld_wodup)
 modeld$warmStratDur <- scale(modeld$warmStratDur)[,1]
 modeld$coldStratDur <- scale(modeld$coldStratDur)[,1]
 modeld$germDuration <- scale(modeld$germDuration)[,1]
-modeld$germTempGen <- scale(modeld$germTempGen)[,1]
 
 # Trim the phylo tree with species present in the dataset
 spp <-  unique(modeld$genusspecies)
 length(spp)
 length(phylo$node.label)
 setdiff(unique(newd$genusspecies), unique(modeld$genusspecies))
-# phylo2 <- ape::keep.tip(phylo, spp) # UNCOMMENT FOR PHYLOGENY
-# cphy <- ape::vcv.phylo(phylo2,corr=TRUE) # UNCOMMENT FOR PHYLOGENY
 
 # Prepare data for Stan
 # modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy))) # UNCOMMENT FOR PHYLOGENY
