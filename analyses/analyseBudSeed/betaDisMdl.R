@@ -38,19 +38,20 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 source("analyseBudSeed/prepEgretUsda.R")
 # removing the rows with incomplete data:
-d <- d[complete.cases(d),] 
+d <- usdaData[complete.cases(usdaData),] 
 
 # 372 spp
-#set.seed(123)
-phylo <- ape::read.tree("output/usdaEgretFull.tre")
+set.seed(123)
+phylo <- ape::read.tree("output/usdaPhylogenyFull.tre")
 #plot(phylo, show.node.label = TRUE)  # shows nodes on the plot
 #nodelabels()  # adds node numbers above nodes
 
 # Get the node to seperate gym and angio
-#For egret only
+#For usda only
 #tipsGym <- getDescendants(phylo, node = 705)
 #For egret+usda
 tipsGym <- getDescendants(phylo, node = 1264)
+
 tipsGym <- tipsGym[tipsGym <= Ntip(phylo)]
 
 # Get only angio

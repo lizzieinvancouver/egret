@@ -23,7 +23,7 @@
 require(dplyr)
 
 # cleaning egret data---will use the same decision rules as used to the abundant 0's model:
-egret <- TRUE
+egret <- FALSE
 if(egret){
 source('studyDesign/decisionRules_abundant0s.R')
 # Process data 
@@ -170,6 +170,6 @@ usdaData$latbi[which(usdaData$latbi == "Aronia_x prunifolia")] <-"Aronia_x_pruni
 
 ## merge
 
-d <- rbind(usdaData, egretData)
+#d <- rbind(usdaData, egretData)
 
 #length(unique(d$latbi)) #568 spp if left incomplete
