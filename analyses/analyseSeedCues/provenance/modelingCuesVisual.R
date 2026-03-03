@@ -7,6 +7,7 @@ library(stringr)
 library(ape)
 library(phytools)
 library(rstan)
+library(ggplot2)
 
 options(mc.cores = parallel::detectCores())
 
@@ -294,11 +295,10 @@ aprovspp2$sppname <- modeld$genusspecies[match(aprovspp2$prmID, modeld$numprov)]
 da2$woody <- dmain$woody[match(da2$sppname, dmain$latbi)]
 aprovspp2$woody <- dmain$woody[match(aprovspp2$sppname, dmain$latbi)]
 
-jpeg(
-  filename = "analyseSeedCues/provenance/figures/muPlotProv_aprov.jpeg",
-  width = 2400,      
-  height = 2400,
-  res = 300         
+pdf(
+  file = "analyseSeedCues/provenance/figures/muPlotProv_aprov.pdf",
+  width = 8,
+  height = 8
 )
 par(mar = c(4, 6, 4, 5))
 
@@ -358,8 +358,8 @@ points(
 
 # Add species intervals and mean
 da2$spp <- da2$spp_name
-spp_y <- tapply(aprovspp2$y_pos, aprovspp2$spp, mean)
-da2$y_pos <- spp_y[da2$numspp]
+spp_y <- tapply(aprovspp2$y_pos, aprovspp2$spp, max)
+da2$y_pos <- spp_y[da2$numspp] +1.5
 
 segments(
   x0 = da2$fit_per25,
@@ -466,11 +466,10 @@ dbtprovspp2$sppname <- modeld$genusspecies[match(dbtprovspp2$prmID, modeld$numpr
 dbt2$woody <- dmain$woody[match(dbt2$sppname, dmain$latbi)]
 dbtprovspp2$woody <- dmain$woody[match(dbtprovspp2$sppname, dmain$latbi)]
 
-jpeg(
-  filename = "analyseSeedCues/provenance/figures/muPlotProv_btprov.jpeg",
-  width = 2400,      
-  height = 2400,
-  res = 300         
+pdf(
+  file = "analyseSeedCues/provenance/figures/muPlotProv_btprov.pdf",
+  width = 8,
+  height = 8
 )
 par(mar = c(4, 6, 4, 5))
 
@@ -530,8 +529,8 @@ points(
 
 # Add species intervals and mean
 dbt2$spp <- dbt2$spp_name
-spp_y <- tapply(dbtprovspp2$y_pos, dbtprovspp2$spp, mean)
-dbt2$y_pos <- spp_y[dbt2$numspp]
+spp_y <- tapply(dbtprovspp2$y_pos, dbtprovspp2$spp, max)
+dbt2$y_pos <- spp_y[dbt2$numspp] + 1.5
 
 segments(
   x0 = dbt2$fit_per25,
@@ -637,11 +636,10 @@ dbfprovspp2$sppname <- modeld$genusspecies[match(dbfprovspp2$prmID, modeld$numpr
 dbf2$woody <- dmain$woody[match(dbf2$sppname, dmain$latbi)]
 dbfprovspp2$woody <- dmain$woody[match(dbfprovspp2$sppname, dmain$latbi)]
 
-jpeg(
-  filename = "analyseSeedCues/provenance/figures/muPlotProv_bfprov.jpeg",
-  width = 2400,      
-  height = 2400,
-  res = 300         
+pdf(
+  file = "analyseSeedCues/provenance/figures/muPlotProv_bfprov.pdf",
+  width = 8,
+  height = 8
 )
 par(mar = c(4, 6, 4, 5))
 
@@ -701,8 +699,8 @@ points(
 
 # Add species intervals and mean
 dbf2$spp <- dbf2$spp_name
-spp_y <- tapply(dbfprovspp2$y_pos, dbfprovspp2$spp, mean)
-dbf2$y_pos <- spp_y[dbf2$numspp]
+spp_y <- tapply(dbfprovspp2$y_pos, dbfprovspp2$spp, max)
+dbf2$y_pos <- spp_y[dbf2$numspp] + 1.5
 
 segments(
   x0 = dbf2$fit_per25,
@@ -809,11 +807,10 @@ dbcsprovspp2$sppname <- modeld$genusspecies[match(dbcsprovspp2$prmID, modeld$num
 dbcs2$woody <- dmain$woody[match(dbcs2$sppname, dmain$latbi)]
 dbcsprovspp2$woody <- dmain$woody[match(dbcsprovspp2$sppname, dmain$latbi)]
 
-jpeg(
-  filename = "analyseSeedCues/provenance/figures/muPlotProv_bcsprov.jpeg",
-  width = 2400,      
-  height = 2400,
-  res = 300         
+pdf(
+  file = "analyseSeedCues/provenance/figures/muPlotProv_bcsprov.pdf",
+  width = 8,
+  height = 8
 )
 par(mar = c(4, 6, 4, 5))
 
@@ -873,8 +870,8 @@ points(
 
 # Add species intervals and mean
 dbcs2$spp <- dbcs2$spp_name
-spp_y <- tapply(dbcsprovspp2$y_pos, dbcsprovspp2$spp, mean)
-dbcs2$y_pos <- spp_y[dbcs2$numspp]
+spp_y <- tapply(dbcsprovspp2$y_pos, dbcsprovspp2$spp, max)
+dbcs2$y_pos <- spp_y[dbcs2$numspp] + 1.5
 
 segments(
   x0 = dbcs2$fit_per25,
@@ -1046,26 +1043,30 @@ dforplot <- merge(dwithprov3, dnoforcing3, by = "prmID")
 dforplot$numspp <- sub(".*\\[(\\d+)\\]", "\\1", dforplot$prmID)
 dforplot$spp <- modeld$genusspecies[match(dforplot$numspp, modeld$numspp)]
 
-# dforplot$forcingperspp <- forcingcounts$forcingLatLonAlt[match(dforplot$spp, forcingcounts$genusspecies)]
-
 # Plot!
 ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noforcing)) +
-  geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75), 
+  geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75),
                 width = 0, linewidth = 0.5, color = "darkgray", alpha=0.7) +
-  geom_errorbar(aes(ymin = fit_per25_noforcing, ymax = fit_per75_noforcing), 
+  geom_errorbar(aes(ymin = fit_per25_noforcing, ymax = fit_per75_noforcing),
                 width = 0, linewidth = 0.5, color = "darkgray", alpha = 0.7) +
   geom_point(aes(color = spp), size = 1.5) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#B40F20", linewidth = 0.8) +
   facet_wrap(~prm, scales = "free") +
+  ggrepel::geom_text_repel(aes(label = spp), size = 2) +
   labs(x = "with forcing", y = "no forcing", title = "") +
   theme_minimal()
-ggsave("analyseSeedCues/provenance/figures/forcingComparison.jpeg", width = 12, height = 6, 
-       units = "in", dpi = 300)
+ggsave("analyseSeedCues/provenance/figures/forcingComparison.pdf", width = 24, height = 12)
 
-# checks if the ones that diverge had forcing treatments
-dforplot$diff <- dforplot$fit_mean-dforplot$fit_mean_noforcing
-dsub <- subset(dforplot, diff > 2 | diff < -0.2)
-spptocheck <- unique(dsub$spp)
+# spp to check
+# a
+asppv <- c("Picea_orientalis", "Achillea_erba-rotta", "Eucalyptus_delegatensis")
+asppd <- subset(dmain, latbi %in% asppv) 
+unique(asppd$latbi)
+
+# a_prov
+aprovsppv <- c("Degenia_velebitica", "Ilex_maximowicziana")
+aprovsppd <- subset(dmain, latbi %in% aprovsppv) 
+unique(aprovsppd$latbi)
 
 dsub2 <- subset(dmain, latbi %in% spptocheck)
 spptocheck2 <- c(spptocheck, "llex_maximowicziana", "Degenia_velebitica")
