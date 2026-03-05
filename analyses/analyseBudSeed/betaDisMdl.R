@@ -38,11 +38,11 @@ if(length(grep("deirdre", getwd()) > 0)) {
 
 source("analyseBudSeed/prepEgretUsda.R")
 # removing the rows with incomplete data:
-d <- usdaData[complete.cases(usdaData),] 
+d <- d[complete.cases(d),] 
 
 # 372 spp
 set.seed(123)
-phylo <- ape::read.tree("output/usdaPhylogenyFull.tre")
+phylo <- ape::read.tree("output/usdaEgretFull.tre")
 #plot(phylo, show.node.label = TRUE)  # shows nodes on the plot
 #nodelabels()  # adds node numbers above nodes
 

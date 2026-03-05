@@ -23,7 +23,7 @@
 require(dplyr)
 
 # cleaning egret data---will use the same decision rules as used to the abundant 0's model:
-egret <- FALSE
+egret <- TRUE
 if(egret){
 source('studyDesign/decisionRules_abundant0s.R')
 # Process data 
