@@ -170,6 +170,6 @@ usdaData$latbi[which(usdaData$latbi == "Aronia_x prunifolia")] <-"Aronia_x_pruni
 
 ## merge
 
-#d <- rbind(usdaData, egretData)
+d <- rbind(usdaData, egretData)
 
 #length(unique(d$latbi)) #568 spp if left incomplete

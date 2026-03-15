@@ -7,9 +7,9 @@ source('mcmc_visualization_tools.R', local=util)
 
 ###for usda only
 ## Angiosperm
-fit <- readRDS("fit_usda_angio.rds")
-summ <- readRDS("summary_usda_angio.rds")
-diagnostics <- readRDS("diagnostics_usda_angio.rds")
+fit <- readRDS("fit_full_angio.rds")
+summ <- readRDS("summary_full_angio.rds")
+diagnostics <- readRDS("diagnostics_full_angio.rds")
 
 samples <- util$extract_expectand_vals(fit)
 
