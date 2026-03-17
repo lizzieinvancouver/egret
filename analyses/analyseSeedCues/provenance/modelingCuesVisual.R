@@ -737,7 +737,7 @@ spp_y <- tapply(dbfprovspp2$y_pos, dbfprovspp2$spp, mean)
 woody_legend_order <- c("Y", "N")
 # woody legend
 legend(
-  x = max(dbf2$fit_per95) - 5,
+  x = max(dbf2$fit_per95) - 0.5,
   y = max(dbf2$y_pos) - 2,
   legend = woody_legend_order,
   pch = my_shapes[woody_legend_order],
@@ -1068,8 +1068,8 @@ aprovsppv <- c("Degenia_velebitica", "Ilex_maximowicziana")
 aprovsppd <- subset(dmain, latbi %in% aprovsppv) 
 unique(aprovsppd$latbi)
 
+spptocheck <- c("llex_maximowicziana", "Degenia_velebitica")
 dsub2 <- subset(dmain, latbi %in% spptocheck)
-spptocheck2 <- c(spptocheck, "llex_maximowicziana", "Degenia_velebitica")
 
 smalldsub <- data.frame(
   datasetIDstudy = unique(dsub2$datasetIDstudy)

@@ -121,6 +121,10 @@ nrow(modeld)-nrow(modeld_wodup) # 14() when responseValue rounded to 3 digits (X
 modeld <- modeld_wodup 
 rm(modeld_wodup)
 
+# how many rows without gymnosperms
+modeldnogymn <- subset(modeld, genusspecies %in% c("Picea_glauca", "Picea_orientalis"))
+nrow(modeld) - nrow(modeldnogymn)
+nrow(modeldnogymn)
 # I hate doing this, but I want to go swimmmmmiiiiing
 modeld$warmStratDur <- scale(modeld$warmStratDur)[,1]
 modeld$coldStratDur <- scale(modeld$coldStratDur)[,1]
