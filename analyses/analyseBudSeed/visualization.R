@@ -1,5 +1,6 @@
 library(bayesplot)
 library(ggplot2)
+library(posterior)
 setwd("C:/PhD/Project/egret/wcvp_Mao/")
 util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
@@ -7,9 +8,9 @@ source('mcmc_visualization_tools.R', local=util)
 
 ###for usda only
 ## Angiosperm
-fit <- readRDS("fit_usda_angio.rds")
-summ <- readRDS("summary_usda_angio.rds")
-diagnostics <- readRDS("diagnostics_usda_angio.rds")
+fit <- readRDS("fit_full_angio.rds")
+summ <- readRDS("summary_full_angio.rds")
+diagnostics <- readRDS("diagnostics_full_angio.rds")
 
 samples <- util$extract_expectand_vals(fit)
 
@@ -22,7 +23,8 @@ util$plot_expectand_pushforward(samples[['sigma_bc']], 50, display_name = "sigma
 util$plot_expectand_pushforward(samples[['sigma_bf']], 50, display_name = "sigma_bf")
 
 
-species_names <- levels(as.factor(d$latbi))
+species_names <- tapply(d$latbi, d$numspp, unique)
+species_names <- as.character(species_names)
 
 # Create a data frame that maps the index to the Name
 lookup <- data.frame(
@@ -347,7 +349,8 @@ util$plot_expectand_pushforward(samples[['bc_z']], 20,
 util$plot_expectand_pushforward(samples[['bf_z']], 20,
                                 display_name = "bf_z")
 
-species_names <- levels(as.factor(d$latbi))
+species_names <- tapply(d$latbi, d$numspp, unique)
+species_names <- as.character(species_names)
 
 # Create a data frame that maps the index to the Name
 lookup <- data.frame(
@@ -373,6 +376,12 @@ df_bc$index <- as.numeric(gsub("\\D", "", df_bc$parameter))
 df_bc$name <- ifelse(is.na(df_bc$index), 
                      "Global Mean", 
                      species_names[df_bc$index])
+df_bc <- df_bc[order(df_bc$name), ]
+df_bc <- rbind(
+  df_bc[df_bc$name == "Global Mean", ],
+  df_bc[df_bc$name != "Global Mean", ]
+)
+df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 
 pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullChillingAngio.pdf", width = 20, height = 50)
 ggplot(df_bc, aes(x = mean, y = name)) +
@@ -407,6 +416,13 @@ df_bf$index <- as.numeric(gsub("\\D", "", df_bf$parameter))
 df_bf$name <- ifelse(is.na(df_bf$index), 
                      "Global Mean", 
                      species_names[df_bf$index])
+df_bf <- df_bf[order(df_bf$name), ]
+df_bf <- rbind(
+  df_bf[df_bf$name == "Global Mean", ],
+  df_bf[df_bf$name != "Global Mean", ]
+)
+df_bf$name <- factor(df_bf$name, levels = rev(df_bf$name))
+
 
 pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullForcingAngio.pdf", width = 20, height = 50)
 ggplot(df_bf, aes(x = mean, y = name)) +
@@ -441,6 +457,13 @@ df_a$index <- as.numeric(gsub("\\D", "", df_a$parameter))
 df_a$name <- ifelse(is.na(df_a$index), 
                      "Global Mean", 
                      species_names[df_a$index])
+df_a <- df_a[order(df_a$name), ]
+df_a <- rbind(
+  df_a[df_a$name == "Global Mean", ],
+  df_a[df_a$name != "Global Mean", ]
+)
+df_a$name <- factor(df_a$name, levels = rev(df_a$name))
+
 
 pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullInterceptAngio.pdf", width = 20, height = 50)
 ggplot(df_a, aes(x = mean, y = name)) +
@@ -522,7 +545,8 @@ util$plot_expectand_pushforward(samples[['bc_z']], 20,
 util$plot_expectand_pushforward(samples[['bf_z']], 20,
                                 display_name = "bf_z")
 
-species_names <- levels(as.factor(d$latbi))
+species_names <- tapply(d$latbi, d$numspp, unique)
+species_names <- as.character(species_names)
 
 # Create a data frame that maps the index to the Name
 lookup <- data.frame(
@@ -548,6 +572,12 @@ df_bc$index <- as.numeric(gsub("\\D", "", df_bc$parameter))
 df_bc$name <- ifelse(is.na(df_bc$index), 
                      "Global Mean", 
                      species_names[df_bc$index])
+df_bc <- df_bc[order(df_bc$name), ]
+df_bc <- rbind(
+  df_bc[df_bc$name == "Global Mean", ],
+  df_bc[df_bc$name != "Global Mean", ]
+)
+df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 
 pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullChillingGymno.pdf", width = 20, height = 50)
 ggplot(df_bc, aes(x = mean, y = name)) +
@@ -582,6 +612,12 @@ df_bf$index <- as.numeric(gsub("\\D", "", df_bf$parameter))
 df_bf$name <- ifelse(is.na(df_bf$index), 
                      "Global Mean", 
                      species_names[df_bf$index])
+df_bf <- df_bf[order(df_bf$name), ]
+df_bf <- rbind(
+  df_bf[df_bf$name == "Global Mean", ],
+  df_bf[df_bf$name != "Global Mean", ]
+)
+df_bf$name <- factor(df_bf$name, levels = rev(df_bf$name))
 
 pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullForcingGymno.pdf", width = 20, height = 50)
 ggplot(df_bf, aes(x = mean, y = name)) +
@@ -616,6 +652,12 @@ df_a$index <- as.numeric(gsub("\\D", "", df_a$parameter))
 df_a$name <- ifelse(is.na(df_a$index), 
                     "Global Mean", 
                     species_names[df_a$index])
+df_a <- df_a[order(df_a$name), ]
+df_a <- rbind(
+  df_a[df_a$name == "Global Mean", ],
+  df_a[df_a$name != "Global Mean", ]
+)
+df_a$name <- factor(df_a$name, levels = rev(df_a$name))
 
 pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullInterceptGymno.pdf", width = 20, height = 50)
 ggplot(df_a, aes(x = mean, y = name)) +
@@ -656,3 +698,46 @@ ggplot(lambda, aes(x = mean, y = parameter)) +
   ) +
   theme_minimal() +
   scale_y_discrete(limits = rev)  
+
+# visualize some sp with both positive and negative estimates
+# Aconitum_chasmanthum
+# Extract array: iterations × chains × parameters
+post_array <- rstan::extract(fit, pars = c("a","bc","bf"))
+
+# For data frame (long format):
+draws <- as.data.frame(rstan::extract(fit, pars = c("a","bc","bf"), permuted = TRUE))
+
+targetSp <- "Aconitum_chasmanthum"
+speciesIdx <- which(species_names == targetSp)
+
+rawData <- d %>%
+  filter(latbi == targetSp)
+
+c_seq <- seq(min(rawData$chillDurationS), max(rawData$chillDurationS), length.out = 100)
+f_fixed <- mean(rawData$tempDayS)
+
+a_j <- draws[[paste0("a.", speciesIdx)]]
+bc_j <- draws[[paste0("bc.", speciesIdx)]]
+bf_j <- draws[[paste0("bf.", speciesIdx)]]
+
+pred_mat <- sapply(c_seq, function(cval) {
+  plogis(a_j + bc_j * cval + bf_j * f_fixed)
+})
+
+pred_df <- data.frame(
+  chill = c_seq,
+  mean = apply(pred_mat, 2, mean),
+  low = apply(pred_mat, 2, quantile, 0.1),
+  high = apply(pred_mat, 2, quantile, 0.9)
+)
+
+ggplot() +
+  geom_ribbon(data = pred_df, aes(x = chill, ymin = low, ymax = high),
+              fill = "blue", alpha = 0.2) +
+  geom_line(data = pred_df, aes(x = chill, y = mean),
+            color = "blue", size = 1) +
+  geom_point(data = rawData, aes(x = chillDurationS, y = responseValueProp),
+             color = "black", alpha = 0.6) +
+  labs(x = "Chilling (standardized)", y = "Predicted response",
+       title = targetSp) +
+  theme_minimal()
