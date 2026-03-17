@@ -22,11 +22,10 @@
 # packages
 require(dplyr)
 
-egret <- FALSE
-if(egret){
 # cleaning egret data---will use the same decision rules as used to the abundant 0's model:
+egret <- TRUE
+if(egret){
 source('studyDesign/decisionRules_abundant0s.R')
-
 # Process data 
 # (1) - removing rows where we do not have any info on forcing) 
 modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] 
@@ -93,7 +92,6 @@ colnames(egretData)[colnames(egretData) == "genusspecies"] <- "latbi"
 colnames(egretData)[colnames(egretData) == "responseVar"] <- "responseVarClean"
 colnames(egretData)[colnames(egretData) == "responseValueNum"] <- "responseValue"
 colnames(egretData)[colnames(egretData) == "coldStratDur"] <- "chillDuration"
-
 }
 #####################################################
 # Prep the usda data using the same cleaning rules 
@@ -171,5 +169,7 @@ usdaData$latbi[which(usdaData$latbi == "Aronia_x prunifolia")] <-"Aronia_x_pruni
 
 
 ## merge
-#d <- rbind(usdaData, egretData)
+
+d <- rbind(usdaData, egretData)
+
 #length(unique(d$latbi)) #568 spp if left incomplete

@@ -161,4 +161,43 @@ model {
   
 }
 
+generated quantities {
+  
+  array[N_prop] real y_prop_gen;
+  array[N_degen] real y_degen_gen;
+  
+  real logisticvariate;
+  
+  if(N_degen>0) {
+    for(i in 1:N_degen) {
+      
+      logisticvariate = ordered_logistic_rng(calc_degen[i] ,cutpoints);
+       
+      if(logisticvariate==1) {
+        y_degen_gen[i] = 0;
+      } else if(logisticvariate==3) {
+        y_degen_gen[i] = 1;
+      } else {
+        y_degen_gen[i] = beta_proportion_rng(inv_logit(calc_degen[i]),kappa);
+      }
+    
+    }
+  }
+  for(i in 1:N_prop) {
+      
+    logisticvariate = ordered_logistic_rng(calc_prop[i] ,cutpoints);
+       
+    if(logisticvariate==1) {
+        y_prop_gen[i] = 0;
+    } else if(logisticvariate==3) {
+        y_prop_gen[i] = 1;
+    } else {
+        y_prop_gen[i] = beta_proportion_rng(inv_logit(calc_prop[i]),kappa);
+    }
+  }
+  
+  
+  
+} 
+  
 
