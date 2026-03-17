@@ -352,7 +352,7 @@ points(
   aprovspp2$fit_mean,
   aprovspp2$y_pos,
   cex = 0.5,
-  pch = 21,
+  pch = my_shapes[aprovspp2$woody],
   col = adjustcolor(my_colors[aprovspp2$spp], alpha.f = 1)
 )
 
@@ -523,7 +523,7 @@ points(
   dbtprovspp2$fit_mean,
   dbtprovspp2$y_pos,
   cex = 0.5,
-  pch = 21,
+  pch = my_shapes[dbtprovspp2$woody],
   col = adjustcolor(my_colors[dbtprovspp2$spp], alpha.f = 1)
 )
 
@@ -693,7 +693,7 @@ points(
   dbfprovspp2$fit_mean,
   dbfprovspp2$y_pos,
   cex = 0.5,
-  pch = 21,
+  pch = my_shapes[dbfprovspp2$woody],
   col = adjustcolor(my_colors[dbfprovspp2$spp], alpha.f = 1)
 )
 
@@ -864,7 +864,7 @@ points(
   dbcsprovspp2$fit_mean,
   dbcsprovspp2$y_pos,
   cex = 0.5,
-  pch = 21,
+  pch = my_shapes[dbcsprovspp2$woody],
   col = adjustcolor(my_colors[dbcsprovspp2$spp], alpha.f = 1)
 )
 
