@@ -426,6 +426,7 @@ setdiff(modeld_noforc2$genusspecies, modeld$genusspecies)
 # modeld_noforc2$numspp = as.integer(factor(modeld_noforc2$genusspecies, levels = colnames(cphy))) # UNCOMMENT FOR PHYLOGENY
 modeld_noforc2$numspp <-  match(modeld_noforc2$genusspecies, unique(modeld_noforc2$genusspecies))# COMMENT FOR PHYLOGENY
 modeld_noforc2$numprov = as.integer(factor(modeld_noforc2$provLatLonAlt))
+
 mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
                  N_prop = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1),
                  
@@ -475,7 +476,45 @@ smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_pro
 fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data,
                         iter = 2024, warmup = 1000,
                         chains = 4)
-
-}
 # saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
+
+# fit with the same data as the model with forcing in it
+mdl.data2 <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
+                 N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
+                 
+                 Nsp =  length(unique(modeld$numspp)),
+                 sp_degen = array(modeld$numspp[modeld$responseValueNum %in% c(0,1)],
+                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 sp_prop = array(modeld$numspp[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 Nprov =  length(unique(modeld$numprov)),
+                 prov_degen = array(modeld$numprov[modeld$responseValueNum %in% c(0,1)],
+                                    dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 prov_prop = array(modeld$numprov[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                   dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 y_degen = array(modeld$responseValueNum[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 y_prop = array(modeld$responseValueNum[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 t_degen = array(modeld$germDuration[modeld$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 t_prop = array(modeld$germDuration[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 cs_degen = array(modeld$coldStratDur[modeld$responseValueNum %in% c(0,1)],
+                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
+                 cs_prop = array(modeld$coldStratDur[modeld$responseValueNum>0 & modeld$responseValueNum<1],
+                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
+                 
+                 Vphy = cphy)
+
+fit_nophy_noforcingRestric <- sampling(smordbeta_nophy, mdl.data2,
+                                iter = 2024, warmup = 1000,
+                                chains = 4)
+# saveRDS(fit_nophy_noforcingRestric, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcingRestr.rds")
+}
+
 }
