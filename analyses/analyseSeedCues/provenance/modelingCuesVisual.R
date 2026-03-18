@@ -163,9 +163,9 @@ dforplot$provperspp <- provcounts$provLatLonAlt[match(dforplot$spp, provcounts$g
 # Plot!
 ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noprov)) +
   geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75), 
-                width = 0, linewidth = 0.5, color = "darkgray", alpha=0.7) +
+                width = 0, linewidth = 0.3, color = "darkgray", alpha=0.7) +
   geom_errorbar(aes(ymin = fit_per25_noprov, ymax = fit_per75_noprov), 
-                width = 0, linewidth = 0.5, color = "darkgray", alpha = 0.7) +
+                width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
   geom_point(aes(color = provperspp), size = 1.5) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#B40F20", linewidth = 0.8) +
   facet_wrap(~prm, scales = "free") +
@@ -185,7 +185,7 @@ ggplot(dsigmas, aes(x = fit_mean, y = prmID)) +
   geom_point(size = 2, alpha = 1) + 
   geom_errorbar(aes(xmin = fit_per5, 
                     xmax = fit_per95), 
-                width = 0, alpha = 1, linewidth = 0.5) +
+                width = 0, alpha = 1, linewidth = 0.3) +
   geom_errorbar(aes(xmin = fit_per25, 
                     xmax = fit_per75), 
                 width = 0, alpha = 1, linewidth = 1) +
@@ -352,7 +352,7 @@ points(
   aprovspp2$fit_mean,
   aprovspp2$y_pos,
   cex = 0.5,
-  pch = 21,
+  pch = my_shapes[aprovspp2$woody],
   col = adjustcolor(my_colors[aprovspp2$spp], alpha.f = 1)
 )
 
@@ -523,7 +523,7 @@ points(
   dbtprovspp2$fit_mean,
   dbtprovspp2$y_pos,
   cex = 0.5,
-  pch = 21,
+  pch = my_shapes[dbtprovspp2$woody],
   col = adjustcolor(my_colors[dbtprovspp2$spp], alpha.f = 1)
 )
 
@@ -693,7 +693,7 @@ points(
   dbfprovspp2$fit_mean,
   dbfprovspp2$y_pos,
   cex = 0.5,
-  pch = 21,
+  pch = my_shapes[dbfprovspp2$woody],
   col = adjustcolor(my_colors[dbfprovspp2$spp], alpha.f = 1)
 )
 
@@ -737,7 +737,7 @@ spp_y <- tapply(dbfprovspp2$y_pos, dbfprovspp2$spp, mean)
 woody_legend_order <- c("Y", "N")
 # woody legend
 legend(
-  x = max(dbf2$fit_per95) - 5,
+  x = max(dbf2$fit_per95) - 0.5,
   y = max(dbf2$y_pos) - 2,
   legend = woody_legend_order,
   pch = my_shapes[woody_legend_order],
@@ -864,7 +864,7 @@ points(
   dbcsprovspp2$fit_mean,
   dbcsprovspp2$y_pos,
   cex = 0.5,
-  pch = 21,
+  pch = my_shapes[dbcsprovspp2$woody],
   col = adjustcolor(my_colors[dbcsprovspp2$spp], alpha.f = 1)
 )
 
@@ -931,6 +931,8 @@ ggplot(pibe) +
 # Compare models with and without forcing ####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 fit_nophy_noforcing <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
+# same data as the model with forcing
+fit_nophy_noforcingrest <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcingRestr.rds")
 # read the object 'fit_nophy' as an RDS file
 fit_withprov <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy.rds")
 
@@ -984,7 +986,7 @@ prmvec <- c(rep("a", each = 27),
 dwithprov3 <- subset(dwithprov2, prmID %in% vec)
 
 # No forcing
-df_noforcing <- as.data.frame(fit_nophy_noforcing)
+df_noforcing <- as.data.frame(fit_nophy_noforcingrest)
 
 colsnoforcing <- colnames(df_noforcing)
 colsnoforcing <- colsnoforcing[!grepl("tilde", colsnoforcing)]
@@ -1037,25 +1039,83 @@ dnoforcing3$prm <- prmvec
 
 dforplot <- merge(dwithprov3, dnoforcing3, by = "prmID")
 
-# Get the number of forcingenances per species
-# count the number of unique forcingenance per species
-
 dforplot$numspp <- sub(".*\\[(\\d+)\\]", "\\1", dforplot$prmID)
 dforplot$spp <- modeld$genusspecies[match(dforplot$numspp, modeld$numspp)]
 
 # Plot!
+# color code by max temperature for each species
+# taking newd because modeld gets scaled in modelingCues
+newd$germTempGen <- as.numeric(newd$germTempGen)
+maxtempgen <- aggregate(germTempGen ~ genusspecies, newd, FUN = max)
+dforplot$tempgenmax <- maxtempgen$germTempGen[match(dforplot$spp,
+                                                    maxtempgen$genusspecies)]
+
 ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noforcing)) +
   geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75),
-                width = 0, linewidth = 0.5, color = "darkgray", alpha=0.7) +
+                width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
   geom_errorbar(aes(ymin = fit_per25_noforcing, ymax = fit_per75_noforcing),
-                width = 0, linewidth = 0.5, color = "darkgray", alpha = 0.7) +
-  geom_point(aes(color = spp), size = 1.5) +
+                width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
+  geom_point(aes(color = tempgenmax), size = 1.5) +
+  scale_color_gradientn(
+    colors = colorRampPalette(c("#9cc184", "#192813"))(100),
+    name = "Max germ.temp"
+  ) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#B40F20", linewidth = 0.8) +
   facet_wrap(~prm, scales = "free") +
-  ggrepel::geom_text_repel(aes(label = spp), size = 2) +
   labs(x = "with forcing", y = "no forcing", title = "") +
   theme_minimal()
-ggsave("analyseSeedCues/provenance/figures/forcingComparison.pdf", width = 24, height = 12)
+ggsave("analyseSeedCues/provenance/figures/forcingComparisonMaxGermtemp.jpeg", 
+       width = 3600, height = 2400, units = "px", dpi = 300)
+
+# number of forcing treatments
+uniquetempgen <- aggregate(germTempGen ~ genusspecies, newd, 
+                           FUN = function(x) length(unique(x)))
+dforplot$tempgenunique <- uniquetempgen$germTempGen[match(dforplot$spp,
+                                                                     uniquetempgen$genusspecies)]
+
+ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noforcing)) +
+  geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75),
+                width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
+  geom_errorbar(aes(ymin = fit_per25_noforcing, ymax = fit_per75_noforcing),
+                width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
+  geom_point(aes(color = tempgenunique), size = 1.5) +
+  scale_color_gradientn(
+    colors = colorRampPalette(c("#00ffff", "#0000b3"))(100),
+    name = "N unique germ.temp treatments"
+  ) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#B40F20", linewidth = 0.8) +
+  facet_wrap(~prm, scales = "free") +
+  labs(x = "with forcing", y = "no forcing", title = "") +
+  theme_minimal()
+ggsave("analyseSeedCues/provenance/figures/forcingComparisonUniqueGermtemp.jpeg", 
+       width = 3600, height = 2400, units = "px", dpi = 300)
+
+# temperature intervals of forcing treatments
+intervaltempgen <- aggregate(germTempGen ~ genusspecies, newd, FUN = unique)
+
+intervaltempgen$temp_range <- sapply(intervaltempgen$germTempGen, function(x) {
+  vals <- unique(x)
+  if (length(vals) == 1) 0 else max(vals) - min(vals)
+})
+dforplot$tempgeninterval <- intervaltempgen$temp_range[match(dforplot$spp,
+                                                            intervaltempgen$genusspecies)]
+
+ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noforcing)) +
+  geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75),
+                width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
+  geom_errorbar(aes(ymin = fit_per25_noforcing, ymax = fit_per75_noforcing),
+                width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
+  geom_point(aes(color = tempgeninterval), size = 1.5) +
+  scale_color_gradientn(
+    colors = colorRampPalette(c("#D9D0D3", "black"))(5),
+    name = "Temperature interval (max - min) \n 0 if only 1"
+  ) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#B40F20", linewidth = 0.8) +
+  facet_wrap(~prm, scales = "free") +
+  labs(x = "with forcing", y = "no forcing", title = "") +
+  theme_minimal()
+ggsave("analyseSeedCues/provenance/figures/forcingComparisonIntervGermtemp.jpeg", 
+       width = 3600, height = 2400, units = "px", dpi = 300)
 
 # spp to check
 # a
@@ -1068,8 +1128,8 @@ aprovsppv <- c("Degenia_velebitica", "Ilex_maximowicziana")
 aprovsppd <- subset(dmain, latbi %in% aprovsppv) 
 unique(aprovsppd$latbi)
 
+spptocheck <- c("llex_maximowicziana", "Degenia_velebitica")
 dsub2 <- subset(dmain, latbi %in% spptocheck)
-spptocheck2 <- c(spptocheck, "llex_maximowicziana", "Degenia_velebitica")
 
 smalldsub <- data.frame(
   datasetIDstudy = unique(dsub2$datasetIDstudy)
