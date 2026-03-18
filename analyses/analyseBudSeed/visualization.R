@@ -701,10 +701,8 @@ ggplot(lambda, aes(x = mean, y = parameter)) +
 
 # visualize some sp with both positive and negative estimates
 # Aconitum_chasmanthum
-# Extract array: iterations × chains × parameters
-post_array <- rstan::extract(fit, pars = c("a","bc","bf"))
 
-# For data frame (long format):
+post_array <- rstan::extract(fit, pars = c("a","bc","bf"))
 draws <- as.data.frame(rstan::extract(fit, pars = c("a","bc","bf"), permuted = TRUE))
 
 targetSp <- "Aconitum_chasmanthum"
@@ -738,6 +736,41 @@ ggplot() +
             color = "blue", size = 1) +
   geom_point(data = rawData, aes(x = chillDurationS, y = responseValueProp),
              color = "black", alpha = 0.6) +
-  labs(x = "Chilling (standardized)", y = "Predicted response",
+  labs(x = "Chilling (scaled)", y = "Response value/100",
        title = targetSp) +
   theme_minimal()
+
+targetSp <- "Aconitum_chasmanthum"
+
+speciesIdx <- unique(d$numspp[d$latbi == targetSp])
+
+# indices for this species
+idx_prop <- which(mdl.dataUSDA$sp_prop == speciesIdx)
+
+y_prop_obs <- mdl.dataUSDA$y_prop
+y_prop_gen <- rstan::extract(fit)$y_prop_gen
+y_degen_obs <- mdl.dataUSDA$y_degen
+y_degen_gen <- rstan::extract(fit)$y_degen_gen
+y_prop_hat <- apply(y_prop_gen, 2, mean)
+y_degen_hat <- apply(y_degen_gen, 2, mean)
+# observed
+y_obs <- y_prop_obs[idx_prop]
+
+# predictions
+y_hat <- y_prop_hat[idx_prop]
+
+# covariate
+c_vals <- mdl.dataUSDA$c_prop[idx_prop]
+
+plot_df <- data.frame(
+  chill = c_vals,
+  observed = y_obs,
+  predicted = y_hat
+)
+ggplot(plot_df, aes(x = chill)) +
+  geom_point(aes(y = observed), color = "black") +
+  geom_point(aes(y = predicted), color = "blue") +
+  labs(title = paste(targetSp),
+       y = "Response value/100",
+       x = "Chilling (scaled)")+theme_minimal()
+
