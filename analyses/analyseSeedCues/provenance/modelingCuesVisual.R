@@ -171,7 +171,8 @@ ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noprov)) +
   facet_wrap(~prm, scales = "free") +
   labs(x = "with prov", y = "no prov", title = "") +
   theme_minimal()
-
+ggsave("analyseSeedCues/provenance/figures/11PlotProvNoProv.jpeg", width = 8, height = 6, 
+       units = "in", dpi = 300)
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Check sigmas #### 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
