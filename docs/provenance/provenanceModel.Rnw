@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+
+
+\begin{document}
+% \SweaveOpts{concordance=TRUE}
+
+\title{Provenance model methods}
+\author{Christophe}
+\date{\today}
+\maketitle
+
+
+<<setup, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE>>=
+library(xtable)
+source("/Users/christophe_rouleau-desrochers/github/egret/analyses/analyseSeedCues/provenance/modelingCues.R")
+
+@
+
+% <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+\section{Provenance model with forcing}
+% <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+We fitted a provenance model by selected each study that had a minimum of two provenances per species. 
+\begin{enumerate}
+\item We fitted the provenance model with forcing and without forcing. We
+\item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ \Sexpr{nrow(modeld)}) and the full dataset ($n =$ \Sexpr{nrow(modeld_noforc2)}). The germination temperature condition does not seem to explain the variation between the no-forcing and forcing models. Neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}).
+\item We fitted the model on the most restricted dataset with and without provenance, which did not change the estimates (Figure \ref{fig: provNoProv})
+\end{enumerate}
+
+% Max temp
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonMaxGermtemp.jpeg}
+\caption{}
+\label{fig:maxGermTemp}
+\end{figure}
+
+% Number of unique germination treatments
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonUniqueGermtemp.jpeg}
+\caption{}
+\label{fig:uniqueGermTemp}
+\end{figure}
+
+% Germ temp interval
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonIntervGermtemp.jpeg}
+\caption{}
+\label{fig:germTempInterval}
+\end{figure}
+
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/11PlotProvNoProv.jpeg}
+\caption{}
+\label{fig:provNoProv}
+\end{figure}
+
+%-------------------------------------------------------------------------------
+\subsection{other}
+%-------------------------------------------------------------------------------
+
+
+
+
+\end{document}
