@@ -167,6 +167,7 @@ usdaData <- usdaData %>%
 
 usdaData$latbi[which(usdaData$latbi == "Aronia_x prunifolia")] <-"Aronia_x_prunifolia"
 
+usdaData$responseValue <- usdaData$responseValue/100
 
 ## merge
 

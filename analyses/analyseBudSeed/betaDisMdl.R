@@ -87,7 +87,7 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 # Prepare data for Stan - chilling hours between -20 and 10
 
 d$numspp = as.integer(factor(d$latbi, levels = colnames(cphy)))
-d$responseValueProp <- d$responseValue/100
+#d$responseValueProp <- d$responseValue/100
 d$chillDurationS <- scale(d$chillDuration)
 d$tempDayS <- scale(d$germTempGen)
 
@@ -157,7 +157,7 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 # Prepare data for Stan - chilling hours between -20 and 10
 
 d$numspp = as.integer(factor(d$latbi, levels = colnames(cphy)))
-d$responseValueProp <- d$responseValue/100
+#d$responseValueProp <- d$responseValue/100
 d$chillDurationS <- scale(d$chillDuration)
 d$tempDayS <- scale(d$germTempGen)
 
