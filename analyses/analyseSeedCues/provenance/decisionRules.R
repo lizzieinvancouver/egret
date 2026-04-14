@@ -114,7 +114,7 @@ ids <- unique(filteredd[c('datasetID', 'study', 'genusspecies')])
 write.csv(ids, file.path('studyDesign', 'ids_for_ken', 'ids_after_step3.csv'))
 
 # Fourth veto: no info on germination temperature
-filteredd <- filteredd[!(filteredd$germTempGen %in% c(NA, 'NA')),]
+# filteredd <- filteredd[!(filteredd$germTempGen %in% c(NA, 'NA')),]
 
 # Here I'm discarding studies where I knopw the germTempGen could not be corrected earlier (~ 300 rows, who cares?!)
 for(i in 1:nrow(idsnotcorrected)){

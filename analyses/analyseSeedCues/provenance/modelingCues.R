@@ -44,36 +44,9 @@ source('analyseSeedCues/provenance/decisionRules.R')
 
 runmodels <- FALSE
 
-# Prepare phylogeny
-phylo <- ape::read.tree("output/egretPhylogenyFull.tre")
-phylo$tip.label <- sapply(phylo$tip.label, function(i) paste0(unlist(stringr::str_split(i, '_'))[1:2], collapse = '_')) # remove subspecies or whatever
-names(phylo$tip.label) <- unname(phylo$tip.label)
-namesphy <- phylo$tip.label
-phylo <- phytools::force.ultrametric(phylo, method="extend")
-phylo$node.label <- seq(1,length(phylo$node.label),1)
-ape::is.ultrametric(phylo)
-# plot(phylo, cex=0.7))
-
-gymno <- c('Pseudotsuga_menziesii', 'Pinus_roxburghii','Pinus_sylvestris','Pinus_halepensis',
-           'Pinus_brutia','Pinus_canariensis','Pinus_bungeana','Pinus_koraiensis','Pinus_wallichiana',
-           'Pinus_strobus','Picea_orientalis','Picea_abies','Picea_sitchensis','Picea_glauca',
-           'Abies_amabilis','Abies_procera','Abies_grandis','Abies_nordmanniana','Abies_chensiensis',
-           'Abies_lasiocarpa','Tsuga_heterophylla','Tsuga_mertensiana','Ginkgo_biloba', 'Juniperus_oxycedrus',
-           'Juniperus_communis')
-
-# which gymnosperms we currently have in the provenance dataset?
-unique(newd$genusspecies[newd$genusspecies %in% gymno])
-
-phylo <- ape::drop.tip(phylo, gymno) # exclude gymnosperms
-# plot(phylo, cex=0.7)
-cphy <- ape::vcv.phylo(phylo,corr=TRUE)
-# rm(gymno)
-
 # Process data 
 # (1) - removing rows where we do not have any info on forcing) 
 modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] 
-unique(newd$genusspecies[newd$genusspecies %in% gymno])
-unique(modeld$genusspecies[modeld$genusspecies %in% gymno])
 
 # (2) - separating warm and cold strat. durations
 modeld$warmStratDur <- as.numeric(sapply(1:nrow(modeld), function(i){
@@ -121,7 +94,9 @@ nrow(modeld)-nrow(modeld_wodup) # 14() when responseValue rounded to 3 digits (X
 modeld <- modeld_wodup 
 rm(modeld_wodup)
 
-# how many rows without gymnosperms
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+##### How many rows with gymnosperms #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 modeldnogymn <- subset(modeld, genusspecies %in% c("Picea_glauca", "Picea_orientalis"))
 nrow(modeld) - nrow(modeldnogymn)
 nrow(modeldnogymn)
@@ -131,15 +106,8 @@ modeld$coldStratDur <- scale(modeld$coldStratDur)[,1]
 modeld$germDuration <- scale(modeld$germDuration)[,1]
 modeld$germTempGen <- scale(modeld$germTempGen)[,1]
 
-# Trim the phylo tree with species present in the dataset
-spp <-  unique(modeld$genusspecies)
-
-# phylo2 <- ape::keep.tip(phylo, spp) # UNCOMMENT FOR PHYLOGENY
-# cphy <- ape::vcv.phylo(phylo2,corr=TRUE) # UNCOMMENT FOR PHYLOGENY
-
 # Prepare data for Stan
-# modeld$numspp = as.integer(factor(modeld$genusspecies, levels = colnames(cphy))) # UNCOMMENT FOR PHYLOGENY
-modeld$numspp <-  match(modeld$genusspecies, unique(modeld$genusspecies))# COMMENT FOR PHYLOGENY
+modeld$numspp <-  match(modeld$genusspecies, unique(modeld$genusspecies))
 modeld$numprov = as.integer(factor(modeld$provLatLonAlt))
 mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
@@ -174,9 +142,7 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  cs_degen = array(modeld$coldStratDur[modeld$responseValueNum %in% c(0,1)],
                                   dim = sum(modeld$responseValueNum%in% c(0,1))),
                  cs_prop = array(modeld$coldStratDur[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
-                 Vphy = cphy)
+                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)))
 
 # Posterior quantification
 # smordbeta <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance.stan")
@@ -343,14 +309,10 @@ for(c in unique(cs)){
 }
 }
 
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Drop forcing ####
-if (TRUE) {
-# Process data 
-# (1) - removing rows where we do not have any info on forcing) 
-# write.csv(newd, "analyseSeedCues/provenance/bfrDropForcing.csv")
-newd_noforc <- read.csv("analyseSeedCues/provenance/bfrDropForcing.csv")
-
-modeld_noforc <- newd_noforc
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+modeld_noforc <- newd
 
 nrow(modeld_noforc)
 nrow(modeld_noforc)- nrow(modeld)
@@ -398,7 +360,7 @@ modeld_noforc2 <- na.omit(modeld_noforc)
 
 # Removing potential duplicates
 modeld_noforc_wodup <- modeld_noforc2[!duplicated(modeld_noforc2),]
-message(paste0("Removing ", nrow(modeld_noforc2)-nrow(modeld_noforc_wodup), ' potential duplicates!'))# 137 rows 
+message(paste0("Removing ", nrow(modeld_noforc2)-nrow(modeld_noforc_wodup), ' potential duplicates!')) 
 
 # Other test for duplicate removal
 modeld_noforc2$responseValueRounded <- round(modeld_noforc2$responseValueNum,3) # rounded to 3 digits, ie percentage with 1 digits (data scraping uncertainty...?)
@@ -410,21 +372,33 @@ rm(modeld_noforc_wodup)
 # I hate doing this, but I want to go swimmmmmiiiiing
 modeld_noforc2$warmStratDur <- scale(modeld_noforc2$warmStratDur)[,1]
 modeld_noforc2$coldStratDur <- scale(modeld_noforc2$coldStratDur)[,1]
+modeld_noforc2$germDuration <- as.numeric(modeld_noforc2$germDuration)
 modeld_noforc2$germDuration <- scale(modeld_noforc2$germDuration)[,1]
 
-# Trim the phylo tree with species present in the dataset
-spp <-  unique(modeld_noforc2$genusspecies)
-length(spp)
-length(phylo$node.label)
-setdiff(unique(newd$genusspecies), unique(modeld_noforc2$genusspecies))
 
 # check which species I'm getting back when I don't drop forcing
 nrow(modeld_noforc2) - nrow(modeld)
 setdiff(modeld_noforc2$genusspecies, modeld$genusspecies)
 
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# some checks to figure out where species get dropped out
+length(unique(newd$genusspecies)) # 4 species lost when phylogeny gets dropped out because of forcing
+length(unique(modeld_noforc2$genusspecies))
+
+# which species
+setdiff(unique(newd$genusspecies), unique(modeld_noforc2$genusspecies))
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# Fit models ####
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+if (runmodels) {
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---  
+##### without forcing full data #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Prepare data for Stan
-# modeld_noforc2$numspp = as.integer(factor(modeld_noforc2$genusspecies, levels = colnames(cphy))) # UNCOMMENT FOR PHYLOGENY
-modeld_noforc2$numspp <-  match(modeld_noforc2$genusspecies, unique(modeld_noforc2$genusspecies))# COMMENT FOR PHYLOGENY
+modeld_noforc2$numspp <-  match(modeld_noforc2$genusspecies, unique(modeld_noforc2$genusspecies))
 modeld_noforc2$numprov = as.integer(factor(modeld_noforc2$provLatLonAlt))
 
 mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
@@ -451,34 +425,20 @@ mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
                                  dim = sum(modeld_noforc2$responseValueNum%in% c(0,1))),
                  t_prop = array(modeld_noforc2$germDuration[modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1],
                                 dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)),
-
+                 
                  cs_degen = array(modeld_noforc2$coldStratDur[modeld_noforc2$responseValueNum %in% c(0,1)],
                                   dim = sum(modeld_noforc2$responseValueNum%in% c(0,1))),
                  cs_prop = array(modeld_noforc2$coldStratDur[modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1],
-                                 dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)),
-                 
-                 Vphy = cphy)
-
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-# some checks to figure out where species get dropped out
-length(unique(newd$genusspecies)) # 4 species lost when phylogeny gets dropped out because of forcing
-length(unique(modeld_noforc2$genusspecies))
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-
-# Posterior quantification
-# smordbeta <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance.stan")
-# fit <- sampling(smordbeta, mdl.data,
-#                 iter = 2024, warmup = 1000,
-#                 chains = 4)
-if (runmodels) {
-  
+                                 dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)))
 smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo_noforcing.stan")
 fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data,
                         iter = 2024, warmup = 1000,
                         chains = 4)
 # saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
 
-# fit with the same data as the model with forcing in it
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---  
+##### without forcing restricted data #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 mdl.data2 <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
                  
@@ -507,9 +467,7 @@ mdl.data2 <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  cs_degen = array(modeld$coldStratDur[modeld$responseValueNum %in% c(0,1)],
                                   dim = sum(modeld$responseValueNum%in% c(0,1))),
                  cs_prop = array(modeld$coldStratDur[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
-                 Vphy = cphy)
+                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)))
 
 fit_nophy_noforcingRestric <- sampling(smordbeta_nophy, mdl.data2,
                                 iter = 2024, warmup = 1000,
@@ -517,4 +475,4 @@ fit_nophy_noforcingRestric <- sampling(smordbeta_nophy, mdl.data2,
 # saveRDS(fit_nophy_noforcingRestric, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcingRestr.rds")
 }
 
-}
+
