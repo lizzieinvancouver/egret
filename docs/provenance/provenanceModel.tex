@@ -56,7 +56,7 @@
 \begin{document}
 % \SweaveOpts{concordance=TRUE}
 
-\title{Provenance model methods}
+\title{Provenance model methods and results outline}
 \author{Christophe}
 \date{\today}
 \maketitle
@@ -65,46 +65,81 @@
 
 
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-\section{Provenance model with forcing}
+\section{Methods}
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-We fitted a provenance model by selected each study that had a minimum of two provenances per species. 
 \begin{enumerate}
-\item We fitted the provenance model with forcing and without forcing. We
-\item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ 1116) and the full dataset ($n =$ 1219). The germination temperature condition does not seem to explain the variation between the no-forcing and forcing models. Neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}).
-\item We fitted the model on the most restricted dataset with and without provenance, which did not change the estimates (Figure \ref{fig: provNoProv})
+\item We selected all the datasetIDstudy that had more than one provenance per species ($n = $ 5959)
+\item After Victor's decision rules and cleaning the dataset we end up with 31 single species from 23 studies.
+\end{enumerate}
+% <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+\section{Results}
+% <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+We fitted a provenance model for each species with more than one provenance.
+
+%-------------------------------------------------------------------------------
+\subsection{Forcing or no forcing?}
+%-------------------------------------------------------------------------------
+\begin{enumerate}
+\item We fitted the provenance model with forcing and without forcing. 
+\item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ 1116) and the full dataset ($n =$ 1219). 
+\item The germination temperature conditions does not seem to explain the variation between the no-forcing and forcing models. Neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}) between the restricted vs full dataset.
+\item We fitted the model on the most restricted dataset, with and without provenance, which did not change the estimates (Figure \ref{fig:provNoProv})
 \end{enumerate}
 
 % Max temp
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonMaxGermtemp.jpeg}
-\caption{}
+\caption{Datasets with forcing vs no forcing color coded by max temperature}
 \label{fig:maxGermTemp}
 \end{figure}
 
 % Number of unique germination treatments
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonUniqueGermtemp.jpeg}
-\caption{}
+\caption{Datasets with forcing vs no forcing color coded by number of unique germ temp treatments}
 \label{fig:uniqueGermTemp}
 \end{figure}
 
 % Germ temp interval
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonIntervGermtemp.jpeg}
-\caption{}
+\caption{Datasets with forcing vs no forcing color coded by the temperature interval in the study}
 \label{fig:germTempInterval}
 \end{figure}
 
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/11PlotProvNoProv.jpeg}
-\caption{}
+\caption{1:1 line plot to compare the model that includes provenance and excludes provenance.}
 \label{fig:provNoProv}
 \end{figure}
 
 %-------------------------------------------------------------------------------
-\subsection{other}
+\subsection{Model estimates}
 %-------------------------------------------------------------------------------
+The below are for the model that includes forcing. We need to change the x axis.
+\begin{enumerate}
+\item Forcing had little effects on species, but increased germination for Maackia taiwanensis and Betula utilis and Picea glauca (Figure \ref{fig:muForcing}).
+\item Chilling increased germination for most species with huge variations. Four species probability to germinate decreased in response to chilling (Figure \ref{fig:muChilling}).
+\item Time had a similar trend to forcing, with some more species increasing germination in response to time. Most of them didn't shift (Figure \ref{fig:muTime}).
+\end{enumerate}
 
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/muPlotProv_bcsprov.pdf}
+\caption{Chilling slope parameters}
+\label{fig:muChilling}
+\end{figure}
+
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/muPlotProv_bfprov.pdf}
+\caption{Forcing slope parameters}
+\label{fig:muForcing}
+\end{figure}
+
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/muPlotProv_btprov.pdf}
+\caption{Time slope parameters}
+\label{fig:muTime}
+\end{figure}
 
 
 
