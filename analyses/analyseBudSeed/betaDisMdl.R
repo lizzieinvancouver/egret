@@ -87,33 +87,32 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 # Prepare data for Stan - chilling hours between -20 and 10
 
 d$numspp = as.integer(factor(d$latbi, levels = colnames(cphy)))
-#d$responseValueProp <- d$responseValue/100
 d$chillDurationS <- scale(d$chillDuration)
 d$tempDayS <- scale(d$germTempGen)
 
-mdl.dataUSDA <- list(N_degen = sum(d$responseValueProp %in% c(0,1)),
-                 N_prop = sum(d$responseValueProp>0 & d$responseValueProp<1),
+mdl.dataUSDA <- list(N_degen = sum(d$responseValue %in% c(0,1)),
+                 N_prop = sum(d$responseValue>0 & d$responseValue<1),
                  
                  Nsp =  length(unique(d$latbi)),
-                 sp_degen = array(d$numspp[d$responseValueProp %in% c(0,1)],
-                                  dim = sum(d$responseValueProp%in% c(0,1))),
-                 sp_prop = array(d$numspp[d$responseValueProp>0 & d$responseValueProp<1],
-                                 dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
+                 sp_degen = array(d$numspp[d$responseValue %in% c(0,1)],
+                                  dim = sum(d$responseValue%in% c(0,1))),
+                 sp_prop = array(d$numspp[d$responseValue>0 & d$responseValue<1],
+                                 dim = sum(d$responseValue>0 & d$responseValue<1)),
                  
-                 y_degen = array(d$responseValueProp[d$responseValueProp %in% c(0,1)],
-                                 dim = sum(d$responseValueProp%in% c(0,1))),
-                 y_prop = array(d$responseValueProp[d$responseValueProp>0 & d$responseValueProp<1],
-                                dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
+                 y_degen = array(d$responseValue[d$responseValue %in% c(0,1)],
+                                 dim = sum(d$responseValue%in% c(0,1))),
+                 y_prop = array(d$responseValue[d$responseValue>0 & d$responseValue<1],
+                                dim = sum(d$responseValue>0 & d$responseValue<1)),
                  
-                 c_degen = array(d$chillDurationS[d$responseValueProp %in% c(0,1)],
-                                 dim = sum(d$responseValueProp%in% c(0,1))),
-                 c_prop = array(d$chillDurationS[d$responseValueProp>0 & d$responseValueProp<1],
-                                dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
+                 c_degen = array(d$chillDurationS[d$responseValue %in% c(0,1)],
+                                 dim = sum(d$responseValue%in% c(0,1))),
+                 c_prop = array(d$chillDurationS[d$responseValue>0 & d$responseValue<1],
+                                dim = sum(d$responseValue>0 & d$responseValue<1)),
                  
-                 f_degen = array(d$tempDayS[d$responseValueProp %in% c(0,1)],
-                                 dim = sum(d$responseValueProp%in% c(0,1))),
-                 f_prop = array(d$tempDayS[d$responseValueProp>0 & d$responseValueProp<1],
-                                dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
+                 f_degen = array(d$tempDayS[d$responseValue %in% c(0,1)],
+                                 dim = sum(d$responseValue%in% c(0,1))),
+                 f_prop = array(d$tempDayS[d$responseValue>0 & d$responseValue<1],
+                                dim = sum(d$responseValue>0 & d$responseValue<1)),
                  Vphy = cphy)
 
 # Compile and run model
@@ -157,33 +156,33 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 # Prepare data for Stan - chilling hours between -20 and 10
 
 d$numspp = as.integer(factor(d$latbi, levels = colnames(cphy)))
-#d$responseValueProp <- d$responseValue/100
+
 d$chillDurationS <- scale(d$chillDuration)
 d$tempDayS <- scale(d$germTempGen)
 
-mdl.dataUSDA <- list(N_degen = sum(d$responseValueProp %in% c(0,1)),
-                     N_prop = sum(d$responseValueProp>0 & d$responseValueProp<1),
+mdl.dataUSDA <- list(N_degen = sum(d$responseValue %in% c(0,1)),
+                     N_prop = sum(d$responseValue>0 & d$responseValue<1),
                      
                      Nsp =  length(unique(d$latbi)),
-                     sp_degen = array(d$numspp[d$responseValueProp %in% c(0,1)],
-                                      dim = sum(d$responseValueProp%in% c(0,1))),
-                     sp_prop = array(d$numspp[d$responseValueProp>0 & d$responseValueProp<1],
-                                     dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
+                     sp_degen = array(d$numspp[d$responseValue %in% c(0,1)],
+                                      dim = sum(d$responseValue%in% c(0,1))),
+                     sp_prop = array(d$numspp[d$responseValue>0 & d$responseValue<1],
+                                     dim = sum(d$responseValue>0 & d$responseValue<1)),
                      
-                     y_degen = array(d$responseValueProp[d$responseValueProp %in% c(0,1)],
-                                     dim = sum(d$responseValueProp%in% c(0,1))),
-                     y_prop = array(d$responseValueProp[d$responseValueProp>0 & d$responseValueProp<1],
-                                    dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
+                     y_degen = array(d$responseValue[d$responseValue %in% c(0,1)],
+                                     dim = sum(d$responseValue%in% c(0,1))),
+                     y_prop = array(d$responseValue[d$responseValue>0 & d$responseValue<1],
+                                    dim = sum(d$responseValue>0 & d$responseValue<1)),
                      
-                     c_degen = array(d$chillDurationS[d$responseValueProp %in% c(0,1)],
-                                     dim = sum(d$responseValueProp%in% c(0,1))),
-                     c_prop = array(d$chillDurationS[d$responseValueProp>0 & d$responseValueProp<1],
-                                    dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
+                     c_degen = array(d$chillDurationS[d$responseValue %in% c(0,1)],
+                                     dim = sum(d$responseValue%in% c(0,1))),
+                     c_prop = array(d$chillDurationS[d$responseValue>0 & d$responseValue<1],
+                                    dim = sum(d$responseValue>0 & d$responseValue<1)),
                      
-                     f_degen = array(d$tempDayS[d$responseValueProp %in% c(0,1)],
-                                     dim = sum(d$responseValueProp%in% c(0,1))),
-                     f_prop = array(d$tempDayS[d$responseValueProp>0 & d$responseValueProp<1],
-                                    dim = sum(d$responseValueProp>0 & d$responseValueProp<1)),
+                     f_degen = array(d$tempDayS[d$responseValue %in% c(0,1)],
+                                     dim = sum(d$responseValue%in% c(0,1))),
+                     f_prop = array(d$tempDayS[d$responseValue>0 & d$responseValue<1],
+                                    dim = sum(d$responseValue>0 & d$responseValue<1)),
                      Vphy = cphy)
 
 # Compile and run model
@@ -214,7 +213,7 @@ f_names <- sapply(1:mdl.dataUSDA$N_degen,
                   function(n) paste0('y_degen_gen[', n, ']'))
 d$y_gen_mean <- NA
 
-d[d$responseValueProp %in% c(0,1), 'y_gen_mean'] <-
+d[d$responseValue %in% c(0,1), 'y_gen_mean'] <-
   sapply(f_names, function(n){
     mean(rowMeans(samples[[n]]))})
 
@@ -230,8 +229,8 @@ nColor <- 100
 colors = paletteer_c("viridis::inferno", n=nColor)
 rank <- as.factor( as.numeric( cut(ppcheck$numspp, nColor)))
 
-ppcheck <- d[c('numspp', 'responseValueProp', 'y_gen_mean', 'tempDayS', 'chillDurationS')]
-plot(ppcheck$responseValueProp ~ ppcheck$y_gen_mean, 
+ppcheck <- d[c('numspp', 'responseValue', 'y_gen_mean', 'tempDayS', 'chillDurationS')]
+plot(ppcheck$responseValue ~ ppcheck$y_gen_mean, 
      col = colors[ rank ], cex = 0.5)
 abline(a=0, b=1, col = 'white', lwd = 4)
 abline(a=0, b=1, col = 'black', lwd = 1)
