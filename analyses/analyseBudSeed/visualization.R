@@ -1,6 +1,7 @@
 library(bayesplot)
 library(ggplot2)
 library(posterior)
+library(gridExtra)
 
 rm(list=ls()) 
 options(stringsAsFactors = FALSE)
@@ -271,14 +272,20 @@ ggplot(lambda, aes(x = mean, y = parameter)) +
 dev.off()
 
 # visualize with raw data and predicted values from model for angio
-
 y_prop_hat  <- colMeans(rstan::extract(fit)$y_prop_gen)
 y_degen_hat <- colMeans(rstan::extract(fit)$y_degen_gen)
+y_prop_hat_10 <- apply(rstan::extract(fit)$y_prop_gen, 2, quantile, probs = 0.1, na.rm = TRUE)
+y_prop_hat_90 <- apply(rstan::extract(fit)$y_prop_gen, 2, quantile, probs = 0.9, na.rm = TRUE)
+y_degen_hat_10 <- apply(rstan::extract(fit)$y_degen_gen, 2, quantile, probs = 0.1, na.rm = TRUE)
+y_degen_hat_90 <- apply(rstan::extract(fit)$y_degen_gen, 2, quantile, probs = 0.1, na.rm = TRUE)
+
 
 df_prop <- data.frame(
   chill     = mdl.dataAngio$c_prop,
   observed  = mdl.dataAngio$y_prop,
   predicted = y_prop_hat,
+  quantile10 = y_prop_hat_10,
+  quantile90 = y_prop_hat_90,
   species_idx = mdl.dataAngio$sp_prop
 )
 
@@ -286,36 +293,65 @@ df_degen <- data.frame(
   chill     = mdl.dataAngio$c_degen,
   observed  = mdl.dataAngio$y_degen,
   predicted = y_degen_hat,
+  quantile10 = y_degen_hat_10,
+  quantile90 = y_degen_hat_90,
   species_idx = mdl.dataAngio$sp_degen
 )
+
 
 all_data <- rbind(df_prop, df_degen)
 
 all_data$species_name <- species_names[all_data$species_idx]
 
-
-pdf("analyseBudSeed/figures/predictedRawAngio.pdf", width = 14, height = 11)
-
-par(mfrow = c(4, 5))
-
-unique_spp <- unique(all_data$species_name)
-
-for (i in 1:length(unique_spp)) {
+testing <- FALSE
+if(testing){
+pdf("analyseBudSeed/figures/predictedRawAngioTest.pdf",
+      width = 14, height = 11)
   
-  sp_data <- all_data[all_data$species_name == unique_spp[i], ]
-  plot(sp_data$chill, sp_data$observed, 
-       pch = 16, col = "black",
-       ylim = c(0, 1),
-       xlab = "Chilling", ylab = "Response",
-       main = unique_spp[i],
-       cex.main = 0.8)
-  points(sp_data$chill, sp_data$predicted, 
-         col = "blue", pch = 1, cex = 1.2)
+  all_data <- arrange(all_data, species_idx)
+  unique_spp <- unique(all_data$species_name)
+  
+  plots <- lapply(unique_spp, function(sp_name) {
+    sp_raw <- subset(all_data, species_name == sp_name)
+    
+    p <- ggplot(sp_raw, aes(x = chill)) +
+      ylim(0, 1) +
+      labs(title = sp_name, x = "Chilling", y = "Response") +
+      theme_bw() +
+      theme(plot.title = element_text(size = 8))
+    
+    if (nrow(sp_raw) > 1) {
+      p <- p +
+        geom_ribbon(aes(ymin = quantile10, ymax = quantile90),
+                    fill = "blue", alpha = 0.2) +
+        geom_line(aes(y = predicted),
+                  color = "blue", linewidth = 1)
+    } else {
+      p <- p +
+        geom_errorbar(aes(ymin = quantile10, ymax = quantile90),
+                      width = 0.05, color = "blue") +
+        geom_point(aes(y = predicted),
+                   color = "blue", size = 2)
+    }
+    
+    p +
+      geom_point(aes(y = observed),
+                 color = "black", size = 1.5)
+  })
+  
+  # ---- CHUNK INTO GROUPS OF 20 ----
+  chunk_size <- 20
+  n_pages <- ceiling(length(plots) / chunk_size)
+  
+  for (i in seq_len(n_pages)) {
+    idx <- ((i - 1) * chunk_size + 1):min(i * chunk_size, length(plots))
+    
+    grid.arrange(grobs = plots[idx], ncol = 5, nrow = 4)
+  }
+  
+  dev.off()
 }
-
-
-dev.off()
-
+###Hmm this didn't work
 
 
 ## Gymnosperm
@@ -534,53 +570,7 @@ ggplot(lambda, aes(x = mean, y = parameter)) +
   theme_minimal() +
   scale_y_discrete(limits = rev)  
 
-# visualize with raw data and predicted values from model for angio
-
-y_prop_hat  <- colMeans(rstan::extract(fit)$y_prop_gen)
-y_degen_hat <- colMeans(rstan::extract(fit)$y_degen_gen)
-
-df_prop <- data.frame(
-  chill     = mdl.dataGym$c_prop,
-  observed  = mdl.dataGym$y_prop,
-  predicted = y_prop_hat,
-  species_idx = mdl.dataGym$sp_prop
-)
-
-df_degen <- data.frame(
-  chill     = mdl.dataGym$c_degen,
-  observed  = mdl.dataGym$y_degen,
-  predicted = y_degen_hat,
-  species_idx = mdl.dataGym$sp_degen
-)
-
-all_data <- rbind(df_prop, df_degen)
-
-all_data$species_name <- species_names[all_data$species_idx]
-
-
-pdf("analyseBudSeed/figures/predictedRawGym.pdf", width = 14, height = 11)
-
-par(mfrow = c(4, 5))
-
-unique_spp <- unique(all_data$species_name)
-
-for (i in 1:length(unique_spp)) {
-  
-  sp_data <- all_data[all_data$species_name == unique_spp[i], ]
-  plot(sp_data$chill, sp_data$observed, 
-       pch = 16, col = "black",
-       ylim = c(0, 1),
-       xlab = "Chilling", ylab = "Response",
-       main = unique_spp[i],
-       cex.main = 0.8)
-  points(sp_data$chill, sp_data$predicted, 
-         col = "blue", pch = 1, cex = 1.2)
-}
-
-
-dev.off()
-
-# Make the line
+# Make the line using a fixed mean forcing, which is not retrodictive check
 draws_a  <- as.matrix(fit, pars = "a")
 draws_bc <- as.matrix(fit, pars = "bc")
 draws_bf <- as.matrix(fit, pars = "bf")
@@ -653,7 +643,7 @@ for (i in 1:length(unique_spp)) {
   
   lines(chill_seq, mu_mean, col = "blue", lwd = 2)
   
-  points(sp_raw$chill, sp_raw$observed, pch = 16, col = rgb(0, 0, 0, 0.5), cex = 0.8)
+  points(sp_raw$chill, sp_raw$observed, pch = 16, col = "black", cex = 0.8)
 
 }
 
@@ -699,53 +689,7 @@ polygon(c(global_chill_seq, rev(global_chill_seq)),
 
 lines(global_chill_seq, global_mu_mean, col = "blue", lwd = 2)
 
-#points(all_data$chill, all_data$observed, pch = 16, col = rgb(0, 0, 0, 0.1), cex = 0.6)
+
 
 dev.off()
 
-for (i in 1:length(unique_spp)) {
-  sp_name <- unique_spp[i]
-  sp_idx  <- which(unique_spp == sp_name)
-  sp_raw <- all_data[all_data$species_name == sp_name, ]
-  
-  chill_seq <- seq(min(sp_raw$chill), max(sp_raw$chill), length.out = 10)
-  a_i  <- draws_a[, sp_idx]
-  bc_i <- draws_bc[, sp_idx]
-  bf_i <- draws_bf[, sp_idx]
-  f_i  <- sp_forcing[sp_idx]
-  
-  a_i_mean <- mean(a_i)
-  bc_i_mean <- mean(bc_i)
-  bf_i_mean <- mean(bf_i)
-  
-  mu_mean <- plogis(a_i_mean + bc_i_mean * chill_seq + bf_i_mean * f_i)
-  
-  a_i_low <- quantile(a_i, probs = 0.1, na.rm = FALSE)
-  bc_i_low <- quantile(bc_i, probs = 0.1, na.rm = FALSE)
-  bf_i_low <- quantile(bf_i, probs = 0.1, na.rm = FALSE)
-  
-  mu_low <- plogis(a_i_low + bc_i_low * chill_seq + bf_i_low * f_i)
-  
-  a_i_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
-  bc_i_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
-  bf_i_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
-  
-  mu_high <- plogis(a_i_high + bc_i_high * chill_seq + bf_i_high * f_i)
-  
-  
-  plot(sp_raw$chill, sp_raw$observed, 
-       type = "n",
-       ylim = c(0, 1), 
-       xlab = "Chilling", ylab = "Response",
-       main = sp_name, cex.main = 0.8)
-  
-  polygon(c(chill_seq, rev(chill_seq)), 
-          c(mu_low, rev(mu_high)), 
-          col = "grey", border = NA)
-  
-  
-  lines(chill_seq, mu_mean, col = "blue", lwd = 2)
-  
-  points(sp_raw$chill, sp_raw$observed, pch = 16, col = rgb(0, 0, 0, 0.5), cex = 0.8)
-  
-}
