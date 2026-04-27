@@ -66,9 +66,9 @@ gym <- d[d$latbi %in% gymPhy$tip.label, ]
 #d <- d[!d$latbi %in% missing,]
 
 # For angio
-d <- angio
+da <- angio
 phylo <- angioPhy
-subby <- unique(d$latbi)
+subby <- unique(da$latbi)
 
 namesphy <- phylo$tip.label
 phylo <- phytools::force.ultrametric(phylo, method="extend")
@@ -86,38 +86,38 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 # numsp
 # Prepare data for Stan - chilling hours between -20 and 10
 
-d$numspp = as.integer(factor(d$latbi, levels = colnames(cphy)))
-d$chillDurationS <- scale(d$chillDuration)
-d$tempDayS <- scale(d$germTempGen)
+da$numspp = as.integer(factor(da$latbi, levels = colnames(cphy)))
+da$chillDurationS <- scale(da$chillDuration)
+da$tempDayS <- scale(da$germTempGen)
 
-mdl.dataUSDA <- list(N_degen = sum(d$responseValue %in% c(0,1)),
-                 N_prop = sum(d$responseValue>0 & d$responseValue<1),
+mdl.dataAngio <- list(N_degen = sum(da$responseValue %in% c(0,1)),
+                 N_prop = sum(da$responseValue>0 & da$responseValue<1),
                  
-                 Nsp =  length(unique(d$latbi)),
-                 sp_degen = array(d$numspp[d$responseValue %in% c(0,1)],
-                                  dim = sum(d$responseValue%in% c(0,1))),
-                 sp_prop = array(d$numspp[d$responseValue>0 & d$responseValue<1],
-                                 dim = sum(d$responseValue>0 & d$responseValue<1)),
+                 Nsp =  length(unique(da$latbi)),
+                 sp_degen = array(da$numspp[da$responseValue %in% c(0,1)],
+                                  dim = sum(da$responseValue%in% c(0,1))),
+                 sp_prop = array(da$numspp[da$responseValue>0 & da$responseValue<1],
+                                 dim = sum(da$responseValue>0 & da$responseValue<1)),
                  
-                 y_degen = array(d$responseValue[d$responseValue %in% c(0,1)],
-                                 dim = sum(d$responseValue%in% c(0,1))),
-                 y_prop = array(d$responseValue[d$responseValue>0 & d$responseValue<1],
-                                dim = sum(d$responseValue>0 & d$responseValue<1)),
+                 y_degen = array(da$responseValue[da$responseValue %in% c(0,1)],
+                                 dim = sum(da$responseValue%in% c(0,1))),
+                 y_prop = array(da$responseValue[da$responseValue>0 & da$responseValue<1],
+                                dim = sum(da$responseValue>0 & da$responseValue<1)),
                  
-                 c_degen = array(d$chillDurationS[d$responseValue %in% c(0,1)],
-                                 dim = sum(d$responseValue%in% c(0,1))),
-                 c_prop = array(d$chillDurationS[d$responseValue>0 & d$responseValue<1],
-                                dim = sum(d$responseValue>0 & d$responseValue<1)),
+                 c_degen = array(da$chillDurationS[da$responseValue %in% c(0,1)],
+                                 dim = sum(da$responseValue%in% c(0,1))),
+                 c_prop = array(da$chillDurationS[da$responseValue>0 & da$responseValue<1],
+                                dim = sum(da$responseValue>0 & da$responseValue<1)),
                  
-                 f_degen = array(d$tempDayS[d$responseValue %in% c(0,1)],
-                                 dim = sum(d$responseValue%in% c(0,1))),
-                 f_prop = array(d$tempDayS[d$responseValue>0 & d$responseValue<1],
-                                dim = sum(d$responseValue>0 & d$responseValue<1)),
+                 f_degen = array(da$tempDayS[da$responseValue %in% c(0,1)],
+                                 dim = sum(da$responseValue%in% c(0,1))),
+                 f_prop = array(da$tempDayS[da$responseValue>0 & da$responseValue<1],
+                                dim = sum(da$responseValue>0 & da$responseValue<1)),
                  Vphy = cphy)
 
 # Compile and run model
 smordbeta <-stan_model("stan/orderedbetalikelihood_2slopes.stan")
-fit <- sampling(smordbeta, mdl.dataUSDA, 
+fit <- sampling(smordbeta, mdl.dataAngio, 
                 iter = 4000, warmup = 3000,
                 chains = 4)
 
@@ -135,9 +135,9 @@ saveRDS(summ, file = 'analyseBudSeed/output/summary_full_angio.rds')
 saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_full_angio.rds')
 
 # For gymnosperm
-d <- gym
+dg <- gym
 phylo <- gymPhy
-subby <- unique(d$latbi)
+subby <- unique(dg$latbi)
 
 namesphy <- phylo$tip.label
 phylo <- phytools::force.ultrametric(phylo, method="extend")
@@ -155,39 +155,39 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 # numsp
 # Prepare data for Stan - chilling hours between -20 and 10
 
-d$numspp = as.integer(factor(d$latbi, levels = colnames(cphy)))
+dg$numspp = as.integer(factor(dg$latbi, levels = colnames(cphy)))
 
-d$chillDurationS <- scale(d$chillDuration)
-d$tempDayS <- scale(d$germTempGen)
+dg$chillDurationS <- scale(dg$chillDuration)
+dg$tempDayS <- scale(dg$germTempGen)
 
-mdl.dataUSDA <- list(N_degen = sum(d$responseValue %in% c(0,1)),
-                     N_prop = sum(d$responseValue>0 & d$responseValue<1),
+mdl.dataGym <- list(N_degen = sum(dg$responseValue %in% c(0,1)),
+                     N_prop = sum(dg$responseValue>0 & dg$responseValue<1),
                      
-                     Nsp =  length(unique(d$latbi)),
-                     sp_degen = array(d$numspp[d$responseValue %in% c(0,1)],
-                                      dim = sum(d$responseValue%in% c(0,1))),
-                     sp_prop = array(d$numspp[d$responseValue>0 & d$responseValue<1],
-                                     dim = sum(d$responseValue>0 & d$responseValue<1)),
+                     Nsp =  length(unique(dg$latbi)),
+                     sp_degen = array(dg$numspp[dg$responseValue %in% c(0,1)],
+                                      dim = sum(dg$responseValue%in% c(0,1))),
+                     sp_prop = array(dg$numspp[dg$responseValue>0 & dg$responseValue<1],
+                                     dim = sum(dg$responseValue>0 & dg$responseValue<1)),
                      
-                     y_degen = array(d$responseValue[d$responseValue %in% c(0,1)],
-                                     dim = sum(d$responseValue%in% c(0,1))),
-                     y_prop = array(d$responseValue[d$responseValue>0 & d$responseValue<1],
-                                    dim = sum(d$responseValue>0 & d$responseValue<1)),
+                     y_degen = array(dg$responseValue[dg$responseValue %in% c(0,1)],
+                                     dim = sum(dg$responseValue%in% c(0,1))),
+                     y_prop = array(dg$responseValue[dg$responseValue>0 & dg$responseValue<1],
+                                    dim = sum(dg$responseValue>0 & dg$responseValue<1)),
                      
-                     c_degen = array(d$chillDurationS[d$responseValue %in% c(0,1)],
-                                     dim = sum(d$responseValue%in% c(0,1))),
-                     c_prop = array(d$chillDurationS[d$responseValue>0 & d$responseValue<1],
-                                    dim = sum(d$responseValue>0 & d$responseValue<1)),
+                     c_degen = array(dg$chillDurationS[dg$responseValue %in% c(0,1)],
+                                     dim = sum(dg$responseValue%in% c(0,1))),
+                     c_prop = array(dg$chillDurationS[dg$responseValue>0 & dg$responseValue<1],
+                                    dim = sum(dg$responseValue>0 & dg$responseValue<1)),
                      
-                     f_degen = array(d$tempDayS[d$responseValue %in% c(0,1)],
-                                     dim = sum(d$responseValue%in% c(0,1))),
-                     f_prop = array(d$tempDayS[d$responseValue>0 & d$responseValue<1],
-                                    dim = sum(d$responseValue>0 & d$responseValue<1)),
+                     f_degen = array(dg$tempDayS[dg$responseValue %in% c(0,1)],
+                                     dim = sum(dg$responseValue%in% c(0,1))),
+                     f_prop = array(dg$tempDayS[dg$responseValue>0 & dg$responseValue<1],
+                                    dim = sum(dg$responseValue>0 & dg$responseValue<1)),
                      Vphy = cphy)
 
 # Compile and run model
 smordbeta <-stan_model("stan/orderedbetalikelihood_2slopes.stan")
-fit <- sampling(smordbeta, mdl.dataUSDA, 
+fit <- sampling(smordbeta, mdl.dataGym, 
                 iter = 4000, warmup = 3000,
                 chains = 4)
 
