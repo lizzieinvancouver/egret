@@ -292,9 +292,14 @@ sum(modeld$responseValueNum[modeld$numspp %in% mdl.data$sp_degen] == 0 )
 sum(modeld$responseValueNum[modeld$numspp %in% mdl.data$sp_degen] == 1 )
 
 # diagnose what's going on
-modeld[modeld$genusspecies %in% "Maackia_taiwanensis", ]
-unique(modeld$provLatLonAlt[modeld$genusspecies %in% "Maackia_taiwanensis"])
-modeld$provLatLonAlt[modeld$genusspecies %in% "Maackia_taiwanensis"]
+modeld[modeld$genusspecies %in% "Eucalyptus_delegatensis", ]
+unique(modeld$provLatLonAlt[modeld$genusspecies %in% "Eucalyptus_delegatensis"])
+modeld$provLatLonAlt[modeld$genusspecies %in% "Eucalyptus_delegatensis"]
+modeld$provLatLonAlt[modeld$genusspecies %in% "Eucalyptus_delegatensis"]
+unique(modeld$germTempGen[modeld$genusspecies %in% "Eucalyptus_delegatensis"])
+
+unique(modeld$germDuration[modeld$genusspecies %in% "Eucalyptus_delegatensis"])
+
 modeld[modeld$numprov %in% provs, ]
 modeld[modeld$numspp %in% sp, ]
 
