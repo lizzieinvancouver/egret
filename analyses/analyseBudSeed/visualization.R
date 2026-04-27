@@ -492,3 +492,102 @@ for (i in 1:length(unique_spp)) {
 
 
 dev.off()
+
+# Make the line
+draws_a  <- as.matrix(fit, pars = "a")
+draws_bc <- as.matrix(fit, pars = "bc")
+draws_bf <- as.matrix(fit, pars = "bf")
+
+sp_forcing <- tapply(c(mdl.dataAngio$f_prop, mdl.dataAngio$f_degen),
+                     c(mdl.dataAngio$sp_prop, mdl.dataAngio$sp_degen), mean)
+
+df_prop <- data.frame(
+  chill     = mdl.dataAngio$c_prop,
+  observed  = mdl.dataAngio$y_prop,
+  species_idx = mdl.dataAngio$sp_prop
+)
+
+df_degen <- data.frame(
+  chill     = mdl.dataGym$c_degen,
+  observed  = mdl.dataGym$y_degen,
+  species_idx = mdl.dataGym$sp_degen
+)
+
+all_data <- rbind(df_prop, df_degen)
+
+all_data$species_name <- species_names[all_data$species_idx]
+unique_spp <- unique(all_data$species_name)
+
+pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/chillingPredictedAngio.pdf", width = 14, height = 11)
+
+par(mfrow = c(4, 5))
+
+for (i in 1:length(unique_spp)) {
+
+  sp_name <- unique_spp[i]
+  sp_idx  <- which(unique_spp == sp_name)
+  sp_raw <- all_data[all_data$species_name == sp_name, ]
+
+  chill_seq <- seq(min(sp_raw$chill), max(sp_raw$chill), length.out = 10)
+  a_i  <- draws_a[, sp_idx]
+  bc_i <- draws_bc[, sp_idx]
+  bf_i <- draws_bf[, sp_idx]
+  f_i  <- sp_forcing[sp_idx]
+  
+  mu_mat <- plogis(outer(a_i + (bf_i * f_i), chill_seq, "+") + 
+                     outer(bc_i, chill_seq, "*"))
+  
+  mu_mean <- apply(mu_mat, 2, mean)
+  mu_low  <- apply(mu_mat, 2, quantile, 0.05)
+  mu_high <- apply(mu_mat, 2, quantile, 0.95)
+  
+
+  plot(sp_raw$chill, sp_raw$observed, 
+       type = "n",
+       ylim = c(0, 1), 
+       xlab = "Chilling", ylab = "Response",
+       main = sp_name, cex.main = 0.8)
+  
+  polygon(c(chill_seq, rev(chill_seq)), 
+          c(mu_low, rev(mu_high)), 
+          col = rgb(0, 0, 1, 0.2), border = NA)
+  
+  
+  lines(chill_seq, mu_mean, col = "blue", lwd = 2)
+  
+  points(sp_raw$chill, sp_raw$observed, pch = 16, col = rgb(0, 0, 0, 0.5), cex = 0.8)
+
+}
+
+draws_a_z  <- as.matrix(fit, pars = "a_z")
+draws_a_z <- as.numeric(draws_a_z)
+draws_bc_z <- as.matrix(fit, pars = "bc_z")
+draws_bc_z <- as.numeric(draws_bc_z)
+draws_bf_z <- as.matrix(fit, pars = "bf_z")
+draws_bf_z <- as.numeric(draws_bf_z)
+global_forcing <- mean(c(mdl.dataAngio$f_prop, mdl.dataAngio$f_degen))
+
+
+global_chill_seq <- seq(min(all_data$chill), max(all_data$chill), length.out = 10)
+
+global_mu_mat <- plogis(outer(draws_a_z + (draws_bf_z * global_forcing), global_chill_seq, "+") + outer(draws_bc_z, global_chill_seq, "*"))
+
+global_mu_mean <- apply(global_mu_mat, 2, mean)
+global_mu_low  <- apply(global_mu_mat, 2, quantile, 0.05)
+global_mu_high <- apply(global_mu_mat, 2, quantile, 0.95)
+
+plot(all_data$chill, all_data$observed, 
+     type = "n", 
+     ylim = c(0, 1),
+     xlab = "Chilling", 
+     ylab = "Response")
+
+polygon(c(global_chill_seq, rev(global_chill_seq)), 
+        c(global_mu_low, rev(global_mu_high)), 
+        col = rgb(0.1, 0.1, 0.1, 0.15), border = NA) 
+
+lines(global_chill_seq, global_mu_mean, col = "blue", lwd = 2)
+
+#points(all_data$chill, all_data$observed, pch = 16, col = rgb(0, 0, 0, 0.1), cex = 0.6)
+
+dev.off()
