@@ -18,3 +18,19 @@ I am fairly sure the 'companion study' is this paper: https://www.pnas.org/doi/a
 
 ## Also ...
 Everyone seems to be making SDMs for all plants ... a colleague suggested just using the iNaturalist maps. 
+
+## From earlier ...
+Here are my notes started 12 February 2026 when I was trying to track down how to make species distribution maps
+
+Started 12 Feb 2026
+
+Hi! It's Lizzie. It's the last full day of the retreat in February 2026. I have had one beer. 
+
+These data are the GreenMaps data mentioned here: https://www.biorxiv.org/content/10.1101/2020.02.21.960161v1 ... which became this paper (as best I can tell): Widespread homogenization of plant communities in the Anthropocene.
+
+And the advice to use these data came from Will Pearse: 
+> My honest advice would be not to do it... If you need distribution data for plants I would go to Barnabas' plant mapper thing - I'll get you a link
+> https://www.biorxiv.org/content/10.1101/2020.02.21.960161v1
+> ...there you go. This is an R package that will do it and while it might not be "the best" way of doing it (I haven't checked in a while) Barnabas is absolutely amazing so it can't be far off...
+
+I downloaded the data today (12 Feb 2026). If you want to use it, you need to download it yourself, it unzips into 1.7 GB. 
