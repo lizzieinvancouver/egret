@@ -605,7 +605,7 @@ all_data <- rbind(df_prop, df_degen)
 all_data$species_name <- species_names[all_data$species_idx]
 unique_spp <- unique(all_data$species_name)
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/chillingPredictedAngio.pdf", width = 14, height = 11)
+pdf("analyseBudSeed/figures/chillingPredictedAngio.pdf", width = 14, height = 11)
 
 par(mfrow = c(4, 5))
 
