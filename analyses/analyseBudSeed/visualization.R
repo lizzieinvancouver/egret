@@ -1,17 +1,82 @@
 library(bayesplot)
 library(ggplot2)
 library(posterior)
-setwd("C:/PhD/Project/egret/wcvp_Mao/")
-source("C:/PhD/Project/egret/analyses/analyseBudSeed/betaDisMdl.R")
+
+rm(list=ls()) 
+options(stringsAsFactors = FALSE)
+
+
+if(length(grep("deirdre", getwd()) > 0)) {
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
+} else if(length(grep("sapph", getwd()) > 0)) {
+  setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
+} else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
+  setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses")
+} else if(length(grep("Xiaomao", getwd()) > 0)) {
+  setwd("C:/PhD/Project/egret/analyses")
+} else if(length(grep("xiaomao", getwd()) > 0)) {
+  setwd("/home/xiaomao/egret/analyses")  
+} else if(length(grep("britanywuuu", getwd()) > 0)) {
+  setwd("/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
+} else if(length(grep("Ken", getwd())) > 0){
+  setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
+} else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
+  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+} else if(length(grep("victor", getwd())) > 0){
+  setwd('~/projects/egret/analyses')
+} 
+
+source("analyseBudSeed/prepEgretUsda.R")
+# removing the rows with incomplete data:
+d <- d[complete.cases(d),] 
+
 util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
 
+# to better see phylogenetic structure, ordering species by order on phylogeny
+phylo <- ape::read.tree("output/usdaEgretFull.tre")
+tipsGym <- getDescendants(phylo, node = 1264)
+tipsGym <- tipsGym[tipsGym <= Ntip(phylo)]
+
+# Get only angio
+angioPhy <- drop.tip(phylo, phylo$tip.label[tipsGym])
+
+# Get only gymno
+gymPhy <- keep.tip(phylo, phylo$tip.label[tipsGym])
+
+angio <- d[d$latbi %in% angioPhy$tip.label, ]
+gym <- d[d$latbi %in% gymPhy$tip.label, ]
+
+
 ### for full dataset
+da <- angio
+phylo <- angioPhy
+subby <- unique(da$latbi)
+
+namesphy <- phylo$tip.label
+phylo <- phytools::force.ultrametric(phylo, method="extend")
+phylo$node.label <- seq(1,length(phylo$node.label),1)
+ape::is.ultrametric(phylo)
+# plot(phylo, cex=0.7)
+
+phylo <- ape::keep.tip(phylo, subby) # exclude gymnosperms
+# plot(phylo, cex=0.7)
+cphy <- ape::vcv.phylo(phylo,corr=TRUE)
+rm(subby)
+
+cphy <- vcv.phylo(phylo,corr=TRUE)
+
+da$numspp = as.integer(factor(da$latbi, levels = colnames(cphy)))
+da$chillDurationS <- scale(da$chillDuration)
+da$tempDayS <- scale(da$germTempGen)
+
 ## Angiosperm
-fit <- readRDS("fit_full_angio.rds")
-summ <- readRDS("summary_full_angio.rds")
-diagnostics <- readRDS("diagnostics_full_angio.rds")
+fit <- readRDS("analyseBudSeed/output/fit_full_angio.rds")
+summ <- readRDS("analyseBudSeed/output/summary_full_angio.rds")
+diagnostics <- readRDS("analyseBudSeed/output/diagnostics_full_angio.rds")
 
 samples <- util$extract_expectand_vals(fit)
 
@@ -75,14 +140,14 @@ df_bc$index <- as.numeric(gsub("\\D", "", df_bc$parameter))
 df_bc$name <- ifelse(is.na(df_bc$index), 
                      "Global Mean", 
                      species_names[df_bc$index])
-df_bc <- df_bc[order(df_bc$name), ]
+df_bc <- df_bc[order(df_bc$index), ]
 df_bc <- rbind(
   df_bc[df_bc$name == "Global Mean", ],
   df_bc[df_bc$name != "Global Mean", ]
 )
 df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullChillingAngio.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullChillingAngio.pdf", width = 20, height = 50)
 ggplot(df_bc, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -156,7 +221,7 @@ df_a$index <- as.numeric(gsub("\\D", "", df_a$parameter))
 df_a$name <- ifelse(is.na(df_a$index), 
                      "Global Mean", 
                      species_names[df_a$index])
-df_a <- df_a[order(df_a$name), ]
+df_a <- df_a[order(df_a$index), ]
 df_a <- rbind(
   df_a[df_a$name == "Global Mean", ],
   df_a[df_a$name != "Global Mean", ]
@@ -164,7 +229,7 @@ df_a <- rbind(
 df_a$name <- factor(df_a$name, levels = rev(df_a$name))
 
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullInterceptAngio.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullInterceptAngio.pdf", width = 20, height = 50)
 ggplot(df_a, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -229,7 +294,7 @@ all_data <- rbind(df_prop, df_degen)
 all_data$species_name <- species_names[all_data$species_idx]
 
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/predictedRawAngio.pdf", width = 14, height = 11)
+pdf("analyseBudSeed/figures/predictedRawAngio.pdf", width = 14, height = 11)
 
 par(mfrow = c(4, 5))
 
@@ -254,9 +319,31 @@ dev.off()
 
 
 ## Gymnosperm
-fit <- readRDS("fit_full_gymno.rds")
-summ <- readRDS("summary_full_gymno.rds")
-diagnostics <- readRDS("diagnostics_full_gymno.rds")
+dg <- gym
+phylo <- gymPhy
+subby <- unique(dg$latbi)
+
+namesphy <- phylo$tip.label
+phylo <- phytools::force.ultrametric(phylo, method="extend")
+phylo$node.label <- seq(1,length(phylo$node.label),1)
+ape::is.ultrametric(phylo)
+# plot(phylo, cex=0.7)
+
+phylo <- ape::keep.tip(phylo, subby) # exclude gymnosperms
+# plot(phylo, cex=0.7)
+cphy <- ape::vcv.phylo(phylo,corr=TRUE)
+rm(subby)
+
+cphy <- vcv.phylo(phylo,corr=TRUE)
+
+dg$numspp = as.integer(factor(dg$latbi, levels = colnames(cphy)))
+
+dg$chillDurationS <- scale(dg$chillDuration)
+dg$tempDayS <- scale(dg$germTempGen)
+
+fit <- readRDS("analyseBudSeed/output/fit_full_gymno.rds")
+summ <- readRDS("analyseBudSeed/output/summary_full_gymno.rds")
+diagnostics <- readRDS("analyseBudSeed/output/diagnostics_full_gymno.rds")
 
 samples <- util$extract_expectand_vals(fit)
 
@@ -320,14 +407,14 @@ df_bc$index <- as.numeric(gsub("\\D", "", df_bc$parameter))
 df_bc$name <- ifelse(is.na(df_bc$index), 
                      "Global Mean", 
                      species_names[df_bc$index])
-df_bc <- df_bc[order(df_bc$name), ]
+df_bc <- df_bc[order(df_bc$index), ]
 df_bc <- rbind(
   df_bc[df_bc$name == "Global Mean", ],
   df_bc[df_bc$name != "Global Mean", ]
 )
 df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullChillingGymno.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullChillingGymno.pdf", width = 20, height = 50)
 ggplot(df_bc, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -367,7 +454,7 @@ df_bf <- rbind(
 )
 df_bf$name <- factor(df_bf$name, levels = rev(df_bf$name))
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullForcingGymno.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullForcingGymno.pdf", width = 20, height = 50)
 ggplot(df_bf, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -407,7 +494,7 @@ df_a <- rbind(
 )
 df_a$name <- factor(df_a$name, levels = rev(df_a$name))
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullInterceptGymno.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullInterceptGymno.pdf", width = 20, height = 50)
 ggplot(df_a, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -471,7 +558,7 @@ all_data <- rbind(df_prop, df_degen)
 all_data$species_name <- species_names[all_data$species_idx]
 
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/predictedRawGym.pdf", width = 14, height = 11)
+pdf("analyseBudSeed/figures/predictedRawGym.pdf", width = 14, height = 11)
 
 par(mfrow = c(4, 5))
 
