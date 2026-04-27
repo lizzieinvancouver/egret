@@ -603,6 +603,7 @@ df_degen <- data.frame(
 all_data <- rbind(df_prop, df_degen)
 
 all_data$species_name <- species_names[all_data$species_idx]
+all_data <- arrange(all_data,species_idx)
 unique_spp <- unique(all_data$species_name)
 
 pdf("analyseBudSeed/figures/chillingPredictedAngio.pdf", width = 14, height = 11)
@@ -610,7 +611,6 @@ pdf("analyseBudSeed/figures/chillingPredictedAngio.pdf", width = 14, height = 11
 par(mfrow = c(4, 5))
 
 for (i in 1:length(unique_spp)) {
-
   sp_name <- unique_spp[i]
   sp_idx  <- which(unique_spp == sp_name)
   sp_raw <- all_data[all_data$species_name == sp_name, ]
@@ -621,14 +621,25 @@ for (i in 1:length(unique_spp)) {
   bf_i <- draws_bf[, sp_idx]
   f_i  <- sp_forcing[sp_idx]
   
-  mu_mat <- plogis(outer(a_i + (bf_i * f_i), chill_seq, "+") + 
-                     outer(bc_i, chill_seq, "*"))
+  a_i_mean <- mean(a_i)
+  bc_i_mean <- mean(bc_i)
+  bf_i_mean <- mean(bf_i)
   
-  mu_mean <- apply(mu_mat, 2, mean)
-  mu_low  <- apply(mu_mat, 2, quantile, 0.05)
-  mu_high <- apply(mu_mat, 2, quantile, 0.95)
+  mu_mean <- plogis(a_i_mean + bc_i_mean * chill_seq + bf_i_mean * f_i)
   
-
+  a_i_low <- quantile(a_i, probs = 0.1, na.rm = FALSE)
+  bc_i_low <- quantile(bc_i, probs = 0.1, na.rm = FALSE)
+  bf_i_low <- quantile(bf_i, probs = 0.1, na.rm = FALSE)
+  
+  mu_low <- plogis(a_i_low + bc_i_low * chill_seq + bf_i_low * f_i)
+  
+  a_i_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
+  bc_i_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
+  bf_i_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
+  
+  mu_high <- plogis(a_i_high + bc_i_high * chill_seq + bf_i_high * f_i)
+  
+  
   plot(sp_raw$chill, sp_raw$observed, 
        type = "n",
        ylim = c(0, 1), 
@@ -637,7 +648,7 @@ for (i in 1:length(unique_spp)) {
   
   polygon(c(chill_seq, rev(chill_seq)), 
           c(mu_low, rev(mu_high)), 
-          col = rgb(0, 0, 1, 0.2), border = NA)
+          col = "grey", border = NA)
   
   
   lines(chill_seq, mu_mean, col = "blue", lwd = 2)
@@ -657,11 +668,24 @@ global_forcing <- mean(c(mdl.dataAngio$f_prop, mdl.dataAngio$f_degen))
 
 global_chill_seq <- seq(min(all_data$chill), max(all_data$chill), length.out = 10)
 
-global_mu_mat <- plogis(outer(draws_a_z + (draws_bf_z * global_forcing), global_chill_seq, "+") + outer(draws_bc_z, global_chill_seq, "*"))
+draws_a_z_mean <- mean(draws_a_z)
+draws_bc_z_mean <- mean(draws_bc_z)
+draws_bf_z_mean <- mean(draws_bf_z)
 
-global_mu_mean <- apply(global_mu_mat, 2, mean)
-global_mu_low  <- apply(global_mu_mat, 2, quantile, 0.05)
-global_mu_high <- apply(global_mu_mat, 2, quantile, 0.95)
+global_mu <- plogis(draws_a_z_mean + draws_bc_z_mean * global_chill_seq + draws_bf_z_mean * f_i)
+
+draws_a_z_low <- quantile(draws_a_z, probs = 0.1, na.rm = FALSE)
+draws_bc_z_low <- quantile(draws_bc_z, probs = 0.1, na.rm = FALSE)
+draws_bf_z_low <- quantile(draws_bf_z, probs = 0.1, na.rm = FALSE)
+
+global_mu_low <- plogis(draws_a_z_low + draws_bc_z_low * global_chill_seq + draws_bf_z_low * f_i)
+
+draws_a_z_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
+draws_bc_z_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
+draws_bf_z_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
+
+global_mu_high <- plogis(draws_a_z_high + draws_bc_z_high * global_chill_seq + draws_bf_z_high * f_i)
+
 
 plot(all_data$chill, all_data$observed, 
      type = "n", 
@@ -671,10 +695,57 @@ plot(all_data$chill, all_data$observed,
 
 polygon(c(global_chill_seq, rev(global_chill_seq)), 
         c(global_mu_low, rev(global_mu_high)), 
-        col = rgb(0.1, 0.1, 0.1, 0.15), border = NA) 
+        col = "grey", border = NA) 
 
 lines(global_chill_seq, global_mu_mean, col = "blue", lwd = 2)
 
 #points(all_data$chill, all_data$observed, pch = 16, col = rgb(0, 0, 0, 0.1), cex = 0.6)
 
 dev.off()
+
+for (i in 1:length(unique_spp)) {
+  sp_name <- unique_spp[i]
+  sp_idx  <- which(unique_spp == sp_name)
+  sp_raw <- all_data[all_data$species_name == sp_name, ]
+  
+  chill_seq <- seq(min(sp_raw$chill), max(sp_raw$chill), length.out = 10)
+  a_i  <- draws_a[, sp_idx]
+  bc_i <- draws_bc[, sp_idx]
+  bf_i <- draws_bf[, sp_idx]
+  f_i  <- sp_forcing[sp_idx]
+  
+  a_i_mean <- mean(a_i)
+  bc_i_mean <- mean(bc_i)
+  bf_i_mean <- mean(bf_i)
+  
+  mu_mean <- plogis(a_i_mean + bc_i_mean * chill_seq + bf_i_mean * f_i)
+  
+  a_i_low <- quantile(a_i, probs = 0.1, na.rm = FALSE)
+  bc_i_low <- quantile(bc_i, probs = 0.1, na.rm = FALSE)
+  bf_i_low <- quantile(bf_i, probs = 0.1, na.rm = FALSE)
+  
+  mu_low <- plogis(a_i_low + bc_i_low * chill_seq + bf_i_low * f_i)
+  
+  a_i_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
+  bc_i_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
+  bf_i_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
+  
+  mu_high <- plogis(a_i_high + bc_i_high * chill_seq + bf_i_high * f_i)
+  
+  
+  plot(sp_raw$chill, sp_raw$observed, 
+       type = "n",
+       ylim = c(0, 1), 
+       xlab = "Chilling", ylab = "Response",
+       main = sp_name, cex.main = 0.8)
+  
+  polygon(c(chill_seq, rev(chill_seq)), 
+          c(mu_low, rev(mu_high)), 
+          col = "grey", border = NA)
+  
+  
+  lines(chill_seq, mu_mean, col = "blue", lwd = 2)
+  
+  points(sp_raw$chill, sp_raw$observed, pch = 16, col = rgb(0, 0, 0, 0.5), cex = 0.8)
+  
+}
