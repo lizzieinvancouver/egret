@@ -235,9 +235,9 @@ util$plot_expectand_pushforward(samples[['sigma_bcs_prov']], 20,
                                 display_name="sigma_bcs_prov")
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Chilling #####
+##### Retrodictive checks: Time #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppChill.pdf",
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
     width = 8, height = 6)
 
 # get unique identifiers for chilling, so we can plot time
@@ -258,7 +258,7 @@ all_timeids <- sort(unique(c(timeid_prop, timeid_degen)))
 
 par(mfrow=c(3,3), mar=c(4,4,4,1), cex.main=0.8)
 
-for(i in all_chillids) { # i = 2
+for(i in all_timeids) { # i = 2
   idx_prop  <- which(timeid_prop  == i)
   idx_degen <- which(timeid_degen == i)
   
@@ -294,7 +294,7 @@ for(i in all_chillids) { # i = 2
 dev.off()
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Time #####
+##### Retrodictive checks: Chilling #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
     width = 8, height = 6)
@@ -440,11 +440,12 @@ setdiff(unique(newd$genusspecies), unique(modeld_noforc2$genusspecies))
 ###### Prepare data for Stan ######
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Prepare data for Stan
-modeld$numspp  <- as.integer(factor(modeld$genusspecies))
-modeld$numprov <- as.integer(factor(modeld$provLatLonAlt))
+modeld_noforc2$numspp  <- as.integer(factor(modeld_noforc2$genusspecies))
+modeld_noforc2$numprov <- as.integer(factor(modeld_noforc2$provLatLonAlt))
 
 # trim the \t weird thingy
-modeld$provLatLonAlt <- trimws(modeld$provLatLonAlt)
+modeld_noforc2$provLatLonAlt <- trimws(modeld_noforc2$provLatLonAlt)
+
 mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
                  N_prop = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1),
                  
@@ -476,17 +477,22 @@ mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
                                  dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)))
 
 
+if(runmodels){
 smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo_noforcing.stan")
 fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data,
                         iter = 2024, warmup = 1000, chains = 4)
 # saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
-
 }
 
+fit_nophy_noforcing <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
+diagnostics <- util$extract_hmc_diagnostics(fit_nophy_noforcing)
+util$check_all_hmc_diagnostics(diagnostics)
+samples <- util$extract_expectand_vals(fit_nophy_noforcing)
+
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Chilling #####
+##### Retrodictive checks: Time #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppChill.pdf",
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
     width = 8, height = 6)
 
 # get unique identifiers for chilling, so we can plot time
@@ -499,7 +505,7 @@ all_labels <- paste0(
 shared_factor <- as.integer(as.factor(all_labels))
 
 # index for prop so we have the correct location 
-timeid_prop  <- shared_factor[seq_len(mdl.data$N_prop)]
+timeid_prop  <- shared_factor[1:mdl.data$N_prop]
 # then from n_prop until the end
 timeid_degen <- shared_factor[seq(mdl.data$N_prop + 1, mdl.data$N_prop + mdl.data$N_degen)]
 
@@ -507,14 +513,15 @@ all_timeids <- sort(unique(c(timeid_prop, timeid_degen)))
 
 par(mfrow=c(3,3), mar=c(4,4,4,1), cex.main=0.8)
 
-for(i in all_chillids) { # i = 2
+for(i in all_timeids) { # i = 8
   idx_prop  <- which(timeid_prop  == i)
   idx_degen <- which(timeid_degen == i)
   
   # recover sp and prov for the title
   sp <- unique(c(mdl.data$sp_prop[idx_prop],   mdl.data$sp_degen[idx_degen]))
   p  <- unique(c(mdl.data$prov_prop[idx_prop],  mdl.data$prov_degen[idx_degen]))
-  t_val <- unique(c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen]))
+  # extract that precise chilling value for that time series
+  cs_val <- unique(c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen]))
   
   names <- unlist(c(
     sapply(idx_prop,  function(n) paste0('y_prop_gen[',  n, ']')),
@@ -529,8 +536,8 @@ for(i in all_chillids) { # i = 2
   
   util$plot_conn_pushforward_quantiles(
     samples, names, plot_xs = cs_vals,
-    main = paste0(levels(factor(modeld$genusspecies))[sp],
-                  ", Prov: ", unique(modeld$provLatLonAlt[modeld$numprov == p]),
+    main = paste0(levels(factor(modeld_noforc2$genusspecies))[sp],
+                  ", Prov: ", unique(modeld_noforc2$provLatLonAlt[modeld_noforc2$numprov == p]),
                   ", CS: ", round(t_val, 2)),
     xlab = "Chilling (scaled)",
     ylab = "Germ. perc.",
@@ -543,7 +550,7 @@ for(i in all_chillids) { # i = 2
 dev.off()
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Time #####
+##### Retrodictive checks: Chilling #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
     width = 8, height = 6)
@@ -599,6 +606,3 @@ for(i in all_chillids) { # i = 2
 }
 
 dev.off()
-
-
-
