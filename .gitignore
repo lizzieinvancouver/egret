@@ -23,5 +23,7 @@ wcvp_Mao/
 analyses/modeling/output/
 
 data/speciesrange/
+data/plant_rasters/dist_gm_all/
+data/plant_rasters/iNaturalist*.gpkg
 
 analyses/analyseBudSeed/output/
