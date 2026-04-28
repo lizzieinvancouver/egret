@@ -1,17 +1,83 @@
 library(bayesplot)
 library(ggplot2)
 library(posterior)
-setwd("C:/PhD/Project/egret/wcvp_Mao/")
-source("C:/PhD/Project/egret/analyses/analyseBudSeed/betaDisMdl.R")
+library(gridExtra)
+
+rm(list=ls()) 
+options(stringsAsFactors = FALSE)
+
+
+if(length(grep("deirdre", getwd()) > 0)) {
+  setwd("~/Documents/github/egret/analyses")
+} else if(length(grep("lizzie", getwd()) > 0)) {
+  setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
+} else if(length(grep("sapph", getwd()) > 0)) {
+  setwd("/Users/sapph/Documents/ubc things/work/egret/analyses")
+} else if(length(grep("danielbuonaiuto", getwd()) > 0)) {
+  setwd("/Users/danielbuonaiuto/Documents/git/egret/analyses")
+} else if(length(grep("Xiaomao", getwd()) > 0)) {
+  setwd("C:/PhD/Project/egret/analyses")
+} else if(length(grep("xiaomao", getwd()) > 0)) {
+  setwd("/home/xiaomao/egret/analyses")  
+} else if(length(grep("britanywuuu", getwd()) > 0)) {
+  setwd("/Documents/ubc/year5/TemporalEcologyLab/egret/analyses")
+} else if(length(grep("Ken", getwd())) > 0){
+  setwd("/Users/Ken Michiko Samson/Documents/Temporal Ecology Lab/egret/analyses")
+} else if(length(grep("christophe_rouleau-desrochers", getwd())) > 0){
+  setwd("/Users/christophe_rouleau-desrochers/Documents/github/egret/analyses")
+} else if(length(grep("victor", getwd())) > 0){
+  setwd('~/projects/egret/analyses')
+} 
+
+source("analyseBudSeed/prepEgretUsda.R")
+# removing the rows with incomplete data:
+d <- d[complete.cases(d),] 
+
 util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
 
+# to better see phylogenetic structure, ordering species by order on phylogeny
+phylo <- ape::read.tree("output/usdaEgretFull.tre")
+tipsGym <- getDescendants(phylo, node = 1264)
+tipsGym <- tipsGym[tipsGym <= Ntip(phylo)]
+
+# Get only angio
+angioPhy <- drop.tip(phylo, phylo$tip.label[tipsGym])
+
+# Get only gymno
+gymPhy <- keep.tip(phylo, phylo$tip.label[tipsGym])
+
+angio <- d[d$latbi %in% angioPhy$tip.label, ]
+gym <- d[d$latbi %in% gymPhy$tip.label, ]
+
+
 ### for full dataset
+da <- angio
+phylo <- angioPhy
+subby <- unique(da$latbi)
+
+namesphy <- phylo$tip.label
+phylo <- phytools::force.ultrametric(phylo, method="extend")
+phylo$node.label <- seq(1,length(phylo$node.label),1)
+ape::is.ultrametric(phylo)
+# plot(phylo, cex=0.7)
+
+phylo <- ape::keep.tip(phylo, subby) # exclude gymnosperms
+# plot(phylo, cex=0.7)
+cphy <- ape::vcv.phylo(phylo,corr=TRUE)
+rm(subby)
+
+cphy <- vcv.phylo(phylo,corr=TRUE)
+
+da$numspp = as.integer(factor(da$latbi, levels = colnames(cphy)))
+da$chillDurationS <- scale(da$chillDuration)
+da$tempDayS <- scale(da$germTempGen)
+
 ## Angiosperm
-fit <- readRDS("fit_full_angio.rds")
-summ <- readRDS("summary_full_angio.rds")
-diagnostics <- readRDS("diagnostics_full_angio.rds")
+fit <- readRDS("analyseBudSeed/output/fit_full_angio.rds")
+summ <- readRDS("analyseBudSeed/output/summary_full_angio.rds")
+diagnostics <- readRDS("analyseBudSeed/output/diagnostics_full_angio.rds")
 
 samples <- util$extract_expectand_vals(fit)
 
@@ -75,14 +141,14 @@ df_bc$index <- as.numeric(gsub("\\D", "", df_bc$parameter))
 df_bc$name <- ifelse(is.na(df_bc$index), 
                      "Global Mean", 
                      species_names[df_bc$index])
-df_bc <- df_bc[order(df_bc$name), ]
+df_bc <- df_bc[order(df_bc$index), ]
 df_bc <- rbind(
   df_bc[df_bc$name == "Global Mean", ],
   df_bc[df_bc$name != "Global Mean", ]
 )
 df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullChillingAngio.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullChillingAngio.pdf", width = 20, height = 50)
 ggplot(df_bc, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -156,7 +222,7 @@ df_a$index <- as.numeric(gsub("\\D", "", df_a$parameter))
 df_a$name <- ifelse(is.na(df_a$index), 
                      "Global Mean", 
                      species_names[df_a$index])
-df_a <- df_a[order(df_a$name), ]
+df_a <- df_a[order(df_a$index), ]
 df_a <- rbind(
   df_a[df_a$name == "Global Mean", ],
   df_a[df_a$name != "Global Mean", ]
@@ -164,7 +230,7 @@ df_a <- rbind(
 df_a$name <- factor(df_a$name, levels = rev(df_a$name))
 
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullInterceptAngio.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullInterceptAngio.pdf", width = 20, height = 50)
 ggplot(df_a, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -206,14 +272,20 @@ ggplot(lambda, aes(x = mean, y = parameter)) +
 dev.off()
 
 # visualize with raw data and predicted values from model for angio
-
 y_prop_hat  <- colMeans(rstan::extract(fit)$y_prop_gen)
 y_degen_hat <- colMeans(rstan::extract(fit)$y_degen_gen)
+y_prop_hat_10 <- apply(rstan::extract(fit)$y_prop_gen, 2, quantile, probs = 0.1, na.rm = TRUE)
+y_prop_hat_90 <- apply(rstan::extract(fit)$y_prop_gen, 2, quantile, probs = 0.9, na.rm = TRUE)
+y_degen_hat_10 <- apply(rstan::extract(fit)$y_degen_gen, 2, quantile, probs = 0.1, na.rm = TRUE)
+y_degen_hat_90 <- apply(rstan::extract(fit)$y_degen_gen, 2, quantile, probs = 0.1, na.rm = TRUE)
+
 
 df_prop <- data.frame(
   chill     = mdl.dataAngio$c_prop,
   observed  = mdl.dataAngio$y_prop,
   predicted = y_prop_hat,
+  quantile10 = y_prop_hat_10,
+  quantile90 = y_prop_hat_90,
   species_idx = mdl.dataAngio$sp_prop
 )
 
@@ -221,42 +293,93 @@ df_degen <- data.frame(
   chill     = mdl.dataAngio$c_degen,
   observed  = mdl.dataAngio$y_degen,
   predicted = y_degen_hat,
+  quantile10 = y_degen_hat_10,
+  quantile90 = y_degen_hat_90,
   species_idx = mdl.dataAngio$sp_degen
 )
+
 
 all_data <- rbind(df_prop, df_degen)
 
 all_data$species_name <- species_names[all_data$species_idx]
 
-
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/predictedRawAngio.pdf", width = 14, height = 11)
-
-par(mfrow = c(4, 5))
-
-unique_spp <- unique(all_data$species_name)
-
-for (i in 1:length(unique_spp)) {
+testing <- FALSE
+if(testing){
+pdf("analyseBudSeed/figures/predictedRawAngioTest.pdf",
+      width = 14, height = 11)
   
-  sp_data <- all_data[all_data$species_name == unique_spp[i], ]
-  plot(sp_data$chill, sp_data$observed, 
-       pch = 16, col = "black",
-       ylim = c(0, 1),
-       xlab = "Chilling", ylab = "Response",
-       main = unique_spp[i],
-       cex.main = 0.8)
-  points(sp_data$chill, sp_data$predicted, 
-         col = "blue", pch = 1, cex = 1.2)
+  all_data <- arrange(all_data, species_idx)
+  unique_spp <- unique(all_data$species_name)
+  
+  plots <- lapply(unique_spp, function(sp_name) {
+    sp_raw <- subset(all_data, species_name == sp_name)
+    
+    p <- ggplot(sp_raw, aes(x = chill)) +
+      ylim(0, 1) +
+      labs(title = sp_name, x = "Chilling", y = "Response") +
+      theme_bw() +
+      theme(plot.title = element_text(size = 8))
+    
+    if (nrow(sp_raw) > 1) {
+      p <- p +
+        geom_ribbon(aes(ymin = quantile10, ymax = quantile90),
+                    fill = "blue", alpha = 0.2) +
+        geom_line(aes(y = predicted),
+                  color = "blue", linewidth = 1)
+    } else {
+      p <- p +
+        geom_errorbar(aes(ymin = quantile10, ymax = quantile90),
+                      width = 0.05, color = "blue") +
+        geom_point(aes(y = predicted),
+                   color = "blue", size = 2)
+    }
+    
+    p +
+      geom_point(aes(y = observed),
+                 color = "black", size = 1.5)
+  })
+  
+  # ---- CHUNK INTO GROUPS OF 20 ----
+  chunk_size <- 20
+  n_pages <- ceiling(length(plots) / chunk_size)
+  
+  for (i in seq_len(n_pages)) {
+    idx <- ((i - 1) * chunk_size + 1):min(i * chunk_size, length(plots))
+    
+    grid.arrange(grobs = plots[idx], ncol = 5, nrow = 4)
+  }
+  
+  dev.off()
 }
-
-
-dev.off()
-
+###Hmm this didn't work
 
 
 ## Gymnosperm
-fit <- readRDS("fit_full_gymno.rds")
-summ <- readRDS("summary_full_gymno.rds")
-diagnostics <- readRDS("diagnostics_full_gymno.rds")
+dg <- gym
+phylo <- gymPhy
+subby <- unique(dg$latbi)
+
+namesphy <- phylo$tip.label
+phylo <- phytools::force.ultrametric(phylo, method="extend")
+phylo$node.label <- seq(1,length(phylo$node.label),1)
+ape::is.ultrametric(phylo)
+# plot(phylo, cex=0.7)
+
+phylo <- ape::keep.tip(phylo, subby) # exclude gymnosperms
+# plot(phylo, cex=0.7)
+cphy <- ape::vcv.phylo(phylo,corr=TRUE)
+rm(subby)
+
+cphy <- vcv.phylo(phylo,corr=TRUE)
+
+dg$numspp = as.integer(factor(dg$latbi, levels = colnames(cphy)))
+
+dg$chillDurationS <- scale(dg$chillDuration)
+dg$tempDayS <- scale(dg$germTempGen)
+
+fit <- readRDS("analyseBudSeed/output/fit_full_gymno.rds")
+summ <- readRDS("analyseBudSeed/output/summary_full_gymno.rds")
+diagnostics <- readRDS("analyseBudSeed/output/diagnostics_full_gymno.rds")
 
 samples <- util$extract_expectand_vals(fit)
 
@@ -320,14 +443,14 @@ df_bc$index <- as.numeric(gsub("\\D", "", df_bc$parameter))
 df_bc$name <- ifelse(is.na(df_bc$index), 
                      "Global Mean", 
                      species_names[df_bc$index])
-df_bc <- df_bc[order(df_bc$name), ]
+df_bc <- df_bc[order(df_bc$index), ]
 df_bc <- rbind(
   df_bc[df_bc$name == "Global Mean", ],
   df_bc[df_bc$name != "Global Mean", ]
 )
 df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullChillingGymno.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullChillingGymno.pdf", width = 20, height = 50)
 ggplot(df_bc, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -367,7 +490,7 @@ df_bf <- rbind(
 )
 df_bf$name <- factor(df_bf$name, levels = rev(df_bf$name))
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullForcingGymno.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullForcingGymno.pdf", width = 20, height = 50)
 ggplot(df_bf, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -407,7 +530,7 @@ df_a <- rbind(
 )
 df_a$name <- factor(df_a$name, levels = rev(df_a$name))
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullInterceptGymno.pdf", width = 20, height = 50)
+pdf("analyseBudSeed/figures/fullInterceptGymno.pdf", width = 20, height = 50)
 ggplot(df_a, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
                 width = 0,
@@ -447,48 +570,126 @@ ggplot(lambda, aes(x = mean, y = parameter)) +
   theme_minimal() +
   scale_y_discrete(limits = rev)  
 
-# visualize with raw data and predicted values from model for angio
+# Make the line using a fixed mean forcing, which is not retrodictive check
+draws_a  <- as.matrix(fit, pars = "a")
+draws_bc <- as.matrix(fit, pars = "bc")
+draws_bf <- as.matrix(fit, pars = "bf")
 
-y_prop_hat  <- colMeans(rstan::extract(fit)$y_prop_gen)
-y_degen_hat <- colMeans(rstan::extract(fit)$y_degen_gen)
+sp_forcing <- tapply(c(mdl.dataAngio$f_prop, mdl.dataAngio$f_degen),
+                     c(mdl.dataAngio$sp_prop, mdl.dataAngio$sp_degen), mean)
 
 df_prop <- data.frame(
-  chill     = mdl.dataGym$c_prop,
-  observed  = mdl.dataGym$y_prop,
-  predicted = y_prop_hat,
-  species_idx = mdl.dataGym$sp_prop
+  chill     = mdl.dataAngio$c_prop,
+  observed  = mdl.dataAngio$y_prop,
+  species_idx = mdl.dataAngio$sp_prop
 )
 
 df_degen <- data.frame(
   chill     = mdl.dataGym$c_degen,
   observed  = mdl.dataGym$y_degen,
-  predicted = y_degen_hat,
   species_idx = mdl.dataGym$sp_degen
 )
 
 all_data <- rbind(df_prop, df_degen)
 
 all_data$species_name <- species_names[all_data$species_idx]
+all_data <- arrange(all_data,species_idx)
+unique_spp <- unique(all_data$species_name)
 
-
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/predictedRawGym.pdf", width = 14, height = 11)
+pdf("analyseBudSeed/figures/chillingPredictedAngio.pdf", width = 14, height = 11)
 
 par(mfrow = c(4, 5))
 
-unique_spp <- unique(all_data$species_name)
-
 for (i in 1:length(unique_spp)) {
+  sp_name <- unique_spp[i]
+  sp_idx  <- which(unique_spp == sp_name)
+  sp_raw <- all_data[all_data$species_name == sp_name, ]
+
+  chill_seq <- seq(min(sp_raw$chill), max(sp_raw$chill), length.out = 10)
+  a_i  <- draws_a[, sp_idx]
+  bc_i <- draws_bc[, sp_idx]
+  bf_i <- draws_bf[, sp_idx]
+  f_i  <- sp_forcing[sp_idx]
   
-  sp_data <- all_data[all_data$species_name == unique_spp[i], ]
-  plot(sp_data$chill, sp_data$observed, 
-       pch = 16, col = "black",
-       ylim = c(0, 1),
+  a_i_mean <- mean(a_i)
+  bc_i_mean <- mean(bc_i)
+  bf_i_mean <- mean(bf_i)
+  
+  mu_mean <- plogis(a_i_mean + bc_i_mean * chill_seq + bf_i_mean * f_i)
+  
+  a_i_low <- quantile(a_i, probs = 0.1, na.rm = FALSE)
+  bc_i_low <- quantile(bc_i, probs = 0.1, na.rm = FALSE)
+  bf_i_low <- quantile(bf_i, probs = 0.1, na.rm = FALSE)
+  
+  mu_low <- plogis(a_i_low + bc_i_low * chill_seq + bf_i_low * f_i)
+  
+  a_i_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
+  bc_i_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
+  bf_i_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
+  
+  mu_high <- plogis(a_i_high + bc_i_high * chill_seq + bf_i_high * f_i)
+  
+  
+  plot(sp_raw$chill, sp_raw$observed, 
+       type = "n",
+       ylim = c(0, 1), 
        xlab = "Chilling", ylab = "Response",
-       main = unique_spp[i],
-       cex.main = 0.8)
-  points(sp_data$chill, sp_data$predicted, 
-         col = "blue", pch = 1, cex = 1.2)
+       main = sp_name, cex.main = 0.8)
+  
+  polygon(c(chill_seq, rev(chill_seq)), 
+          c(mu_low, rev(mu_high)), 
+          col = "grey", border = NA)
+  
+  
+  lines(chill_seq, mu_mean, col = "blue", lwd = 2)
+  
+  points(sp_raw$chill, sp_raw$observed, pch = 16, col = "black", cex = 0.8)
+
 }
+
+draws_a_z  <- as.matrix(fit, pars = "a_z")
+draws_a_z <- as.numeric(draws_a_z)
+draws_bc_z <- as.matrix(fit, pars = "bc_z")
+draws_bc_z <- as.numeric(draws_bc_z)
+draws_bf_z <- as.matrix(fit, pars = "bf_z")
+draws_bf_z <- as.numeric(draws_bf_z)
+global_forcing <- mean(c(mdl.dataAngio$f_prop, mdl.dataAngio$f_degen))
+
+
+global_chill_seq <- seq(min(all_data$chill), max(all_data$chill), length.out = 10)
+
+draws_a_z_mean <- mean(draws_a_z)
+draws_bc_z_mean <- mean(draws_bc_z)
+draws_bf_z_mean <- mean(draws_bf_z)
+
+global_mu <- plogis(draws_a_z_mean + draws_bc_z_mean * global_chill_seq + draws_bf_z_mean * f_i)
+
+draws_a_z_low <- quantile(draws_a_z, probs = 0.1, na.rm = FALSE)
+draws_bc_z_low <- quantile(draws_bc_z, probs = 0.1, na.rm = FALSE)
+draws_bf_z_low <- quantile(draws_bf_z, probs = 0.1, na.rm = FALSE)
+
+global_mu_low <- plogis(draws_a_z_low + draws_bc_z_low * global_chill_seq + draws_bf_z_low * f_i)
+
+draws_a_z_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
+draws_bc_z_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
+draws_bf_z_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
+
+global_mu_high <- plogis(draws_a_z_high + draws_bc_z_high * global_chill_seq + draws_bf_z_high * f_i)
+
+
+plot(all_data$chill, all_data$observed, 
+     type = "n", 
+     ylim = c(0, 1),
+     xlab = "Chilling", 
+     ylab = "Response")
+
+polygon(c(global_chill_seq, rev(global_chill_seq)), 
+        c(global_mu_low, rev(global_mu_high)), 
+        col = "grey", border = NA) 
+
+lines(global_chill_seq, global_mu_mean, col = "blue", lwd = 2)
+
 
 
 dev.off()
+
