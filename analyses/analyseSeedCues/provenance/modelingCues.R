@@ -480,7 +480,7 @@ mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
 if(runmodels){
 smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo_noforcing.stan")
 fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data,
-                        iter = 2024, warmup = 1000, chains = 4)
+                        iter = 1000, warmup = 500, chains = 4)
 # saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
 }
 
@@ -546,13 +546,12 @@ for(i in all_timeids) { # i = 8
   points(cs_vals, y_vals, pch=16, cex=1.2, col="white")
   points(cs_vals, y_vals, pch=16, cex=0.8, col="black")
 }
-
 dev.off()
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 ##### Retrodictive checks: Chilling #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppChill.pdf",
     width = 8, height = 6)
 
 # get unique identifiers for chilling, so we can plot time
@@ -597,7 +596,7 @@ for(i in all_chillids) { # i = 2
     main = paste0(levels(factor(modeld$genusspecies))[sp],
                   ", Prov: ", unique(modeld$provLatLonAlt[modeld$numprov == p]),
                   ", CS: ", round(cs_val, 2)),
-    xlab = "Time (scaled)",
+    xlab = "Chilling (scaled)",
     ylab = "Germ. perc.",
     display_ylim = c(0, 1))
   
