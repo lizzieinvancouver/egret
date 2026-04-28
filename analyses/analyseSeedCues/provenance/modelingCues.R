@@ -46,7 +46,10 @@ source('mcmc_visualization_tools.R', local=util)
 
 runmodels <- FALSE
 
-# Process data 
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# Model WITH forcing ####
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+##### Prep data #####
 # (1) - removing rows where we do not have any info on forcing) 
 modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] 
 
@@ -117,6 +120,8 @@ modeld$provLatLonAlt <- trimws(modeld$provLatLonAlt)
 
 mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
+                 Ndataset = length(unique(modeld$idstudy)),
+                 numdat = as.integer(factor(modeld$idstudy)),
                  
                  Nsp =  length(unique(modeld$numspp)),
                  sp_degen = array(modeld$numspp[modeld$responseValueNum %in% c(0,1)],
@@ -156,28 +161,25 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
 #                 iter = 2024, warmup = 1000,
 #                 chains = 4)
 
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-# Run model with forcing, no phylogeny #### 
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+##### Run model with forcing, no phylogeny #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 if(runmodels){
 
 smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo.stan")
 fit_nophy <- sampling(smordbeta_nophy, mdl.data,
-                iter = 600, warmup = 200, chains = 4)
-
-# smordbeta_nophy_noprov <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_noprovenance_nophylo.stan")
-# fit_nophy_noprov <- sampling(smordbeta_nophy_noprov, mdl.data,
-#                       iter = 2024, warmup = 1000,
-#                       chains = 4)
-
-# Diagnostics #### 
+                iter = 2000, warmup = 1000, chains = 4)
+}
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+##### Diagnostics #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 # read model on christophe's computer
 # saveRDS(fit_nophy, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy.rds")
-smordbeta_nophy <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy.rds")
+fit_nophy <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy.rds")
 
-diagnostics <- util$extract_hmc_diagnostics(smordbeta_nophy)
+diagnostics <- util$extract_hmc_diagnostics(fit_nophy)
 util$check_all_hmc_diagnostics(diagnostics)
-samples <- util$extract_expectand_vals(smordbeta_nophy)
+samples <- util$extract_expectand_vals(fit_nophy)
 
 base_samples <- util$filter_expectands(samples,
                                        c('a_z', 'lambda_a', 'sigma_a', 'a',
@@ -232,169 +234,136 @@ util$plot_expectand_pushforward(samples[['sigma_bcs_prov']], 20,
                                 flim = c(0,6),
                                 display_name="sigma_bcs_prov")
 
-#  
-pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provperspp.pdf",
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+##### Retrodictive checks: Chilling #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppChill.pdf",
     width = 8, height = 6)
 
-# par(mfrow=c(2, 2), mar = c(4,4,4,1), cex.main = 0.8)
-# mdl.data$prov_prop[mdl.data$sp_prop == sp]
-# modeld[modeld$numspp == 2,]
+# get unique identifiers for chilling, so we can plot time
+all_labels <- paste0(
+  c(mdl.data$sp_prop,  mdl.data$sp_degen),
+  c(mdl.data$prov_prop, mdl.data$prov_degen),
+  c(mdl.data$t_prop,  mdl.data$t_degen))
 
-# levels(factor(modeld$provLatLonAlt))[c(37, 43)]
-str(mdl.data)
+# give it an integer, as we do in the lists
+shared_factor <- as.integer(as.factor(all_labels))
 
-# get a vector of ALL species, both in prop and degen
-all_sp <- unique(c(mdl.data$sp_prop, mdl.data$sp_degen))
+# index for prop so we have the correct location 
+timeid_prop  <- shared_factor[seq_len(mdl.data$N_prop)]
+# then from n_prop until the end
+timeid_degen <- shared_factor[seq(mdl.data$N_prop + 1, mdl.data$N_prop + mdl.data$N_degen)]
 
-for(sp in all_sp) { # sp = 4
-  provs <- unique(c(mdl.data$prov_prop[mdl.data$sp_prop == sp],
-                    mdl.data$prov_degen[mdl.data$sp_degen == sp]))
-  # calculate the number of pannels for each species per page
-  nprov <- length(provs)
-  ncols <- 3
-  nrows <- ceiling(nprov / ncols)
+all_timeids <- sort(unique(c(timeid_prop, timeid_degen)))
+
+par(mfrow=c(3,3), mar=c(4,4,4,1), cex.main=0.8)
+
+for(i in all_chillids) { # i = 2
+  idx_prop  <- which(timeid_prop  == i)
+  idx_degen <- which(timeid_degen == i)
   
-  # so we have 1 species per page
-  par(mfrow=c(nrows, ncols), mar=c(4,4,4,1), cex.main=0.8)
+  # recover sp and prov for the title
+  sp <- unique(c(mdl.data$sp_prop[idx_prop],   mdl.data$sp_degen[idx_degen]))
+  p  <- unique(c(mdl.data$prov_prop[idx_prop],  mdl.data$prov_degen[idx_degen]))
+  t_val <- unique(c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen]))
   
-  for(p in provs) { # p = provs
-    idx_prop  <- which(mdl.data$sp_prop  == sp & mdl.data$prov_prop  == p)
-    idx_degen <- which(mdl.data$sp_degen == sp & mdl.data$prov_degen == p)
-    
-    names <- unlist(c(
-      sapply(idx_prop,  function(n) paste0('y_prop_gen[',  n, ']')),
-      sapply(idx_degen, function(n) paste0('y_degen_gen[', n, ']'))))
-    
-    cs <- c(mdl.data$cs_prop[idx_prop], mdl.data$cs_degen[idx_degen])
-    orderx <- order(cs)
-    names  <- names[orderx]
-    cs     <- cs[orderx]
-    
-    util$plot_conn_pushforward_quantiles(
-      samples, names, plot_xs = cs,
-      main = paste0(levels(factor(modeld$genusspecies))[sp], ", Prov: ", 
-                    unique(modeld$provLatLonAlt[modeld$numprov %in% p])),
-      xlab = 'Chilling (scaled)',
-      ylab = 'Germ. perc. (marginal quantiles)',
-      display_xlim = c(-0.5, 1.1), display_ylim = c(0, 1))
-    
-    y <- c(mdl.data$y_prop[idx_prop], mdl.data$y_degen[idx_degen])
-    y <- y[orderx]
-    points(cs, y, pch=16, cex=1.2, col="white")
-    points(cs, y, pch=16, cex=0.8, col="black")
-  }
+  names <- unlist(c(
+    sapply(idx_prop,  function(n) paste0('y_prop_gen[',  n, ']')),
+    sapply(idx_degen, function(n) paste0('y_degen_gen[', n, ']'))))
+  
+  cs_vals  <- c(mdl.data$cs_prop[idx_prop],  mdl.data$cs_degen[idx_degen])
+  y_vals  <- c(mdl.data$y_prop[idx_prop],  mdl.data$y_degen[idx_degen])
+  orderx  <- order(cs_vals)
+  names   <- names[orderx]
+  cs_vals  <- cs_vals[orderx]
+  y_vals  <- y_vals[orderx]
+  
+  util$plot_conn_pushforward_quantiles(
+    samples, names, plot_xs = cs_vals,
+    main = paste0(levels(factor(modeld$genusspecies))[sp],
+                  ", Prov: ", unique(modeld$provLatLonAlt[modeld$numprov == p]),
+                  ", CS: ", round(t_val, 2)),
+    xlab = "Chilling (scaled)",
+    ylab = "Germ. perc.",
+    display_ylim = c(0, 1))
+  
+  points(cs_vals, y_vals, pch=16, cex=1.2, col="white")
+  points(cs_vals, y_vals, pch=16, cex=0.8, col="black")
 }
+
 dev.off()
 
-unique(modeld$genusspecies[modeld$numspp %in% mdl.data$sp_degen])
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+##### Retrodictive checks: Time #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
+    width = 8, height = 6)
 
-sum(modeld$responseValueNum[modeld$numspp %in% mdl.data$sp_degen] == 0 )
-sum(modeld$responseValueNum[modeld$numspp %in% mdl.data$sp_degen] == 1 )
+# get unique identifiers for chilling, so we can plot time
+all_labels <- paste0(
+  c(mdl.data$sp_prop,  mdl.data$sp_degen),
+  c(mdl.data$prov_prop, mdl.data$prov_degen),
+  c(mdl.data$cs_prop,  mdl.data$cs_degen))
+# give it an integer, as we do in the lists
+shared_factor <- as.integer(as.factor(all_labels))
 
-# diagnose what's going on
-modeld[modeld$genusspecies %in% "Eucalyptus_delegatensis", ]
-unique(modeld$provLatLonAlt[modeld$genusspecies %in% "Eucalyptus_delegatensis"])
-modeld$provLatLonAlt[modeld$genusspecies %in% "Eucalyptus_delegatensis"]
-modeld$provLatLonAlt[modeld$genusspecies %in% "Eucalyptus_delegatensis"]
-unique(modeld$germTempGen[modeld$genusspecies %in% "Eucalyptus_delegatensis"])
+# index for prop so we have the correct location 
+chillid_prop  <- shared_factor[seq_len(mdl.data$N_prop)]
+# then from n_prop until the end
+chillid_degen <- shared_factor[seq(mdl.data$N_prop + 1, mdl.data$N_prop + mdl.data$N_degen)]
 
-unique(modeld$germDuration[modeld$genusspecies %in% "Eucalyptus_delegatensis"])
+all_chillids <- sort(unique(c(chillid_prop, chillid_degen)))
 
-modeld[modeld$numprov %in% provs, ]
-modeld[modeld$numspp %in% sp, ]
+par(mfrow=c(3,3), mar=c(4,4,4,1), cex.main=0.8)
 
-# checks
-modeld[modeld$genusspecies == "Penstemon_fremontii",
-       c("provLatLonAlt", "numprov", "responseValueNum")]
-
-# 2. what position are those strings at in the global factor?
-which(levels(factor(modeld$provLatLonAlt)) %in% 
-        unique(modeld$provLatLonAlt[modeld$genusspecies == "Penstemon_fremontii"]))
-
-
-# 3. what does mdl.data think fremontii's provenance indices are?
-sp <- which(levels(factor(modeld$genusspecies)) == "Penstemon_fremontii")
-mdl.data$prov_prop[mdl.data$sp_prop == sp]
-mdl.data$prov_degen[mdl.data$sp_degen == sp]
-
-# 4. what do those indices resolve to in the global factor?
-levels(factor(modeld$provLatLonAlt))[mdl.data$prov_prop[mdl.data$sp_prop == sp]]
-levels(factor(modeld$provLatLonAlt))[mdl.data$prov_degen[mdl.data$sp_degen == sp]]
-
-
-# what species indices exist in each subset?
-unique(mdl.data$sp_prop)
-unique(mdl.data$sp_degen)
-
-# and what species names do those indices correspond to?
-levels(factor(modeld$genusspecies))[mdl.data$sp_prop %in% sp]
-levels(factor(modeld$genusspecies))[unique(mdl.data$sp_degen)]
-
-sp <- 7
-provs <- c(mdl.data$prov_prop[which(mdl.data$sp_prop == sp)], mdl.data$prov_degen[which(mdl.data$sp_degen == sp)])
-par(mfrow=c(2, 2), mar = c(4,4,4,1), cex.main = 1.1)
-for(p in unique(provs)) {
-  idx_prop <- which(mdl.data$sp_prop == sp & mdl.data$prov_prop == p)
-  idx_degen <- which(mdl.data$sp_degen == sp & mdl.data$prov_degen == p)
-  names <- unlist(c(sapply(idx_prop, function(n) paste0('y_prop_gen[',n,']')),
-                    sapply(idx_degen, function(n) paste0('y_degen_gen[',n,']'))))
-  t <- c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen])
-  cs <- c(mdl.data$cs_prop[idx_prop], mdl.data$cs_degen[idx_degen])
-  f <- c(mdl.data$f_prop[idx_prop], mdl.data$f_degen[idx_degen])
+for(i in all_chillids) { # i = 2
+  idx_prop  <- which(chillid_prop  == i)
+  idx_degen <- which(chillid_degen == i)
   
-  orderx <- order(t)
-  names <- names[orderx]
-  t <- t[orderx]
-  util$plot_conn_pushforward_quantiles(samples, names, plot_xs = t, main = paste0('Provenance: ', levels(factor(modeld$provLatLonAlt))[p]),
-                                       xlab = 'Time (scaled)', ylab = 'Germination perc.(marginal quantiles)',
-                                       display_xlim = c(-0.6, -0.3), display_ylim = c(0,1))
-  y <- c(mdl.data$y_prop[idx_prop], mdl.data$y_degen[idx_degen])
-  y <- y[orderx]
-  points(t, y, pch=16, cex=1.2, col="white")
-  points(t, y, pch=16, cex=0.8, col="black")
+  # recover sp and prov for the title
+  sp <- unique(c(mdl.data$sp_prop[idx_prop],   mdl.data$sp_degen[idx_degen]))
+  p  <- unique(c(mdl.data$prov_prop[idx_prop],  mdl.data$prov_degen[idx_degen]))
+  cs_val <- unique(c(mdl.data$cs_prop[idx_prop], mdl.data$cs_degen[idx_degen]))
+  
+  names <- unlist(c(
+    sapply(idx_prop,  function(n) paste0('y_prop_gen[',  n, ']')),
+    sapply(idx_degen, function(n) paste0('y_degen_gen[', n, ']'))))
+  
+  t_vals  <- c(mdl.data$t_prop[idx_prop],  mdl.data$t_degen[idx_degen])
+  y_vals  <- c(mdl.data$y_prop[idx_prop],  mdl.data$y_degen[idx_degen])
+  orderx  <- order(t_vals)
+  names   <- names[orderx]
+  t_vals  <- t_vals[orderx]
+  y_vals  <- y_vals[orderx]
+  
+  util$plot_conn_pushforward_quantiles(
+    samples, names, plot_xs = t_vals,
+    main = paste0(levels(factor(modeld$genusspecies))[sp],
+                  ", Prov: ", unique(modeld$provLatLonAlt[modeld$numprov == p]),
+                  ", CS: ", round(cs_val, 2)),
+    xlab = "Time (scaled)",
+    ylab = "Germ. perc.",
+    display_ylim = c(0, 1))
+  
+  points(t_vals, y_vals, pch=16, cex=1.2, col="white")
+  points(t_vals, y_vals, pch=16, cex=0.8, col="black")
 }
 
-sp <- 7
-provs <- c(mdl.data$prov_prop[which(mdl.data$sp_prop == sp)], mdl.data$prov_degen[which(mdl.data$sp_degen == sp)])
-par(mfrow=c(2, 3), mar = c(4,4,4,1), cex.main = 1.1)
-p <- 1
+dev.off()
 
-idx_prop <- which(mdl.data$sp_prop == sp & mdl.data$prov_prop == p)
-idx_degen <- which(mdl.data$sp_degen == sp & mdl.data$prov_degen == p)
-names <- unlist(c(sapply(idx_prop, function(n) paste0('y_prop_gen[',n,']')),
-                  sapply(idx_degen, function(n) paste0('y_degen_gen[',n,']'))))
-t <- c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen])
-cs <- c(mdl.data$cs_prop[idx_prop], mdl.data$cs_degen[idx_degen])
-f <- c(mdl.data$f_prop[idx_prop], mdl.data$f_degen[idx_degen])
-y <- c(mdl.data$y_prop[idx_prop], mdl.data$y_degen[idx_degen])
 
-for(c in unique(cs)){
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+##### Retrodictive checks: Forcing #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-  names_c <- names[which(cs == c)]
-  t_c <- t[which(cs == c)]
-
-  orderx <- order(t_c)
-  names_c <- names_c[orderx]
-  t_c <- t_c[orderx]
-  util$plot_conn_pushforward_quantiles(samples, names_c, plot_xs = t_c, main = paste0('Chilling (scaled): ', round(c,2)),
-                                       xlab = 'Time (scaled)', ylab = 'Germination perc.(marginal quantiles)',
-                                       display_xlim = c(-0.6, -0.3), display_ylim = c(0,1))
-  y_c <- y[which(cs == c)]
-  y_c <- y_c[orderx]
-  points(t_c, y_c, pch=16, cex=1.2, col="white")
-  points(t_c, y_c, pch=16, cex=0.8, col="black")
-
-}
-}
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-# Drop forcing ####
+# Model WITHOUT forcing ####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# some checks
 modeld_noforc <- newd
-
 nrow(modeld_noforc)
 nrow(modeld_noforc)- nrow(modeld)
-
 setdiff(modeld_noforc$genusspecies, modeld$genusspecies)
 
 modeld_noforc_nogymno <- subset(modeld_noforc, !genusspecies %in% c("Juniperus_communis", "Tsuga_heterophylla"))
@@ -405,6 +374,7 @@ nrow(modeld_noforc_nogymno) - nrow(modeld)
 nrow(newd[is.na(newd$germTempGen),])
 nrow(modeld[is.na(modeld$germDuration),])
 
+# Select data
 # (2) - separating warm and cold strat. durations
 modeld_noforc$warmStratDur <- as.numeric(sapply(1:nrow(modeld_noforc), function(i){
   seq <-  unlist(stringr::str_split(modeld_noforc$stratSequence_condensed[i], ' then '))
@@ -466,18 +436,15 @@ length(unique(modeld_noforc2$genusspecies))
 setdiff(unique(newd$genusspecies), unique(modeld_noforc2$genusspecies))
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-# Fit models ####
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-if (runmodels) {
-
-# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---  
-##### without forcing full data #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+###### Prepare data for Stan ######
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Prepare data for Stan
-modeld_noforc2$numspp <-  match(modeld_noforc2$genusspecies, unique(modeld_noforc2$genusspecies))
-modeld_noforc2$numprov = as.integer(factor(modeld_noforc2$provLatLonAlt))
+modeld$numspp  <- as.integer(factor(modeld$genusspecies))
+modeld$numprov <- as.integer(factor(modeld$provLatLonAlt))
 
+# trim the \t weird thingy
+modeld$provLatLonAlt <- trimws(modeld$provLatLonAlt)
 mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
                  N_prop = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1),
                  
@@ -507,49 +474,131 @@ mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
                                   dim = sum(modeld_noforc2$responseValueNum%in% c(0,1))),
                  cs_prop = array(modeld_noforc2$coldStratDur[modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1],
                                  dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)))
+
+
 smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo_noforcing.stan")
 fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data,
-                        iter = 2024, warmup = 1000,
-                        chains = 4)
+                        iter = 2024, warmup = 1000, chains = 4)
 # saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
 
-# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---  
-##### without forcing restricted data #####
-# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-mdl.data2 <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
-                 N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
-                 
-                 Nsp =  length(unique(modeld$numspp)),
-                 sp_degen = array(modeld$numspp[modeld$responseValueNum %in% c(0,1)],
-                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 sp_prop = array(modeld$numspp[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
-                 Nprov =  length(unique(modeld$numprov)),
-                 prov_degen = array(modeld$numprov[modeld$responseValueNum %in% c(0,1)],
-                                    dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 prov_prop = array(modeld$numprov[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                   dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
-                 y_degen = array(modeld$responseValueNum[modeld$responseValueNum %in% c(0,1)],
-                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 y_prop = array(modeld$responseValueNum[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
-                 t_degen = array(modeld$germDuration[modeld$responseValueNum %in% c(0,1)],
-                                 dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 t_prop = array(modeld$germDuration[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)),
-                 
-                 cs_degen = array(modeld$coldStratDur[modeld$responseValueNum %in% c(0,1)],
-                                  dim = sum(modeld$responseValueNum%in% c(0,1))),
-                 cs_prop = array(modeld$coldStratDur[modeld$responseValueNum>0 & modeld$responseValueNum<1],
-                                 dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)))
-
-fit_nophy_noforcingRestric <- sampling(smordbeta_nophy, mdl.data2,
-                                iter = 2024, warmup = 1000,
-                                chains = 4)
-# saveRDS(fit_nophy_noforcingRestric, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcingRestr.rds")
 }
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+##### Retrodictive checks: Chilling #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppChill.pdf",
+    width = 8, height = 6)
+
+# get unique identifiers for chilling, so we can plot time
+all_labels <- paste0(
+  c(mdl.data$sp_prop,  mdl.data$sp_degen),
+  c(mdl.data$prov_prop, mdl.data$prov_degen),
+  c(mdl.data$t_prop,  mdl.data$t_degen))
+
+# give it an integer, as we do in the lists
+shared_factor <- as.integer(as.factor(all_labels))
+
+# index for prop so we have the correct location 
+timeid_prop  <- shared_factor[seq_len(mdl.data$N_prop)]
+# then from n_prop until the end
+timeid_degen <- shared_factor[seq(mdl.data$N_prop + 1, mdl.data$N_prop + mdl.data$N_degen)]
+
+all_timeids <- sort(unique(c(timeid_prop, timeid_degen)))
+
+par(mfrow=c(3,3), mar=c(4,4,4,1), cex.main=0.8)
+
+for(i in all_chillids) { # i = 2
+  idx_prop  <- which(timeid_prop  == i)
+  idx_degen <- which(timeid_degen == i)
+  
+  # recover sp and prov for the title
+  sp <- unique(c(mdl.data$sp_prop[idx_prop],   mdl.data$sp_degen[idx_degen]))
+  p  <- unique(c(mdl.data$prov_prop[idx_prop],  mdl.data$prov_degen[idx_degen]))
+  t_val <- unique(c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen]))
+  
+  names <- unlist(c(
+    sapply(idx_prop,  function(n) paste0('y_prop_gen[',  n, ']')),
+    sapply(idx_degen, function(n) paste0('y_degen_gen[', n, ']'))))
+  
+  cs_vals  <- c(mdl.data$cs_prop[idx_prop],  mdl.data$cs_degen[idx_degen])
+  y_vals  <- c(mdl.data$y_prop[idx_prop],  mdl.data$y_degen[idx_degen])
+  orderx  <- order(cs_vals)
+  names   <- names[orderx]
+  cs_vals  <- cs_vals[orderx]
+  y_vals  <- y_vals[orderx]
+  
+  util$plot_conn_pushforward_quantiles(
+    samples, names, plot_xs = cs_vals,
+    main = paste0(levels(factor(modeld$genusspecies))[sp],
+                  ", Prov: ", unique(modeld$provLatLonAlt[modeld$numprov == p]),
+                  ", CS: ", round(t_val, 2)),
+    xlab = "Chilling (scaled)",
+    ylab = "Germ. perc.",
+    display_ylim = c(0, 1))
+  
+  points(cs_vals, y_vals, pch=16, cex=1.2, col="white")
+  points(cs_vals, y_vals, pch=16, cex=0.8, col="black")
+}
+
+dev.off()
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+##### Retrodictive checks: Time #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
+    width = 8, height = 6)
+
+# get unique identifiers for chilling, so we can plot time
+all_labels <- paste0(
+  c(mdl.data$sp_prop,  mdl.data$sp_degen),
+  c(mdl.data$prov_prop, mdl.data$prov_degen),
+  c(mdl.data$cs_prop,  mdl.data$cs_degen))
+# give it an integer, as we do in the lists
+shared_factor <- as.integer(as.factor(all_labels))
+
+# index for prop so we have the correct location 
+chillid_prop  <- shared_factor[seq_len(mdl.data$N_prop)]
+# then from n_prop until the end
+chillid_degen <- shared_factor[seq(mdl.data$N_prop + 1, mdl.data$N_prop + mdl.data$N_degen)]
+
+all_chillids <- sort(unique(c(chillid_prop, chillid_degen)))
+
+par(mfrow=c(3,3), mar=c(4,4,4,1), cex.main=0.8)
+
+for(i in all_chillids) { # i = 2
+  idx_prop  <- which(chillid_prop  == i)
+  idx_degen <- which(chillid_degen == i)
+  
+  # recover sp and prov for the title
+  sp <- unique(c(mdl.data$sp_prop[idx_prop],   mdl.data$sp_degen[idx_degen]))
+  p  <- unique(c(mdl.data$prov_prop[idx_prop],  mdl.data$prov_degen[idx_degen]))
+  cs_val <- unique(c(mdl.data$cs_prop[idx_prop], mdl.data$cs_degen[idx_degen]))
+  
+  names <- unlist(c(
+    sapply(idx_prop,  function(n) paste0('y_prop_gen[',  n, ']')),
+    sapply(idx_degen, function(n) paste0('y_degen_gen[', n, ']'))))
+  
+  t_vals  <- c(mdl.data$t_prop[idx_prop],  mdl.data$t_degen[idx_degen])
+  y_vals  <- c(mdl.data$y_prop[idx_prop],  mdl.data$y_degen[idx_degen])
+  orderx  <- order(t_vals)
+  names   <- names[orderx]
+  t_vals  <- t_vals[orderx]
+  y_vals  <- y_vals[orderx]
+  
+  util$plot_conn_pushforward_quantiles(
+    samples, names, plot_xs = t_vals,
+    main = paste0(levels(factor(modeld$genusspecies))[sp],
+                  ", Prov: ", unique(modeld$provLatLonAlt[modeld$numprov == p]),
+                  ", CS: ", round(cs_val, 2)),
+    xlab = "Time (scaled)",
+    ylab = "Germ. perc.",
+    display_ylim = c(0, 1))
+  
+  points(t_vals, y_vals, pch=16, cex=1.2, col="white")
+  points(t_vals, y_vals, pch=16, cex=0.8, col="black")
+}
+
+dev.off()
+
 
 
