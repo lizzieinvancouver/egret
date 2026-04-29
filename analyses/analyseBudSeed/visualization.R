@@ -29,50 +29,11 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd('~/projects/egret/analyses')
 } 
 
-source("analyseBudSeed/prepEgretUsda.R")
-# removing the rows with incomplete data:
-d <- d[complete.cases(d),] 
+source("analyseBudSeed/betaDisMdl.R")
 
 util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
-
-# to better see phylogenetic structure, ordering species by order on phylogeny
-phylo <- ape::read.tree("output/usdaEgretFull.tre")
-tipsGym <- getDescendants(phylo, node = 1264)
-tipsGym <- tipsGym[tipsGym <= Ntip(phylo)]
-
-# Get only angio
-angioPhy <- drop.tip(phylo, phylo$tip.label[tipsGym])
-
-# Get only gymno
-gymPhy <- keep.tip(phylo, phylo$tip.label[tipsGym])
-
-angio <- d[d$latbi %in% angioPhy$tip.label, ]
-gym <- d[d$latbi %in% gymPhy$tip.label, ]
-
-
-### for full dataset
-da <- angio
-phylo <- angioPhy
-subby <- unique(da$latbi)
-
-namesphy <- phylo$tip.label
-phylo <- phytools::force.ultrametric(phylo, method="extend")
-phylo$node.label <- seq(1,length(phylo$node.label),1)
-ape::is.ultrametric(phylo)
-# plot(phylo, cex=0.7)
-
-phylo <- ape::keep.tip(phylo, subby) # exclude gymnosperms
-# plot(phylo, cex=0.7)
-cphy <- ape::vcv.phylo(phylo,corr=TRUE)
-rm(subby)
-
-cphy <- vcv.phylo(phylo,corr=TRUE)
-
-da$numspp = as.integer(factor(da$latbi, levels = colnames(cphy)))
-da$chillDurationS <- scale(da$chillDuration)
-da$tempDayS <- scale(da$germTempGen)
 
 ## Angiosperm
 fit <- readRDS("analyseBudSeed/output/fit_full_angio.rds")
@@ -88,12 +49,12 @@ util$check_all_expectand_diagnostics(base_samples)
 
 # Retrodictive check
 par(mfrow=c(1, 1), mar = c(4,4,2,2))
-names <- c(sapply(1:mdl.dataUSDA$N_prop, function(n) paste0('y_prop_gen[',n,']')),
-           sapply(1:mdl.dataUSDA$N_degen, function(n) paste0('y_degen_gen[',n,']')))
+names <- c(sapply(1:mdl.dataAngio$N_prop, function(n) paste0('y_prop_gen[',n,']')),
+           sapply(1:mdl.dataAngio$N_degen, function(n) paste0('y_degen_gen[',n,']')))
 preds <- samples[names]
 names(preds) <- sapply(1:length(preds), function(n) paste0('y_gen[',n,']'))
 util$plot_hist_quantiles(preds, 'y_gen', 0, 1, 0.1,
-                         baseline_values=c(mdl.dataUSDA$y_prop, mdl.dataUSDA$y_degen), 
+                         baseline_values=c(mdl.dataAngio$y_prop, mdl.dataAngio$y_degen), 
                          xlab="Germination perc.")
 
 # Posterior inference
@@ -693,3 +654,119 @@ lines(global_chill_seq, global_mu_mean, col = "blue", lwd = 2)
 
 dev.off()
 
+# REAL retrodictive check with Mike's functions
+pdf("figures/retrodictiveChecks/spp.pdf",
+    width = 8, height = 6)
+
+
+str(mdl.dataAngio)
+
+# get a vector of ALL species, both in prop and degen
+all_sp <- unique(c(mdl.dataAngio$sp_prop, mdl.dataAngio$sp_degen))
+par(mfrow=c(4, 5))
+
+for (sp in all_sp) {
+  
+  c_vals <- c(mdl.dataAngio$c_degen[mdl.dataAngio$sp_degen == "239"], 
+              mdl.dataAngio$c_prop[mdl.dataAngio$sp_prop == "239"])
+  f_vals <- c(mdl.dataAngio$f_degen[mdl.dataAngio$sp_degen == "239"], 
+              mdl.dataAngio$f_prop[mdl.dataAngio$sp_prop == "239"])
+  
+  n_unique_c <- length(unique(c_vals))
+  n_unique_f <- length(unique(f_vals))
+  
+  # Case 1: Multiple Chilling levels, but only 1 Forcing level
+  if (n_unique_c > 1 && n_unique_f == 1) {
+    
+    dif_chill <- c_vals
+    idx_degen  <- which(mdl.dataAngio$sp_degen == "239")
+    idx_prop <- which(mdl.dataAngio$sp_prop == "239")
+    
+    names <- c(paste0('y_degen_gen[', idx_degen, ']'), 
+               paste0('y_prop_gen[', idx_prop, ']'))
+    
+    orderx <- order(dif_chill) 
+    dif_chill <- dif_chill[orderx]
+    names  <- names[orderx]
+    
+    util$plot_conn_pushforward_quantiles(
+      samples, names, plot_xs = dif_chill,
+      xlab = 'Chilling (scaled)', ylab = 'Germ. perc.',
+      display_xlim = c(-1, 5), display_ylim = c(0, 1)
+    )
+    y <- c(mdl.dataAngio$y_degen[idx_degen], mdl.dataAngio$y_prop[idx_prop])
+    y <- y[orderx]
+    points(dif_chill, y, pch=16, cex=1.2, col="white")
+    points(dif_chill, y, pch=16, cex=0.8, col="black")
+    
+    # Case 2: Multiple chilling and multiple Forcing (loop through forcing)
+  } else if (n_unique_c > 1 && n_unique_f > 1) {
+    
+    for (f in unique(f_vals)) {
+      idx_degen  <- which(mdl.dataAngio$sp_degen == "303" & mdl.dataAngio$f_degen == f)
+      idx_prop <- which(mdl.dataAngio$sp_prop == "303" & mdl.dataAngio$f_prop == f)
+      
+      dif_chill <- c(mdl.dataAngio$c_degen[idx_degen], mdl.dataAngio$c_prop[idx_prop])
+      names     <- c(paste0('y_degen_gen[', idx_degen, ']'), 
+                     paste0('y_prop_gen[', idx_prop, ']'))
+      
+      orderx <- order(dif_chill) 
+      names  <- names[orderx]
+      dif_chill     <- dif_chill[orderx]
+      
+      util$plot_conn_pushforward_quantiles(
+        samples, names, plot_xs = dif_chill,
+        xlab = 'Chilling (scaled)', ylab = 'Germ. perc.',
+        display_xlim = c(-1, 5), display_ylim = c(0, 1))
+      y <- c(mdl.dataAngio$y_degen[idx_degen], mdl.dataAngio$y_prop[idx_prop])
+      y <- y[orderx]
+      points(dif_chill, y, pch=16, cex=1.2, col="white")
+      points(dif_chill, y, pch=16, cex=0.8, col="black")
+    }
+    
+    # Case 3: 1 Chilling level, but multiple forcing levels
+  } else if (n_unique_c == 1 && n_unique_f > 1) {
+    dif_force <- f_vals
+    idx_degen  <- which(mdl.dataAngio$sp_degen == sp)
+    idx_prop <- which(mdl.dataAngio$sp_prop == sp)
+    
+    names <- c(paste0('y_degen_gen[', idx_degen, ']'), 
+               paste0('y_prop_gen[', idx_prop, ']'))
+    
+    orderx <- order(dif_force) 
+    names  <- names[orderx]
+    dif_force     <- dif_force[orderx]
+    
+    util$plot_conn_pushforward_quantiles(
+      samples, names, plot_xs = dif_force,
+      xlab = 'Forcing (scaled)', ylab = 'Germ. perc.',
+      display_xlim = c(-3, 3), display_ylim = c(0, 1))
+    y <- c(mdl.dataAngio$y_degen[idx_degen], mdl.dataAngio$y_prop[idx_prop])
+    y <- y[orderx]
+    points(dif_force, y, pch=16, cex=1.2, col="white")
+    points(dif_force, y, pch=16, cex=0.8, col="black")
+    
+  } else {
+    dif_chill <- c_vals
+    idx_degen  <- which(mdl.dataAngio$sp_degen == sp)
+    idx_prop <- which(mdl.dataAngio$sp_prop == sp)
+    
+    names <- c(paste0('y_degen_gen[', idx_degen, ']'), 
+               paste0('y_prop_gen[', idx_prop, ']'))
+    
+    orderx <- order(dif_chill) 
+    names  <- names[orderx]
+    dif_chill     <- dif_chill[orderx]
+    
+    util$plot_conn_pushforward_quantiles(
+      samples, names, plot_xs = dif_chill,
+      xlab = 'Chilling (scaled)', ylab = 'Germ. perc.',
+      display_xlim = c(-1, 5), display_ylim = c(0, 1))
+    y <- c(mdl.dataAngio$y_degen[idx_degen], mdl.dataAngio$y_prop[idx_prop])
+    y <- y[orderx]
+    points(dif_chill, y, pch=16, cex=1.2, col="white")
+    points(dif_chill, y, pch=16, cex=0.8, col="black")
+    
+  }
+}
+dev.off()

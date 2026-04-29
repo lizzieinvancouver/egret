@@ -115,6 +115,8 @@ mdl.dataAngio <- list(N_degen = sum(da$responseValue %in% c(0,1)),
                                 dim = sum(da$responseValue>0 & da$responseValue<1)),
                  Vphy = cphy)
 
+runmodel <- FALSE
+if(runmodel){
 # Compile and run model
 smordbeta <-stan_model("stan/orderedbetalikelihood_2slopes.stan")
 fit <- sampling(smordbeta, mdl.dataAngio, 
@@ -133,7 +135,7 @@ diagnostics <- list(
 saveRDS(fit, file = 'analyseBudSeed/output/fit_full_angio.rds')
 saveRDS(summ, file = 'analyseBudSeed/output/summary_full_angio.rds')
 saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_full_angio.rds')
-
+}
 # For gymnosperm
 dg <- gym
 phylo <- gymPhy
@@ -185,6 +187,7 @@ mdl.dataGym <- list(N_degen = sum(dg$responseValue %in% c(0,1)),
                                     dim = sum(dg$responseValue>0 & dg$responseValue<1)),
                      Vphy = cphy)
 
+if(runmodel){
 # Compile and run model
 smordbeta <-stan_model("stan/orderedbetalikelihood_2slopes.stan")
 fit <- sampling(smordbeta, mdl.dataGym, 
@@ -203,7 +206,7 @@ diagnostics <- list(
 saveRDS(fit, file = 'analyseBudSeed/output/fit_full_gymno.rds')
 saveRDS(summ, file = 'analyseBudSeed/output/summary_full_gymno.rds')
 saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_full_gymno.rds')
-
+}
 diagnostic <- FALSE
 if(diagnostic){
 source('modeling/mcmc_analysis_tools_rstan.R', local=util)
