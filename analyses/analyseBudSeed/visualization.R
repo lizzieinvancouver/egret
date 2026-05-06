@@ -660,7 +660,7 @@ pdf("analyseBudSeed/figures/retrodictiveChecksSpp.pdf",
 
 # get a vector of ALL species, both in prop and degen
 all_sp <- unique(c(mdl.dataAngio$sp_degen, mdl.dataAngio$sp_prop))
-par(mfrow=c(4, 5))
+par(mfrow=c(2, 3))
 
 for (sp in all_sp) {
   
