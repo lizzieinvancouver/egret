@@ -655,118 +655,73 @@ lines(global_chill_seq, global_mu_mean, col = "blue", lwd = 2)
 dev.off()
 
 # REAL retrodictive check with Mike's functions
-pdf("figures/retrodictiveChecks/spp.pdf",
+pdf("analyseBudSeed/figures/retrodictiveChecksSpp.pdf",
     width = 8, height = 6)
 
-
-str(mdl.dataAngio)
-
 # get a vector of ALL species, both in prop and degen
-all_sp <- unique(c(mdl.dataAngio$sp_prop, mdl.dataAngio$sp_degen))
+all_sp <- unique(c(mdl.dataAngio$sp_degen, mdl.dataAngio$sp_prop))
 par(mfrow=c(4, 5))
 
 for (sp in all_sp) {
   
-  c_vals <- c(mdl.dataAngio$c_degen[mdl.dataAngio$sp_degen == "239"], 
-              mdl.dataAngio$c_prop[mdl.dataAngio$sp_prop == "239"])
-  f_vals <- c(mdl.dataAngio$f_degen[mdl.dataAngio$sp_degen == "239"], 
-              mdl.dataAngio$f_prop[mdl.dataAngio$sp_prop == "239"])
+  idx_degen_raw  <- which(mdl.dataAngio$sp_degen == sp)
+  idx_prop_raw <- which(mdl.dataAngio$sp_prop == sp)
+  
+  names <- c()
+  c_vals <- c()
+  f_vals <- c()
+  y_obs  <- c()
+  
+  if (length(idx_degen_raw) > 0) {
+    names  <- c(names, paste0('y_degen_gen[', idx_degen_raw, ']'))
+    c_vals <- c(c_vals, mdl.dataAngio$c_degen[idx_degen_raw])
+    f_vals <- c(f_vals, mdl.dataAngio$f_degen[idx_degen_raw])
+    y_obs  <- c(y_obs, mdl.dataAngio$y_degen[idx_degen_raw])
+  }
+  
+  if (length(idx_prop_raw) > 0) {
+    names  <- c(names, paste0('y_prop_gen[', idx_prop_raw, ']'))
+    c_vals <- c(c_vals, mdl.dataAngio$c_prop[idx_prop_raw])
+    f_vals <- c(f_vals, mdl.dataAngio$f_prop[idx_prop_raw])
+    y_obs  <- c(y_obs, mdl.dataAngio$y_prop[idx_prop_raw])
+  }
   
   n_unique_c <- length(unique(c_vals))
   n_unique_f <- length(unique(f_vals))
   
-  # Case 1: Multiple Chilling levels, but only 1 Forcing level
-  if (n_unique_c > 1 && n_unique_f == 1) {
+  # Case 1: Multiple Chilling levels or other cases don't belong to following cases
+  if (n_unique_c > 1){
+    for (f in unique(f_vals)){
+      mask <- which(f_vals == f)
     
-    dif_chill <- c_vals
-    idx_degen  <- which(mdl.dataAngio$sp_degen == "239")
-    idx_prop <- which(mdl.dataAngio$sp_prop == "239")
-    
-    names <- c(paste0('y_degen_gen[', idx_degen, ']'), 
-               paste0('y_prop_gen[', idx_prop, ']'))
-    
-    orderx <- order(dif_chill) 
-    dif_chill <- dif_chill[orderx]
-    names  <- names[orderx]
+    orderx <- order(c_vals[mask]) 
+    names_ordered <- names[mask][orderx]
+    dif_chill <- c_vals[mask][orderx]
+    y_ordered <- y_obs[mask][orderx]
     
     util$plot_conn_pushforward_quantiles(
-      samples, names, plot_xs = dif_chill,
+      samples, names_ordered, plot_xs = dif_chill,
       xlab = 'Chilling (scaled)', ylab = 'Germ. perc.',
       display_xlim = c(-1, 5), display_ylim = c(0, 1)
     )
-    y <- c(mdl.dataAngio$y_degen[idx_degen], mdl.dataAngio$y_prop[idx_prop])
-    y <- y[orderx]
-    points(dif_chill, y, pch=16, cex=1.2, col="white")
-    points(dif_chill, y, pch=16, cex=0.8, col="black")
-    
-    # Case 2: Multiple chilling and multiple Forcing (loop through forcing)
-  } else if (n_unique_c > 1 && n_unique_f > 1) {
-    
-    for (f in unique(f_vals)) {
-      idx_degen  <- which(mdl.dataAngio$sp_degen == "303" & mdl.dataAngio$f_degen == f)
-      idx_prop <- which(mdl.dataAngio$sp_prop == "303" & mdl.dataAngio$f_prop == f)
-      
-      dif_chill <- c(mdl.dataAngio$c_degen[idx_degen], mdl.dataAngio$c_prop[idx_prop])
-      names     <- c(paste0('y_degen_gen[', idx_degen, ']'), 
-                     paste0('y_prop_gen[', idx_prop, ']'))
-      
-      orderx <- order(dif_chill) 
-      names  <- names[orderx]
-      dif_chill     <- dif_chill[orderx]
-      
-      util$plot_conn_pushforward_quantiles(
-        samples, names, plot_xs = dif_chill,
-        xlab = 'Chilling (scaled)', ylab = 'Germ. perc.',
-        display_xlim = c(-1, 5), display_ylim = c(0, 1))
-      y <- c(mdl.dataAngio$y_degen[idx_degen], mdl.dataAngio$y_prop[idx_prop])
-      y <- y[orderx]
-      points(dif_chill, y, pch=16, cex=1.2, col="white")
-      points(dif_chill, y, pch=16, cex=0.8, col="black")
+    title(main = paste("Sp:", sp,"| F:", round(f, 2)))
+    points(dif_chill, y_ordered, pch=16, cex=1.2, col="white")
+    points(dif_chill, y_ordered, pch=16, cex=0.8, col="black")
     }
-    
-    # Case 3: 1 Chilling level, but multiple forcing levels
-  } else if (n_unique_c == 1 && n_unique_f > 1) {
-    dif_force <- f_vals
-    idx_degen  <- which(mdl.dataAngio$sp_degen == sp)
-    idx_prop <- which(mdl.dataAngio$sp_prop == sp)
-    
-    names <- c(paste0('y_degen_gen[', idx_degen, ']'), 
-               paste0('y_prop_gen[', idx_prop, ']'))
-    
-    orderx <- order(dif_force) 
-    names  <- names[orderx]
-    dif_force     <- dif_force[orderx]
+  } else if (n_unique_f > 1) {
+    orderx <- order(f_vals)
+    dif_forcing <- f_vals[orderx]
+    names_ordered <- names[orderx]
+    y_ordered <- y_obs[orderx]
     
     util$plot_conn_pushforward_quantiles(
-      samples, names, plot_xs = dif_force,
+      samples, names_ordered, plot_xs = dif_forcing,
       xlab = 'Forcing (scaled)', ylab = 'Germ. perc.',
-      display_xlim = c(-3, 3), display_ylim = c(0, 1))
-    y <- c(mdl.dataAngio$y_degen[idx_degen], mdl.dataAngio$y_prop[idx_prop])
-    y <- y[orderx]
-    points(dif_force, y, pch=16, cex=1.2, col="white")
-    points(dif_force, y, pch=16, cex=0.8, col="black")
-    
-  } else {
-    dif_chill <- c_vals
-    idx_degen  <- which(mdl.dataAngio$sp_degen == sp)
-    idx_prop <- which(mdl.dataAngio$sp_prop == sp)
-    
-    names <- c(paste0('y_degen_gen[', idx_degen, ']'), 
-               paste0('y_prop_gen[', idx_prop, ']'))
-    
-    orderx <- order(dif_chill) 
-    names  <- names[orderx]
-    dif_chill     <- dif_chill[orderx]
-    
-    util$plot_conn_pushforward_quantiles(
-      samples, names, plot_xs = dif_chill,
-      xlab = 'Chilling (scaled)', ylab = 'Germ. perc.',
-      display_xlim = c(-1, 5), display_ylim = c(0, 1))
-    y <- c(mdl.dataAngio$y_degen[idx_degen], mdl.dataAngio$y_prop[idx_prop])
-    y <- y[orderx]
-    points(dif_chill, y, pch=16, cex=1.2, col="white")
-    points(dif_chill, y, pch=16, cex=0.8, col="black")
-    
+      display_xlim = c(-3, 3), display_ylim = c(0, 1)
+    )
+    title(main = paste("Sp:", sp))
+    points(dif_forcing, y_ordered, pch=16, cex=1.2, col="white")
+    points(dif_forcing, y_ordered, pch=16, cex=0.8, col="black")
   }
-}
+  }
 dev.off()
