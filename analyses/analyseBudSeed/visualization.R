@@ -671,7 +671,7 @@ for (sp in all_sp) {
   c_vals <- c()
   f_vals <- c()
   y_obs  <- c()
-  
+  # aggregate data for both degen and prop
   if (length(idx_degen_raw) > 0) {
     names  <- c(names, paste0('y_degen_gen[', idx_degen_raw, ']'))
     c_vals <- c(c_vals, mdl.dataAngio$c_degen[idx_degen_raw])
@@ -689,8 +689,9 @@ for (sp in all_sp) {
   n_unique_c <- length(unique(c_vals))
   n_unique_f <- length(unique(f_vals))
   
-  # Case 1: Multiple Chilling levels or other cases don't belong to following cases
+  # Case 1: Multiple Chilling levels
   if (n_unique_c > 1){
+    # if there are multiple forcing as well, make separate figures for different forcing
     for (f in unique(f_vals)){
       mask <- which(f_vals == f)
     
@@ -708,6 +709,7 @@ for (sp in all_sp) {
     points(dif_chill, y_ordered, pch=16, cex=1.2, col="white")
     points(dif_chill, y_ordered, pch=16, cex=0.8, col="black")
     }
+    # Case 2: Multiple forcing levels
   } else if (n_unique_f > 1) {
     orderx <- order(f_vals)
     dif_forcing <- f_vals[orderx]
