@@ -490,9 +490,9 @@ util$check_all_hmc_diagnostics(diagnostics)
 samples <- util$extract_expectand_vals(fit_nophy_noforcing)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Time #####
+##### Retrodictive checks: Chilling, grouped by time #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppChilling.pdf",
     width = 8, height = 6)
 
 # get unique identifiers for chilling, so we can plot time
@@ -521,7 +521,7 @@ for(i in all_timeids) { # i = 8
   sp <- unique(c(mdl.data$sp_prop[idx_prop],   mdl.data$sp_degen[idx_degen]))
   p  <- unique(c(mdl.data$prov_prop[idx_prop],  mdl.data$prov_degen[idx_degen]))
   # extract that precise chilling value for that time series
-  cs_val <- unique(c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen]))
+  t_val <- unique(c(mdl.data$t_prop[idx_prop], mdl.data$t_degen[idx_degen]))
   
   names <- unlist(c(
     sapply(idx_prop,  function(n) paste0('y_prop_gen[',  n, ']')),
@@ -537,10 +537,11 @@ for(i in all_timeids) { # i = 8
   util$plot_conn_pushforward_quantiles(
     samples, names, plot_xs = cs_vals,
     main = paste0(levels(factor(modeld_noforc2$genusspecies))[sp],
-                  ", Prov: ", unique(modeld_noforc2$provLatLonAlt[modeld_noforc2$numprov == p]),
-                  ", CS: ", round(t_val, 2)),
+                  ", Prov: ", p,
+                  ", Time: ", round(t_val, 2)),
     xlab = "Chilling (scaled)",
     ylab = "Germ. perc.",
+    # display_xlim = c(min(mdl.data$cs_prop), max(mdl.data$cs_prop)),
     display_ylim = c(0, 1))
   
   points(cs_vals, y_vals, pch=16, cex=1.2, col="white")
@@ -549,9 +550,9 @@ for(i in all_timeids) { # i = 8
 dev.off()
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Chilling #####
+##### Retrodictive checks: Time grouped by chilling #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppChill.pdf",
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
     width = 8, height = 6)
 
 # get unique identifiers for chilling, so we can plot time
@@ -593,11 +594,12 @@ for(i in all_chillids) { # i = 2
   
   util$plot_conn_pushforward_quantiles(
     samples, names, plot_xs = t_vals,
-    main = paste0(levels(factor(modeld$genusspecies))[sp],
-                  ", Prov: ", unique(modeld$provLatLonAlt[modeld$numprov == p]),
-                  ", CS: ", round(cs_val, 2)),
-    xlab = "Chilling (scaled)",
+    main = paste0(levels(factor(modeld_noforc2$genusspecies))[sp],
+                  ", Prov: ", p,
+                  ", Chill: ", round(cs_val, 2)),
+    xlab = "Time (scaled)",
     ylab = "Germ. perc.",
+    # display_xlim = c(min(mdl.data$t_prop), max(mdl.data$t_prop)),
     display_ylim = c(0, 1))
   
   points(t_vals, y_vals, pch=16, cex=1.2, col="white")
