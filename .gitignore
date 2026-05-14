@@ -26,4 +26,8 @@ data/speciesrange/
 data/plant_rasters/dist_gm_all/
 data/plant_rasters/iNaturalist*.gpkg
 
+analyses/figures/spDist/comp.pdf
+analyses/figures/spDist/GM.pdf
+analyses/figures/spDist/iNat.pdf
+
 analyses/analyseBudSeed/output/
