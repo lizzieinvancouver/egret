@@ -859,3 +859,66 @@ for (sp in prop_sp) {
   }
 }
 dev.off()
+
+#Pick one species (sp:198) and reconstruct the ypred see if the plotting code is wrong
+df_prop <- data.frame(
+  chill     = mdl.dataAngio$c_prop,
+  observed  = mdl.dataAngio$y_prop,
+  species_idx = mdl.dataAngio$sp_prop
+)
+
+df_degen <- data.frame(
+  chill     = mdl.dataGym$c_degen,
+  observed  = mdl.dataGym$y_degen,
+  species_idx = mdl.dataGym$sp_degen
+)
+
+all_data <- rbind(df_prop, df_degen)
+
+all_data$species_name <- species_names[all_data$species_idx]
+all_data <- arrange(all_data,species_idx)
+sp_forcing <- tapply(c(mdl.dataAngio$f_prop, mdl.dataAngio$f_degen),
+                     c(mdl.dataAngio$sp_prop, mdl.dataAngio$sp_degen), mean)
+  sp_idx  <- 198
+  sp_raw <- df_prop[df_prop$species_idx == "198", ]
+  
+  chill_seq <- seq(min(sp_raw$chill), max(sp_raw$chill), length.out = 10)
+  a_i  <- draws_a[, sp_idx]
+  bc_i <- draws_bc[, sp_idx]
+  bf_i <- draws_bf[, sp_idx]
+  f_i  <- sp_forcing[sp_idx]
+  
+  a_i_mean <- mean(a_i)
+  bc_i_mean <- mean(bc_i)
+  bf_i_mean <- mean(bf_i)
+  
+  mu_mean <- plogis(a_i_mean + bc_i_mean * chill_seq + bf_i_mean * f_i)
+  
+  a_i_low <- quantile(a_i, probs = 0.1, na.rm = FALSE)
+  bc_i_low <- quantile(bc_i, probs = 0.1, na.rm = FALSE)
+  bf_i_low <- quantile(bf_i, probs = 0.1, na.rm = FALSE)
+  
+  mu_low <- plogis(a_i_low + bc_i_low * chill_seq + bf_i_low * f_i)
+  
+  a_i_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
+  bc_i_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
+  bf_i_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
+  
+  mu_high <- plogis(a_i_high + bc_i_high * chill_seq + bf_i_high * f_i)
+  
+  
+  plot(sp_raw$chill, sp_raw$observed, 
+       type = "n",
+       ylim = c(0, 1), 
+       xlab = "Chilling", ylab = "Response",
+       main = sp_name, cex.main = 0.8)
+  
+  polygon(c(chill_seq, rev(chill_seq)), 
+          c(mu_low, rev(mu_high)), 
+          col = "grey", border = NA)
+  
+  
+  lines(chill_seq, mu_mean, col = "blue", lwd = 2)
+  
+  points(sp_raw$chill, sp_raw$observed, pch = 16, col = "black", cex = 0.8)
+  
