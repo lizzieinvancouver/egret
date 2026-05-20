@@ -727,3 +727,135 @@ for (sp in all_sp) {
   }
   }
 dev.off()
+
+# get a vector of ALL species in prop only
+pdf("analyseBudSeed/figures/retrodictiveChecksSppPropAngio.pdf",
+    width = 8, height = 6)
+
+prop_sp <- unique(mdl.dataGym$sp_prop)
+par(mfrow=c(2, 3))
+
+for (sp in prop_sp) {
+  
+  idx_prop_raw <- which(mdl.dataAngio$sp_prop == sp)
+  
+  names <- c()
+  c_vals <- c()
+  f_vals <- c()
+  y_obs  <- c()
+  
+  names  <- c(names, paste0('y_prop_gen[', idx_prop_raw, ']'))
+  c_vals <- c(c_vals, mdl.dataAngio$c_prop[idx_prop_raw])
+  f_vals <- c(f_vals, mdl.dataAngio$f_prop[idx_prop_raw])
+  y_obs  <- c(y_obs, mdl.dataAngio$y_prop[idx_prop_raw])
+  
+  n_unique_c <- length(unique(c_vals))
+  n_unique_f <- length(unique(f_vals))
+  
+  # Case 1: Multiple Chilling levels
+  if (n_unique_c > 1){
+    # if there are multiple forcing as well, make separate figures for different forcing
+    for (f in unique(f_vals)){
+      mask <- which(f_vals == f)
+      
+      orderx <- order(c_vals[mask]) 
+      names_ordered <- names[mask][orderx]
+      dif_chill <- c_vals[mask][orderx]
+      y_ordered <- y_obs[mask][orderx]
+      
+      util$plot_conn_pushforward_quantiles(
+        samples, names_ordered, plot_xs = dif_chill,
+        xlab = 'Chilling (scaled)', ylab = 'Germ. perc.',
+        display_xlim = c(-1, 3), display_ylim = c(0, 1)
+      )
+      title(main = paste("Sp:", sp,"| F:", round(f, 2)))
+      points(dif_chill, y_ordered, pch=16, cex=1.2, col="white")
+      points(dif_chill, y_ordered, pch=16, cex=0.8, col="black")
+    }
+    # Case 2: Multiple forcing levels
+  } else if (n_unique_f > 1) {
+    orderx <- order(f_vals)
+    dif_forcing <- f_vals[orderx]
+    names_ordered <- names[orderx]
+    y_ordered <- y_obs[orderx]
+    
+    util$plot_conn_pushforward_quantiles(
+      samples, names_ordered, plot_xs = dif_forcing,
+      xlab = 'Forcing (scaled)', ylab = 'Germ. perc.',
+      display_xlim = c(-3, 3), display_ylim = c(0, 1)
+    )
+    title(main = paste("Sp:", sp))
+    points(dif_forcing, y_ordered, pch=16, cex=1.2, col="white")
+    points(dif_forcing, y_ordered, pch=16, cex=0.8, col="black")
+  }
+}
+dev.off()
+
+fit <- readRDS("analyseBudSeed/output/fit_full_gymno.rds")
+summ <- readRDS("analyseBudSeed/output/summary_full_gymno.rds")
+diagnostics <- readRDS("analyseBudSeed/output/diagnostics_full_gymno.rds")
+
+samples <- util$extract_expectand_vals(fit)
+
+# get a vector of ALL species in prop only
+pdf("analyseBudSeed/figures/retrodictiveChecksSppPropGym.pdf",
+    width = 8, height = 6)
+
+prop_sp <- unique(mdl.dataGym$sp_prop)
+par(mfrow=c(2, 3))
+
+for (sp in prop_sp) {
+  
+  idx_prop_raw <- which(mdl.dataGym$sp_prop == sp)
+  
+  names <- c()
+  c_vals <- c()
+  f_vals <- c()
+  y_obs  <- c()
+
+  names  <- c(names, paste0('y_prop_gen[', idx_prop_raw, ']'))
+  c_vals <- c(c_vals, mdl.dataGym$c_prop[idx_prop_raw])
+  f_vals <- c(f_vals, mdl.dataGym$f_prop[idx_prop_raw])
+  y_obs  <- c(y_obs, mdl.dataGym$y_prop[idx_prop_raw])
+  
+  n_unique_c <- length(unique(c_vals))
+  n_unique_f <- length(unique(f_vals))
+  
+  # Case 1: Multiple Chilling levels
+  if (n_unique_c > 1){
+    # if there are multiple forcing as well, make separate figures for different forcing
+    for (f in unique(f_vals)){
+      mask <- which(f_vals == f)
+      
+      orderx <- order(c_vals[mask]) 
+      names_ordered <- names[mask][orderx]
+      dif_chill <- c_vals[mask][orderx]
+      y_ordered <- y_obs[mask][orderx]
+      
+      util$plot_conn_pushforward_quantiles(
+        samples, names_ordered, plot_xs = dif_chill,
+        xlab = 'Chilling (scaled)', ylab = 'Germ. perc.',
+        display_xlim = c(-1, 3), display_ylim = c(0, 1)
+      )
+      title(main = paste("Sp:", sp,"| F:", round(f, 2)))
+      points(dif_chill, y_ordered, pch=16, cex=1.2, col="white")
+      points(dif_chill, y_ordered, pch=16, cex=0.8, col="black")
+    }
+    # Case 2: Multiple forcing levels
+  } else if (n_unique_f > 1) {
+    orderx <- order(f_vals)
+    dif_forcing <- f_vals[orderx]
+    names_ordered <- names[orderx]
+    y_ordered <- y_obs[orderx]
+    
+    util$plot_conn_pushforward_quantiles(
+      samples, names_ordered, plot_xs = dif_forcing,
+      xlab = 'Forcing (scaled)', ylab = 'Germ. perc.',
+      display_xlim = c(-3, 3), display_ylim = c(0, 1)
+    )
+    title(main = paste("Sp:", sp))
+    points(dif_forcing, y_ordered, pch=16, cex=1.2, col="white")
+    points(dif_forcing, y_ordered, pch=16, cex=0.8, col="black")
+  }
+}
+dev.off()
