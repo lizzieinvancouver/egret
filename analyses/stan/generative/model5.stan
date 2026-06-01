@@ -19,7 +19,9 @@ data {
 }
 parameters {
   real mu_pv;
-  real<lower=0> tau_pv;
+  real<lower=0> tau_pv_species;
+  vector[Nspecies] mu_pv_species_tilde;
+  real<lower=0> tau_pv_exp;
   vector[Nexps] alpha_pv_tilde;
   
   real mu_tau50;
@@ -29,25 +31,36 @@ parameters {
   vector[Nexps] alpha_tau50_tilde;
   
   real mu_logratio;
-  real<lower=0> tau_logratio;
+  real<lower=0> tau_logratio_species;
+  vector[Nspecies] mu_logratio_species_tilde;
+  real<lower=0> tau_logratio_exp;
   vector[Nexps] alpha_logratio_tilde;
 }
 transformed parameters {
-  vector[Nexps] alpha_pv = mu_pv + tau_pv * alpha_pv_tilde;
-  vector[Nexps] pv = inv_logit(alpha_pv);
-  
-  vector[Nspecies] mu_tau50_species = mu_tau50 + tau_tau50_species * mu_tau50_species_tilde;
-  
+  vector[Nspecies] mu_pv_species;
+  vector[Nspecies] mu_tau50_species;
+  vector[Nspecies] mu_logratio_species;
   vector[Nexps] log_tau50;
-  for(e in 1:Nexps) {
-    log_tau50[e] = mu_tau50_species[species_idxs[e]] + tau_tau50_exp * alpha_tau50_tilde[e];
-  }
-  vector[Nexps] tau50 = exp(log_tau50);
-  
-  vector[Nexps] log_delta = log_tau50 + mu_logratio + tau_logratio * alpha_logratio_tilde;
-  vector[Nexps] delta_595 = exp(log_delta);
-  
+  vector[Nexps] tau50;
+  vector[Nexps] log_delta;
+  vector[Nexps] delta_595;
+  vector[Nexps] alpha_pv;
+  vector[Nexps] pv;
   vector[N] pg;
+  
+  mu_pv_species = mu_pv + tau_pv_species * mu_pv_species_tilde;
+  mu_tau50_species = mu_tau50 + tau_tau50_species * mu_tau50_species_tilde;
+  mu_logratio_species = mu_logratio + tau_logratio_species * mu_logratio_species_tilde;
+  
+  for(e in 1:Nexps) {
+    alpha_pv[e] = mu_pv_species[species_idxs[e]] + tau_pv_exp * alpha_pv_tilde[e];
+    log_tau50[e] = mu_tau50_species[species_idxs[e]] + tau_tau50_exp * alpha_tau50_tilde[e];
+    log_delta[e] = log_tau50[e] + mu_logratio_species[species_idxs[e]] + tau_logratio_exp * alpha_logratio_tilde[e];
+  }
+  
+  pv = inv_logit(alpha_pv);
+  tau50 = exp(log_tau50);
+  delta_595 = exp(log_delta);
   
   for(e in 1:Nexps) {
     int start = exp_start_idxs[e];
@@ -64,7 +77,9 @@ transformed parameters {
 }
 model {
   mu_pv ~ normal(0, 1);
-  tau_pv ~ normal(0.5, 0.5);
+  tau_pv_species ~ normal(0, 1);
+  mu_pv_species_tilde ~ normal(0, 1);
+  tau_pv_exp ~ normal(0, 0.5);
   alpha_pv_tilde ~ normal(0, 1);
   
   mu_tau50 ~ normal(log(20), 1);
@@ -74,7 +89,9 @@ model {
   alpha_tau50_tilde ~ normal(0, 1);
   
   mu_logratio ~ normal(log(0.4), 0.5);
-  tau_logratio ~ normal(0, 0.5);
+  tau_logratio_species ~ normal(0, 0.5);
+  mu_logratio_species_tilde ~ normal(0, 1);
+  tau_logratio_exp ~ normal(0, 0.3);
   alpha_logratio_tilde ~ normal(0, 1);
   
   for(e in 1:Nexps) {
