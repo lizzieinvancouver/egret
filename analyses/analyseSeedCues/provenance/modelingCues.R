@@ -541,7 +541,7 @@ for(i in all_timeids) { # i = 8
                   ", Time: ", round(t_val, 2)),
     xlab = "Chilling (scaled)",
     ylab = "Germ. perc.",
-    # display_xlim = c(min(mdl.data$cs_prop), max(mdl.data$cs_prop)),
+    display_xlim = c(min(mdl.data$cs_prop), max(mdl.data$cs_prop)),
     display_ylim = c(0, 1))
   
   points(cs_vals, y_vals, pch=16, cex=1.2, col="white")
@@ -607,3 +607,29 @@ for(i in all_chillids) { # i = 2
 }
 
 dev.off()
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+##### General response curve #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+jpeg("analyseSeedCues/provenance/figures/retrodictiveChecks/overallGermTrend.jpeg",
+    width = 3000, height = 2400, res = 300)
+
+# get everyone together!
+evryonetgther <- data.frame(
+  name = c(paste0('y_prop_gen[',  seq_len(mdl.data$N_prop),  ']'),
+           paste0('y_degen_gen[', seq_len(mdl.data$N_degen), ']')),
+  t = c(mdl.data$t_prop,  mdl.data$t_degen),
+  y = c(mdl.data$y_prop,  mdl.data$y_degen))
+evryonetgther <- evryonetgther[order(evryonetgther$t), ]
+
+par(mar = c(4, 4, 2, 1))
+util$plot_conn_pushforward_quantiles(
+  samples, evryonetgther$name, plot_xs = evryonetgther$t,
+  main = "germ trend across everything",
+  xlab = "Time (scaled)",
+  ylab = "Germ. perc.",
+  display_ylim = c(0, 1))
+points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 1.2, col = adjustcolor("white", alpha.f = 0.5))
+points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 0.8, col = adjustcolor( "black", alpha.f = 0.5))
+dev.off()
+       
