@@ -618,9 +618,14 @@ jpeg("analyseSeedCues/provenance/figures/retrodictiveChecks/overallGermTrend.jpe
 evryonetgther <- data.frame(
   name = c(paste0('y_prop_gen[',  seq_len(mdl.data$N_prop),  ']'),
            paste0('y_degen_gen[', seq_len(mdl.data$N_degen), ']')),
+  sp = c(mdl.data$sp_prop, mdl.data$sp_degen),
+  prov = c(mdl.data$prov_prop, mdl.data$prov_degen),
   t = c(mdl.data$t_prop,  mdl.data$t_degen),
+  cs = c(mdl.data$cs_prop, mdl.data$cs_degen),
   y = c(mdl.data$y_prop,  mdl.data$y_degen))
 evryonetgther <- evryonetgther[order(evryonetgther$t), ]
+
+# Through Mike's code
 
 par(mar = c(4, 4, 2, 1))
 util$plot_conn_pushforward_quantiles(
@@ -632,4 +637,44 @@ util$plot_conn_pushforward_quantiles(
 points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 1.2, col = adjustcolor("white", alpha.f = 0.5))
 points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 0.8, col = adjustcolor( "black", alpha.f = 0.5))
 dev.off()
-       
+
+# Rework it
+
+paramnames <- names(fit_nophy_noforcing)[grepl("cs|t", names(fit_nophy_noforcing)) &
+                                           !grepl("tilde|z|sigma|logis|cut", 
+                                                  names(fit_nophy_noforcing))]
+df_fit <- as.data.frame(fit_nophy_noforcing)
+pardf <- df_fit[, paramnames]
+df_fit_cs <- pardf[, grepl("cs", colnames(pardf))]
+seqcs <- seq(from = min(evryonetgther$cs), max(evryonetgther$cs), length.out = 5)
+scaled_list <- lapply(seqcs, function(s) df_fit_cs * s)
+ave_list_cs <- lapply(scaled_list, function(s) rowMeans(s))
+df_fit_t <- pardf[, grepl("t", colnames(pardf))]
+seqt <- seq(from = min(evryonetgther$t), max(evryonetgther$t), length.out = 5)
+scaled_list_t <- lapply(seqt, function(s) df_fit_t * s)
+a_names <- names(fit_nophy_noforcing)[grepl("a", names(fit_nophy_noforcing)) &
+                                        !grepl("sigma|calc|kappa|logis", 
+                                               names(fit_nophy_noforcing))]
+pardf_a <- df_fit[, a_names]
+ave_a <- rowMeans(pardf_a)
+ave_cs <- rowMeans(do.call(cbind, ave_list_cs))
+
+# check the distribution of the chilling data
+hist(evryonetgther$cs, xlab = "scaled chilling values")
+abline(v = seqcs, col = "blue")
+colMeans(do.call(cbind, ave_list_cs))
+ave_list_t <- lapply(scaled_list_t, function(s) rowMeans(s))
+predictions <- lapply(ave_list_t, function(t) ave_a + t 
+                      # + ave_cs
+                      )
+
+par(mfrow = c(1,1), mar = c(5,5,5,5))
+plot(seqt, sapply(predictions, mean), type = "l",
+     xlab = "time scaled", ylab = "expected germ percentage", 
+     ylim = range(c(sapply(predictions, quantile, c(0.25, 0.75)), evryonetgther$y)))
+polygon(c(seqt, rev(seqt)),
+        c(sapply(predictions, quantile, 0.75), rev(sapply(predictions, quantile, 0.25))),
+        col = adjustcolor("grey", 0.4), border = NA)
+points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 1.2, col = adjustcolor( "white", alpha.f = 0.5))
+points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 0.8, col = adjustcolor( "black", alpha.f = 0.5))
+
