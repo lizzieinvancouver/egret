@@ -860,11 +860,124 @@ for (sp in prop_sp) {
 }
 dev.off()
 
-#Pick one species (sp:198) and reconstruct the ypred see if the plotting code is wrong
+#Manually plot the model results with CI
+fit <- readRDS("analyseBudSeed/output/fit_full_angio.rds")
+summ <- readRDS("analyseBudSeed/output/summary_full_angio.rds")
+diagnostics <- readRDS("analyseBudSeed/output/diagnostics_full_angio.rds")
+
 df_prop <- data.frame(
   chill     = mdl.dataAngio$c_prop,
   observed  = mdl.dataAngio$y_prop,
   species_idx = mdl.dataAngio$sp_prop
+)
+
+df_degen <- data.frame(
+  chill     = mdl.dataAngio$c_degen,
+  observed  = mdl.dataAngio$y_degen,
+  species_idx = mdl.dataAngio$sp_degen
+)
+
+all_data <- rbind(df_prop, df_degen)
+species_names <- tapply(da$latbi, da$numspp, unique)
+species_names <- as.character(species_names)
+
+all_data$species_name <- species_names[all_data$species_idx]
+
+# species-level forcing
+forcing <- c(mdl.dataAngio$f_prop, mdl.dataAngio$f_degen)
+sp <- c(mdl.dataAngio$sp_prop, mdl.dataAngio$sp_degen)
+sp_forcing <- tapply(forcing, sp, mean)
+
+draws_a  <- as.matrix(fit, pars = "a")
+draws_bc <- as.matrix(fit, pars = "bc")
+draws_bf <- as.matrix(fit, pars = "bf")
+
+pdf("analyseBudSeed/figures/manualPosteriorAngioFreeY.pdf",
+    width = 8, height = 6)
+par(mfrow=c(2, 3))
+
+for(sp_idx in sort(unique(all_data$species_idx))) {
+  
+  sp_raw <- subset(all_data, species_idx == sp_idx)
+  
+  # skip species with too few observations
+  if(nrow(sp_raw) < 2) next
+  
+  chill_seq <- seq(
+    min(sp_raw$chill),
+    max(sp_raw$chill),
+    length.out = 100
+  )
+  
+  # posterior draws for this species
+  a_i  <- draws_a[, sp_idx]
+  bc_i <- draws_bc[, sp_idx]
+  bf_i <- draws_bf[, sp_idx]
+  
+  f_i <- sp_forcing[as.character(sp_idx)]
+  
+  # posterior mean
+  mu_mean <- plogis(
+    mean(a_i) +
+      mean(bc_i) * chill_seq +
+      mean(bf_i) * f_i
+  )
+  
+  # 10% quantile prediction
+  mu_low <- plogis(
+    quantile(a_i, 0.1) +
+      quantile(bc_i, 0.1) * chill_seq +
+      quantile(bf_i, 0.1) * f_i
+  )
+  
+  # 90% quantile prediction
+  mu_high <- plogis(
+    quantile(a_i, 0.9) +
+      quantile(bc_i, 0.9) * chill_seq +
+      quantile(bf_i, 0.9) * f_i
+  )
+  
+  sp_name <- species_names[sp_idx]
+
+  plot(
+    sp_raw$chill,
+    sp_raw$observed,
+    type = "n",
+    ylim = c(0, 1),
+    xlab = "Chilling",
+    ylab = "Response",
+    main = sp_name,
+    cex.main = 0.8
+  )
+  
+  polygon(
+    c(chill_seq, rev(chill_seq)),
+    c(mu_low, rev(mu_high)),
+    col = "grey80",
+    border = NA
+  )
+  
+  lines(chill_seq, mu_mean, col = "blue", lwd = 2)
+  
+  points(
+    sp_raw$chill,
+    sp_raw$observed,
+    pch = 16,
+    cex = 0.8
+  )
+}
+
+dev.off()
+
+#gymnosperm
+fit <- readRDS("analyseBudSeed/output/fit_full_gymno.rds")
+summ <- readRDS("analyseBudSeed/output/summary_full_gymno.rds")
+diagnostics <- readRDS("analyseBudSeed/output/diagnostics_full_gymno.rds")
+
+df_prop <- data.frame(
+  chill     = mdl.dataGym$c_prop,
+  observed  = mdl.dataGym$y_prop,
+  species_idx = mdl.dataGym$sp_prop
 )
 
 df_degen <- data.frame(
@@ -874,51 +987,93 @@ df_degen <- data.frame(
 )
 
 all_data <- rbind(df_prop, df_degen)
+species_names <- tapply(dg$latbi, dg$numspp, unique)
+species_names <- as.character(species_names)
 
 all_data$species_name <- species_names[all_data$species_idx]
-all_data <- arrange(all_data,species_idx)
-sp_forcing <- tapply(c(mdl.dataAngio$f_prop, mdl.dataAngio$f_degen),
-                     c(mdl.dataAngio$sp_prop, mdl.dataAngio$sp_degen), mean)
-  sp_idx  <- 198
-  sp_raw <- df_prop[df_prop$species_idx == "198", ]
+
+# species-level forcing
+forcing <- c(mdl.dataGym$f_prop, mdl.dataGym$f_degen)
+sp <- c(mdl.dataGym$sp_prop, mdl.dataGym$sp_degen)
+sp_forcing <- tapply(forcing, sp, mean)
+
+draws_a  <- as.matrix(fit, pars = "a")
+draws_bc <- as.matrix(fit, pars = "bc")
+draws_bf <- as.matrix(fit, pars = "bf")
+
+pdf("analyseBudSeed/figures/manualPosteriorGymFreeY.pdf",
+    width = 8, height = 6)
+par(mfrow=c(2, 3))
+
+for(sp_idx in sort(unique(all_data$species_idx))) {
   
-  chill_seq <- seq(min(sp_raw$chill), max(sp_raw$chill), length.out = 10)
+  sp_raw <- subset(all_data, species_idx == sp_idx)
+  
+  # skip species with too few observations
+  if(nrow(sp_raw) < 2) next
+  
+  chill_seq <- seq(
+    min(sp_raw$chill),
+    max(sp_raw$chill),
+    length.out = 100
+  )
+  
+  # posterior draws for this species
   a_i  <- draws_a[, sp_idx]
   bc_i <- draws_bc[, sp_idx]
   bf_i <- draws_bf[, sp_idx]
-  f_i  <- sp_forcing[sp_idx]
   
-  a_i_mean <- mean(a_i)
-  bc_i_mean <- mean(bc_i)
-  bf_i_mean <- mean(bf_i)
+  f_i <- sp_forcing[as.character(sp_idx)]
   
-  mu_mean <- plogis(a_i_mean + bc_i_mean * chill_seq + bf_i_mean * f_i)
+  # posterior mean
+  mu_mean <- plogis(
+    mean(a_i) +
+      mean(bc_i) * chill_seq +
+      mean(bf_i) * f_i
+  )
   
-  a_i_low <- quantile(a_i, probs = 0.1, na.rm = FALSE)
-  bc_i_low <- quantile(bc_i, probs = 0.1, na.rm = FALSE)
-  bf_i_low <- quantile(bf_i, probs = 0.1, na.rm = FALSE)
+  # 10% quantile prediction
+  mu_low <- plogis(
+    quantile(a_i, 0.1) +
+      quantile(bc_i, 0.1) * chill_seq +
+      quantile(bf_i, 0.1) * f_i
+  )
   
-  mu_low <- plogis(a_i_low + bc_i_low * chill_seq + bf_i_low * f_i)
+  # 90% quantile prediction
+  mu_high <- plogis(
+    quantile(a_i, 0.9) +
+      quantile(bc_i, 0.9) * chill_seq +
+      quantile(bf_i, 0.9) * f_i
+  )
   
-  a_i_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
-  bc_i_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
-  bf_i_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
+  sp_name <- species_names[sp_idx]
   
-  mu_high <- plogis(a_i_high + bc_i_high * chill_seq + bf_i_high * f_i)
+  plot(
+    sp_raw$chill,
+    sp_raw$observed,
+    type = "n",
+    ylim = c(0, 1),
+    xlab = "Chilling",
+    ylab = "Response",
+    main = sp_name,
+    cex.main = 0.8
+  )
   
-  
-  plot(sp_raw$chill, sp_raw$observed, 
-       type = "n",
-       ylim = c(0, 1), 
-       xlab = "Chilling", ylab = "Response",
-       main = sp_name, cex.main = 0.8)
-  
-  polygon(c(chill_seq, rev(chill_seq)), 
-          c(mu_low, rev(mu_high)), 
-          col = "grey", border = NA)
-  
+  polygon(
+    c(chill_seq, rev(chill_seq)),
+    c(mu_low, rev(mu_high)),
+    col = "grey80",
+    border = NA
+  )
   
   lines(chill_seq, mu_mean, col = "blue", lwd = 2)
   
-  points(sp_raw$chill, sp_raw$observed, pch = 16, col = "black", cex = 0.8)
-  
+  points(
+    sp_raw$chill,
+    sp_raw$observed,
+    pch = 16,
+    cex = 0.8
+  )
+}
+
+dev.off()
