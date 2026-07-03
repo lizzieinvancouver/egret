@@ -654,7 +654,7 @@ lines(global_chill_seq, global_mu_mean, col = "blue", lwd = 2)
 
 dev.off()
 
-# REAL retrodictive check with Mike's functions
+# retrodictive check with Mike's functions
 pdf("analyseBudSeed/figures/retrodictiveChecksSpp.pdf",
     width = 8, height = 6)
 
@@ -916,26 +916,17 @@ for(sp_idx in sort(unique(all_data$species_idx))) {
   
   f_i <- sp_forcing[as.character(sp_idx)]
   
-  # posterior mean
-  mu_mean <- plogis(
-    mean(a_i) +
-      mean(bc_i) * chill_seq +
-      mean(bf_i) * f_i
-  )
+  # make a matrix with all the combination of draws
+  all_draws <- a_i + bc_i %o% chill_seq + bf_i * f_i
   
-  # 10% quantile prediction
-  mu_low <- plogis(
-    quantile(a_i, 0.1) +
-      quantile(bc_i, 0.1) * chill_seq +
-      quantile(bf_i, 0.1) * f_i
-  )
+  # inverse transform
+  mu_draws <- plogis(all_draws)
   
-  # 90% quantile prediction
-  mu_high <- plogis(
-    quantile(a_i, 0.9) +
-      quantile(bc_i, 0.9) * chill_seq +
-      quantile(bf_i, 0.9) * f_i
-  )
+  # output predictions
+  mu_mean <- colMeans(mu_draws)
+  mu_low  <- apply(mu_draws, 2, quantile, probs = 0.1)
+  mu_high <- apply(mu_draws, 2, quantile, probs = 0.9)
+  
   
   sp_name <- species_names[sp_idx]
 
@@ -966,7 +957,57 @@ for(sp_idx in sort(unique(all_data$species_idx))) {
     cex = 0.8
   )
 }
+# global mean with all data
+draws_az  <- as.matrix(fit, pars = "a_z")
+draws_bcz <- as.matrix(fit, pars = "bc_z")
+draws_bfz <- as.matrix(fit, pars = "bf_z")
 
+draws_az <- as.vector(draws_az)
+draws_bcz <- as.vector(draws_bcz)
+draws_bfz <- as.vector(draws_bfz)
+
+chill_all_seq <- seq(
+  min(all_data$chill),
+  max(all_data$chill),
+  length.out = 100
+)
+
+f_i <- mean(forcing)
+
+grand_draws <- draws_az + draws_bcz %o% chill_all_seq + draws_bfz * f_i
+grand_mu_draws <- plogis(grand_draws)
+
+# output predictions
+grand_mu_mean <- colMeans(grand_mu_draws)
+grand_mu_low  <- apply(grand_mu_draws, 2, quantile, probs = 0.1)
+grand_mu_high <- apply(grand_mu_draws, 2, quantile, probs = 0.9)
+
+plot(
+  all_data$chill,
+  all_data$observed,
+  type = "n",
+  ylim = c(0, 1),
+  xlab = "Chilling",
+  ylab = "Response",
+  main = "All data",
+  cex.main = 0.8
+)
+
+polygon(
+  c(chill_all_seq, rev(chill_all_seq)),
+  c(grand_mu_low, rev(grand_mu_high)),
+  col = "grey80",
+  border = NA
+)
+
+lines(chill_all_seq, grand_mu_mean, col = "blue", lwd = 2)
+
+points(
+  all_data$chill,
+  all_data$observed,
+  pch = 16,
+  cex = 0.8
+)
 dev.off()
 
 #gymnosperm
@@ -1025,26 +1066,16 @@ for(sp_idx in sort(unique(all_data$species_idx))) {
   
   f_i <- sp_forcing[as.character(sp_idx)]
   
-  # posterior mean
-  mu_mean <- plogis(
-    mean(a_i) +
-      mean(bc_i) * chill_seq +
-      mean(bf_i) * f_i
-  )
+  # make a matrix with all the combination of draws
+  all_draws <- a_i + bc_i %o% chill_seq + bf_i * f_i
   
-  # 10% quantile prediction
-  mu_low <- plogis(
-    quantile(a_i, 0.1) +
-      quantile(bc_i, 0.1) * chill_seq +
-      quantile(bf_i, 0.1) * f_i
-  )
+  # inverse transform
+  mu_draws <- plogis(all_draws)
   
-  # 90% quantile prediction
-  mu_high <- plogis(
-    quantile(a_i, 0.9) +
-      quantile(bc_i, 0.9) * chill_seq +
-      quantile(bf_i, 0.9) * f_i
-  )
+  # output predictions
+  mu_mean <- colMeans(mu_draws)
+  mu_low  <- apply(mu_draws, 2, quantile, probs = 0.1)
+  mu_high <- apply(mu_draws, 2, quantile, probs = 0.9)
   
   sp_name <- species_names[sp_idx]
   
@@ -1075,5 +1106,57 @@ for(sp_idx in sort(unique(all_data$species_idx))) {
     cex = 0.8
   )
 }
+
+# global mean with all data
+draws_az  <- as.matrix(fit, pars = "a_z")
+draws_bcz <- as.matrix(fit, pars = "bc_z")
+draws_bfz <- as.matrix(fit, pars = "bf_z")
+
+draws_az <- as.vector(draws_az)
+draws_bcz <- as.vector(draws_bcz)
+draws_bfz <- as.vector(draws_bfz)
+
+chill_all_seq <- seq(
+  min(all_data$chill),
+  max(all_data$chill),
+  length.out = 100
+)
+
+f_i <- mean(forcing)
+
+grand_draws <- draws_az + draws_bcz %o% chill_all_seq + draws_bfz * f_i
+grand_mu_draws <- plogis(grand_draws)
+
+# output predictions
+grand_mu_mean <- colMeans(grand_mu_draws)
+grand_mu_low  <- apply(grand_mu_draws, 2, quantile, probs = 0.1)
+grand_mu_high <- apply(grand_mu_draws, 2, quantile, probs = 0.9)
+
+plot(
+  all_data$chill,
+  all_data$observed,
+  type = "n",
+  ylim = c(0, 1),
+  xlab = "Chilling",
+  ylab = "Response",
+  main = "All data",
+  cex.main = 0.8
+)
+
+polygon(
+  c(chill_all_seq, rev(chill_all_seq)),
+  c(grand_mu_low, rev(grand_mu_high)),
+  col = "grey80",
+  border = NA
+)
+
+lines(chill_all_seq, grand_mu_mean, col = "blue", lwd = 2)
+
+points(
+  all_data$chill,
+  all_data$observed,
+  pch = 16,
+  cex = 0.8
+)
 
 dev.off()
