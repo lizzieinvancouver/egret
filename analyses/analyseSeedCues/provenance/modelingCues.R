@@ -646,9 +646,11 @@ paramnames <- names(fit_nophy_noforcing)[grepl("cs|t", names(fit_nophy_noforcing
 df_fit <- as.data.frame(fit_nophy_noforcing)
 pardf <- df_fit[, paramnames]
 df_fit_cs <- pardf[, grepl("cs", colnames(pardf))]
+
 seqcs <- seq(from = min(evryonetgther$cs), max(evryonetgther$cs), length.out = 5)
 scaled_list <- lapply(seqcs, function(s) df_fit_cs * s)
 ave_list_cs <- lapply(scaled_list, function(s) rowMeans(s))
+
 df_fit_t <- pardf[, grepl("t", colnames(pardf))]
 seqt <- seq(from = min(evryonetgther$t), max(evryonetgther$t), length.out = 5)
 scaled_list_t <- lapply(seqt, function(s) df_fit_t * s)
@@ -678,3 +680,310 @@ polygon(c(seqt, rev(seqt)),
 points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 1.2, col = adjustcolor( "white", alpha.f = 0.5))
 points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 0.8, col = adjustcolor( "black", alpha.f = 0.5))
 
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# Maos code ####
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+##### Spp facet with Chilling as the predictor, averaged across time #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+df_prop <- data.frame(
+  chill     = mdl.data$cs_prop,
+  time = mdl.data$t_prop,
+  observed  = mdl.data$y_prop,
+  species_idx = mdl.data$sp_prop
+)
+
+df_degen <- data.frame(
+  chill     = mdl.data$cs_degen,
+  time = mdl.data$t_degen,
+  observed  = mdl.data$y_degen,
+  species_idx = mdl.data$sp_degen
+)
+
+all_data <- rbind(df_prop, df_degen)
+
+species_names <- tapply(modeld_noforc2$genusspecies, modeld_noforc2$numspp, unique)
+species_names <- as.character(species_names)
+
+all_data$species_name <- species_names[all_data$species_idx]
+
+# species-level time
+time <- c(mdl.data$t_prop, mdl.data$t_degen)
+sp <- c(mdl.data$sp_prop, mdl.data$sp_degen)
+sp_time <- tapply(time, sp, mean)
+
+draws_a  <- as.matrix(fit_nophy_noforcing, pars = "a")
+draws_bc <- as.matrix(fit_nophy_noforcing, pars = "bcs")
+draws_bt <- as.matrix(fit_nophy_noforcing, pars = "bt")
+
+# Plot each species
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/PPCperSpp_meanT.pdf",
+     width = 8, height = 6)
+par(mfrow=c(2, 3))
+
+for(sp_idx in sort(unique(all_data$species_idx))) { # sp_idx = 4
+  
+  sp_raw <- subset(all_data, species_idx == sp_idx)
+  
+  # skip species with too few observations
+  if(nrow(sp_raw) < 2) next
+  
+  chill_seq <- seq(
+    min(sp_raw$chill),
+    max(sp_raw$chill),
+    length.out = 100
+  )
+  
+  # posterior draws for this species
+  a_i  <- draws_a[, sp_idx]
+  bc_i <- draws_bc[, sp_idx]
+  bt_i <- draws_bt[, sp_idx]
+  
+  t_i <- sp_time[as.character(sp_idx)]
+  
+  # make a matrix with all the combination of draws
+  all_draws <- a_i + bc_i %o% chill_seq + bt_i * t_i
+  
+  # inverse transform
+  mu_draws <- plogis(all_draws)
+  
+  # output predictions
+  mu_mean <- colMeans(mu_draws)
+  mu_low  <- apply(mu_draws, 2, quantile, probs = 0.1)
+  mu_high <- apply(mu_draws, 2, quantile, probs = 0.9)
+  
+  sp_name <- species_names[sp_idx]
+  
+  plot(
+    sp_raw$chill,
+    sp_raw$observed,
+    type = "n",
+    ylim = c(0, 1),
+    xlab = "Chilling",
+    ylab = "Response",
+    main = sp_name,
+    cex.main = 0.8
+  )
+  
+  polygon(
+    c(chill_seq, rev(chill_seq)),
+    c(mu_low, rev(mu_high)),
+    col = adjustcolor("#3b7c70", alpha.f = 0.2),
+    border = NA
+  )
+  
+  lines(chill_seq, mu_mean, col = "#3b7c70", lwd = 2)
+  
+  points(
+    sp_raw$chill,
+    sp_raw$observed,
+    pch = 16,
+    cex = 0.8,
+    col = "#3b7c70"
+  )
+  
+  usr <- par("usr")
+  text(
+    usr[1] + 0.02 * (usr[2] - usr[1]),
+    usr[4] - 0.05 * (usr[4] - usr[3]),
+    labels = paste0("Scaled time: ", sprintf("%.2f", t_i)),
+    adj = c(0, 1),
+    cex = 0.7
+  )
+}
+dev.off()
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+##### Spp facet with Time as the predictor, averaged across chilling #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+sp_chill <- tapply(all_data$chill, sp, mean)
+draws_a  <- as.matrix(fit_nophy_noforcing, pars = "a")
+draws_bc <- as.matrix(fit_nophy_noforcing, pars = "bcs")
+draws_bt <- as.matrix(fit_nophy_noforcing, pars = "bt")
+
+# Plot each species
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/PPCperSpp_meanC.pdf",
+    width = 8, height = 6)
+par(mfrow=c(2, 3))
+for(sp_idx in sort(unique(all_data$species_idx))) { # sp_idx = 4
+  
+  sp_raw <- subset(all_data, species_idx == sp_idx)
+  
+  # skip species with too few observations
+  if(nrow(sp_raw) < 2) next
+  
+  time_seq <- seq(
+    min(sp_raw$time),
+    max(sp_raw$time),
+    length.out = 100
+  )
+  
+  # posterior draws for this species
+  a_i  <- draws_a[, sp_idx]
+  bc_i <- draws_bc[, sp_idx]
+  bt_i <- draws_bt[, sp_idx]
+  
+  c_i <- sp_chill[as.character(sp_idx)]
+  
+  # make a matrix with all the combination of draws
+  all_draws <- a_i + bc_i * c_i + bt_i %o% time_seq
+  
+  # inverse transform
+  mu_draws <- plogis(all_draws)
+  
+  # output predictions
+  mu_mean <- colMeans(mu_draws)
+  mu_low  <- apply(mu_draws, 2, quantile, probs = 0.1)
+  mu_high <- apply(mu_draws, 2, quantile, probs = 0.9)
+  
+  sp_name <- species_names[sp_idx]
+  
+  plot(
+    sp_raw$time,
+    sp_raw$observed,
+    type = "n",
+    ylim = c(0, 1),
+    xlab = "Time",
+    ylab = "Response",
+    main = sp_name,
+    cex.main = 0.8
+  )
+  
+  polygon(
+    c(time_seq, rev(time_seq)),
+    c(mu_low, rev(mu_high)),
+    col = adjustcolor("#a00e00", alpha.f = 0.2),
+    border = NA
+  )
+  
+  lines(time_seq, mu_mean, col = "#a00e00", lwd = 2)
+  
+  points(
+    sp_raw$time,
+    sp_raw$observed,
+    pch = 16,
+    cex = 0.8,
+    col = "#a00e00"
+  )
+  
+  usr <- par("usr")
+  text(
+    usr[1] + 0.02 * (usr[2] - usr[1]),
+    usr[4] - 0.05 * (usr[4] - usr[3]),
+    labels = paste0("Scaled chilling: ", sprintf("%.2f", c_i)),
+    adj = c(0, 1),
+    cex = 0.7
+  )
+}
+dev.off()
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+##### ONE PLOT with Chilling as the predictor, averaged across time #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+# global mean with all data
+draws_az  <- as.matrix(fit_nophy_noforcing, pars = "a_z")
+draws_bcsz <- as.matrix(fit_nophy_noforcing, pars = "bcs_z")
+draws_btz <- as.matrix(fit_nophy_noforcing, pars = "bt_z")
+
+draws_az <- as.vector(draws_az)
+draws_bcsz <- as.vector(draws_bcsz)
+draws_btz <- as.vector(draws_btz)
+
+chill_all_seq <- seq(
+  min(all_data$chill),
+  max(all_data$chill),
+  length.out = 100
+)
+
+t_i <- mean(time)
+
+grand_draws <- draws_az + draws_bcsz %o% chill_all_seq + draws_btz * t_i
+grand_mu_draws <- plogis(grand_draws)
+
+# output predictions
+grand_mu_mean <- colMeans(grand_mu_draws)
+grand_mu_low  <- apply(grand_mu_draws, 2, quantile, probs = 0.1)
+grand_mu_high <- apply(grand_mu_draws, 2, quantile, probs = 0.9)
+
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanT.pdf",
+    width = 8, height = 6)
+plot(
+  all_data$chill,
+  all_data$observed,
+  type = "n",
+  ylim = c(0, 1),
+  xlab = "Chilling",
+  ylab = "Response",
+  main = "All data",
+  cex.main = 0.8
+)
+
+polygon(
+  c(chill_all_seq, rev(chill_all_seq)),
+  c(grand_mu_low, rev(grand_mu_high)),
+  col = adjustcolor("#3b7c70", alpha.f = 0.3),
+  border = NA
+)
+
+lines(chill_all_seq, grand_mu_mean, col = "#3b7c70", lwd = 2)
+
+points(
+  all_data$chill,
+  all_data$observed,
+  pch = 16,
+  cex = 0.8,
+  col = adjustcolor("#3b7c70", alpha.f = 0.5)
+)
+
+dev.off()
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+##### ONE PLOT with Time as the predictor, averaged across chilling #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+draws_az  <- as.matrix(fit_nophy_noforcing, pars = "a_z")
+draws_bcsz <- as.matrix(fit_nophy_noforcing, pars = "bcs_z")
+draws_btz <- as.matrix(fit_nophy_noforcing, pars = "bt_z")
+draws_az <- as.vector(draws_az)
+draws_bcsz <- as.vector(draws_bcsz)
+draws_btz <- as.vector(draws_btz)
+time_all_seq <- seq(
+  min(time),
+  max(time),
+  length.out = 100
+)
+c_i <- mean(all_data$chill)
+grand_draws <- draws_az + draws_bcsz * c_i + draws_btz %o% time_all_seq
+grand_mu_draws <- plogis(grand_draws)
+
+# output predictions
+grand_mu_mean <- colMeans(grand_mu_draws)
+grand_mu_low  <- apply(grand_mu_draws, 2, quantile, probs = 0.1)
+grand_mu_high <- apply(grand_mu_draws, 2, quantile, probs = 0.9)
+
+pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanC.pdf",
+    width = 8, height = 6)
+plot(
+  time,
+  all_data$observed,
+  type = "n",
+  ylim = c(0, 1),
+  xlab = "Time",
+  ylab = "Response",
+  main = "All data",
+  cex.main = 0.8
+)
+polygon(
+  c(time_all_seq, rev(time_all_seq)),
+  c(grand_mu_low, rev(grand_mu_high)),
+  col = adjustcolor("#a00e00", alpha.f = 0.3),
+  border = NA
+)
+lines(time_all_seq, grand_mu_mean, col = "#a00e00", lwd = 2)
+points(
+  time,
+  all_data$observed,
+  pch = 16,
+  cex = 0.8,
+  col = adjustcolor("#a00e00", alpha.f = 0.5)
+)
+dev.off()
