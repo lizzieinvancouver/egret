@@ -21,13 +21,14 @@ library(ggplot2)
 library(phytools)
 library(caper)
 library(pez)
+library(cowplot)
 
 quantile2575 <- function(x){
   returnQuanilte <- quantile(x, prob = c(0.05, 0.25, 0.75,0.95))
   return(returnQuanilte)
 }
 
-source("analyseBudSeed/prepEgretUsda.R")
+d <- read.csv("output/egretUsdaData.csv")
 # removing the rows with incomplete data:
 d <- d[complete.cases(d),] 
 
@@ -93,8 +94,7 @@ names(bfEgret) <- c("latbi","egretMean","egret5","egret25","egret75","egret95")
 # get ospree data
 osp<-read.csv("input/ospreeforegret.csv")
 
-sp.ref <- data.frame(latbi = osp$latbi)
-# sp.ref <- sp.ref[!duplicated(sp.ref), ]
+sp.ref <- unique(osp$latbi)
 
 fit <- readRDS("analyseBudSeed/output/fit_ospree.rds")
 # sumOspree <- readRDS("analyseBudSeed/output/summary_full_angio.rds")
@@ -102,11 +102,13 @@ fit <- readRDS("analyseBudSeed/output/fit_ospree.rds")
 posterior_list <- rstan::extract(fit)
 
 betaC <- posterior_list$b_chill
-betaC <- as.data.frame(betaC)
+betaC <- data.frame(betaC)
 colnames(betaC) <- sp.ref
 
-bcMean <- data.frame(colMeans(betaC)); bcMean$latbi <- sp.ref
-bcQuan <- t(apply(betaC, 2, quantile2575) )
+bcMean <- data.frame(colMeans(betaC));
+bcMean$latbi <- sp.ref
+
+bcQuan <- t(apply(betaC, 2, quantile2575))
 bcOspree <- cbind(bcMean, bcQuan); bcOspree <- bcOspree[,c("latbi", "colMeans.betaC.","5%","25%","75%","95%")]
 names(bcOspree) <- c("latbi","ospreeMean","ospree5","ospree25","ospree75","ospree95")
 
@@ -137,46 +139,113 @@ bsForce$ospreeMeanS <- (bsForce$ospreeMean* -1)/10
 bsForce$ospree5S <- (bsForce$ospree5* -1)/10
 bsForce$ospree95S <- (bsForce$ospree95* -1)/10
 
-pdf("analyseBudSeed/figures/budSeedCompare.pdf", width = 8, height = 4)
+pdf("analyseBudSeed/figures/budSeedCompare.pdf", width = 8, height = 5)
 par(mfrow = c(1,2))
-plot(bsChill$mean ~ bsChill$ospreeMeanS, xlim = c(-1,3), ylim = c(-2,3), type = 'n',
+plot(bsChill$egretMean ~ bsChill$ospreeMean, xlim = c(-25,5), ylim = c(-2,3), type = 'n',
      xlab = "Ospree chill response", ylab = "Egret chill response" )
 
+x_vals <- seq(-26, 6, length.out = 38)
+fit25 <- lm(egret25 ~ ospree25, data = bsChill)
+fit75 <- lm(egret75 ~ ospree75, data = bsChill)
+
+y25 <- predict(fit25, newdata = data.frame(ospree25 = x_vals))
+y75 <- predict(fit75, newdata = data.frame(ospree75 = x_vals))
+
+# 5. Shade the area between the lines using polygon()
+polygon(c(x_vals, rev(x_vals)), c(y25, rev(y75)), col = "lightgrey", border = NA)
+
 arrows(
-  bsChill[,"ospreeMeanS"], # x mean
-  bsChill[,"5%"], # y 25
-  bsChill[,"ospreeMeanS"],
-  bsChill[,"95%"],
+  bsChill[,"ospreeMean"], # x mean
+  bsChill[,"egret5"], # y 25
+  bsChill[,"ospreeMean"],
+  bsChill[,"egret95"],
   length = 0, col= "cyan4", lwd = 1 
 )
 
 arrows(
-  bsChill[,"ospree5S"], # x mean
-  bsChill[,"mean"], # y 25
-  bsChill[,"ospree95S"],
-  bsChill[,"mean"],
+  bsChill[,"ospree5"], # x mean
+  bsChill[,"egretMean"], # y 25
+  bsChill[,"ospree95"],
+  bsChill[,"egretMean"],
   length = 0, col= "cyan4", lwd = 1 
 )
 
-plot(bsForce$mean ~ bsForce$ospreeMean, xlim = c(-1,3), ylim = c(-2,2), type = 'n',
+abline(lm(bsChill$egretMean~bsChill$ospreeMean))
+text(-25, 2.8, label = expression(bold("a")), cex = 1)
+################################################################
+plot(bsForce$egretMean ~ bsForce$ospreeMean, xlim = c(-25,5), ylim = c(-2,3), type = 'n',
      xlab = "Ospree force response", ylab = "Egret germination temperature response" )
 
+x_vals <- seq(-26, 6, length.out = 38)
+fit25 <- lm(egret25 ~ ospree25, data = bsForce)
+fit75 <- lm(egret75 ~ ospree75, data = bsForce)
+
+y25 <- predict(fit25, newdata = data.frame(ospree25 = x_vals))
+y75 <- predict(fit75, newdata = data.frame(ospree75 = x_vals))
+
+# 5. Shade the area between the lines using polygon()
+polygon(c(x_vals, rev(x_vals)), c(y25, rev(y75)), col = "lightgrey", border = NA)
+
 arrows(
-  bsForce[,"ospreeMeanS"], # x mean
-  bsForce[,"5%"], # y 25
-  bsForce[,"ospreeMeanS"],
-  bsForce[,"95%"],
+  bsForce[,"ospreeMean"], # x mean
+  bsForce[,"egret5"], # y 25
+  bsForce[,"ospreeMean"],
+  bsForce[,"egret95"],
   length = 0, col= "maroon", lwd = 1 
 )
 
 arrows(
-  bsForce[,"ospree5S"], # x mean
-  bsForce[,"mean"], # y 25
-  bsForce[,"ospree95S"],
-  bsForce[,"mean"],
+  bsForce[,"ospree5"], # x mean
+  bsForce[,"egretMean"], # y 25
+  bsForce[,"ospree95"],
+  bsForce[,"egretMean"],
   length = 0, col= "maroon", lwd = 1 
 )
 
-# abline(0, 1, lty = 2 )
+abline(lm(bsForce$egretMean~bsForce$ospreeMean))
+text(-25, 2.8, label = expression(bold("b")), cex = 1)
+
 dev.off()
 
+
+### Just points:
+pdf("analyseBudSeed/figures/budSeedComparePoints.pdf", width = 8, height = 5)
+par(mfrow = c(1,2))
+plot(bsChill$egretMean ~ bsChill$ospreeMean, xlim = c(-25,5), ylim = c(-1,2), type = 'n',
+     xlab = "Ospree chill response", ylab = "Egret chill response" )
+
+x_vals <- seq(-26, 6, length.out = 38)
+fit25 <- lm(egret25 ~ ospree25, data = bsChill)
+fit75 <- lm(egret75 ~ ospree75, data = bsChill)
+
+y25 <- predict(fit25, newdata = data.frame(ospree25 = x_vals))
+y75 <- predict(fit75, newdata = data.frame(ospree75 = x_vals))
+
+# 5. Shade the area between the lines using polygon()
+polygon(c(x_vals, rev(x_vals)), c(y25, rev(y75)), col = "lightgrey", border = NA)
+abline(lm(bsChill$egretMean~bsChill$ospreeMean))
+
+points(bsChill$egretMean ~ bsChill$ospreeMean, col = "black", bg = "cyan4", pch = 21)
+
+text(-25, 2, label = expression(bold("a")), cex = 1)
+
+#############################################################################################
+plot(bsForce$egretMean ~ bsForce$ospreeMean, xlim = c(-25,5), ylim = c(-1,2), type = 'n',
+     xlab = "Ospree force response", ylab = "Egret germination temperature response" )
+
+x_vals <- seq(-26, 6, length.out = 38)
+fit25 <- lm(egret25 ~ ospree25, data = bsForce)
+fit75 <- lm(egret75 ~ ospree75, data = bsForce)
+
+y25 <- predict(fit25, newdata = data.frame(ospree25 = x_vals))
+y75 <- predict(fit75, newdata = data.frame(ospree75 = x_vals))
+
+# 5. Shade the area between the lines using polygon()
+polygon(c(x_vals, rev(x_vals)), c(y25, rev(y75)), col = "lightgrey", border = NA)
+
+points(bsForce$egretMean ~ bsForce$ospreeMean, col = "black", bg = "maroon", pch = 21)
+
+abline(lm(bsForce$egretMean~bsForce$ospreeMean))
+text(-25, 2, label = expression(bold("b")), cex = 1)
+
+dev.off()
