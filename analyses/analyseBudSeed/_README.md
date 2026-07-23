@@ -8,3 +8,4 @@ Started 22 July 2026
 * prepEgretUsda.R -- combining and formatting egret and usda data for analysis. Outputs a simplified dataframe with just study, species, and the two parameters---chill duration and germination temperature
 * usdaRawDataPlotting.R -- preliminary code to visualize the egret and usda data
 * visualization.R -- visualizing model output and retrodictive checks
+* Figures/ -- folder of figures including retrodictive checks, model output, and visualizations of the raw data
