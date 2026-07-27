@@ -18,6 +18,21 @@ library(xtable)
 source("/Users/christophe_rouleau-desrochers/github/egret/analyses/analyseSeedCues/provenance/modelingCues.R")
 dmore1prov <- read.csv("/Users/christophe_rouleau-desrochers/github/egret/analyses/output/moreThan1Prov.csv")
 
+sigmas <- names(fit_nophy_noforcing)[grepl("sigma", names(fit_nophy_noforcing))]
+fitdf_noF <- as.data.frame(fit_nophy_noforcing)
+
+fitdf_noF[, sigmas]
+
+sig_sum <- data.frame(
+  prm = colnames(fitdf_noF[, sigmas]),
+  mu  = round(sapply(fitdf_noF[, sigmas], mean), 3),
+  p05 = round(sapply(fitdf_noF[, sigmas], quantile, probs = 0.05), 3),
+  p25 = round(sapply(fitdf_noF[, sigmas], quantile, probs = 0.25), 3),
+  p75 = round(sapply(fitdf_noF[, sigmas], quantile, probs = 0.75), 3),
+  p95 = round(sapply(fitdf_noF[, sigmas], quantile, probs = 0.95), 3),
+  row.names = NULL
+)
+
 @
 
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -25,23 +40,61 @@ dmore1prov <- read.csv("/Users/christophe_rouleau-desrochers/github/egret/analys
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 \begin{enumerate}
 \item We selected all the datasetIDstudy that had more than one provenance per species ($n = $ \Sexpr{nrow(dmore1prov)})
+
 \item After Victor's decision rules and cleaning the dataset we end up with \Sexpr{length(unique(modeld_noforc2$genusspecies))} single species from \Sexpr{length(unique(paste(modeld_noforc2$datasetID, modeld_noforc2$study, sep = "")))} studies.
+
+\item We fit the provenance model with and without forcing first, compared model estimates and moved on with the model without forcing with chilling and time as the main predictors.
+
+\item We performed posterior predictive checks for the provenance model without forcing.
 \end{enumerate}
+
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 \section{Results}
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 We fitted a provenance model for each species with more than one provenance.
 
-%-------------------------------------------------------------------------------
-\subsection{Forcing or no forcing?}
-%-------------------------------------------------------------------------------
 \begin{enumerate}
-\item We fitted the provenance model with forcing and without forcing. 
-\item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ \Sexpr{nrow(modeld)}) and the full dataset ($n =$ \Sexpr{nrow(modeld_noforc2)}). 
-\item The germination temperature conditions does not seem to explain the variation between the no-forcing and forcing models. Neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}) between the restricted vs full dataset.
-\item We fitted the model on the most restricted dataset, with and without provenance, which did not change the estimates (Figure \ref{fig:provNoProv})
+
+%-------------------------------------------------------------------------------
+\item{Did forcing change the germination response?}
+%-------------------------------------------------------------------------------
+  \begin{enumerate}
+  \item We fitted the provenance model with forcing and without forcing. 
+  
+  \item Forcing does not seem to explain the variation between the no-forcing and forcing models. Neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}) between the restricted vs full dataset.
+
+  \item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ \Sexpr{nrow(modeld)}) and the full dataset ($n =$ \Sexpr{nrow(modeld_noforc2)}). 
+  
+  \item We fitted the model on the most restricted dataset, with and without provenance, which did not change the estimates (Figure \ref{fig:provNoProv})
+  \end{enumerate}
+
+%-------------------------------------------------------------------------------
+\item{How did time, chilling and forcing impact germination?}
+%-------------------------------------------------------------------------------
+The below are for the model that includes forcing. We need to change the x axis.
+  \begin{enumerate}
+  \item Forcing had little effects on species, but increased germination for Maackia taiwanensis and Betula utilis and Picea glauca (Figure \ref{fig:muForcing}).
+  
+  \item Chilling increased germination for most species with huge variations. Four species probability to germinate decreased in response to chilling   (Figure \ref{fig:muChilling}).
+  
+  \item Time had a similar trend to forcing, with some more species increasing germination in response to time. Most of them didn't shift (Figure \ref{fig:muTime}).
+  
+  \item We show posterior predictive checks averaged across all species and treatments with time (Figure)
 \end{enumerate}
 
+%-------------------------------------------------------------------------------
+\item Was there more variation across species or across provenances of the same species?
+%-------------------------------------------------------------------------------
+  \begin{enumerate}
+  
+  \item Germination varied more across species ($\sigma$ =
+  \Sexpr{sig_sum$mu[sig_sum$prm == "sigma_a"]} (UI:
+  \Sexpr{sig_sum$p05[sig_sum$prm == "sigma_a"]},
+  \Sexpr{sig_sum$p95[sig_sum$prm == "sigma_a"]})) than across provenances ($\sigma$ =
+  \Sexpr{sig_sum$mu[sig_sum$prm == "sigma_a_prov"]} (UI:
+  \Sexpr{sig_sum$p05[sig_sum$prm == "sigma_a_prov"]},
+  \Sexpr{sig_sum$p95[sig_sum$prm == "sigma_a_prov"]}))
+  \end{enumerate}
 % Max temp
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonMaxGermtemp.jpeg}
@@ -69,15 +122,7 @@ We fitted a provenance model for each species with more than one provenance.
 \label{fig:provNoProv}
 \end{figure}
 
-%-------------------------------------------------------------------------------
-\subsection{Model estimates}
-%-------------------------------------------------------------------------------
-The below are for the model that includes forcing. We need to change the x axis.
-\begin{enumerate}
-\item Forcing had little effects on species, but increased germination for Maackia taiwanensis and Betula utilis and Picea glauca (Figure \ref{fig:muForcing}).
-\item Chilling increased germination for most species with huge variations. Four species probability to germinate decreased in response to chilling (Figure \ref{fig:muChilling}).
-\item Time had a similar trend to forcing, with some more species increasing germination in response to time. Most of them didn't shift (Figure \ref{fig:muTime}).
-\end{enumerate}
+
 
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/muPlotProv_bcsprov.pdf}
@@ -97,6 +142,18 @@ The below are for the model that includes forcing. We need to change the x axis.
 \label{fig:muTime}
 \end{figure}
 
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanC.pdf}
+\caption{General response curve across all species as a function of chilling (scaled). We averaged the contribution of time and included it in the response curve.}
+\label{fig:respCurveChilling}
+\end{figure}
 
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanT.pdf}
+\caption{General response curve across all species as a function of chilling (scaled). We averaged the contribution of time and included it in the response curve.}
+\label{fig:respCurveTime}
+\end{figure}
+
+\end{enumerate}
 
 \end{document}
