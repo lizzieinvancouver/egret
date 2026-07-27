@@ -34,17 +34,22 @@ if(length(grep("deirdre", getwd()) > 0)) {
 } 
 
 
-
-# Load data, discard some experiments following various decision rules
-source('analyseSeedCues/provenance/decisionRules.R')
-# source('studyDesign/decisionRules_abundant0s_Deirdre.R')
-
 # load Mike's diagnostic tools
 util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
 
+# Load data, discard some experiments following various decision rules
+
 runmodels <- FALSE
+rundecisionrules <- FALSE
+runPPC <- FALSE
+
+if(rundecisionrules){
+source('analyseSeedCues/provenance/decisionRules.R')
+write.csv(newd, "analyseSeedCues/provenance/newd.csv")
+}
+newd <- read.csv("analyseSeedCues/provenance/newd.csv")
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Model WITH forcing ####
@@ -118,6 +123,7 @@ modeld$numprov <- as.integer(factor(modeld$provLatLonAlt))
 # trim the \t weird thingy
 modeld$provLatLonAlt <- trimws(modeld$provLatLonAlt)
 
+
 mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  N_prop = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1),
                  Ndataset = length(unique(modeld$idstudy)),
@@ -155,12 +161,6 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                  cs_prop = array(modeld$coldStratDur[modeld$responseValueNum>0 & modeld$responseValueNum<1],
                                  dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)))
 
-# Posterior quantification
-# smordbeta <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance.stan")
-# fit <- sampling(smordbeta, mdl.data,
-#                 iter = 2024, warmup = 1000,
-#                 chains = 4)
-
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 ##### Run model with forcing, no phylogeny #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
@@ -173,6 +173,7 @@ fit_nophy <- sampling(smordbeta_nophy, mdl.data,
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 ##### Diagnostics #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+if(runPPC) {
 # read model on christophe's computer
 # saveRDS(fit_nophy, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy.rds")
 fit_nophy <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy.rds")
@@ -350,12 +351,7 @@ for(i in all_chillids) { # i = 2
 }
 
 dev.off()
-
-
-# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Forcing #####
-# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
+}
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Model WITHOUT forcing ####
@@ -492,6 +488,7 @@ samples <- util$extract_expectand_vals(fit_nophy_noforcing)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 ##### Retrodictive checks: Chilling, grouped by time #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+if(runPPC){
 pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppChilling.pdf",
     width = 8, height = 6)
 
@@ -607,78 +604,6 @@ for(i in all_chillids) { # i = 2
 }
 
 dev.off()
-
-# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### General response curve #####
-# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-jpeg("analyseSeedCues/provenance/figures/retrodictiveChecks/overallGermTrend.jpeg",
-    width = 3000, height = 2400, res = 300)
-
-# get everyone together!
-evryonetgther <- data.frame(
-  name = c(paste0('y_prop_gen[',  seq_len(mdl.data$N_prop),  ']'),
-           paste0('y_degen_gen[', seq_len(mdl.data$N_degen), ']')),
-  sp = c(mdl.data$sp_prop, mdl.data$sp_degen),
-  prov = c(mdl.data$prov_prop, mdl.data$prov_degen),
-  t = c(mdl.data$t_prop,  mdl.data$t_degen),
-  cs = c(mdl.data$cs_prop, mdl.data$cs_degen),
-  y = c(mdl.data$y_prop,  mdl.data$y_degen))
-evryonetgther <- evryonetgther[order(evryonetgther$t), ]
-
-# Through Mike's code
-
-par(mar = c(4, 4, 2, 1))
-util$plot_conn_pushforward_quantiles(
-  samples, evryonetgther$name, plot_xs = evryonetgther$t,
-  main = "germ trend across everything",
-  xlab = "Time (scaled)",
-  ylab = "Germ. perc.",
-  display_ylim = c(0, 1))
-points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 1.2, col = adjustcolor("white", alpha.f = 0.5))
-points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 0.8, col = adjustcolor( "black", alpha.f = 0.5))
-dev.off()
-
-# Rework it
-
-paramnames <- names(fit_nophy_noforcing)[grepl("cs|t", names(fit_nophy_noforcing)) &
-                                           !grepl("tilde|z|sigma|logis|cut", 
-                                                  names(fit_nophy_noforcing))]
-df_fit <- as.data.frame(fit_nophy_noforcing)
-pardf <- df_fit[, paramnames]
-df_fit_cs <- pardf[, grepl("cs", colnames(pardf))]
-
-seqcs <- seq(from = min(evryonetgther$cs), max(evryonetgther$cs), length.out = 5)
-scaled_list <- lapply(seqcs, function(s) df_fit_cs * s)
-ave_list_cs <- lapply(scaled_list, function(s) rowMeans(s))
-
-df_fit_t <- pardf[, grepl("t", colnames(pardf))]
-seqt <- seq(from = min(evryonetgther$t), max(evryonetgther$t), length.out = 5)
-scaled_list_t <- lapply(seqt, function(s) df_fit_t * s)
-a_names <- names(fit_nophy_noforcing)[grepl("a", names(fit_nophy_noforcing)) &
-                                        !grepl("sigma|calc|kappa|logis", 
-                                               names(fit_nophy_noforcing))]
-pardf_a <- df_fit[, a_names]
-ave_a <- rowMeans(pardf_a)
-ave_cs <- rowMeans(do.call(cbind, ave_list_cs))
-
-# check the distribution of the chilling data
-hist(evryonetgther$cs, xlab = "scaled chilling values")
-abline(v = seqcs, col = "blue")
-colMeans(do.call(cbind, ave_list_cs))
-ave_list_t <- lapply(scaled_list_t, function(s) rowMeans(s))
-predictions <- lapply(ave_list_t, function(t) ave_a + t 
-                      # + ave_cs
-                      )
-
-par(mfrow = c(1,1), mar = c(5,5,5,5))
-plot(seqt, sapply(predictions, mean), type = "l",
-     xlab = "time scaled", ylab = "expected germ percentage", 
-     ylim = range(c(sapply(predictions, quantile, c(0.25, 0.75)), evryonetgther$y)))
-polygon(c(seqt, rev(seqt)),
-        c(sapply(predictions, quantile, 0.75), rev(sapply(predictions, quantile, 0.25))),
-        col = adjustcolor("grey", 0.4), border = NA)
-points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 1.2, col = adjustcolor( "white", alpha.f = 0.5))
-points(evryonetgther$t, evryonetgther$y, pch = 16, cex = 0.8, col = adjustcolor( "black", alpha.f = 0.5))
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Maos code ####
@@ -987,3 +912,4 @@ points(
   col = adjustcolor("#a00e00", alpha.f = 0.5)
 )
 dev.off()
+}
