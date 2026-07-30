@@ -39,9 +39,7 @@ sig_sum <- data.frame(
 \section{Methods}
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 \begin{enumerate}
-\item We selected all the datasetIDstudy that had more than one provenance per species ($n = $ \Sexpr{nrow(dmore1prov)})
-
-\item After Victor's decision rules and cleaning the dataset we end up with \Sexpr{length(unique(modeld_noforc2$genusspecies))} single species from \Sexpr{length(unique(paste(modeld_noforc2$datasetID, modeld_noforc2$study, sep = "")))} studies.
+\item We selected all the datasetIDstudy that had more than one provenance per species; After Victor's decision rules and cleaning the dataset we end up with \Sexpr{length(unique(modeld_noforc2$genusspecies))} single species from \Sexpr{length(unique(paste(modeld_noforc2$datasetID, modeld_noforc2$study, sep = "")))} studies ($nrow = $ \Sexpr{nrow(modeld_noforc2)}). 
 
 \item We fit the provenance model with and without forcing first, compared model estimates and moved on with the model without forcing with chilling and time as the main predictors.
 
@@ -71,7 +69,7 @@ We fitted a provenance model for each species with more than one provenance.
 %-------------------------------------------------------------------------------
 \item{How did time, chilling and forcing impact germination?}
 %-------------------------------------------------------------------------------
-The below are for the model that includes forcing. We need to change the x axis.
+\textit{Below are for the model that includes forcing. We need to change the x axis on the mu plots.}
   \begin{enumerate}
   \item Forcing had little effects on species, but increased germination for Maackia taiwanensis and Betula utilis and Picea glauca (Figure \ref{fig:muForcing}).
   
@@ -79,11 +77,10 @@ The below are for the model that includes forcing. We need to change the x axis.
   
   \item Time had a similar trend to forcing, with some more species increasing germination in response to time. Most of them didn't shift (Figure \ref{fig:muTime}).
   
-  \item We show posterior predictive checks averaged across all species and treatments with time (Figure)
 \end{enumerate}
 
 %-------------------------------------------------------------------------------
-\item Was there more variation across species or across provenances of the same species?
+\item Provenance model with chilling and time, not forcing
 %-------------------------------------------------------------------------------
   \begin{enumerate}
   
@@ -94,7 +91,12 @@ The below are for the model that includes forcing. We need to change the x axis.
   \Sexpr{sig_sum$mu[sig_sum$prm == "sigma_a_prov"]} (UI:
   \Sexpr{sig_sum$p05[sig_sum$prm == "sigma_a_prov"]},
   \Sexpr{sig_sum$p95[sig_sum$prm == "sigma_a_prov"]}))
+  
+  \item We show global germination responses across all species as a function of chilling (Figure \ref{fig:respCurveChilling}) and time (Figure \ref{fig:respCurveTime}).
+  
   \end{enumerate}
+  
+  
 % Max temp
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonMaxGermtemp.jpeg}
@@ -143,14 +145,15 @@ The below are for the model that includes forcing. We need to change the x axis.
 \end{figure}
 
 \begin{figure}[!ht]
-\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanC.pdf}
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanT.pdf}
 \caption{General response curve across all species as a function of chilling (scaled). We averaged the contribution of time and included it in the response curve.}
 \label{fig:respCurveChilling}
 \end{figure}
 
+
 \begin{figure}[!ht]
-\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanT.pdf}
-\caption{General response curve across all species as a function of chilling (scaled). We averaged the contribution of time and included it in the response curve.}
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanC.pdf}
+\caption{General response curve across all species as a function of time (scaled). We averaged the contribution of chilling and included it in the response curve.}
 \label{fig:respCurveTime}
 \end{figure}
 
