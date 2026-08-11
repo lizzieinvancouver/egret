@@ -63,3 +63,6 @@ subset(ds, type != "annual" & != "Annual")
 # here I add a column for "type", but they're all annual
 dm$type <- "Annual"
 dm2 <- dm[, c("name", "type")]
+
+# Some species cleaning:
+dm$Species[dm$Species == "strigosis"] <- "strigosus"
