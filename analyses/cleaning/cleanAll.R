@@ -27,6 +27,9 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd('~/projects/egret/analyses')
 } 
 
+# If you want an additional file with additional storage/strat details then...
+# you can change to TRUE, see issue #115
+getstoragedetails <- FALSE 
 
 # 1. Get the data (reads in a dataframe called `egret')
 source("cleaning/source/mergeData.R") # 34011 rows, 45 columns
@@ -91,8 +94,12 @@ d$provLatLon <- paste(d$provenance.lat, d$provenance.long, sep=" ")
 d$provLatLonAlt <- paste(d$provenance.lat, d$provenance.long, d$provenance.altitude, sep=" ")
 
 # checking sizing ..
-dim(d) # dim on 30 July 2025: 31395, 77
+dim(d) # dim on 30 July 2025 (and same for 11 Aug 2026!): 31395, 77
 
-if(length(grep("victor", getwd())) == 0){
-  write.csv(d, "output/egretclean.csv", row.names=FALSE)
+write.csv(d, "output/egretclean.csv", row.names=FALSE)
+ 
+if(getstoragedetails){
+# Want more on the storage? 
+source("source/contStorStrat.R")
+write.csv(d, "output/egretcleanmostoragedetrals.csv", row.names=FALSE) # adds 4 columns
 } 
