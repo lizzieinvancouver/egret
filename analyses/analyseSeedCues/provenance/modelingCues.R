@@ -83,8 +83,6 @@ modeld$genusspecies <- sapply(modeld$genusspecies, function(i) stringr::str_spli
 modeld$responseValueNum <- as.numeric(modeld$responseValueNum)/100
 modeld$germDuration <- as.numeric(modeld$germDuration)
 modeld$germTempGen <- as.numeric(modeld$germTempGen)
-# temporary - need to check whether odd values (>>> scrapping uncertainty) have been corrected
-# modeld[modeld$responseValueNum < 1.05,] # not needed anymore!
 
 # (5) - transform values a bit above or below 0 (due to scrapping uncertainty)
 modeld$responseValueNum <- ifelse(modeld$responseValueNum > 1, 1, modeld$responseValueNum)
@@ -105,12 +103,13 @@ modeld <- modeld_wodup
 rm(modeld_wodup)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
-##### How many rows with gymnosperms #####
-# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+# How many rows with gymnosperms?
 modeldnogymn <- subset(modeld, genusspecies %in% c("Picea_glauca", "Picea_orientalis"))
 nrow(modeld) - nrow(modeldnogymn)
 nrow(modeldnogymn)
-# I hate doing this, but I want to go swimmmmmiiiiing
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+
+# Finish data prep
 modeld$warmStratDur <- scale(modeld$warmStratDur)[,1]
 modeld$coldStratDur <- scale(modeld$coldStratDur)[,1]
 modeld$germDuration <- scale(modeld$germDuration)[,1]
