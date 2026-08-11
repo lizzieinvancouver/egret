@@ -77,8 +77,8 @@ data {
   
   //combined slope model:
   int<lower=0> N_shared;
-  array[N_spEgret] int sp_shared_ospree;
-  array[N_ospreeSp] int sp_shared_egret;
+  array[N_shared] int shared_sp_ospree;
+  array[N_shared] int shared_sp_egret;
 
 }
 
@@ -284,12 +284,9 @@ model {
 // }
    vector[N_shared] mu;
    
-    mu = a_both + b_both * bc_ospree[shared_sp_ospree];
+    mu = a_both + b_both * b_force_ospree[shared_sp_ospree];
     
-    bc_egret[shared_sp_egret] ~ normal(mu, sigma_y_both);
-    	  
-    
-			     	
-    
+    bf_egret[shared_sp_egret] ~ normal(mu, sigma_y_both);
+
 }
 

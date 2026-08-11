@@ -29,7 +29,8 @@ library(cowplot)
 library(reshape2)
 
 # 1. get the egret+usda data
-source("analyseBudSeed/prepEgretUsda.R")
+# source("analyseBudSeed/prepEgretUsda.R")
+d <- read.csv("output/egretUsdaData.csv")
 d <- d[complete.cases(d),] 
 
 # 372 spp
@@ -87,16 +88,16 @@ egretSp <- sort(unique(da$latbi))
 temp <- da[da$latbi %in% ospreeSp,]
 sharedSp <- sort(unique(temp$latbi))
 
-da$sharedSp <- da$latbi
-da$sharedSp <- ifelse(da$sharedSp %in% sharedSp, "1", da$sharedSp)
-da$sharedSp <- ifelse(da$sharedSp %in% sharedSp, "0", da$sharedSp)
+egretShared <- unique(da[, c("latbi", "numspp")])
+egretShared <- egretShared[egretShared$latbi %in% sharedSp, ]
+egretShared <- egretShared[order(egretShared$latbi),]
 
-osp$sharedSp <- osp$latbi
-osp$sharedSp <- ifelse(osp$sharedSp %in% sharedSp, "1", osp$sharedSp)
-osp$sharedSp <- ifelse(osp$sharedSp %in% sharedSp, "0", osp$sharedSp)
+ospreeShared <- unique(osp[, c("latbi", "sppnum")])
+ospreeShared <- ospreeShared[ospreeShared$latbi %in% sharedSp, ]
+ospreeShared <- ospreeShared[order(ospreeShared$latbi),]
 
 # combine in data list:
-dataEO =list(provenance.lat,
+dataEO =list(
           N_degen = sum(da$responseValue %in% c(0,1)),
           N_prop = sum(da$responseValue>0 & da$responseValue<1),
           N_spEgret =  length(unique(da$latbi)),
@@ -118,22 +119,22 @@ dataEO =list(provenance.lat,
                  dim = sum(da$responseValue>0 & da$responseValue<1)),
           Vphy_egret = cphy,
           N_ospree = nrow(osp),
-          N_spOspree = nspeciesO,
+          N_ospreeSp = nspeciesO,
           spOspree = osp$sppnum,
           x1_ospree = osp$force.z,
           x2_ospree = osp$chill.z,
           x3_ospree = osp$photo.z,
-          yOspree = osp$resp,
+          y_ospree = osp$resp,
           Vphy_ospree = vcv(phyloO, corr = TRUE),
-          sp_shared_ospree = osp$sharedSp,
-          sp_shared_egret = da$sharedSp,
+          shared_sp_ospree = ospreeShared$sppnum,
+          shared_sp_egret = egretShared$numspp,
           N_shared = length(sharedSp)
             )
 
-fit <- stan("stan/ospreeEgretmdl.stan",
+fit <- stan("stan/ospreeEgretMdl.stan",
             data = dataEO,
-            iter = 4000,
-            warmup = 3000, 
+            iter = 2000,
+            warmup = 1000, 
             chains = 4
 )
 
