@@ -12,6 +12,8 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
   setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
   setwd("C:/PhD/Project/egret/analyses")
+} else if(length(grep("christophe_rouleau-desrochers", getwd()) > 0)) {
+  setwd("/Users/christophe_rouleau-desrochers/github/egret/analyses")
 } else{
   setwd("boomdittyboom") # for midge
 }
