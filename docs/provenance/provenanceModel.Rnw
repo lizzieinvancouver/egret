@@ -39,27 +39,29 @@ sig_sum <- data.frame(
 \section{Methods}
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 \begin{enumerate}
-\item We selected all the datasetIDstudy that had more than one provenance per species; After Victor's decision rules and cleaning the dataset we end up with \Sexpr{length(unique(modeld_noforc2$genusspecies))} single species from \Sexpr{length(unique(paste(modeld_noforc2$datasetID, modeld_noforc2$study, sep = "")))} studies ($nrow = $ \Sexpr{nrow(modeld_noforc2)}). 
+\item We selected all the datasetIDstudy that had more than one provenance per species; After Victor's decision rules and cleaning the dataset we end up with \Sexpr{length(unique(modeld_noforc2$genusspecies))} single species from \Sexpr{length(unique(paste(modeld_noforc2$datasetID, modeld_noforc2$study, sep = "")))} studies ($nrow = $ \Sexpr{nrow(modeld_noforc2)}). %emw11Aug: Did you select the studies BEFORE or after Victor's decision rules? If it is after, the I would write: After applying Victor's decision rules and cleaning the dataset, we selected all the .... (right now, it's not clear). Since you don't ref your R files above, I would note them in the comments here. 
 
-\item We fit the provenance model with and without forcing first, compared model estimates and moved on with the model without forcing with chilling and time as the main predictors.
-
-\item We performed posterior predictive checks for the provenance model without forcing.
+\item We fit the provenance model with and without forcing first, compared model estimates and moved on with the model without forcing with chilling and time as the main predictors. See the section `comparing models' below for more details. %emw11Aug: I would show the equation... I can write it in tex for you if you need help and point me to the Stan file. 
+%emw11Aug: Somewhere here you should probably also mention the restricted dataset work?
+\item We performed posterior predictive checks for the provenance model without forcing.%emw11Aug: Hmm, maybe say WHY we did this and what we found, or if  you show these below then I am not sure they're classic PPCs and so you could just skip this line.
 \end{enumerate}
 
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 \section{Results}
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-We fitted a provenance model for each species with more than one provenance.
+We fitted a provenance model for each species with more than one provenance. % Don't repeat, you said this above, but you could move the species and data #s from above to here where I think they would fit better. I might also centralize the #s for the restricted and unrestricted...
 
 \begin{enumerate}
 
 %-------------------------------------------------------------------------------
 \item{Did forcing change the germination response?}
+%emw11Aug: better to have two subsections, one `comparing models' and there I would include any results from the forcing only model.... one `results from selected model' or such. 
 %-------------------------------------------------------------------------------
   \begin{enumerate}
-  \item We fitted the provenance model with forcing and without forcing. 
+  \item We fitted the provenance model with forcing and without forcing. %emw11Aug: Don't repeat....
   
-  \item Forcing does not seem to explain the variation between the no-forcing and forcing models. Neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}) between the restricted vs full dataset.
+  \item Forcing does not seem to explain the variation between the no-forcing and forcing models. % Tell me how they differ before you tell me this. 
+  Neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}) between the restricted vs full dataset.
 
   \item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ \Sexpr{nrow(modeld)}) and the full dataset ($n =$ \Sexpr{nrow(modeld_noforc2)}). 
   
@@ -71,7 +73,7 @@ We fitted a provenance model for each species with more than one provenance.
 %-------------------------------------------------------------------------------
 \textit{Below are for the model that includes forcing. We need to change the x axis on the mu plots.}
   \begin{enumerate}
-  \item Forcing had little effects on species, but increased germination for Maackia taiwanensis and Betula utilis and Picea glauca (Figure \ref{fig:muForcing}).
+  \item Forcing had little effects on species, but increased germination for \emph{Maackia taiwanensis} and \emph{Betula utilis} and \emph{Picea glauca} (Figure \ref{fig:muForcing}).
   
   \item Chilling increased germination for most species with huge variations. Four species probability to germinate decreased in response to chilling   (Figure \ref{fig:muChilling}).
   
@@ -100,7 +102,7 @@ We fitted a provenance model for each species with more than one provenance.
 % Max temp
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonMaxGermtemp.jpeg}
-\caption{Datasets with forcing vs no forcing color coded by max temperature}
+\caption{Datasets with forcing vs no forcing color coded by max temperature} %emw11Aug: Showing what line? This is the annoying stuff you add now but WAY more annoying to try to figure it out later. For all the figures, explain the lines and the words (bcs etc.) or remove the words if you basically explain them elsewhere. Or per . Also I would start each caption with either 'comparing forcing and no-forcing models' or 'results' and you may also want: 'comparing models: model with forcing' ... be sure all the results with the model we decide to go with either come all FIRST or all SECOND, don't mix. 
 \label{fig:maxGermTemp}
 \end{figure}
 
@@ -128,33 +130,33 @@ We fitted a provenance model for each species with more than one provenance.
 
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/muPlotProv_bcsprov.pdf}
-\caption{Chilling slope parameters}
+\caption{Chilling slope parameters} %emw11Aug: What model? 
 \label{fig:muChilling}
 \end{figure}
 
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/muPlotProv_bfprov.pdf}
-\caption{Forcing slope parameters}
+\caption{Forcing slope parameters} %emw11Aug: What model? 
 \label{fig:muForcing}
 \end{figure}
 
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/muPlotProv_btprov.pdf}
-\caption{Time slope parameters}
+\caption{Time slope parameters} %emw11Aug: What model? 
 \label{fig:muTime}
 \end{figure}
 
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanT.pdf}
 \caption{General response curve across all species as a function of chilling (scaled). We averaged the contribution of time and included it in the response curve.}
-\label{fig:respCurveChilling}
+\label{fig:respCurveChilling} %emw11Aug: What model? 
 \end{figure}
 
 
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/retrodictiveChecks/PPC_meanC.pdf}
 \caption{General response curve across all species as a function of time (scaled). We averaged the contribution of chilling and included it in the response curve.}
-\label{fig:respCurveTime}
+\label{fig:respCurveTime} %emw11Aug: What model? 
 \end{figure}
 
 \end{enumerate}
