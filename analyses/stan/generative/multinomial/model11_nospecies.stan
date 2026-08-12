@@ -1,7 +1,7 @@
 functions {
   real gompertz(real t, real tau25, real tau75) {
     real log_b = (log(-log(0.75)) - log(-log(0.25))) / (tau75 - tau25);
-    real log_a = log(-log(0.75)) - log_b * tau25;
+    real log_a = log(-log(0.25)) - log_b * tau25;
     return exp(-exp(log_a + log_b * t));
   }
 }
@@ -9,15 +9,15 @@ functions {
 data {
   int<lower=1> N;
   int<lower=1> Nexps;
-  
-  int<lower=1> Nspecies;
-  array[Nexps] int<lower=1, upper=Nspecies> species_idxs;
 
   array[Nexps] int<lower=1, upper=N> exp_start_idxs;
   array[Nexps] int<lower=1, upper=N> exp_end_idxs;
   array[N] int<lower=0> seeds;
 
   vector<lower=0>[N] d;
+  
+  vector[Nexps] chill;
+  vector[Nexps] forcing;
   
   int<lower=1> N_newdays;
 }
@@ -33,27 +33,29 @@ transformed data {
 }
 
 parameters {
+  
   real mu_pv;
-  real<lower=0> sigma_pv_species;
-  vector[Nspecies] logit_pv_species_tilde;
   real<lower=0> sigma_pv_exp;
-  vector[Nexps] logit_pv_tilde;
-
+  vector[Nexps] logit_pv;
+  
   real mu_log_tau25;
-  real<lower=0> sigma_log_tau25_species;
-  vector[Nspecies] log_tau25_species;
-  real<lower=0> sigma_log_tau25_exp;
-  vector[Nexps] log_tau25_tilde;
+  real beta_chill_tau25;
+  real beta_chill2_tau25;
+  real beta_forc_tau25;
+  real beta_forc2_tau25;
+  real beta_chillforc_tau25;
 
   real mu_log_spread;
-  real<lower=0> sigma_log_spread_species;
-  vector[Nspecies] log_spread_species_tilde;
-  real<lower=0> sigma_log_spread_exp;
-  vector[Nexps] log_spread_tilde;
+  real beta_chill_spread;
+  real beta_chill2_spread;
+  real beta_forc_spread;
+  real beta_forc2_spread;
+  real beta_chillforc_spread;
+
 }
 
 transformed parameters {
-  vector[Nexps] logit_pv;
+
   vector[Nexps] pv;
   vector[Nexps] log_tau25;
   vector[Nexps] log_spread;
@@ -62,12 +64,15 @@ transformed parameters {
   vector[N] pg;
 
   for (e in 1:Nexps) {
-    logit_pv[e] = mu_pv + sigma_pv_species * logit_pv_species_tilde[species_idxs[e]] 
-      + sigma_pv_exp * logit_pv_tilde[e];
-    log_tau25[e] = mu_log_tau25 + log_tau25_species[species_idxs[e]] 
-      + sigma_log_tau25_exp * log_tau25_tilde[e];
-    log_spread[e] = mu_log_spread + sigma_log_spread_species * log_spread_species_tilde[species_idxs[e]] 
-      + sigma_log_spread_exp * log_spread_tilde[e];
+    // logit_pv[e] = mu_pv + beta_chill_pv * chill[e] + logit_pv_exp[e];
+    log_tau25[e] = mu_log_tau25 + beta_chill_tau25 * (chill[e]-7) + beta_forc_tau25 * (forcing[e]-1.5) 
+    + beta_chill2_tau25 * (chill[e]-7)^2  + beta_forc2_tau25 * (forcing[e]-1.5)^2 
+    + beta_chillforc_tau25 * (forcing[e]-1.5) * (chill[e]-7);
+    
+    
+    log_spread[e] = mu_log_spread + beta_chill_spread * (chill[e]-7) + beta_forc_spread * (forcing[e]-1.5)
+    + beta_chill2_spread * (chill[e]-7)^2  + beta_forc2_spread * (forcing[e]-1.5)^2 
+    + beta_chillforc_spread * (forcing[e]-1.5) * (chill[e]-7);
   }
 
   pv = inv_logit(logit_pv);
@@ -89,23 +94,24 @@ transformed parameters {
 }
 
 model {
-  mu_pv ~ normal(1, 2);
-  sigma_pv_species ~ normal(0, 3);
-  sigma_pv_exp ~ normal(0, 3);
-  logit_pv_species_tilde ~ normal(0, 1);
-  logit_pv_tilde ~ normal(0, 1);
+  
+  mu_pv ~ normal(2.5, 1.28); // between 50% and 99% 
+  sigma_pv_exp ~ normal(0, 4);
+  logit_pv ~ normal(mu_pv, sigma_pv_exp);
 
-  mu_log_tau25 ~ normal(log(50), log(20)/2.57);
-  sigma_log_tau25_species ~ normal(0, 3);
-  sigma_log_tau25_exp ~ normal(0, 3);
-  log_tau25_species ~ normal(0, sigma_log_tau25_species);
-  log_tau25_tilde ~ normal(0, 1);
+  mu_log_tau25 ~ normal(4.35, 0.13); // between log(50+10) and log(50+50) (time is shifted by 50 days)
+  beta_chill_tau25 ~ normal(0, 1/2.57);
+  beta_chill2_tau25 ~ normal(0, 1/2.57);
+  beta_forc_tau25 ~ normal(0, 1/2.57);
+  beta_forc2_tau25 ~ normal(0, 1/2.57);
+  beta_chillforc_tau25 ~ normal(0, 1/2.57);
 
-  mu_log_spread ~ normal(log(10), log(200)/2.57);
-  sigma_log_spread_species ~ normal(0, 3);
-  sigma_log_spread_exp ~ normal(0, 3);
-  log_spread_species_tilde ~ normal(0, 1);
-  log_spread_tilde ~ normal(0, 1);
+  mu_log_spread ~ normal(3.10, 0.41); // between log(10) and log(50)
+  beta_chill_spread ~ normal(0, 1/2.57);
+  beta_chill2_spread ~ normal(0, 2/2.57);
+  beta_forc_spread ~ normal(0, 1/2.57);
+  beta_forc2_spread ~ normal(0, 1/2.57);
+  beta_chillforc_spread ~ normal(0, 1/2.57);
 
   for (e in 1:Nexps) {
     int start = exp_start_idxs[e];
@@ -113,7 +119,6 @@ model {
     seeds[start:end] ~ multinomial(pg[start:end]);
   }
 }
-
 
 generated quantities {
   
@@ -156,5 +161,4 @@ generated quantities {
   }
 
 }
-
 
