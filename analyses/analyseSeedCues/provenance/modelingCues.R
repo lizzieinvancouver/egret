@@ -164,10 +164,14 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
 ##### Run model with forcing, no phylogeny #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 if(runmodels){
-
 smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo.stan")
 fit_nophy <- sampling(smordbeta_nophy, mdl.data,
                 iter = 2000, warmup = 1000, chains = 4)
+
+smordbeta_nophy_noprov <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_noprovenance_nophylo.stan")
+fit_nophy_noprov <- sampling(smordbeta_nophy_noprov, mdl.data,
+                             iter = 2024, warmup = 1000, chains = 4)
+saveRDS(fit_nophy_noprov, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noprov.rds")
 }
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 ##### Diagnostics #####
