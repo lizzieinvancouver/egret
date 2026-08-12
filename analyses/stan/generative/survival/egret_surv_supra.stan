@@ -36,6 +36,10 @@ parameters {
   // seed viability
   real<lower=0, upper=1> pv;   
   
+  // ceiling temp
+  real mu_c;
+  real<lower=0> sigma_c; 
+  
   // phenological transition parameters
   real log_Psi0; // log phenology threshold (log forcing units)
   real log_sigma; // log phenology threshold scale (log forcing units)
@@ -59,12 +63,18 @@ model {
   
   pv ~ beta(4, 2);
   
+  mu_c ~ normal(19, 3);
+  sigma_c ~ normal(0, 2);
+  
   for(e in 1:N_exps){
     
     int start_idx = start_exp_idxs[e];
     int end_idx = end_exp_idxs[e];
     
     real constant_temp = germ_temp[e];
+    
+    real log_pi   = log_inv_logit((mu_c - constant_temp) / sigma_c);
+    real log1m_pi = log1m_inv_logit((mu_c - constant_temp) / sigma_c);
     
     // compute daily forcings
     int earliest_forcing = 1;
@@ -85,7 +95,7 @@ model {
         real Psi = sum(daily_forcings[1:local_days[obs]]);
         // real log_dPsidt = log_inv_logit(k * (constant_temp - T0));
         
-        target += log(pv) + logistic_lpdf(Psi | Psi0, sigma)  + log_dPsidt;
+        target += log(pv) + log_pi + logistic_lpdf(Psi | Psi0, sigma)  + log_dPsidt;
         
       }
     }
@@ -93,7 +103,13 @@ model {
     // ungerminated seeds
     if (N_ungerm[e] > 0){
       real Psi_last = sum(daily_forcings[1:latest_forcing]);
-      target += N_ungerm[e] * log_sum_exp(log1m(pv), log(pv) + logis_lccdf_s(Psi_last, Psi0, sigma));
+      
+      vector[3] lp;
+      lp[1] = log1m(pv);
+      lp[2] = log(pv) + log1m_pi;
+      lp[3] = log(pv) + log_pi + logis_lccdf_s(Psi_last, Psi0, sigma);
+      
+      target += N_ungerm[e] * log_sum_exp(lp);
     }
     
   }
@@ -101,55 +117,52 @@ model {
 }
 
 generated quantities {
-
-  array[N_exps] int N_obs_pred; // total germianted seeds
-  array[N_exps] int N_ungerm_pred;
   
-  array[N_exps, max_days] int dgerm_pred; // daily germination
-  array[N_exps, max_days] int cumgerm_pred; // cumulative germination
-
+  array[N_exps] int N_obs_pred;
+  array[N_exps] int N_ungerm_pred;
+  array[N_exps, max_days] int dgerm_pred;
+  array[N_exps, max_days] int cumgerm_pred;
+  
   for (e in 1:N_exps) {
     
-    vector[max_days + 1] fday; // daily forcing
-    vector[max_days + 1] cumF; // cumulative sum of forcing
-
+    vector[max_days + 1] fday;
+    vector[max_days + 1] cumF;
+    real pi_e = inv_logit((mu_c - germ_temp[e]) / sigma_c);
+    
     for (d in 1:(max_days + 1))
     {
       fday[d] = inv_logit(k * (germ_temp[e] - T0));
     }
-      
+    
     cumF = cumulative_sum(fday);
-
     N_obs_pred[e] = 0;
     N_ungerm_pred[e] = 0;
+    
     for (day in 1:max_days)
       dgerm_pred[e, day] = 0;
-
+      
     // for each seed in the experiment...
     for (s in 1:(N_obs[e] + N_ungerm[e])) {
-      
       if (bernoulli_rng(pv) == 0) {
-        N_ungerm_pred[e] += 1;
+        N_ungerm_pred[e] += 1; // not viable
+      } else if (bernoulli_rng(pi_e) == 0) {
+        N_ungerm_pred[e] += 1; // viable but somehow thermoinhibited
       } else {
-        
-        real l = logistic_rng(Psi0, sigma); // threshold to reach
-        
-        if (l < cumF[1] || l >= cumF[max_days + 1]) {
-          N_ungerm_pred[e] += 1;  
+        real l = logistic_rng(Psi0, sigma);
+        if (l >= cumF[max_days + 1]) {
+          N_ungerm_pred[e] += 1; // threshold not reached before the end of exp
+        } else if (l < cumF[1]) {
+          dgerm_pred[e, 1] += 1; // already past threshold on day 1..?
+          N_obs_pred[e] += 1;
         } else {
-          
-          // latest d with cumPsi[d] < psi
-          int day = 1;                        
+          int day = 1;
           while (day < max_days && cumF[day + 1] < l)
             day += 1;
           dgerm_pred[e, day] += 1;
           N_obs_pred[e] += 1;
-          
         }
       }
-      
     }
-    
     cumgerm_pred[e,1:max_days] = cumulative_sum(dgerm_pred[e,1:max_days]);
   }
 }

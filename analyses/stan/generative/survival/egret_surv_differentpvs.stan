@@ -34,7 +34,7 @@ parameters {
   real<lower=0> k;  
   
   // seed viability
-  real<lower=0, upper=1> pv;   
+  vector<lower=0, upper=1>[N_exps] pv;   
   
   // phenological transition parameters
   real log_Psi0; // log phenology threshold (log forcing units)
@@ -85,7 +85,7 @@ model {
         real Psi = sum(daily_forcings[1:local_days[obs]]);
         // real log_dPsidt = log_inv_logit(k * (constant_temp - T0));
         
-        target += log(pv) + logistic_lpdf(Psi | Psi0, sigma)  + log_dPsidt;
+        target += log(pv[e]) + logistic_lpdf(Psi | Psi0, sigma)  + log_dPsidt;
         
       }
     }
@@ -93,7 +93,7 @@ model {
     // ungerminated seeds
     if (N_ungerm[e] > 0){
       real Psi_last = sum(daily_forcings[1:latest_forcing]);
-      target += N_ungerm[e] * log_sum_exp(log1m(pv), log(pv) + logis_lccdf_s(Psi_last, Psi0, sigma));
+      target += N_ungerm[e] * log_sum_exp(log1m(pv[e]), log(pv[e]) + logis_lccdf_s(Psi_last, Psi0, sigma));
     }
     
   }
@@ -128,7 +128,7 @@ generated quantities {
     // for each seed in the experiment...
     for (s in 1:(N_obs[e] + N_ungerm[e])) {
       
-      if (bernoulli_rng(pv) == 0) {
+      if (bernoulli_rng(pv[e]) == 0) {
         N_ungerm_pred[e] += 1;
       } else {
         
