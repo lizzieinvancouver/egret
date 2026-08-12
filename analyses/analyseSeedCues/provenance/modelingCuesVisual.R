@@ -171,8 +171,8 @@ ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noprov)) +
   facet_wrap(~prm, scales = "free") +
   labs(x = "with prov", y = "no prov", title = "") +
   theme_minimal()
-ggsave("analyseSeedCues/provenance/figures/11PlotProvNoProv.jpeg", width = 8, height = 6, 
-       units = "in", dpi = 300)
+ggsave("analyseSeedCues/provenance/figures/11PlotProvNoProv.jpeg", width = 8, height = 6, units = "in", dpi = 300)
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Check sigmas #### 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -207,6 +207,10 @@ ggsave("analyseSeedCues/provenance/figures/sigmaVals.jpeg", width = 5, height = 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Plot provenance and color code by spp #### 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+fit_nophy_noforcing <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
+
+df_fit <- as.data.frame(fit_nophy_noforcing)
+
 my_colors <- c("#9E3D22FF", "#AA4422FF", "#B74B22FF",
                "#C35222FF", "#D05921FF", "#D96324FF",
                "#E17028FF", "#E97C2DFF", "#F18832FF",
@@ -229,7 +233,7 @@ dmain <- read.csv("output/egretclean.csv")
 xindex <- unique(modeld[,c("datasetID", "genusspecies", "numspp", "numprov")])
 
 # remove the parameters were not interested in for now
-cols <- colnames(df_withprov)
+cols <- colnames(df_fit)
 cols <- cols[!grepl("z", cols) &
                !grepl("calc", cols) &
                !grepl("sigma", cols) &
@@ -241,17 +245,17 @@ cols <- cols[!grepl("z", cols) &
 ##### a_prov ##### 
 # === === === === === === === === === === === === === === === === === === === 
 # start with the intercept
-amtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_withprov)))
+amtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_fit)))
 
 colnames(amtrx) <- xindex$numprov
 colsa <- cols[grepl("a", cols) &
                 !grepl("prov", cols)]
 colsaprov <- cols[grepl("a_prov", cols) ]
 
-da <- subset(df_withprov, select = colsa)
+da <- subset(df_fit, select = colsa)
 colnames(da) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(da))
 
-daprov <- subset(df_withprov, select = colsaprov)
+daprov <- subset(df_fit, select = colsaprov)
 colnames(daprov) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(daprov))
 
 for (i in seq_len(ncol(amtrx))) { # i = 30
@@ -412,17 +416,17 @@ dev.off()
 ##### bt_prov ##### 
 # === === === === === === === === === === === === === === === === === === === 
 # start with the intercept
-btmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_withprov)))
+btmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_fit)))
 
 colnames(btmtrx) <- xindex$numprov
 colsbt <- cols[grepl("bt", cols) &
                 !grepl("prov", cols)]
 colsbtprov <- cols[grepl("bt_prov", cols) ]
 
-dbt <- subset(df_withprov, select = colsbt)
+dbt <- subset(df_fit, select = colsbt)
 colnames(dbt) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbt))
 
-dbtprov <- subset(df_withprov, select = colsbtprov)
+dbtprov <- subset(df_fit, select = colsbtprov)
 colnames(dbtprov) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbtprov))
 
 for (i in seq_len(ncol(btmtrx))) { # i = 30
@@ -578,192 +582,22 @@ legend(
 )
 dev.off()
 
-# === === === === === === === === === === === === === === === === === === === 
-##### bf_prov ##### 
-# === === === === === === === === === === === === === === === === === === === 
-# start with the intercept
-bfmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_withprov)))
-
-colnames(bfmtrx) <- xindex$numprov
-colsbf <- cols[grepl("bf", cols) &
-                 !grepl("prov", cols)]
-colsbfprov <- cols[grepl("bf_prov", cols) ]
-
-dbf <- subset(df_withprov, select = colsbf)
-colnames(dbf) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbf))
-
-dbfprov <- subset(df_withprov, select = colsbfprov)
-colnames(dbfprov) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbfprov))
-
-for (i in seq_len(ncol(bfmtrx))) { # i = 30
-  prov_id <- as.integer(colnames(bfmtrx)[i])
-  spp_id <- xindex$numspp[match(prov_id, xindex$numprov)]
-  bfmtrx[, i] <- dbf[, spp_id]
-}
-bfmtrx
-
-# sum spp values in matrix to provenance value
-dbfprovspp <- bfmtrx + dbfprov[, colnames(bfmtrx)]
-
-dbfprovspp2 <- data.frame(
-  prmID = character(ncol(dbfprovspp)),
-  fit_mean  = numeric(ncol(dbfprovspp)),  
-  fit_per5  = NA, 
-  fit_per25 = NA,
-  fit_per75 = NA,
-  fit_per95 = NA
-)
-
-for (i in 1:ncol(dbfprovspp)) { # i = 1
-  dbfprovspp2$prmID[i] <- colnames(dbfprovspp)[i]         
-  dbfprovspp2$fit_mean[i] <- round(mean(dbfprovspp[[i]]),3)  
-  dbfprovspp2$fit_per5[i] <- round(quantile(dbfprovspp[[i]], probs = 0.05), 3)
-  dbfprovspp2$fit_per25[i] <- round(quantile(dbfprovspp[[i]], probs = 0.25), 3)
-  dbfprovspp2$fit_per75[i] <- round(quantile(dbfprovspp[[i]], probs = 0.75), 3)
-  dbfprovspp2$fit_per95[i] <- round(quantile(dbfprovspp[[i]], probs = 0.95), 3)
-}
-
-# get just bf
-bfvec <- paste("bf", "[", 1:length(unique(modeld$numspp)), "]", sep = "")
-dbf2 <- subset(dwithprov2, prmID %in% bfvec)
-dbf2$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbf2$prmID))
-dbf2$sppname <- modeld$genusspecies[match(dbf2$numspp, modeld$numspp)]
-
-# add species name to df
-dbfprovspp2$numspp <- modeld$numspp[match(dbfprovspp2$prmID, modeld$numprov)]
-dbfprovspp2$sppname <- modeld$genusspecies[match(dbfprovspp2$prmID, modeld$numprov)]
-
-# add woody
-dbf2$woody <- dmain$woody[match(dbf2$sppname, dmain$latbi)]
-dbfprovspp2$woody <- dmain$woody[match(dbfprovspp2$sppname, dmain$latbi)]
-
-pdf(
-  file = "analyseSeedCues/provenance/figures/muPlotProv_bfprov.pdf",
-  width = 8,
-  height = 8
-)
-par(mar = c(4, 6, 4, 5))
-
-# define a gap between species clusters
-gap <- 3
-
-# y positions
-dbfprovspp2$y_pos <- NA
-current_y <- 1
-
-species_order <- as.character(1 : max(dbfprovspp2$numspp))
-
-dbfprovspp2$spp  <- factor(dbfprovspp2$numspp, levels = species_order)
-
-dbfprovspp2 <- dbfprovspp2[order(dbfprovspp2$spp),]
-
-dbfprovspp2$y_pos <- seq_len(nrow(dbfprovspp2))
-
-for(sp in species_order){
-  idx <- which(dbfprovspp2$spp == sp)
-  n <- length(idx)
-  # assign sequential positions for this species
-  dbfprovspp2$y_pos[idx] <- current_y:(current_y + n - 1)
-  # move cursor down with a gap before next species cluster
-  current_y <- current_y + n + gap
-}
-
-dbfprovspp2$y_pos
-
-# set up empty plot
-plot(NA, NA,
-     xlim = range(c(dbf2$fit_per5-0.5, dbf2$fit_per95+0.5)),
-     ylim = c(0.5, max(dbfprovspp2$y_pos) + 0.5),
-     xlab = "Days to germinate?",
-     ylab = "",
-     yaxt = "n",
-     main = "bf and bf_prov"
-)
-
-# add error bars
-segments(
-  x0 = dbfprovspp2$fit_per25,
-  x1 = dbfprovspp2$fit_per75,
-  y0 = dbfprovspp2$y_pos,
-  col = adjustcolor(my_colors[dbfprovspp2$spp], alpha.f = 0.7),
-  lwd = 1
-)
-
-# Add the points
-points(
-  dbfprovspp2$fit_mean,
-  dbfprovspp2$y_pos,
-  cex = 0.5,
-  pch = my_shapes[dbfprovspp2$woody],
-  col = adjustcolor(my_colors[dbfprovspp2$spp], alpha.f = 1)
-)
-
-# Add species intervals and mean
-dbf2$spp <- dbf2$spp_name
-spp_y <- tapply(dbfprovspp2$y_pos, dbfprovspp2$spp, max)
-dbf2$y_pos <- spp_y[dbf2$numspp] + 1.5
-
-segments(
-  x0 = dbf2$fit_per25,
-  x1 = dbf2$fit_per75,
-  y0 = dbf2$y_pos,
-  col = adjustcolor(my_colors[dbf2$numspp], alpha.f = 1),
-  lwd = 2
-)
-
-points(
-  dbf2$fit_mean,
-  dbf2$y_pos,
-  pch = my_shapes[dbf2$woody],
-  col  = adjustcolor(my_colors[dbf2$numspp], alpha.f = 1),
-  # col = "black",
-  cex = 1
-)
-
-# add vertical line at 0 
-abline(v = 0, lty = 2)
-
-# Add custom y-axis labels (reverse order if needed)
-axis(
-  side = 2,
-  at = dbf2$y_pos,
-  labels = dbf2$sppname,
-  cex.axis = 0.5,
-  las = 1
-)
-
-# spp mean
-spp_y <- tapply(dbfprovspp2$y_pos, dbfprovspp2$spp, mean)
-
-woody_legend_order <- c("Y", "N")
-# woody legend
-legend(
-  x = max(dbf2$fit_per95) - 0.5,
-  y = max(dbf2$y_pos) - 2,
-  legend = woody_legend_order,
-  pch = my_shapes[woody_legend_order],
-  pt.cex = 1.2,
-  title = "Woody (Y/N)",
-  bty = "n"
-)
-dev.off()
-
 
 # === === === === === === === === === === === === === === === === === === === 
 ##### bcs_prov ##### 
 # === === === === === === === === === === === === === === === === === === === 
 # start with the intercept
-bcsmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_withprov)))
+bcsmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_fit)))
 
 colnames(bcsmtrx) <- xindex$numprov
 colsbcs <- cols[grepl("bcs", cols) &
                   !grepl("prov", cols)]
 colsbcsprov <- cols[grepl("bcs_prov", cols) ]
 
-dbcs <- subset(df_withprov, select = colsbcs)
+dbcs <- subset(df_fit, select = colsbcs)
 colnames(dbcs) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbcs))
 
-dbcsprov <- subset(df_withprov, select = colsbcsprov)
+dbcsprov <- subset(df_fit, select = colsbcsprov)
 colnames(dbcsprov) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(dbcsprov))
 
 for (i in seq_len(ncol(bcsmtrx))) { # i = 30
