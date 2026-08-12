@@ -19,7 +19,7 @@
 \begin{enumerate}
 \item We used different data and models for budburst and seed germination.
 \begin{enumerate}
-\item We have complete data for 191 species for the budburst model.
+\item We have complete data for 191 species for the budburst model.%These 191 species are all angiosperm species, but we only ran the ospree model with the data file called: ospreeforegret.csv, which I failed to track down its origin. I asked Dan see if he remembered.
 \item We have complete data for 329 angiosperm species and 107 gymnosperm species for the seed germination model.
 \end{enumerate}
 \item We modeled budburst as a function of forcing, chilling, and photoperiod, accounting for phylogeny: 
