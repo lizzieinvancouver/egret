@@ -3,7 +3,7 @@
 # For the new excting survival model
 
 # 12 Aug. 2026
-
+library(rstan)
 data <- readRDS('~/projects/egret/analyses/analyseSeedCues/survival/newdata.rds')
 
 

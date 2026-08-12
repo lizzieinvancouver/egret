@@ -42,11 +42,7 @@ sim_one_exp <- function(e) {
 }
 
 
-sim_raw <- bind_rows(lapply(1:N_exps, sim_one_exp))
-
-sim <- sim_raw %>%
-  filter(germ_day >= 1, germ_day <= max_days) %>%
-  arrange(exp, germ_day)
+sim <- bind_rows(lapply(1:N_exps, sim_one_exp))
 
 counts <- as.integer(table(factor(sim$exp, levels = 1:N_exps)))
 N_ungerm <- n_seeds - counts
