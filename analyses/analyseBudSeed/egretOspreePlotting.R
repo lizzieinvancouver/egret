@@ -13,7 +13,7 @@ if(length(grep("deirdreloughnan", getwd()) > 0)) {
 } else if(length(grep("dbuona", getwd()) > 0)) {
   setwd("/Users/dbuona/Documents/git/egret/analyses/")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
-  setwd("C:/PhD/Project/egret/analyses")
+  setwd("C:/PhD/Project/egret/analyses/")
 }
 library(rstan)
 library(dplyr)
@@ -95,6 +95,12 @@ names(bfEgret) <- c("latbi","egretMean","egret5","egret25","egret75","egret95")
 osp<-read.csv("input/ospreeforegret.csv")
 
 sp.ref <- unique(osp$latbi)
+
+# checking for the overlapping species in egret+USDA and Ospree
+overlapSp <- intersect(sp.angio,sp.ref)
+# only 38 overlapping sp.
+overlapSpAll <- intersect(unique(d$latbi),sp.ref)
+# still only 38 overlapping sp.
 
 fit <- readRDS("analyseBudSeed/output/fit_ospree.rds")
 # sumOspree <- readRDS("analyseBudSeed/output/summary_full_angio.rds")
