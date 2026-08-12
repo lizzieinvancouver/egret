@@ -6,7 +6,8 @@ source('mcmc_visualization_tools.R', local=util)
 
 data <- mdl.data
 
-selected_species <- c(48, 49, 55, 56)
+selected_species <- c(4, 5, 17, 25, 26,  31, 32, 48, 49, 55, 56, 76, 77, 78)
+selected_species <- c(48) # this is the one with supra-optimal temp
 exps <- which(data$species_idxs %in% selected_species)
 offset <- data$exp_end_idxs[exps[1]-1]
 
@@ -54,7 +55,7 @@ newdata <- list(
   d = new_d
 )
 
-# saveRDS(newdata, '~/projects/egret/analyses/analyseSeedCues/survival/newdata.rds')
+saveRDS(newdata, '~/projects/egret/analyses/analyseSeedCues/survival/newdata_species48.rds')
 
 init_fn <- function() list(
   log_tau25 = rnorm(newdata$Nexps, log(50), log(20)/2.57),

@@ -4,7 +4,7 @@
 
 # 12 Aug. 2026
 library(rstan)
-data <- readRDS('~/projects/egret/analyses/analyseSeedCues/survival/newdata.rds')
+data <- readRDS('~/projects/egret/analyses/analyseSeedCues/survival/newdata_species48.rds')
 
 
 germ_days <- c()
@@ -18,7 +18,7 @@ exp_idxs <- c()
 uniq_species <- unique(data$species_idxs)
 species_idxs <- c()
 idx <- 1
-for(e in 1:data$Nexps){
+for(e in 1:9){
   
   start <- data$exp_start_idxs[e]
   end <- data$exp_end_idxs[e]
@@ -44,7 +44,7 @@ for(e in 1:data$Nexps){
   }
   N_obs <- c(N_obs, count)
   N_ungerm <- c(N_ungerm, nungerm_here)
-
+  
   start_exp_idxs <- c(start_exp_idxs, idx)
   idx <- idx + count
   end_exp_idxs <- c(end_exp_idxs, idx - 1)
@@ -54,7 +54,7 @@ max_days <- max(floor(germ_days))
 N <- sum(N_obs)
 
 newdata <- list(
-  N_exps = data$Nexps,
+  N_exps = 9,
   germ_temp = as.array(germ_temps*10),
   chill_cond = chill_cond, 
   N = N,
@@ -69,7 +69,7 @@ newdata <- list(
 )
 
 
-modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_multispecies.stan")
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_supra.stan")
 fit <- sampling(modelstan, newdata, chains = 4, cores = 4,
                 seed = 123456, iter = 2000, warmup = 1000)
 diagnostics <- util$extract_hmc_diagnostics(fit)
@@ -77,76 +77,17 @@ util$check_all_expectand_diagnostics(diagnostics)
 
 samples <- util$extract_expectand_vals(fit)
 base_samples <- util$filter_expectands(samples,
-                                       c('T0', 'k', 'pv', 'log_Psi0', 'log_sigma'), check_arrays = T)
+                                       c('T0', 'k', 'pv', 'log_Psi0', 'log_sigma', 'mu_c', 'sigma_c'), check_arrays = T)
 util$check_all_expectand_diagnostics(base_samples)
 
-saveRDS(samples, '/home/victor/projects/egret/analyses/analyseSeedCues/survival/output/14species_samples.rds')
+util$plot_expectand_pushforward(samples[['mu_c']], 30, flim = c(0, 40),
+                                display_name = 'mu_c')
 
+util$plot_pairs_by_chain(samples[['mu_c']], 'mu_c',
+                         samples[['T0']], 'T0')
 
-par(mfrow = c(3,2), mar = c(4,4,1,1))
-
-util$plot_expectand_pushforward(samples[['T0[1]']], 30, flim = c(0, 40),
-                                ylim = c(0,1),
-                                display_name = 'T0')
-for(s in 2:newdata$N_species){
-  if(s == 12){next}
-  util$plot_expectand_pushforward(samples[[paste0('T0[',s,']')]], 30, flim = c(0, 40),
-                                  display_name =  paste0('T0[',s,']'), add = T)
-}
-
-util$plot_expectand_pushforward(samples[['k[1]']], 30, flim = c(0, 2),
-                                ylim = c(0,25),
-                                display_name = 'k')
-for(s in 2:newdata$N_species){
-  if(s == 12){next}
-  util$plot_expectand_pushforward(samples[[paste0('k[',s,']')]], 30, flim = c(0, 2),
-                                  display_name =  paste0('k[',s,']'), add = T)
-}
-
-util$plot_expectand_pushforward(samples[['Psi0[1]']], 30, flim = c(0, 30),
-                                ylim = c(0,1),
-                                display_name = 'Psi0')
-for(s in 2:newdata$N_species){
-  if(s == 12){next}
-  util$plot_expectand_pushforward(samples[[paste0('Psi0[',s,']')]], 30, flim = c(0, 30),
-                                  display_name =  paste0('Psi0[',s,']'), add = T)
-}
-
-util$plot_expectand_pushforward(samples[['sigma[1]']], 30, flim = c(0, 20),
-                                display_name = 'sigma')
-for(s in 2:newdata$N_species){
-  if(s == 12){next}
-  util$plot_expectand_pushforward(samples[[paste0('sigma[',s,']')]], 30, flim = c(0, 20),
-                                  display_name =  paste0('sigma[',s,']'), add = T)
-}
-
-util$plot_expectand_pushforward(samples[['pv[1]']], 30, flim = c(0, 1),
-                                display_name = 'pv')
-for(s in 2:newdata$N_species){
-  if(s == 12){next}
-  util$plot_expectand_pushforward(samples[[paste0('pv[',s,']')]], 30, flim = c(0, 1),
-                                  display_name =  paste0('pv[',s,']'), add = T)
-}
-
-util$plot_expectand_pushforward(samples[['Psi0[1]']]/samples[['sigma[1]']], 30, flim = c(0, 10),
-                                display_name = 'Psi0/sigma')
-for(s in 2:newdata$N_species){
-  if(s == 12){next}
-  util$plot_expectand_pushforward(samples[[paste0('Psi0[',s,']')]]/samples[[paste0('sigma[',s,']')]], 30, flim = c(0, 10),
-                                  display_name =  paste0('Psi0[',s,']'), add = T)
-}
-
-
-for(s in 1:newdata$N_species){
-  util$plot_pairs_by_chain(samples[[paste0('T0[',s,']')]], paste0('T0[',s,']'),
-                           samples[[paste0('k[',s,']')]], paste0('k[',s,']'))
-}
-
-
-for(s in 1:newdata$N_species){
-  util$plot_pairs_by_chain(samples[[paste0('Psi0[',s,']')]], paste0('Psi0[',s,']'),
-                           samples[[paste0('sigma[',s,']')]], paste0('sigma[',s,']'))
-}
+util$plot_pairs_by_chain(samples[['mu_c']], 'mu_c',
+                          samples[['sigma_c']], 'sigma_c')
 
 
 
@@ -167,7 +108,7 @@ for(e in 1:newdata$N_exps){
 }
 
 par(mfrow = c(3,3), cex.main = 1)
-for(e in 1:newdata$N_exps){
+for(e in 1:9){
   util$plot_conn_pushforward_quantiles(samples, paste0('cumgerm_pred[',e,',',1:newdata$max_days,']'), 1:newdata$max_days,
                                        display_ylim = c(0 ,300),
                                        main = paste0('exp ', e,
@@ -183,8 +124,8 @@ for(e in 1:newdata$N_exps){
 par(mfrow = c(1,1))
 constant_temp <- seq(-10, 50, 1)
 qy <- sapply(constant_temp, function(t){
-  k <- samples[['k[4]']]
-  T0 <- samples[['T0[4]']]
+  k <- samples[['k']]
+  T0 <- samples[['T0']]
   y <- boot::inv.logit(k * (t - T0))
   util$ensemble_mcmc_quantile_est(y, c(0.05, 0.5, 0.95))
 })
