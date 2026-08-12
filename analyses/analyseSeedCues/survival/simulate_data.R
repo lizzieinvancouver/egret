@@ -1,4 +1,9 @@
 
+# Simulate data and fit the model on those simualted data
+# For the new excting survival model
+
+# 12 Aug. 2026
+
 wd <- '/home/victor/projects/egret/analyses'
 setwd(wd)
 util <- new.env()
