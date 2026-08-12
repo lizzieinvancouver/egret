@@ -37,7 +37,7 @@ source("cleaning/source/mergeData.R") # 34011 rows, 45 columns
 # 2. Clean up datasetID issues
 source("cleaning/source/cleandatasetID.R") 
 
-# 3. Clean species names
+# 3. Clean species names (looking for the worldflora backbone? It's one the MS OneDrive)
 source("cleaning/source/cleanSpecies.R")
 
 # 4. Clean miscellaneous -- removing redundant data between tables and fig, studies we can't trust data quality after reviewing pdf's again.
