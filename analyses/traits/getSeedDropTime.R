@@ -27,28 +27,64 @@ dm <- read.csv("input/traits/mtsv_data_publish.csv") # data Dan scraped from Mic
 shrubscheck <- read.csv("/Users/christophe_rouleau-desrochers/Downloads/shrubs_vines_index.csv")[,c(1,3,4)]
 treescheck <- read.csv("/Users/christophe_rouleau-desrochers/Downloads/trees.csv")
 
-nrow(subset(treescheck, genus == "Acer"))
-nrow(subset(dm, Genus == "Acer"))
 # bind them!
 check <- rbind(shrubscheck, treescheck)
-
 check$latbi <- paste0(check$genus, "_", check$species)
 
-length(unique(check$latbi))
-length(unique(dm$name))
-intersect(check$latbi, dm$name)
+# Read newly scraped trees and shrubs and vines
+dm2 <- read.csv("input/traits/MTSV_v2.csv")
 
-setdiff(check$latbi, dm$name)
-setdiff(dm$name, check$latbi)
-ds <- ds[order(ds$genus),]
-dm <- dm[order(dm$Genus),]
+dm2$latbi <- paste0(dm2$Genus, "_", dm2$Species)
 
+# check if I entered species that dan already input
+vec <- intersect(dm2$latbi, dm$name)
 
+# select Dan's entries for instances where I input data that was already in input
+dm2 <- subset(dm2, !(latbi %in% vec))
+
+# Prep structure for merge
+dm2_2 <- dm2[, c(2:8, 11)]
+
+colnames(dm2_2)[colnames(dm2_2) == "flo.time"] <- "flo_time"
+
+dm_2 <- dm[,1:7]
+dm_2$latbi <- paste0(dm_2$Genus, "_", dm_2$Species)
+
+# rbind!
+df <- rbind(dm2_2, dm_2)
+
+# === === === === === === === === === === === === === === ===
+# NEED TO CLEAN THE FRUITING TIME:
+# Autumn --> numerical
+# === === === === === === === === === === === === === === ===
+
+# Clean species names:
+# I am cleaning the species names from Dan's MTSV data and the extra species I found in these book, using the Worldflora package. The Worldflora backbone data set can be found on the lab One Drive: TemporalEcologyLab/Documents/egret/classification.csv
+library("WorldFlora")
+# Read in the backbone dataset
+backbone <- read.csv("~/Desktop/UBC/egretLOCAL/classification.csv",head = TRUE, sep="\t")
+df$Species <- tolower(df$Species)
+# Remove trailing spaces:
+df$Species <- str_trim(df$Species)
+df$Genus <- str_trim(df$Genus)
+df_species <- unique(paste(df$Genus, df$Species))
+checks<-WFO.match(spec.data=df_species, WFO.data=backbone, counter=1, verbose=TRUE)
+d_species_fix <- unique(checks$scientificName)
+names_changed <- setdiff(df_species, d_species_fix)
+
+df$latbi_cleaned <- checks$scientificName[match(paste(df$Genus, df$Species), 
+                                                checks$spec.name )]
+setdiff(df$latbi_cleaned, paste(df$Genus, df$Species))
+
+# Still need to make additional checks to make sure these species names still correpond to the egret database
 
 # Some minor cleaning
 ds$type[ds$type == "Annual"] <- "annual"
 ds$type[ds$type == "Perennial"] <- "perrenial"
 ds$type[ds$type == "Biennial"] <- "biennial"
+
+#
+
 # I think we should just adjust dm to match ds and merge it in (do any of the species overlap?)
 # From dm, we need the genus, species, fruiting and we can label them all as perennials 
 
