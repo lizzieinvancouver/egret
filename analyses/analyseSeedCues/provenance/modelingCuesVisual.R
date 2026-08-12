@@ -354,10 +354,10 @@ aprovspp2$y_pos
 plot(NA, NA,
      xlim = range(c(da2$p5-0.5, da2$p95+0.5)),
      ylim = c(0.5, max(aprovspp2$y_pos) + 0.5),
-     xlab = "Days to germinate?",
+     xlab = "Species and provenance intercept estimates",
      ylab = "",
      yaxt = "n",
-     main = "a and a_prov"
+     main = ""
 )
 
 # add error bars
@@ -418,8 +418,8 @@ spp_y <- tapply(aprovspp2$y_pos, aprovspp2$spp, mean)
 woody_legend_order <- c("Y", "N")
 # woody legend
 legend(
-  x = max(da2$p95) - 5,
-  y = max(da2$y_pos) - 2,
+  x = max(da2$mean) - 1,
+  y = max(da2$y_pos) - 15,
   legend = woody_legend_order,
   pch = my_shapes[woody_legend_order],
   pt.cex = 1.2,
@@ -524,10 +524,10 @@ dbtprovspp2$y_pos
 plot(NA, NA,
      xlim = range(c(dbt2$p5-0.5, dbt2$p95+0.5)),
      ylim = c(0.5, max(dbtprovspp2$y_pos) + 0.5),
-     xlab = "Days to germinate?",
+     xlab = "Species and provenance time slopes",
      ylab = "",
      yaxt = "n",
-     main = "bt and bt_prov"
+     main = ""
 )
 
 # add error bars
@@ -588,8 +588,8 @@ spp_y <- tapply(dbtprovspp2$y_pos, dbtprovspp2$spp, mean)
 woody_legend_order <- c("Y", "N")
 # woody legend
 legend(
-  x = max(dbt2$p95) - 5,
-  y = max(dbt2$y_pos) - 2,
+  x = max(dbt2$mean) - 1,
+  y = max(dbt2$y_pos)- 15,
   legend = woody_legend_order,
   pch = my_shapes[woody_legend_order],
   pt.cex = 1.2,
@@ -695,10 +695,10 @@ dbcsprovspp2$y_pos
 plot(NA, NA,
      xlim = range(c(dbcs2$p5-0.5, dbcs2$p95+0.5)),
      ylim = c(0.5, max(dbcsprovspp2$y_pos) + 0.5),
-     xlab = "Days to germinate?",
+     xlab = "Species and provenance chilling slopes",
      ylab = "",
      yaxt = "n",
-     main = "bcs and bcs_prov"
+     main = ""
 )
 
 # add error bars
@@ -759,8 +759,8 @@ spp_y <- tapply(dbcsprovspp2$y_pos, dbcsprovspp2$spp, mean)
 woody_legend_order <- c("Y", "N")
 # woody legend
 legend(
-  x = max(dbcs2$p95) - 5,
-  y = max(dbcs2$y_pos) - 2,
+  x = max(dbcs2$mean) - 1,
+  y = max(dbcs2$y_pos)- 15,
   legend = woody_legend_order,
   pch = my_shapes[woody_legend_order],
   pt.cex = 1.2,
