@@ -100,32 +100,36 @@ For the dataset that includes forcing (henceforth referred to as `restricted'), 
   \end{enumerate}
   
 \end{enumerate}
+
+% Provenance model comparison with model without provenance
+\begin{figure}[!ht]
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/11PlotProvNoProv.jpeg}
+\caption{Comparing the no-provenance vs provenance models. Both of these models include the forcing parameters. We compare model parameters on a 1:1 line (red dashed line) where the y-axis represents the model that excludes provenance and the x-axis depicts the model that includes the provenance parameters. `a' is the grand intercept for each species, `bcs' is the chilling slope for each species, `bf' is the forcing slope for each species  and `bt' is the time slope for each species.}
+\label{fig:provNoProv}
+\end{figure}
+
+
 % Max temp
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonMaxGermtemp.jpeg}
-\caption{Datasets with forcing vs no forcing color coded by max temperature} %emw11Aug: Showing what line? This is the annoying stuff you add now but WAY more annoying to try to figure it out later. For all the figures, explain the lines and the words (bcs etc.) or remove the words if you basically explain them elsewhere. Or per . Also I would start each caption with either 'comparing forcing and no-forcing models' or 'results' and you may also want: 'comparing models: model with forcing' ... be sure all the results with the model we decide to go with either come all FIRST or all SECOND, don't mix. 
+\caption{Comparing forcing vs no-forcing models color coded by the max temperature used in each study. We compare model parameters on a 1:1 line (red dashed line) where the x-axis represents the model that includes forcing and the y-axis depicts the model that excludes the forcing parameters. `a' is the grand intercept for each species, `a_prov' is the intercept for each provenance, `bcs' is the chilling slope for each species, `bcs_prov' is the chilling slope for each provenance, `bt' is the time slope for each species and `bt_prov' is the time slope for each provenance}
 \label{fig:maxGermTemp}
 \end{figure}
 
 % Number of unique germination treatments
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonUniqueGermtemp.jpeg}
-\caption{Datasets with forcing vs no forcing color coded by number of unique germ temp treatments}
+\caption{Comparing forcing vs no-forcing models color coded by the number of unique germination temperature treatments in each study. We compare model parameters on a 1:1 line (red dashed line) where the x-axis represents the model that includes forcing and the y-axis depicts the model that excludes the forcing parameters. `a' is the grand intercept for each species, `a_prov' is the intercept for each provenance, `bcs' is the chilling slope for each species, `bcs_prov' is the chilling slope for each provenance, `bt' is the time slope for each species and `bt_prov' is the time slope for each provenance}
 \label{fig:uniqueGermTemp}
 \end{figure}
 
 % Germ temp interval
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonIntervGermtemp.jpeg}
-\caption{Datasets with forcing vs no forcing color coded by the temperature interval in the study}
+\caption{Comparing forcing vs no-forcing models color coded by the temperature interval in the study. We compare model parameters on a 1:1 line (red dashed line) where the x-axis represents the model that includes forcing and the y-axis depicts the model that excludes the forcing parameters. `a' is the grand intercept for each species, `a_prov' is the intercept for each provenance, `bcs' is the chilling slope for each species, `bcs_prov' is the chilling slope for each provenance, `bt' is the time slope for each species. `bt_prov' is the time slope for each provenance}
 \label{fig:germTempInterval}
 \end{figure}
 
-\begin{figure}[!ht]
-\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/11PlotProvNoProv.jpeg}
-\caption{1:1 line plot to compare the model that includes provenance and excludes provenance.}
-\label{fig:provNoProv}
-\end{figure}
 
 
 
