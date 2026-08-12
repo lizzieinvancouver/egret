@@ -63,20 +63,20 @@ dwithprov <- df_withprov[, colnames(df_withprov) %in% colswithprov]
 
 dwithprov2 <- data.frame(
   prmID = character(ncol(dwithprov)),
-  fit_mean  = numeric(ncol(dwithprov)),  
-  fit_per5  = NA, 
-  fit_per25 = NA,
-  fit_per75 = NA,
-  fit_per95 = NA
+  mean  = numeric(ncol(dwithprov)),  
+  p5  = NA, 
+  p25 = NA,
+  p75 = NA,
+  p95 = NA
 )
 
 for (i in 1:ncol(dwithprov)) { # i = 1
   dwithprov2$prmID[i] <- colnames(dwithprov)[i]         
-  dwithprov2$fit_mean[i] <- round(mean(dwithprov[[i]]),3)  
-  dwithprov2$fit_per5[i] <- round(quantile(dwithprov[[i]], probs = 0.05), 3)
-  dwithprov2$fit_per25[i] <- round(quantile(dwithprov[[i]], probs = 0.25), 3)
-  dwithprov2$fit_per75[i] <- round(quantile(dwithprov[[i]], probs = 0.75), 3)
-  dwithprov2$fit_per95[i] <- round(quantile(dwithprov[[i]], probs = 0.95), 3)
+  dwithprov2$mean[i] <- round(mean(dwithprov[[i]]),3)  
+  dwithprov2$p5[i] <- round(quantile(dwithprov[[i]], probs = 0.05), 3)
+  dwithprov2$p25[i] <- round(quantile(dwithprov[[i]], probs = 0.25), 3)
+  dwithprov2$p75[i] <- round(quantile(dwithprov[[i]], probs = 0.75), 3)
+  dwithprov2$p95[i] <- round(quantile(dwithprov[[i]], probs = 0.95), 3)
 }
 dwithprov2
 
@@ -110,20 +110,20 @@ dnoprov <- df_noprov[, colnames(df_noprov) %in% colsnoprov]
 
 dnoprov2 <- data.frame(
   prmID = character(ncol(dnoprov)),
-  fit_mean  = numeric(ncol(dnoprov)),  
-  fit_per5  = NA, 
-  fit_per25 = NA,
-  fit_per75 = NA,
-  fit_per95 = NA
+  mean  = numeric(ncol(dnoprov)),  
+  p5  = NA, 
+  p25 = NA,
+  p75 = NA,
+  p95 = NA
 )
 
 for (i in 1:ncol(dnoprov)) { # i = 1
   dnoprov2$prmID[i] <- colnames(dnoprov)[i]         
-  dnoprov2$fit_mean[i] <- round(mean(dnoprov[[i]]),3)  
-  dnoprov2$fit_per5[i] <- round(quantile(dnoprov[[i]], probs = 0.05), 3)
-  dnoprov2$fit_per25[i] <- round(quantile(dnoprov[[i]], probs = 0.25), 3)
-  dnoprov2$fit_per75[i] <- round(quantile(dnoprov[[i]], probs = 0.75), 3)
-  dnoprov2$fit_per95[i] <- round(quantile(dnoprov[[i]], probs = 0.95), 3)
+  dnoprov2$mean[i] <- round(mean(dnoprov[[i]]),3)  
+  dnoprov2$p5[i] <- round(quantile(dnoprov[[i]], probs = 0.05), 3)
+  dnoprov2$p25[i] <- round(quantile(dnoprov[[i]], probs = 0.25), 3)
+  dnoprov2$p75[i] <- round(quantile(dnoprov[[i]], probs = 0.75), 3)
+  dnoprov2$p95[i] <- round(quantile(dnoprov[[i]], probs = 0.95), 3)
 }
 dnoprov2
 
@@ -161,10 +161,10 @@ dforplot$spp <- modeld$genusspecies[match(dforplot$numspp, modeld$numspp)]
 dforplot$provperspp <- provcounts$provLatLonAlt[match(dforplot$spp, provcounts$genusspecies)]
 
 # Plot!
-ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noprov)) +
-  geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75), 
+ggplot(dforplot, aes(x = mean, y = mean_noprov)) +
+  geom_errorbar(aes(xmin = p25, xmax = p75), 
                 width = 0, linewidth = 0.3, color = "darkgray", alpha=0.7) +
-  geom_errorbar(aes(ymin = fit_per25_noprov, ymax = fit_per75_noprov), 
+  geom_errorbar(aes(ymin = p25_noprov, ymax = p75_noprov), 
                 width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
   geom_point(aes(color = provperspp), size = 1.5) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#B40F20", linewidth = 0.8) +
@@ -173,44 +173,13 @@ ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noprov)) +
   theme_minimal()
 ggsave("analyseSeedCues/provenance/figures/11PlotProvNoProv.jpeg", width = 8, height = 6, units = "in", dpi = 300)
 
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-# Check sigmas #### 
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-aprovvec <- paste("a_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
-da_prov <- subset(dwithprov2, prmID %in% aprovvec)
-
-dsigmas <- subset(dwithprov2, prmID %in% 
-                    dwithprov2$prmID[grep("sigma", dwithprov2$prmID)])
-
-ggplot(dsigmas, aes(x = fit_mean, y = prmID)) +
-  geom_point(size = 2, alpha = 1) + 
-  geom_errorbar(aes(xmin = fit_per5, 
-                    xmax = fit_per95), 
-                width = 0, alpha = 1, linewidth = 0.3) +
-  geom_errorbar(aes(xmin = fit_per25, 
-                    xmax = fit_per75), 
-                width = 0, alpha = 1, linewidth = 1) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "black") +
-  labs(y = "", x = "Sigma values") +
-  # facet_wrap(~ model, nrow =2) +
-  theme(
-    axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-    legend.title = element_text(size = 12, face = "bold"),  
-    legend.text = element_text(size = 10),                  
-    legend.key.size = unit(1.5, "lines"), legend.position = "right"             
-  ) +
-  theme_minimal() +
-  scale_y_discrete(limits = rev)  
-ggsave("analyseSeedCues/provenance/figures/sigmaVals.jpeg", width = 5, height = 5, 
-       units = "in", dpi = 300)
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-# Plot provenance and color code by spp #### 
+# Mu plot! #### 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 fit_nophy_noforcing <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
 
 df_fit <- as.data.frame(fit_nophy_noforcing)
-
 my_colors <- c("#9E3D22FF", "#AA4422FF", "#B74B22FF",
                "#C35222FF", "#D05921FF", "#D96324FF",
                "#E17028FF", "#E97C2DFF", "#F18832FF",
@@ -235,22 +204,70 @@ xindex <- unique(modeld[,c("datasetID", "genusspecies", "numspp", "numprov")])
 # remove the parameters were not interested in for now
 cols <- colnames(df_fit)
 cols <- cols[!grepl("z", cols) &
-               !grepl("calc", cols) &
-               !grepl("sigma", cols) &
-               !grepl("kappa", cols) &
-               !grepl("logistic", cols) &
-               !grepl("tilde", cols)]
+               !grepl("calc|kappa|logistic|tilde|cutpoints", cols)]
 
-# === === === === === === === === === === === === === === === === === === === 
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+##### Check sigmas #####
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+dnof <- df_fit[, colnames(df_fit) %in% cols]
+
+dnof2 <- data.frame(
+  prmID = character(ncol(dnof)),
+  mean  = numeric(ncol(dnof)),  
+  p5  = NA, 
+  p25 = NA,
+  p75 = NA,
+  p95 = NA
+)
+
+for (i in 1:ncol(dnof)) { # i = 1
+  dnof2$prmID[i] <- colnames(dnof)[i]         
+  dnof2$mean[i] <- round(mean(dnof[[i]]),3)  
+  dnof2$p5[i] <- round(quantile(dnof[[i]], probs = 0.05), 3)
+  dnof2$p25[i] <- round(quantile(dnof[[i]], probs = 0.25), 3)
+  dnof2$p75[i] <- round(quantile(dnof[[i]], probs = 0.75), 3)
+  dnof2$p95[i] <- round(quantile(dnof[[i]], probs = 0.95), 3)
+}
+dnof2
+
+aprovvec <- paste("a_prov", "[", 1:length(unique(modeld$numprov)), "]", sep = "")
+da_prov <- subset(dnof2, prmID %in% aprovvec)
+
+dsigmas <- subset(dnof2, prmID %in% 
+                    dnof2$prmID[grep("sigma", dnof2$prmID)])
+
+ggplot(dsigmas, aes(x = mean, y = prmID)) +
+  geom_point(size = 2, alpha = 1) + 
+  geom_errorbar(aes(xmin = p5, xmax = p95), 
+                width = 0, alpha = 1, linewidth = 0.3) +
+  geom_errorbar(aes(xmin = p25, xmax = p75), 
+                width = 0, alpha = 1, linewidth = 1) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black") +
+  labs(y = "", x = "Sigma values") +
+  # facet_wrap(~ model, nrow =2) +
+  theme(
+    axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+    legend.title = element_text(size = 12, face = "bold"),  
+    legend.text = element_text(size = 10),                  
+    legend.key.size = unit(1.5, "lines"), legend.position = "right"             
+  ) +
+  theme_minimal() +
+  scale_y_discrete(limits = rev)  
+ggsave("analyseSeedCues/provenance/figures/sigmaVals.jpeg", width = 5, height = 5, units = "in", dpi = 300)
+
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 ##### a_prov ##### 
-# === === === === === === === === === === === === === === === === === === === 
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+# Now that sigmas are plotted, removed them from col vector
+cols <- cols[!grepl("sigma", cols)]
+
 # start with the intercept
 amtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_fit)))
 
 colnames(amtrx) <- xindex$numprov
-colsa <- cols[grepl("a", cols) &
-                !grepl("prov", cols)]
-colsaprov <- cols[grepl("a_prov", cols) ]
+colsa <- cols[grepl("a", cols) & !grepl("prov", cols)]
+colsaprov <- cols[grepl("a_prov", cols)]
 
 da <- subset(df_fit, select = colsa)
 colnames(da) <- sub(".*\\[(\\d+)\\]", "\\1", colnames(da))
@@ -270,25 +287,25 @@ aprovspp <- amtrx + daprov[, colnames(amtrx)]
 
 aprovspp2 <- data.frame(
   prmID = character(ncol(aprovspp)),
-  fit_mean  = numeric(ncol(aprovspp)),  
-  fit_per5  = NA, 
-  fit_per25 = NA,
-  fit_per75 = NA,
-  fit_per95 = NA
+  mean  = numeric(ncol(aprovspp)),  
+  p5  = NA, 
+  p25 = NA,
+  p75 = NA,
+  p95 = NA
 )
 
 for (i in 1:ncol(aprovspp)) { # i = 1
   aprovspp2$prmID[i] <- colnames(aprovspp)[i]         
-  aprovspp2$fit_mean[i] <- round(mean(aprovspp[[i]]),3)  
-  aprovspp2$fit_per5[i] <- round(quantile(aprovspp[[i]], probs = 0.05), 3)
-  aprovspp2$fit_per25[i] <- round(quantile(aprovspp[[i]], probs = 0.25), 3)
-  aprovspp2$fit_per75[i] <- round(quantile(aprovspp[[i]], probs = 0.75), 3)
-  aprovspp2$fit_per95[i] <- round(quantile(aprovspp[[i]], probs = 0.95), 3)
+  aprovspp2$mean[i] <- round(mean(aprovspp[[i]]),3)  
+  aprovspp2$p5[i] <- round(quantile(aprovspp[[i]], probs = 0.05), 3)
+  aprovspp2$p25[i] <- round(quantile(aprovspp[[i]], probs = 0.25), 3)
+  aprovspp2$p75[i] <- round(quantile(aprovspp[[i]], probs = 0.75), 3)
+  aprovspp2$p95[i] <- round(quantile(aprovspp[[i]], probs = 0.95), 3)
 }
 
 # get just a
 avec <- paste("a", "[", 1:length(unique(modeld$numspp)), "]", sep = "")
-da2 <- subset(dwithprov2, prmID %in% avec)
+da2 <- subset(dnof2, prmID %in% avec)
 da2$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", da2$prmID))
 da2$sppname <- modeld$genusspecies[match(da2$numspp, modeld$numspp)]
 
@@ -335,7 +352,7 @@ aprovspp2$y_pos
 
 # set up empty plot
 plot(NA, NA,
-     xlim = range(c(da2$fit_per5-0.5, da2$fit_per95+0.5)),
+     xlim = range(c(da2$p5-0.5, da2$p95+0.5)),
      ylim = c(0.5, max(aprovspp2$y_pos) + 0.5),
      xlab = "Days to germinate?",
      ylab = "",
@@ -345,8 +362,8 @@ plot(NA, NA,
 
 # add error bars
 segments(
-  x0 = aprovspp2$fit_per25,
-  x1 = aprovspp2$fit_per75,
+  x0 = aprovspp2$p25,
+  x1 = aprovspp2$p75,
   y0 = aprovspp2$y_pos,
   col = adjustcolor(my_colors[aprovspp2$spp], alpha.f = 0.7),
   lwd = 1
@@ -354,7 +371,7 @@ segments(
 
 # Add the points
 points(
-  aprovspp2$fit_mean,
+  aprovspp2$mean,
   aprovspp2$y_pos,
   cex = 0.5,
   pch = my_shapes[aprovspp2$woody],
@@ -367,15 +384,15 @@ spp_y <- tapply(aprovspp2$y_pos, aprovspp2$spp, max)
 da2$y_pos <- spp_y[da2$numspp] +1.5
 
 segments(
-  x0 = da2$fit_per25,
-  x1 = da2$fit_per75,
+  x0 = da2$p25,
+  x1 = da2$p75,
   y0 = da2$y_pos,
   col = adjustcolor(my_colors[da2$numspp], alpha.f = 1),
   lwd = 2
 )
 
 points(
-  da2$fit_mean,
+  da2$mean,
   da2$y_pos,
   pch = my_shapes[da2$woody],
   col  = adjustcolor(my_colors[da2$numspp], alpha.f = 1),
@@ -401,7 +418,7 @@ spp_y <- tapply(aprovspp2$y_pos, aprovspp2$spp, mean)
 woody_legend_order <- c("Y", "N")
 # woody legend
 legend(
-  x = max(da2$fit_per95) - 5,
+  x = max(da2$p95) - 5,
   y = max(da2$y_pos) - 2,
   legend = woody_legend_order,
   pch = my_shapes[woody_legend_order],
@@ -412,15 +429,14 @@ legend(
 dev.off()
 
 
-# === === === === === === === === === === === === === === === === === === === 
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 ##### bt_prov ##### 
-# === === === === === === === === === === === === === === === === === === === 
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 # start with the intercept
 btmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_fit)))
 
 colnames(btmtrx) <- xindex$numprov
-colsbt <- cols[grepl("bt", cols) &
-                !grepl("prov", cols)]
+colsbt <- cols[grepl("bt", cols) & !grepl("prov", cols)]
 colsbtprov <- cols[grepl("bt_prov", cols) ]
 
 dbt <- subset(df_fit, select = colsbt)
@@ -441,25 +457,25 @@ dbtprovspp <- btmtrx + dbtprov[, colnames(btmtrx)]
 
 dbtprovspp2 <- data.frame(
   prmID = character(ncol(dbtprovspp)),
-  fit_mean  = numeric(ncol(dbtprovspp)),  
-  fit_per5  = NA, 
-  fit_per25 = NA,
-  fit_per75 = NA,
-  fit_per95 = NA
+  mean  = numeric(ncol(dbtprovspp)),  
+  p5  = NA, 
+  p25 = NA,
+  p75 = NA,
+  p95 = NA
 )
 
 for (i in 1:ncol(dbtprovspp)) { # i = 1
   dbtprovspp2$prmID[i] <- colnames(dbtprovspp)[i]         
-  dbtprovspp2$fit_mean[i] <- round(mean(dbtprovspp[[i]]),3)  
-  dbtprovspp2$fit_per5[i] <- round(quantile(dbtprovspp[[i]], probs = 0.05), 3)
-  dbtprovspp2$fit_per25[i] <- round(quantile(dbtprovspp[[i]], probs = 0.25), 3)
-  dbtprovspp2$fit_per75[i] <- round(quantile(dbtprovspp[[i]], probs = 0.75), 3)
-  dbtprovspp2$fit_per95[i] <- round(quantile(dbtprovspp[[i]], probs = 0.95), 3)
+  dbtprovspp2$mean[i] <- round(mean(dbtprovspp[[i]]),3)  
+  dbtprovspp2$p5[i] <- round(quantile(dbtprovspp[[i]], probs = 0.05), 3)
+  dbtprovspp2$p25[i] <- round(quantile(dbtprovspp[[i]], probs = 0.25), 3)
+  dbtprovspp2$p75[i] <- round(quantile(dbtprovspp[[i]], probs = 0.75), 3)
+  dbtprovspp2$p95[i] <- round(quantile(dbtprovspp[[i]], probs = 0.95), 3)
 }
 
 # get just bt
 btvec <- paste("bt", "[", 1:length(unique(modeld$numspp)), "]", sep = "")
-dbt2 <- subset(dwithprov2, prmID %in% btvec)
+dbt2 <- subset(dnof2, prmID %in% btvec)
 dbt2$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbt2$prmID))
 dbt2$sppname <- modeld$genusspecies[match(dbt2$numspp, modeld$numspp)]
 
@@ -506,7 +522,7 @@ dbtprovspp2$y_pos
 
 # set up empty plot
 plot(NA, NA,
-     xlim = range(c(dbt2$fit_per5-0.5, dbt2$fit_per95+0.5)),
+     xlim = range(c(dbt2$p5-0.5, dbt2$p95+0.5)),
      ylim = c(0.5, max(dbtprovspp2$y_pos) + 0.5),
      xlab = "Days to germinate?",
      ylab = "",
@@ -516,8 +532,8 @@ plot(NA, NA,
 
 # add error bars
 segments(
-  x0 = dbtprovspp2$fit_per25,
-  x1 = dbtprovspp2$fit_per75,
+  x0 = dbtprovspp2$p25,
+  x1 = dbtprovspp2$p75,
   y0 = dbtprovspp2$y_pos,
   col = adjustcolor(my_colors[dbtprovspp2$spp], alpha.f = 0.7),
   lwd = 1
@@ -525,7 +541,7 @@ segments(
 
 # Add the points
 points(
-  dbtprovspp2$fit_mean,
+  dbtprovspp2$mean,
   dbtprovspp2$y_pos,
   cex = 0.5,
   pch = my_shapes[dbtprovspp2$woody],
@@ -538,15 +554,15 @@ spp_y <- tapply(dbtprovspp2$y_pos, dbtprovspp2$spp, max)
 dbt2$y_pos <- spp_y[dbt2$numspp] + 1.5
 
 segments(
-  x0 = dbt2$fit_per25,
-  x1 = dbt2$fit_per75,
+  x0 = dbt2$p25,
+  x1 = dbt2$p75,
   y0 = dbt2$y_pos,
   col = adjustcolor(my_colors[dbt2$numspp], alpha.f = 1),
   lwd = 2
 )
 
 points(
-  dbt2$fit_mean,
+  dbt2$mean,
   dbt2$y_pos,
   pch = my_shapes[dbt2$woody],
   col  = adjustcolor(my_colors[dbt2$numspp], alpha.f = 1),
@@ -572,7 +588,7 @@ spp_y <- tapply(dbtprovspp2$y_pos, dbtprovspp2$spp, mean)
 woody_legend_order <- c("Y", "N")
 # woody legend
 legend(
-  x = max(dbt2$fit_per95) - 5,
+  x = max(dbt2$p95) - 5,
   y = max(dbt2$y_pos) - 2,
   legend = woody_legend_order,
   pch = my_shapes[woody_legend_order],
@@ -583,9 +599,9 @@ legend(
 dev.off()
 
 
-# === === === === === === === === === === === === === === === === === === === 
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 ##### bcs_prov ##### 
-# === === === === === === === === === === === === === === === === === === === 
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 # start with the intercept
 bcsmtrx <- data.frame(matrix(ncol = nrow(xindex), nrow = nrow(df_fit)))
 
@@ -612,25 +628,25 @@ dbcsprovspp <- bcsmtrx + dbcsprov[, colnames(bcsmtrx)]
 
 dbcsprovspp2 <- data.frame(
   prmID = character(ncol(dbcsprovspp)),
-  fit_mean  = numeric(ncol(dbcsprovspp)),  
-  fit_per5  = NA, 
-  fit_per25 = NA,
-  fit_per75 = NA,
-  fit_per95 = NA
+  mean  = numeric(ncol(dbcsprovspp)),  
+  p5  = NA, 
+  p25 = NA,
+  p75 = NA,
+  p95 = NA
 )
 
 for (i in 1:ncol(dbcsprovspp)) { # i = 1
   dbcsprovspp2$prmID[i] <- colnames(dbcsprovspp)[i]         
-  dbcsprovspp2$fit_mean[i] <- round(mean(dbcsprovspp[[i]]),3)  
-  dbcsprovspp2$fit_per5[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.05), 3)
-  dbcsprovspp2$fit_per25[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.25), 3)
-  dbcsprovspp2$fit_per75[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.75), 3)
-  dbcsprovspp2$fit_per95[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.95), 3)
+  dbcsprovspp2$mean[i] <- round(mean(dbcsprovspp[[i]]),3)  
+  dbcsprovspp2$p5[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.05), 3)
+  dbcsprovspp2$p25[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.25), 3)
+  dbcsprovspp2$p75[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.75), 3)
+  dbcsprovspp2$p95[i] <- round(quantile(dbcsprovspp[[i]], probs = 0.95), 3)
 }
 
 # get just bcs
 bcsvec <- paste("bcs", "[", 1:length(unique(modeld$numspp)), "]", sep = "")
-dbcs2 <- subset(dwithprov2, prmID %in% bcsvec)
+dbcs2 <- subset(dnof2, prmID %in% bcsvec)
 dbcs2$numspp <- as.numeric(sub(".*\\[(\\d+)\\]", "\\1", dbcs2$prmID))
 dbcs2$sppname <- modeld$genusspecies[match(dbcs2$numspp, modeld$numspp)]
 
@@ -677,7 +693,7 @@ dbcsprovspp2$y_pos
 
 # set up empty plot
 plot(NA, NA,
-     xlim = range(c(dbcs2$fit_per5-0.5, dbcs2$fit_per95+0.5)),
+     xlim = range(c(dbcs2$p5-0.5, dbcs2$p95+0.5)),
      ylim = c(0.5, max(dbcsprovspp2$y_pos) + 0.5),
      xlab = "Days to germinate?",
      ylab = "",
@@ -687,8 +703,8 @@ plot(NA, NA,
 
 # add error bars
 segments(
-  x0 = dbcsprovspp2$fit_per25,
-  x1 = dbcsprovspp2$fit_per75,
+  x0 = dbcsprovspp2$p25,
+  x1 = dbcsprovspp2$p75,
   y0 = dbcsprovspp2$y_pos,
   col = adjustcolor(my_colors[dbcsprovspp2$spp], alpha.f = 0.7),
   lwd = 1
@@ -696,7 +712,7 @@ segments(
 
 # Add the points
 points(
-  dbcsprovspp2$fit_mean,
+  dbcsprovspp2$mean,
   dbcsprovspp2$y_pos,
   cex = 0.5,
   pch = my_shapes[dbcsprovspp2$woody],
@@ -709,15 +725,15 @@ spp_y <- tapply(dbcsprovspp2$y_pos, dbcsprovspp2$spp, max)
 dbcs2$y_pos <- spp_y[dbcs2$numspp] + 1.5
 
 segments(
-  x0 = dbcs2$fit_per25,
-  x1 = dbcs2$fit_per75,
+  x0 = dbcs2$p25,
+  x1 = dbcs2$p75,
   y0 = dbcs2$y_pos,
   col = adjustcolor(my_colors[dbcs2$numspp], alpha.f = 1),
   lwd = 2
 )
 
 points(
-  dbcs2$fit_mean,
+  dbcs2$mean,
   dbcs2$y_pos,
   pch = my_shapes[dbcs2$woody],
   col  = adjustcolor(my_colors[dbcs2$numspp], alpha.f = 1),
@@ -743,7 +759,7 @@ spp_y <- tapply(dbcsprovspp2$y_pos, dbcsprovspp2$spp, mean)
 woody_legend_order <- c("Y", "N")
 # woody legend
 legend(
-  x = max(dbcs2$fit_per95) - 5,
+  x = max(dbcs2$p95) - 5,
   y = max(dbcs2$y_pos) - 2,
   legend = woody_legend_order,
   pch = my_shapes[woody_legend_order],
@@ -766,10 +782,8 @@ ggplot(pibe) +
 # Compare models with and without forcing ####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 fit_nophy_noforcing <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
-# same data as the model with forcing
+# same data as the model with forcing (restricted dataset)
 fit_nophy_noforcingrest <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcingRestr.rds")
-# read the object 'fit_nophy' as an RDS file
-fit_withprov <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy.rds")
 
 # Try a more efficient way to plot the different parameters
 df_withprov <- as.data.frame(fit_withprov)
@@ -778,30 +792,30 @@ colswithprov <- colnames(df_withprov)
 # colswithprov <- colswithprov[grepl("prov", colswithprov)]
 # colswithprov <- colswithprov[!grepl("tilde", colswithprov)]
 
-dwithprov <- df_withprov[, colnames(df_withprov) %in% colswithprov]
+dnof <- df_withprov[, colnames(df_withprov) %in% colswithprov]
 
-dwithprov2 <- data.frame(
-  prmID = character(ncol(dwithprov)),
-  fit_mean  = numeric(ncol(dwithprov)),  
-  fit_per5  = NA, 
-  fit_per25 = NA,
-  fit_per75 = NA,
-  fit_per95 = NA
+dnof2 <- data.frame(
+  prmID = character(ncol(dnof)),
+  mean  = numeric(ncol(dnof)),  
+  p5  = NA, 
+  p25 = NA,
+  p75 = NA,
+  p95 = NA
 )
 
-for (i in 1:ncol(dwithprov)) { # i = 1
-  dwithprov2$prmID[i] <- colnames(dwithprov)[i]         
-  dwithprov2$fit_mean[i] <- round(mean(dwithprov[[i]]),3)  
-  dwithprov2$fit_per5[i] <- round(quantile(dwithprov[[i]], probs = 0.05), 3)
-  dwithprov2$fit_per25[i] <- round(quantile(dwithprov[[i]], probs = 0.25), 3)
-  dwithprov2$fit_per75[i] <- round(quantile(dwithprov[[i]], probs = 0.75), 3)
-  dwithprov2$fit_per95[i] <- round(quantile(dwithprov[[i]], probs = 0.95), 3)
+for (i in 1:ncol(dnof)) { # i = 1
+  dnof2$prmID[i] <- colnames(dnof)[i]         
+  dnof2$mean[i] <- round(mean(dnof[[i]]),3)  
+  dnof2$p5[i] <- round(quantile(dnof[[i]], probs = 0.05), 3)
+  dnof2$p25[i] <- round(quantile(dnof[[i]], probs = 0.25), 3)
+  dnof2$p75[i] <- round(quantile(dnof[[i]], probs = 0.75), 3)
+  dnof2$p95[i] <- round(quantile(dnof[[i]], probs = 0.95), 3)
 }
-dwithprov2
+dnof2
 
-# dwithprov2$num <- sub(".*\\[(\\d+)\\]", "\\1", dwithprov2$prmID)
+# dnof2$num <- sub(".*\\[(\\d+)\\]", "\\1", dnof2$prmID)
 
-# dwithprov2$numspp <- modeld$numspp[modeld$num]
+# dnof2$numspp <- modeld$numspp[modeld$num]
 
 # get a subset for just the slope and intercepts 
 vec <- c(paste("a", "[", 1:27, "]", sep = ""),
@@ -818,7 +832,7 @@ prmvec <- c(rep("a", each = 27),
             rep("bcs", each =  27),
             rep("bt_prov", each = 27), 
             rep("bcs_prov", each =  27))
-dwithprov3 <- subset(dwithprov2, prmID %in% vec)
+dnof3 <- subset(dnof2, prmID %in% vec)
 
 # No forcing
 df_noforcing <- as.data.frame(fit_nophy_noforcingrest)
@@ -831,20 +845,20 @@ dnoforcing <- df_noforcing[, colnames(df_noforcing) %in% colsnoforcing]
 
 dnoforcing2 <- data.frame(
   prmID = character(ncol(dnoforcing)),
-  fit_mean  = numeric(ncol(dnoforcing)),  
-  fit_per5  = NA, 
-  fit_per25 = NA,
-  fit_per75 = NA,
-  fit_per95 = NA
+  mean  = numeric(ncol(dnoforcing)),  
+  p5  = NA, 
+  p25 = NA,
+  p75 = NA,
+  p95 = NA
 )
 
 for (i in 1:ncol(dnoforcing)) { # i = 1
   dnoforcing2$prmID[i] <- colnames(dnoforcing)[i]         
-  dnoforcing2$fit_mean[i] <- round(mean(dnoforcing[[i]]),3)  
-  dnoforcing2$fit_per5[i] <- round(quantile(dnoforcing[[i]], probs = 0.05), 3)
-  dnoforcing2$fit_per25[i] <- round(quantile(dnoforcing[[i]], probs = 0.25), 3)
-  dnoforcing2$fit_per75[i] <- round(quantile(dnoforcing[[i]], probs = 0.75), 3)
-  dnoforcing2$fit_per95[i] <- round(quantile(dnoforcing[[i]], probs = 0.95), 3)
+  dnoforcing2$mean[i] <- round(mean(dnoforcing[[i]]),3)  
+  dnoforcing2$p5[i] <- round(quantile(dnoforcing[[i]], probs = 0.05), 3)
+  dnoforcing2$p25[i] <- round(quantile(dnoforcing[[i]], probs = 0.25), 3)
+  dnoforcing2$p75[i] <- round(quantile(dnoforcing[[i]], probs = 0.75), 3)
+  dnoforcing2$p95[i] <- round(quantile(dnoforcing[[i]], probs = 0.95), 3)
 }
 dnoforcing2
 unique(dnoforcing2$prmID)
@@ -872,7 +886,7 @@ colnames(dnoforcing3)[2:ncol(dnoforcing3)] <- paste(
 
 dnoforcing3$prm <- prmvec
 
-dforplot <- merge(dwithprov3, dnoforcing3, by = "prmID")
+dforplot <- merge(dnof3, dnoforcing3, by = "prmID")
 
 dforplot$numspp <- sub(".*\\[(\\d+)\\]", "\\1", dforplot$prmID)
 dforplot$spp <- modeld$genusspecies[match(dforplot$numspp, modeld$numspp)]
@@ -885,10 +899,10 @@ maxtempgen <- aggregate(germTempGen ~ genusspecies, newd, FUN = max)
 dforplot$tempgenmax <- maxtempgen$germTempGen[match(dforplot$spp,
                                                     maxtempgen$genusspecies)]
 
-ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noforcing)) +
-  geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75),
+ggplot(dforplot, aes(x = mean, y = mean_noforcing)) +
+  geom_errorbar(aes(xmin = p25, xmax = p75),
                 width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
-  geom_errorbar(aes(ymin = fit_per25_noforcing, ymax = fit_per75_noforcing),
+  geom_errorbar(aes(ymin = p25_noforcing, ymax = p75_noforcing),
                 width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
   geom_point(aes(color = tempgenmax), size = 1.5) +
   scale_color_gradientn(
@@ -908,10 +922,10 @@ uniquetempgen <- aggregate(germTempGen ~ genusspecies, newd,
 dforplot$tempgenunique <- uniquetempgen$germTempGen[match(dforplot$spp,
                                                                      uniquetempgen$genusspecies)]
 
-ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noforcing)) +
-  geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75),
+ggplot(dforplot, aes(x = mean, y = mean_noforcing)) +
+  geom_errorbar(aes(xmin = p25, xmax = p75),
                 width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
-  geom_errorbar(aes(ymin = fit_per25_noforcing, ymax = fit_per75_noforcing),
+  geom_errorbar(aes(ymin = p25_noforcing, ymax = p75_noforcing),
                 width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
   geom_point(aes(color = tempgenunique), size = 1.5) +
   scale_color_gradientn(
@@ -935,10 +949,10 @@ intervaltempgen$temp_range <- sapply(intervaltempgen$germTempGen, function(x) {
 dforplot$tempgeninterval <- intervaltempgen$temp_range[match(dforplot$spp,
                                                             intervaltempgen$genusspecies)]
 
-ggplot(dforplot, aes(x = fit_mean, y = fit_mean_noforcing)) +
-  geom_errorbar(aes(xmin = fit_per25, xmax = fit_per75),
+ggplot(dforplot, aes(x = mean, y = mean_noforcing)) +
+  geom_errorbar(aes(xmin = p25, xmax = p75),
                 width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
-  geom_errorbar(aes(ymin = fit_per25_noforcing, ymax = fit_per75_noforcing),
+  geom_errorbar(aes(ymin = p25_noforcing, ymax = p75_noforcing),
                 width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
   geom_point(aes(color = tempgeninterval), size = 1.5) +
   scale_color_gradientn(
