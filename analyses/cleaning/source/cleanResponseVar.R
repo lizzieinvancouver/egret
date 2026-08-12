@@ -183,6 +183,15 @@ sort(unique(d$responseVar))
 
 temp <- subset(d, responseVar == "survival"); unique(temp$datasetID)
 
+# I assume NG means no germination, should this not be 0
+d$response[which(d$response == "NG")] <- "0"
+d$response[which(d$response == "NA*")] <- "NA"
+
+d$response[which(d$datasetID == "tabatabaeian18" &
+                   d$chemical == "NAA" &
+                   d$respvar == "per.germ" &
+                   d$figure == "Table 2")] <- 26.66
+
 # response var tangential to germination:
 other <- c("a:variation MS max germ percent","a.max","a.min","ABA_embryo (μg/g)","ABA_endosperm (μg/g)","adventitious.root.diameter","adventitious.root.length", "amylase.concentration","amylase.specific.activity", "amylase.unit.activity", "area.under.germination.progress.curve", "b:variation MS germ percent", "b.max", "b.min","base temperature","c:variation MS T50","c.max","c.min","CO2.evolution", "coeff.rate.germ", "cotyledon.area","cotyledon.length", "cotyledon.width","embryo:seed.ratio", "ethanol.formation", "GA/ABA_embryo", "GA/ABA_endosperm","GA3_embryo (μg/g)","GA3_endosperm (μg/g)", "growth.collar.diameter.cm", "growth.height.cm","growth.rate (cm days^-1)","growth.rate %", "hypocotyl.ave.diameter","hypocotyl.length", "moisture", "moisture content","normal seedling percentage","num.shoot","number per.seedlings","O2.uptake","oxygen.absorbance", "per.increase.seedmass","per.survive","per.ungerminated.fresh", "per.weight.gain", "primary.root.diameter","primary.root.length", "respiratory.rate","RNA.content","root.dryweight(g)","seed.moisture.content.fresh.weight", "shoot.diam(mm)","shoot.dryweight(g)","shoot.height(cm)","shootroot.ratio", "survival", "thermal time","vigour index (days)", "water.absorption","weight.gram") # 61 
 # cleaning values :  "L.sativa.per.germ",
@@ -217,10 +226,6 @@ temp <- subset(d, responseVar == "germ.time") # values look reasonable
 # what do the -ve values mean?
 #battaglia93
 #ren 15
-
-# I assume NG means no germination, should this not be 0
-d$response[which(d$response == "NG")] <- "0"
-d$response[which(d$response == "NA*")] <- "NA"
 
 #TO CHECK what is "NA*"
 d$errorType <- d$error.type

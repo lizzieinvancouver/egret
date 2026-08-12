@@ -1,3 +1,7 @@
+% Started 11 Aug 2026
+% Started by Mao
+% Written up the outline for Bud seed cues comparison model
+
 \documentclass{article}
 \usepackage{hyperref}
 \usepackage[margin=1in]{geometry}
@@ -8,7 +12,7 @@
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 
-\title{Bud seed cues comparison model methods outline}
+\title{Bud seed cues comparison model outlines}
 \author{Mao}
 \date{\today}
 \maketitle
@@ -19,8 +23,8 @@
 \begin{enumerate}
 \item We used different data and models for budburst and seed germination.
 \begin{enumerate}
-\item We have complete data for 191 species for the budburst model.%These 191 species are all angiosperm species, but we only ran the ospree model with the data file called: ospreeforegret.csv, which I failed to track down its origin. I asked Dan see if he remembered.
-\item We have complete data for 329 angiosperm species and 107 gymnosperm species for the seed germination model.
+\item We have complete (known chilling, forcing and photoperiod levels) data for 191 species for the budburst model, this data following the code used in MoralesCastilla \textit{et al}. 2024 publication, including removal of outlier species and correcting \textit{Acer pseudolatauns} for \textit{Acer pseudoplatanus}. %emwAug12 -- (1) ref the relevant code files here in the comments includingthe one i mentioned in the issue, and I often add any issue #s if they are especially relevant, (2) can you give the gymno/angio #s here also? (3) check my definition of complete is correct
+\item We have complete data for 329 angiosperm species and 107 gymnosperm species for the seed germination model. %emwAug12 -- (1) ref the relevant code files here in the comments (2) define complete
 \end{enumerate}
 \item We modeled budburst as a function of forcing, chilling, and photoperiod, accounting for phylogeny: 
 
@@ -30,11 +34,11 @@
 
 where $sp[i]$ is the species of observation $i$, and species-level intercepts and slopes ($\alpha_{sp}$, $\beta_{\text{force},sp}$, $\beta_{\text{chill},sp}$, $\beta_{\text{photo},sp}$) are modeled according to species phylogenetic relationships.
 
-\item We ran the model with forcing and chilling for seed germination considering phylogeny in the model
+\item We ran the model with forcing and chilling for seed germination considering phylogeny in the model %emwAug12 -- can we define how forcing and chilling were calculated? 
 
-\item We modeled seed germination as a function of forcing and chilling, accounting for phylogeny, following the same structure as above (excluding the photoperiod term). The response variable was standardized to the $[0,1]$: for germination measured as a percentage, we used the proportion directly; for germination recorded as a binary outcome, we coded observations as germinated (1) or not (0).
+\item We modeled seed germination as a function of forcing and chilling, accounting for phylogeny, following the same structure as above (excluding the photoperiod term). The response variable was standardized to $[0,1]$ and modeled as an ordinal beta regression (with special handling for 0 and 1 observations). %emwAug12 -- here I would reference the R and Stan files currently used in the comments. 
     
-\item After fitting both models, we extracted the species-level parameter estimates and compared the chilling and forcing effects on budburst versus seed germination for the 38 species overlapping between the two datasets.
+\item After fitting both models, we extracted the species-level parameter estimates and compared the chilling and forcing effects on budburst versus seed germination for the 38 species overlapping between the two datasets. %emwAug12 -- how many gymnosperms and angiosperms? 
 \end{enumerate}
 
 \end{document}
