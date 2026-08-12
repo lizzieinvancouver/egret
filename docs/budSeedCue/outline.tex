@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+
+\usepackage{Sweave}
+\begin{document}
+\input{outline-concordance}
+
+\title{Bud seed cues comparison model methods outline}
+\author{Mao}
+\date{\today}
+\maketitle
+
+% <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+\section{Methods}
+% <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+\begin{enumerate}
+\item We used different data and models for budburst and seed germination.
+\begin{enumerate}
+\item We have complete data for 191 species for the budburst model.
+\item We have complete data for 329 angiosperm species and 107 gymnosperm species for the seed germination model.
+\end{enumerate}
+\item We modeled budburst as a function of forcing, chilling, and photoperiod, accounting for phylogeny: 
+
+\[
+\hat{y}_i = \alpha_{sp[i]} + \beta_{force,sp[i]} \cdot forcing_i + \beta_{chill,sp[i]} \cdot chilling_i + \beta_{photo,sp[i]} \cdot photoperiod_i
+\]
+
+where $sp[i]$ is the species of observation $i$, and species-level intercepts and slopes ($\alpha_{sp}$, $\beta_{\text{force},sp}$, $\beta_{\text{chill},sp}$, $\beta_{\text{photo},sp}$) are modeled according to species phylogenetic relationships.
+
+\item We ran the model with forcing and chilling for seed germination considering phylogeny in the model
+
+\item We modeled seed germination as a function of forcing and chilling, accounting for phylogeny, following the same structure as above (excluding the photoperiod term). The response variable was standardized to the $[0,1]$: for germination measured as a percentage, we used the proportion directly; for germination recorded as a binary outcome, we coded observations as germinated (1) or not (0).
+    
+\item After fitting both models, we extracted the species-level parameter estimates and compared the chilling and forcing effects on budburst versus seed germination for the 38 species overlapping between the two datasets.
+\end{enumerate}
+
+\end{document}
