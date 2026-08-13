@@ -30,6 +30,7 @@ if(length(grep("deirdre", getwd()) > 0)) {
 # get the data!
 d  <- read.csv("output/egretcleanmostoragedetrals.csv")
 
+library(chillR)
 library(ggplot2)
 
 sort(table(d$responseVar))
@@ -73,3 +74,73 @@ ggplot(everybody, aes(y=stratDurEst, x=stratTempEst, color=storDurEst)) +
   geom_point() 
 ggplot(everybody, aes(y=stratTempEst, x=storTempEst, color=datasetID)) +
   geom_point() 
+
+# some checks
+dss <- subset(d, responseVar == "percent.germ" &
+                !is.na(storTempEst) &
+                !is.na(storDurEst))
+
+dss$storTypeGen <- 'dry'
+dss$storTypeGen[which(dss$storageType %in% c('moist', 'moist/cold', 'moisture-controlled'))] <- 'moist'
+dss$chillPortionsEst <- NA
+
+# for(i in 1:nrow(dss)){
+#   dss$chillPortionsEst[i] <- Dynamic_Model(rep(dss$stratTempEst[i], dss$stratDurEst[i] * 24))[length(rep(dss$stratTempEst[i], dss$stratDurEst[i] * 24))]
+# }
+
+check <- dss[c('storageTemp', 'storageDuration', 'chillTemp', 'chillDuration',
+               'storTempEst', 'storDurEst', 'stratTempEst', 'stratDurEst',
+               'chillPortionsEst')]
+
+plot(dss$storTempEst, dss$responseValueNum, xlim = c(-20, 30))
+plot(dss$storDurEst, dss$responseValueNum)
+plot(dss$stratTempEst, dss$responseValueNum)
+plot(dss$stratDurEst, dss$responseValueNum)
+# plot(dss$chillPortionsEst, dss$responseValueNum)
+
+ggplot(dss, aes(y = responseValueNum, x = germDuration, color = storDurEst)) +
+  geom_point() +
+  xlim(0, 300) +
+  scale_color_gradient(limits = c(0, 400))
+
+ggplot(dss, aes(y = responseValueNum, x = germDuration, color = storTempEst)) +
+  geom_point() +
+  xlim(0, 300) +
+  scale_color_gradient(limits = c(-50, 50))
+
+ggplot(dss, aes(y = responseValueNum, x = germDuration, color = storDurEst, group = germTemp)) +
+ geom_point() + 
+ facet_wrap(.~germTemp)
+
+# check effect of chill portions grouped by storage temperature
+# on percent germ vs germ duration
+dss <- subset(d, responseVar == "percent.germ" &
+                !is.na(responseValueNum) &
+                !is.na(germDuration) &
+                !is.na(storTempEst) &
+                !is.na(storDurEst) &
+                !is.na(stratTempEst) &
+                !is.na(stratDurEst))
+
+dss$chillPortionsEst <- NA
+dss$chillPortionsGroup <- NA
+for(i in 1:nrow(dss)){
+  dss$chillPortionsEst[i] <- Dynamic_Model(rep(dss$stratTempEst[i], dss$stratDurEst[i] * 24))[length(rep(dss$stratTempEst[i], dss$stratDurEst[i] * 24))]
+}
+dss$chillPortionsGroup <- ceiling(dss$chillPortionsEst / 10)
+
+pdf('modeling/figures/storEff/20to30.pdf', width = 8, height = 6)
+ggplot(dss, aes(y = responseValueNum, x = germDuration, color = storTempEst,
+                group = chillPortionsGroup)) +
+  geom_point() +
+  scale_color_gradient(limits = c(-200, 0)) +
+  facet_wrap(.~chillPortionsGroup)
+dev.off()
+
+# find studies which change storage
+storTemps <- rep(NA, length(unique(dss$datasetID)))
+
+for(i in 1:length(unique(dss$datasetID))){
+  dssSub <- subset(dss, datasetID == unique(dss$datasetID)[i])
+  storTemps[i] <- length(unique(dssSub$storTempEst))
+}
