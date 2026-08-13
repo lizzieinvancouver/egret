@@ -41,22 +41,25 @@ sig_sum <- data.frame(
 \begin{enumerate}
 \item First, we selected all the datasetIDstudy that had more than one provenance per species across the whole egret database (`provenanceVisualization.R'; nrow $n = $ \Sexpr{nrow(dmore1prov)}. Second, we ran Victor's decision rules (`decisionRules.R') which yields \Sexpr{nrow(newd)} rows of data. Third, we cleaned the dataset before fitting the model with forcing (`modelingCues.R'), yielding \Sexpr{nrow(modeld)} rows of data. 
 
-\item We fit the provenance model with and without forcing first, compared model estimates and moved on with the model without forcing with chilling and time as the main predictors. See the section `comparing models' below for more details. %emw11Aug: I would show the equation... I can write it in tex for you if you need help and point me to the Stan file. 
+\item We fit the provenance model with and without forcing first, compared model estimates and moved on with the model without forcing; with chilling and time as the main predictors. See the section `comparing models' below for more details. %emw11Aug: I would show the equation... I can write it in tex for you if you need help and point me to the Stan file. 
 
 \item We compared the no-forcing model with the restricted (only the data with forcing information) versus the full dataset
 
 \end{enumerate}
 
+\textbf{Model with forcing:}
 \begin{align}
 p(\mu_i | \theta) &= \begin{cases} 
     1 -  logit^{-1}(\mu_i - k_1) & \text{if } \mu_i = 0 \\
-    [logit^{-1}(\mu - k_1) - logit^{-1}(\mu - k_2)] - \text{Beta\_proportion}(logit^{-1}(\mu), k_1) & \text{if } \mu_i \in ]0, 1[ \\
+    [logit^{-1}(\mu_i - k_1) - logit^{-1}(\mu_i - k_2)] - \text{Beta\_proportion}(logit^{-1}(\mu_i), k_1) & \text{if } \mu_i \in ]0, 1[ \\
     logit^{-1}(\mu_i - k_2) & \text{if } \mu_i = 1
 \end{cases} \\
-\mu_i &= \alpha_{[sp]} + \alpha_{[prov]} + (\beta_{t[sp]} + \beta_{t[prov]}) \cdot \text{time} + \\ 
-& (\beta_{f[sp]} + \beta_{f[prov]}) \cdot \text{forcing} + (\beta_{c[sp]} + \beta_{c[prov]}) \cdot \text{chilling}\\
-\alpha_{[sp]} &\sim \text{normal}(\mu_{\alpha}, \sigma_{\alpha}) \\
-\alpha_{[prov]} &\sim \text{normal}(0, \sigma_{[prov]}) \\ 
+\mu_i &= \alpha_{[sp]} + \alpha_{[prov]} + \\
+& \notag (\beta_{t[sp]} + \beta_{t[prov]}) \cdot \text{time} + \\
+& \notag (\beta_{f[sp]} + \beta_{f[prov]}) \cdot \text{forcing} + \\
+& \notag (\beta_{cs[sp]} + \beta_{cs[prov]}) \cdot \text{chilling} \\
+% \alpha_{[sp]} &\sim \text{normal}(\mu_{\alpha}, \sigma_{\alpha}) \\
+% \alpha_{[prov]} &\sim \text{normal}(0, \sigma_{[prov]}) \\ 
 %  Need to finish writing these priors
 % \beta_{chilling_{[sp]}} &\sim \text{normal}(\mu_{\beta_{chilling}}, \sigma_{\beta_{chilling}})\\
 % \beta_{chilling_{[prov]}} &\sim \text{normal}(0, \sigma_{[prov]}) \\
@@ -65,10 +68,17 @@ p(\mu_i | \theta) &= \begin{cases}
 % \beta_{[prov]} &\sim \text{normal}(0, \sigma_{[prov]})
 \end{align}
 
+\textbf{Selected model (no-forcing):}
+\begin{align}
+\mu_i &= \alpha_{[sp]} + \alpha_{[prov]} + \\
+& \notag (\beta_{t[sp]} + \beta_{t[prov]}) \cdot \text{time} + \\
+& \notag (\beta_{cs[sp]} + \beta_{cs[prov]}) \cdot \text{chilling}
+\end{align}
+
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 \section{Results}
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-For the dataset that includes forcing (henceforth referred to as `restricted'), we have \Sexpr{length(unique(modeld$genusspecies))} single species from \Sexpr{length(unique(paste(modeld$datasetID, modeld$study, sep = "")))} datasetID. For the dataset without forcing (full), we have \Sexpr{length(unique(modeld_noforc$genusspecies))} single species from \Sexpr{length(unique(paste(modeld_noforc$datasetID, modeld$study, sep = "")))} datasetID.
+For the dataset that includes forcing (henceforth referred to as `restricted'), we have \Sexpr{length(unique(modeld$genusspecies))} single species from \Sexpr{length(unique(paste(modeld$datasetID, modeld$study, sep = "")))} datasetID. For the dataset without forcing (henceforth referred to as `full'), we have \Sexpr{length(unique(modeld_noforc$genusspecies))} single species from \Sexpr{length(unique(paste(modeld_noforc$datasetID, modeld$study, sep = "")))} datasetID.
 
 
 
@@ -81,7 +91,7 @@ For the dataset that includes forcing (henceforth referred to as `restricted'), 
   
   \item Excluding forcing from the model did not influence the other parameters consistently across species or provenances
   
-  \item Forcing does not seem to explain the variation between the no-forcing and forcing models. Neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}) between the restricted vs full dataset.
+  \item Forcing does not seem to explain the variation between the no-forcing and forcing models: neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}) between the restricted vs full dataset.
 
   \item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ \Sexpr{nrow(modeld)}) and the full dataset ($n =$ \Sexpr{nrow(modeld_noforc2)}). 
   
@@ -142,7 +152,7 @@ For the dataset that includes forcing (henceforth referred to as `restricted'), 
 % Sigmas for no forcing model
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/sigmaVals.jpeg}
-\caption{Results: sigma estimates for the no-forcing model. The dots represent the estimated mean of each provenance, with 50\% uncertainty intervals (lines).}
+\caption{Results: sigma estimates for the no-forcing model. The dots represent the estimated mean of each provenance, with 50\% and 90\% uncertainty intervals (thicker and thinner lines, respectively).}
 \label{fig:muSigma}
 \end{figure}
 
