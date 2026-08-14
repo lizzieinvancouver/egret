@@ -51,7 +51,7 @@ sig_sum <- data.frame(
 \begin{align}
 p(\mu_i | \theta) &= \begin{cases} 
     1 -  logit^{-1}(\mu_i - k_1) & \text{if } \mu_i = 0 \\
-    [logit^{-1}(\mu_i - k_1) - logit^{-1}(\mu_i - k_2)] - \text{Beta\_proportion}(logit^{-1}(\mu_i), k_1) & \text{if } \mu_i \in ]0, 1[ \\
+    [logit^{-1}(\mu_i - k_1) - logit^{-1}(\mu_i - k_2)] \times \text{Beta\_proportion}(logit^{-1}(\mu_i), k_1) & \text{if } \mu_i \in ]0, 1[ \\
     logit^{-1}(\mu_i - k_2) & \text{if } \mu_i = 1
 \end{cases} \\
 \mu_i &= \alpha_{[sp]} + \alpha_{[prov]} + \\
