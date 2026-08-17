@@ -2,6 +2,12 @@
 # Fit the model on some subset of real data
 # For the new excting survival model
 
+setwd('~/projects/egret/analyses/modeling')
+util <- new.env()
+source('mcmc_analysis_tools_rstan.R', local=util)
+source('mcmc_visualization_tools.R', local=util)
+setwd('~/projects/egret/analyses')
+
 # 12 Aug. 2026
 library(rstan)
 data <- readRDS('~/projects/egret/analyses/analyseSeedCues/survival/newdata.rds')
@@ -69,7 +75,7 @@ newdata <- list(
 )
 
 
-modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_multispecies.stan")
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_multispecies_hier.stan")
 fit <- sampling(modelstan, newdata, chains = 4, cores = 4,
                 seed = 123456, iter = 2000, warmup = 1000)
 diagnostics <- util$extract_hmc_diagnostics(fit)
@@ -77,10 +83,11 @@ util$check_all_expectand_diagnostics(diagnostics)
 
 samples <- util$extract_expectand_vals(fit)
 base_samples <- util$filter_expectands(samples,
-                                       c('T0', 'k', 'pv', 'log_Psi0', 'log_sigma'), check_arrays = T)
+                                       c('mu_log_T0', 'sigma_log_T0', 'T0', 
+                                         'k', 'pv', 'log_Psi0', 'log_sigma'), check_arrays = T)
 util$check_all_expectand_diagnostics(base_samples)
 
-saveRDS(samples, '/home/victor/projects/egret/analyses/analyseSeedCues/survival/output/14species_samples.rds')
+# saveRDS(samples, '/home/victor/projects/egret/analyses/analyseSeedCues/survival/output/14species_samples.rds')
 
 
 par(mfrow = c(3,2), mar = c(4,4,1,1))
@@ -181,13 +188,62 @@ for(e in 1:newdata$N_exps){
 }
 
 par(mfrow = c(1,1))
-constant_temp <- seq(-10, 50, 1)
+constant_temp <- seq(-20, 40, 1)
+qy <- sapply(constant_temp, function(t){
+  k <- samples[['k[1]']]
+  T0 <- samples[['T0[1]']]
+  y <- boot::inv.logit(k * (t - T0))
+  util$ensemble_mcmc_quantile_est(y, c(0.05, 0.5, 0.95))
+})
+plot(qy['50%',] ~ constant_temp, type = 'l', lwd = 2, col = util$c_mid, ylim = c(0,1))
+lines(qy['5%',] ~ constant_temp, col = util$c_mid, lwd = 1, lty = 2)
+lines(qy['95%',] ~ constant_temp, col = util$c_mid, lwd = 1, lty = 2)
+
+
+qy <- sapply(constant_temp, function(t){
+  k <- samples[['k[2]']]
+  T0 <- samples[['T0[2]']]
+  y <- boot::inv.logit(k * (t - T0))
+  util$ensemble_mcmc_quantile_est(y, c(0.05, 0.5, 0.95))
+})
+lines(qy['50%',] ~ constant_temp, col = util$c_light, lwd = 2)
+lines(qy['5%',] ~ constant_temp, col = util$c_light, lwd = 1, lty = 2)
+lines(qy['95%',] ~ constant_temp, col = util$c_light, lwd = 1, lty = 2)
+
+
+qy <- sapply(constant_temp, function(t){
+  k <- samples[['k[3]']]
+  T0 <- samples[['T0[3]']]
+  y <- boot::inv.logit(k * (t - T0))
+  util$ensemble_mcmc_quantile_est(y, c(0.05, 0.5, 0.95))
+})
+lines(qy['50%',] ~ constant_temp, col = util$c_dark, lwd = 2)
+lines(qy['5%',] ~ constant_temp, col = util$c_dark, lwd = 1, lty = 2)
+lines(qy['95%',] ~ constant_temp, col = util$c_dark, lwd = 1, lty = 2)
+
 qy <- sapply(constant_temp, function(t){
   k <- samples[['k[4]']]
   T0 <- samples[['T0[4]']]
   y <- boot::inv.logit(k * (t - T0))
   util$ensemble_mcmc_quantile_est(y, c(0.05, 0.5, 0.95))
 })
-plot(qy['50%',] ~ constant_temp, type = 'l', lwd = 2, col = util$c_mid_highlight)
-lines(qy['5%',] ~ constant_temp, col = util$c_mid, lwd = 1, lty = 2)
-lines(qy['95%',] ~ constant_temp, col = util$c_mid, lwd = 1, lty = 2)
+lines(qy['50%',] ~ constant_temp, col = util$c_mid_highlight, lwd = 2)
+lines(qy['5%',] ~ constant_temp, col = util$c_mid_highlight, lwd = 1, lty = 2)
+lines(qy['95%',] ~ constant_temp, col = util$c_mid_highlight, lwd = 1, lty = 2)
+
+
+par(mfrow = c(2,2))
+
+util$plot_div_pairs('mu_log_T0', 'sigma_log_T0', samples, diagnostics)
+
+util$plot_div_pairs('mu_log_T0', 'sigma_log_T0', samples, diagnostics,
+                    transforms = list('sigma_log_T0' = 1))
+
+util$plot_div_pairs(paste0('T0[',1:newdata$N_species,']'), 'sigma_log_T0', samples, diagnostics,
+                    transforms = list('sigma_log_T0' = 1, 'T0[12]' = 1))
+
+util$plot_div_pairs('T0[12]', 'k[12]', samples, diagnostics,
+                    transforms = list('k[12]' = 1))
+
+util$plot_div_pairs('T0[4]', 'k[4]', samples, diagnostics,
+                    transforms = list('k[12]' = 1))
