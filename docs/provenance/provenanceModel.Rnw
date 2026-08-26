@@ -39,11 +39,11 @@ sig_sum <- data.frame(
 \section{Methods}
 % <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 \begin{enumerate}
-\item First, we selected all the datasetIDstudy that had more than one provenance per species across the whole egret database (`provenanceVisualization.R'; nrow $n = $ \Sexpr{nrow(dmore1prov)}. Second, we ran Victor's decision rules (`decisionRules.R') which yields \Sexpr{nrow(newd)} rows of data. Third, we cleaned the dataset before fitting the model with forcing (`modelingCues.R'), yielding \Sexpr{nrow(modeld)} rows of data. 
+\item First, we selected all the datasetIDstudy that had more than one provenance per species across the whole egret database (`provenanceVisualization.R'; nrow $n = $ \Sexpr{nrow(dmore1prov)}). Second, we ran Victor's decision rules (`decisionRules.R') which yields \Sexpr{nrow(newd)} rows of data. Third, we cleaned the dataset before fitting the model with forcing (`modelingCues.R'), yielding \Sexpr{nrow(modeld)} rows of data. % I think data is lost at the last step here due to NA but someone should double-check (EMW Aug 2026)
 
-\item We fit the provenance model with and without forcing first, compared model estimates and moved on with the model without forcing; with chilling and time as the main predictors. See the section `comparing models' below for more details. %emw11Aug: I would show the equation... I can write it in tex for you if you need help and point me to the Stan file. 
+\item We fit the provenance model with and without forcing first, compared model estimates and moved on with the model without forcing; with chilling and time as the main predictors. See the section `comparing models' below for more details. 
 
-\item We compared the no-forcing model with the restricted (only the data with forcing information) versus the full dataset
+\item We compared the no-forcing model with the restricted (only the data with forcing information) versus the full dataset.
 
 \end{enumerate}
 
@@ -87,13 +87,13 @@ For the dataset that includes forcing (henceforth referred to as `restricted'), 
 %-------------------------------------------------------------------------------
   \begin{enumerate}
   
-  \item We fitted the model with forcing on the most restricted dataset, without and with provenance, which did not change the estimates (Figure \ref{fig:provNoProv})
+  \item We fitted the model with forcing on the most restricted dataset, without and with provenance, which did not change the estimates much (Figure \ref{fig:provNoProv}).
   
-  \item Excluding forcing from the model did not influence the other parameters consistently across species or provenances
+  \item Excluding forcing from the model did not influence the other parameters consistently across species or provenances.
   
-  \item Forcing does not seem to explain the variation between the no-forcing and forcing models: neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval seem to explain the observed variation (Figure \ref{fig:germTempInterval}) between the restricted vs full dataset.
+  \item Forcing did not seem to explain the variation between the no-forcing and forcing models: neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval appeared to covary with the observed variation in model estimates (Figure \ref{fig:germTempInterval}) fitted on the the restricted vs full dataset.
 
-  \item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ \Sexpr{nrow(modeld)}) and the full dataset ($n =$ \Sexpr{nrow(modeld_noforc2)}). 
+  \item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ \Sexpr{nrow(modeld)}) and the full dataset ($n =$ \Sexpr{nrow(modeld_noforc2)}). %emw25Aug2026: Can you add: Results not shown, but for code see file XXX? (Filling in XXX.)
   
 
   \end{enumerate}
@@ -103,9 +103,9 @@ For the dataset that includes forcing (henceforth referred to as `restricted'), 
 %-------------------------------------------------------------------------------
 \begin{enumerate}
 
-  \item Chilling increased germination for most species with huge variations. Four species probability to germinate decreased in response to chilling (Figure \ref{fig:muChilling}).
+  \item Chilling increased germination for most species with large variation in the magnitude of response across species (Figure \ref{fig:muChilling}).
   
-  \item Time had a similar trend to forcing, with some more species increasing germination in response to time. Most of them didn't shift (Figure \ref{fig:muTime}).
+  \item Germination generally increased with time but with more species' response overlapping zero (Figure \ref{fig:muTime}).
   
   \item Germination varied more across species ($\sigma$ =
   \Sexpr{sig_sum$mu[sig_sum$prm == "sigma_a"]} (UI:
@@ -145,7 +145,7 @@ For the dataset that includes forcing (henceforth referred to as `restricted'), 
 % Germ temp interval
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonIntervGermtemp.jpeg}
-\caption{Comparing forcing vs no-forcing models color coded by the temperature interval in the study. We compare model parameters on a 1:1 line (red dashed line) where the x-axis represents the model that includes forcing and the y-axis depicts the model that excludes the forcing parameters. `a' is the grand intercept for each species, `a\_prov' is the intercept for each provenance, `bcs' is the chilling slope for each species, `bcs\_prov' is the chilling slope for each provenance, `bt' is the time slope for each species and `bt\_prov' is the time slope for each provenance}
+\caption{Comparing forcing vs no-forcing models color coded by the temperature interval in the study. We compare model parameters on a 1:1 line (red dashed line) where the x-axis represents the model that includes forcing and the y-axis depicts the model that excludes the forcing parameters. `a' is the grand intercept for each species, `a\_prov' is the intercept for each provenance, `bcs' is the chilling slope for each species, `bcs\_prov' is the chilling slope for each provenance, `bt' is the time slope for each species and `bt\_prov' is the time slope for each provenance} %emw25Aug2026: why is this gray? I cannot see any color variation well using gray ... 
 \label{fig:germTempInterval}
 \end{figure}
 
@@ -156,10 +156,10 @@ For the dataset that includes forcing (henceforth referred to as `restricted'), 
 \label{fig:muSigma}
 \end{figure}
 
-%  Mu chilling slopes
+%  Mu chilling slopes %emw25Aug2026: add units to the below four graphs ... I think we're in natural units (days, etc. but please check and add) 
 \begin{figure}[!ht]
-\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/muPlotProv_bcsprov.pdf}
-\caption{Results: chilling slope parameters for the no-forcing model.The dots represent the estimated mean of each provenance, with 50\% uncertainty intervals (lines).}
+\includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/muPlotProv_bcsprov.pdf} 
+\caption{Results: chilling slope parameters for the no-forcing model. The dots represent the estimated mean of each provenance, with 50\% uncertainty intervals (lines).}
 \label{fig:muChilling}
 \end{figure}
 
