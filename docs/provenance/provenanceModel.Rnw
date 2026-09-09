@@ -93,7 +93,7 @@ For the dataset that includes forcing (henceforth referred to as `restricted'), 
   
   \item Forcing did not seem to explain the variation between the no-forcing and forcing models: neither the maximum temperature (Figure \ref{fig:maxGermTemp}), the number of unique germination treatments (Figure \ref{fig:uniqueGermTemp}) or the temperature interval appeared to covary with the observed variation in model estimates (Figure \ref{fig:germTempInterval}) fitted on the the restricted vs full dataset.
 
-  \item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ \Sexpr{nrow(modeld)}) and the full dataset ($n =$ \Sexpr{nrow(modeld_noforc2)}). %emw25Aug2026: Can you add: Results not shown, but for code see file XXX? (Filling in XXX.)
+  \item The estimates were unchanged when fitting the no-forcing model with the most restricted data ($n =$ \Sexpr{nrow(modeld)}) and the full dataset ($n =$ \Sexpr{nrow(modeld_noforc2)}. Results not shown, but for code see file `modelingCues.R'?
   
 
   \end{enumerate}
@@ -145,7 +145,7 @@ For the dataset that includes forcing (henceforth referred to as `restricted'), 
 % Germ temp interval
 \begin{figure}[!ht]
 \includegraphics[width=0.7\textwidth]{../../analyses/analyseSeedCues/provenance/figures/forcingComparisonIntervGermtemp.jpeg}
-\caption{Comparing forcing vs no-forcing models color coded by the temperature interval in the study. We compare model parameters on a 1:1 line (red dashed line) where the x-axis represents the model that includes forcing and the y-axis depicts the model that excludes the forcing parameters. `a' is the grand intercept for each species, `a\_prov' is the intercept for each provenance, `bcs' is the chilling slope for each species, `bcs\_prov' is the chilling slope for each provenance, `bt' is the time slope for each species and `bt\_prov' is the time slope for each provenance} %emw25Aug2026: why is this gray? I cannot see any color variation well using gray ... 
+\caption{Comparing forcing vs no-forcing models color coded by the temperature interval in the study. We compare model parameters on a 1:1 line (red dashed line) where the x-axis represents the model that includes forcing and the y-axis depicts the model that excludes the forcing parameters. `a' is the grand intercept for each species, `a\_prov' is the intercept for each provenance, `bcs' is the chilling slope for each species, `bcs\_prov' is the chilling slope for each provenance, `bt' is the time slope for each species and `bt\_prov' is the time slope for each provenance}
 \label{fig:germTempInterval}
 \end{figure}
 

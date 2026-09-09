@@ -948,7 +948,6 @@ intervaltempgen$temp_range <- sapply(intervaltempgen$germTempGen, function(x) {
 })
 dforplot$tempgeninterval <- intervaltempgen$temp_range[match(dforplot$spp,
                                                             intervaltempgen$genusspecies)]
-
 ggplot(dforplot, aes(x = mean, y = mean_noforcing)) +
   geom_errorbar(aes(xmin = p25, xmax = p75),
                 width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
@@ -956,10 +955,11 @@ ggplot(dforplot, aes(x = mean, y = mean_noforcing)) +
                 width = 0, linewidth = 0.3, color = "darkgray", alpha = 0.7) +
   geom_point(aes(color = tempgeninterval), size = 1.5) +
   scale_color_gradientn(
-    colors = colorRampPalette(c("#D9D0D3", "black"))(5),
+    colors = colorRampPalette(c("#CE93D8FF", "#4A148CFF"))(5),
     name = "Temperature interval (max - min) \n 0 if only 1"
   ) +
-  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#B40F20", linewidth = 0.8) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#B40F20", 
+              linewidth = 0.8) +
   facet_wrap(~prm, scales = "free") +
   labs(x = "with forcing", y = "no forcing", title = "") +
   theme_minimal()
