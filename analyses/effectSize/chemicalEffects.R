@@ -53,26 +53,77 @@ par(mfrow=c(4,4))
 dev.off()
 
 # How many are just one?
-test <- data.frame(whatcol=character(), 
+howmanylevels <- data.frame(whatcol=character(), 
   howmany1=numeric(), 
   howmany2=numeric(), 
   howmanymodan2=numeric())
 for(colhere in seq_along(colztocontrol)){
-  test[colhere,"whatcol"] <- colztocontrol[colhere]
-  test[colhere,"howmany1"] <- table(studydesign[,colztocontrol[colhere]])[1]
-  test[colhere,"howmany2"] <- table(studydesign[,colztocontrol[colhere]])[2]
+  howmanylevels[colhere,"whatcol"] <- colztocontrol[colhere]
+  howmanylevels[colhere,"howmany1"] <- table(studydesign[,colztocontrol[colhere]])[1]
+  howmanylevels[colhere,"howmany2"] <- table(studydesign[,colztocontrol[colhere]])[2]
 } 
-test$howmanymodan2 <- nrow(studydesign)-test$howmany1-test$howmany2
-test[with(test, order(-howmany1)), ]
+howmanylevels$howmanymodan2 <- nrow(studydesign)-howmanylevels$howmany1-howmanylevels$howmany2
+howmanylevels[with(howmanylevels, order(-howmany1)), ]
 
 # START HERE ... 
 # Okay, that was a fun and not super important detour ...
 # Next, I will subset to the studies that vary 
 #   "chemicalCor"         
-#   "chemicalConcent"    
-# and then get the min and max response for each unique set of ALL possible columns (from above)
-which(studydesign$chemicalCor>1)
-which(studydesign$chemicalConcent>1)
+#   "chemicalConcent" 
+# which are ...
+studydesign$datasetIDstudy[which(studydesign$chemicalCor>1)]
+studydesign$datasetIDstudy[which(studydesign$chemicalConcent>1)]
+
+chemstudiesall <- c(studydesign$datasetIDstudy[which(studydesign$chemicalCor>1)], 
+  studydesign$datasetIDstudy[which(studydesign$chemicalConcent>1)])  
+
+chemstudies <- unique(chemstudiesall)
+# ... and then get the min and max response for each unique set of ALL possible columns (from above)
+
+# Here I get started on my own...
+colztocontrolplusrespvar <- c("responseVar", colztocontrol)
+dathere <- d[which(d$datasetIDstudy %in% chemstudies),]
+
+## START HERE! I need to review what the below is doing and make sure that I am happy with it. 
+
+## Below is from chatGPT (9 Sep 2026, Freeversion)
+# Find unique combinations of all grouping columns
+uniquestuff <- unique(d[colztocontrolplusrespvar])
+
+# For each unique combination, calculate min and max responseValueNum
+minmaxlist <- lapply(seq_len(nrow(uniquestuff)), function(i) {
+  
+  # Identify rows belonging to this combination
+  keep <- rep(TRUE, nrow(dathere))
+  
+  for (j in seq_along(colztocontrolplusrespvar)) {
+    x <- dathere[[colztocontrolplusrespvar[j]]]
+    val <- uniquestuff[i, colztocontrolplusrespvar[j]]
+    
+    if (is.na(val)) {
+      keep <- keep & is.na(x)
+    } else {
+      keep <- keep & x == val
+    }
+  }
+  
+  y <- dathere$responseValueNum[keep]
+  y <- y[!is.na(y)]
+  
+  if (length(y) == 0) {
+    c(min = NA, max = NA)
+  } else {
+    c(min = min(y), max = max(y))
+  }
+})
+
+minmax <- do.call(rbind, minmaxlist)
+
+# Create final dataframe
+result <- cbind(
+  uniquestuff,
+  minmax
+)
 
 # things I still care about and have not dealt with ...
 if(FALSE){
