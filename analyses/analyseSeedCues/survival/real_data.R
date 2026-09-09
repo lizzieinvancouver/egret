@@ -1,6 +1,8 @@
 
 # Fit the model on some subset of real data
 # For the new excting survival model
+## Started 12 Aug. 2026
+## Last modified: 8 Sept. 2026
 
 setwd('~/projects/egret/analyses/modeling')
 util <- new.env()
@@ -8,7 +10,7 @@ source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
 setwd('~/projects/egret/analyses')
 
-# 12 Aug. 2026
+
 library(rstan)
 data <- readRDS('~/projects/egret/analyses/analyseSeedCues/survival/newdata.rds')
 
@@ -75,29 +77,52 @@ newdata <- list(
 )
 
 
-modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_multispecies_hier.stan")
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_multispecies_hier_reparam.stan")
 fit <- sampling(modelstan, newdata, chains = 4, cores = 4,
-                seed = 123456, iter = 2000, warmup = 1000)
+                seed = 12345, iter = 2000, warmup = 1000, init = init_fn)
 diagnostics <- util$extract_hmc_diagnostics(fit)
 util$check_all_expectand_diagnostics(diagnostics)
 
 samples <- util$extract_expectand_vals(fit)
 base_samples <- util$filter_expectands(samples,
-                                       c('mu_log_T0', 'sigma_log_T0', 'T0', 
-                                         'k', 'pv', 'log_Psi0', 'log_sigma'), check_arrays = T)
+                                       c('mu_T0', 'sigma_T0', 'T0', 
+                                         'mu_log_Psi0', 'sigma_log_Psi0', 'log_Psi0',
+                                         'mu_log_cv', 'sigma_log_cv', 'log_cv',
+                                         'mu_log_k', 'sigma_log_k', 'log_k'), check_arrays = T)
 util$check_all_expectand_diagnostics(base_samples)
+
+
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv.stan")
+fit <- sampling(modelstan, newdata, chains = 4, cores = 4,
+                seed = 12345, iter = 2000, warmup = 1000)
+
+
 
 # saveRDS(samples, '/home/victor/projects/egret/analyses/analyseSeedCues/survival/output/14species_samples.rds')
 
+util$plot_div_pairs('mu_T0', 'sigma_T0', samples, diagnostics)
+util$plot_div_pairs(paste0('T0[',1:newdata$N_species,']'), 'sigma_T0', samples, diagnostics)
+
+util$plot_pairs_by_chain(samples[['mu_T0']], 'mu_T0',
+                         samples[['sigma_T0']], 'sigma_T0')
+
+util$plot_div_pairs(paste0('log_cv[',1:newdata$N_species,']'), paste0('log_Psi0[',1:newdata$N_species,']'), samples, diagnostics)
+
+util$plot_pairs_by_chain(samples[['log_cv[8]']], 'log_cv[8]',
+                         samples[['log_Psi0[8]']], 'log_Psi0[8]')
+
+util$plot_pairs_by_chain(samples[['pv[8]']], 'pv[8]',
+                         samples[['T0[8]']], 'T0[8]')
+
+util$plot_pairs_by_chain(samples[['sigma_T0']], 'sigma_T0',
+                         samples[['mu_T0']], 'mu_T0')
 
 par(mfrow = c(3,2), mar = c(4,4,1,1))
-
-util$plot_expectand_pushforward(samples[['T0[1]']], 30, flim = c(0, 40),
+util$plot_expectand_pushforward(samples[['T0[1]']], 30, flim = c(-10, 15),
                                 ylim = c(0,1),
                                 display_name = 'T0')
 for(s in 2:newdata$N_species){
-  if(s == 12){next}
-  util$plot_expectand_pushforward(samples[[paste0('T0[',s,']')]], 30, flim = c(0, 40),
+  util$plot_expectand_pushforward(samples[[paste0('T0[',s,']')]], 30, flim = c(-10, 15),
                                   display_name =  paste0('T0[',s,']'), add = T)
 }
 
@@ -190,7 +215,7 @@ for(e in 1:newdata$N_exps){
 par(mfrow = c(1,1))
 constant_temp <- seq(-20, 40, 1)
 qy <- sapply(constant_temp, function(t){
-  k <- samples[['k[1]']]
+  k <- samples[['k']]
   T0 <- samples[['T0[1]']]
   y <- boot::inv.logit(k * (t - T0))
   util$ensemble_mcmc_quantile_est(y, c(0.05, 0.5, 0.95))
@@ -201,7 +226,7 @@ lines(qy['95%',] ~ constant_temp, col = util$c_mid, lwd = 1, lty = 2)
 
 
 qy <- sapply(constant_temp, function(t){
-  k <- samples[['k[2]']]
+  k <- samples[['k']]
   T0 <- samples[['T0[2]']]
   y <- boot::inv.logit(k * (t - T0))
   util$ensemble_mcmc_quantile_est(y, c(0.05, 0.5, 0.95))
@@ -212,7 +237,7 @@ lines(qy['95%',] ~ constant_temp, col = util$c_light, lwd = 1, lty = 2)
 
 
 qy <- sapply(constant_temp, function(t){
-  k <- samples[['k[3]']]
+  k <- samples[['k']]
   T0 <- samples[['T0[3]']]
   y <- boot::inv.logit(k * (t - T0))
   util$ensemble_mcmc_quantile_est(y, c(0.05, 0.5, 0.95))
@@ -222,7 +247,7 @@ lines(qy['5%',] ~ constant_temp, col = util$c_dark, lwd = 1, lty = 2)
 lines(qy['95%',] ~ constant_temp, col = util$c_dark, lwd = 1, lty = 2)
 
 qy <- sapply(constant_temp, function(t){
-  k <- samples[['k[4]']]
+  k <- samples[['k']]
   T0 <- samples[['T0[4]']]
   y <- boot::inv.logit(k * (t - T0))
   util$ensemble_mcmc_quantile_est(y, c(0.05, 0.5, 0.95))
@@ -234,16 +259,16 @@ lines(qy['95%',] ~ constant_temp, col = util$c_mid_highlight, lwd = 1, lty = 2)
 
 par(mfrow = c(2,2))
 
-util$plot_div_pairs('mu_log_T0', 'sigma_log_T0', samples, diagnostics)
+util$plot_div_pairs('mu_T0', 'sigma_T0', samples, diagnostics)
 
-util$plot_div_pairs('mu_log_T0', 'sigma_log_T0', samples, diagnostics,
-                    transforms = list('sigma_log_T0' = 1))
+util$plot_div_pairs('mu_T0', 'sigma_T0', samples, diagnostics,
+                    transforms = list('sigma_T0' = 1))
 
-util$plot_div_pairs(paste0('T0[',1:newdata$N_species,']'), 'sigma_log_T0', samples, diagnostics,
-                    transforms = list('sigma_log_T0' = 1, 'T0[12]' = 1))
+util$plot_div_pairs(paste0('T0[',1:newdata$N_species,']'), 'sigma_T0', samples, diagnostics,
+                    transforms = list('sigma_T0' = 1))
 
-util$plot_div_pairs('T0[12]', 'k[12]', samples, diagnostics,
-                    transforms = list('k[12]' = 1))
+util$plot_div_pairs('T0[1]', 'k[1]', samples, diagnostics,
+                    transforms = list('k[1]' = 1))
 
 util$plot_div_pairs('T0[4]', 'k[4]', samples, diagnostics,
                     transforms = list('k[12]' = 1))

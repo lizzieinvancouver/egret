@@ -60,10 +60,10 @@ transformed parameters {
 
 model {
   
-  k ~ normal(0, 1/2.57);
+  k ~ normal(0, 10/2.57);
   
-  mu_T0 ~ normal(15, 15/2.57); // between 5 and 40
-  sigma_T0 ~ normal(0, 10/2.57); // allows between 3 and 70
+  mu_T0 ~ normal(1.5, 1.5/2.57); // between 5 and 40
+  sigma_T0 ~ normal(0, 1/2.57); // allows between 3 and 70
   T0 ~ normal(mu_T0, sigma_T0);
   
   log_Psi0 ~ normal(3, 0.5);
@@ -82,7 +82,7 @@ model {
     
     
     // compute daily forcings
-    int latest_forcing = max_days + 1;
+    int latest_forcing = max_days;
     
     real dPsidt = inv_logit(k[sp] * (constant_temp - T0[sp]));
     real log_dPsidt = log_inv_logit(k[sp] * (constant_temp - T0[sp]));
@@ -114,52 +114,50 @@ model {
 
 // generated quantities {
 // 
-//   array[N_exps] int N_obs_pred; // total germianted seeds
-//   array[N_exps] int N_ungerm_pred;
-//   
-//   array[N_exps, max_days] int dgerm_pred; // daily germination
+//   array[N_exps] int N_obs_pred = rep_array(0, N_exps); // total germinated seeds
+//   array[N_exps] int N_ungerm_pred = rep_array(0, N_exps);
+// 
+//   array[N_exps, max_days] int dgerm_pred = rep_array(0, N_exps, max_days);; // daily germination
 //   array[N_exps, max_days] int cumgerm_pred; // cumulative germination
 // 
 //   for (e in 1:N_exps) {
-//     
-//     int sp = species_idxs[e];
-//     
-//     vector[max_days + 1] fday; // daily forcing
-//     vector[max_days + 1] cumF; // cumulative sum of forcing
 // 
-//     for (d in 1:(max_days + 1))
+//     int sp = species_idxs[e];
+// 
+//     vector[max_days] fday; // daily forcing
+//     vector[max_days] cumF; // cumulative sum of forcing
+// 
+//     for (d in 1:max_days){
 //       fday[d] = inv_logit(k[sp] * (germ_temp[e] - T0[sp]));
+//     }
 //     cumF = cumulative_sum(fday);
 // 
-//     N_obs_pred[e] = 0;
-//     N_ungerm_pred[e] = 0;
-//     for (day in 1:max_days)
-//       dgerm_pred[e, day] = 0;
-// 
+//       
 //     // for each seed in the experiment...
 //     for (s in 1:(N_obs[e] + N_ungerm[e])) {
-//       
+// 
 //       if (bernoulli_rng(pv[sp]) == 0) {
 //         N_ungerm_pred[e] += 1;
 //       } else {
-//         
+// 
 //         real l = logistic_rng(Psi0[sp], sigma[sp]); // threshold to reach
-//         
-//         if (l < cumF[1] || l >= cumF[max_days + 1]) {
-//           N_ungerm_pred[e] += 1;  
-//         } else {
-//           
-//           // latest d with cumPsi[d] < psi
-//           int day = 1;                        
-//           while (day < max_days && cumF[day + 1] < l)
+// 
+//         if (l > cumF[max_days]) {
+//           N_ungerm_pred[e] += 1;
+//         }else{
+// 
+//           // first d with l <= cumF[d]
+//           int day = 1;
+//           while (day < max_days && cumF[day] < l){
 //             day += 1;
+//           }
 //           dgerm_pred[e, day] += 1;
 //           N_obs_pred[e] += 1;
 //         }
 //       }
-//       
+// 
 //     }
-//     
-//     cumgerm_pred[e,1:max_days] = cumulative_sum(dgerm_pred[e,1:max_days]);
+// 
+//     cumgerm_pred[e, 1:max_days] = cumulative_sum(dgerm_pred[e, 1:max_days]);
 //   }
 // }

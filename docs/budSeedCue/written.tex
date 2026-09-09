@@ -1,0 +1,58 @@
+% Started 7 Sep 2026
+% Started by Mao
+% Written up the outline for Bud seed cues comparison model
+
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+
+\usepackage{Sweave}
+\begin{document}
+\input{written-concordance}
+
+\title{Bud seed cues comparison model}
+\author{Mao}
+\date{\today}
+\maketitle
+
+% <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+\section{Methods}
+% <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+\subsection{Data Structure}
+\subsubsection{Budburst}
+We used separate datasets and models to quantify the effects of chilling and forcing on budburst and seed germination respectively. For the budburst analysis, we used data for 191 angiosperm species for which chilling, forcing, and photoperiod were all available. The dataset was generated following the data-processing workflow used by Morales-Castilla \textit{et al}. (2024), including the removal of outlier species and correction of the species name \textit{Acer pseudolatauns} to \textit{Acer pseudoplatanus}. Only species with complete information for all three predictors were kept for analysis.%data generating code: phylo_ospree_compact4_angiogymno_updateprior.R, check issue #97
+\subsubsection{Seed germination}
+For the seed germination analysis, we used data for 329 angiosperm and 107 gymnosperm species for which both chilling and forcing conditions were known from the combination of egret and USDA dataset. %data generating code: betaDisMdl.R
+For each germination observation, forcing was represented by the temperature recorded in the germination-day temperature column, whereas chilling was represented by the duration of the chilling treatment.
+
+\subsection{Model Structure}
+\subsubsection{Budburst}
+We modeled budburst as a function of forcing, chilling, and photoperiod while accounting for the non-independence among species phylogeny. For observation (i), the expected budburst response was modeled as:
+\[
+\hat{y}_i = \alpha_{sp[i]} + \beta_{force,sp[i]} \cdot forcing_i + \beta_{chill,sp[i]} \cdot chilling_i + \beta_{photo,sp[i]} \cdot photoperiod_i
+\]
+
+where (sp[i]) represents the species associated with observation (i), ($\alpha_{sp}$) is the species-specific intercept, and ($\beta_{force,sp[i]}$), ($\beta_{chill,sp[i]}$), and ($\beta_{photo,sp[i]}$) are species-specific effects of forcing, chilling, and photoperiod respectively.
+
+We accounted for phylogenetic non-independence among species by assigning phylogenetically structured multivariate normal distributions to the species-specific intercepts and regression coefficients. We ran angiosperm and gymnosperm species seperately because they are phylogenetically splitted.
+
+\subsubsection{Seed germination}
+We modeled seed germination using the same phylogenetically structured model, but excluded photoperiod. The model therefore included forcing and chilling as predictors:
+
+\[
+\hat{y}_i = \alpha_{sp[i]} + \beta_{force,sp[i]} \cdot forcing_i + \beta_{chill,sp[i]} \cdot chilling_i
+\]
+
+
+As in the budburst model, (sp[i]) represents the species associated with observation (i), and both species-specific intercepts and slopes were estimated while accounting for phylogenetic relatedness.
+
+The germination response was standardized to the interval ([0,1]). Because the resulting response included observations at the boundaries of the interval as well as 0 and 1, we used an ordinal beta-regression framework that accommodates both continuous responses within the interval and observations at 0 and 1.
+
+\subsection{Comparison between models}
+After fitting the two models, we extracted the species-level parameter estimates for chilling and forcing from each analysis. We then compared the estimated effects of chilling and forcing on budburst and seed germination using the overlapping species existed in both datasets.
+
+
+\end{document}
