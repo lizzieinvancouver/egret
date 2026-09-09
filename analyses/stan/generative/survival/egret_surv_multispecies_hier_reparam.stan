@@ -32,7 +32,7 @@ parameters {
   real<lower=0> sigma_T0;
   vector[N_species] T0;
   
-  vector<lower=0>[N_species] k;  
+  real log_k;
   
   // seed viability
   vector<lower=0, upper=1>[N_species] pv;   
@@ -50,6 +50,7 @@ parameters {
 
 transformed parameters {
   
+  real<lower=0> k = exp(log_k);
   vector[N_species] Psi0 = exp(log_Psi0);
   vector[N_species] sigma = exp(log_Psi0 + log_cv);
   
@@ -57,11 +58,11 @@ transformed parameters {
 
 model {
   
-  k ~ normal(0, 10.0/2.57);
-  
   mu_T0 ~ normal(1.5, 1.5/2.57);
   sigma_T0 ~ normal(0, 0.3);
   T0 ~ normal(mu_T0, sigma_T0);
+  
+  log_k ~ normal(log(4), 0.5);
   
   mu_log_Psi0 ~ normal(3, 0.5);
   sigma_log_Psi0 ~ normal(0, 0.5);
@@ -82,7 +83,7 @@ model {
     
     real constant_temp = germ_temp[e];
     
-    real log_dPsidt = log_inv_logit(k[sp] * (constant_temp - T0[sp]));
+    real log_dPsidt = log_inv_logit(k * (constant_temp - T0[sp]));
     real dPsidt = exp(log_dPsidt);
     
     // germinated seeds
