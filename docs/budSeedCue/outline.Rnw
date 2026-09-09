@@ -24,8 +24,18 @@
 \item We used different data and models for budburst and seed germination.
 \begin{enumerate}
 \item We have complete (known chilling, forcing and photoperiod levels) data for 191 angiosperm species for the budburst model, this data following the code used in MoralesCastilla \textit{et al}. 2024 publication, including removal of outlier species and correcting \textit{Acer pseudolatauns} for \textit{Acer pseudoplatanus}. %data generating code: phylo_ospree_compact4_angiogymno_updateprior.R, check issue #97
-
 \item We have complete (known chilling and forcing) data for 329 angiosperm species and 107 gymnosperm species for the seed germination model. %data generating code: betaDisMdl.R
+\item To prepare the egret data for our analysis we:
+\begin{itemize}
+\item Separated warm and cold stratification duration into separate treatments
+\item Substituted zero values when no cold stratification values are given
+\item Transformed the percent germination to proportion germination
+\end{itemize}%ie same decision rules as used in the abundant 0's model (studyDesign/decisionRules_abundant0s.R)
+\item To prepare the usda data for our analysis we:
+\begin{itemize}
+\item When responses were reported as ranges we only used the maximum value in our analysis
+\item When provided, day and nighttime germination temperatures were converted to weighted averages based on their reported photoperiods
+\end{itemize}
 \end{enumerate}
 \item We modeled budburst as a function of forcing, chilling, and photoperiod, accounting for phylogeny: 
 
