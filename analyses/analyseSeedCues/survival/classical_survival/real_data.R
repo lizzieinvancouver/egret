@@ -11,7 +11,8 @@ setwd('~/projects/egret/analyses')
 
 
 library(rstan)
-data <- readRDS('~/projects/egret/analyses/analyseSeedCues/survival/newdata.rds')
+# data <- readRDS('~/projects/egret/analyses/analyseSeedCues/survival/newdata.rds')
+data <- mdl.data
 
 
 germ_days <- c()
@@ -103,38 +104,90 @@ newdata <- list(
 )
 
 
-modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_forc_chill_chillpv.stan")
-fit <- sampling(modelstan, newdata, chains = 4, cores = 4,
-                seed = 12345, iter = 2000, warmup = 1000)
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_accs.stan")
+# fit <- sampling(modelstan, newdata, chains = 4, cores = 4,
+#                 seed = 12345, iter = 2000, warmup = 1000)
+# saveRDS(fit, file = "/home/victor/projects/egret/analyses/analyseSeedCues/output/model/survival/fit_nocovar.rds")
+fit <- readRDS("/home/victor/projects/egret/analyses/analyseSeedCues/output/model/survival/fit_nocovar.rds")
+
+get_elapsed_time(fit)
 diagnostics <- util$extract_hmc_diagnostics(fit)
 util$check_all_expectand_diagnostics(diagnostics)
 
 samples <- util$extract_expectand_vals(fit)
 base_samples <- util$filter_expectands(samples,
-                                       c('mu_log_c0', 'sigma_log_c0', 'log_c0',
-                                         'mu_log_k', 'sigma_log_k', 'log_k',
-                                         'mu_beta_chill', 'sigma_beta_chill', 'beta_chill',
-                                         'mu_T0', 'sigma_T0', 'T0',
-                                         'mu_log_b', 'sigma_log_b', 'log_b_sp',
-                                         "mu_a_pv", "sigma_a_pv", "a_pv",
-                                         "mu_bchill_pv", "sigma_bchill_pv", "bchill_pv"), check_arrays = T)
+                                       c('log_b', "log_c", "pv"), 
+                                       check_arrays = T)
 util$check_all_expectand_diagnostics(base_samples)
 
-util$plot_pairs_by_chain(samples[['bchill_pv[13]']], 'bchill_pv[13]',
-                         samples[['sigma_bchill_pv']], 'sigma_bchill_pv')
 
-util$plot_pairs_by_chain(samples[['bchill_pv[5]']], 'bchill_pv[5]',
-                         samples[['sigma_bchill_pv']], 'sigma_bchill_pv')
+
+
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_firstcovariates.stan")
+fit2 <- sampling(modelstan, newdata, chains = 4, cores = 4,
+                seed = 12345, iter = 2000, warmup = 1000)
+diagnostics <- util$extract_hmc_diagnostics(fit)
+util$check_all_expectand_diagnostics(diagnostics)
+
+
+
+
+
+
+
+samples <- util$extract_expectand_vals(fit)
+base_samples <- util$filter_expectands(samples,
+                                       c('mu_log_c0', 'sigma_log_c0', 'log_c0',
+                                         'mu_log_k', 'sigma_log_k', 'log_k',
+                                         'mu_T0', 'sigma_T0', 'T0',
+                                         'mu_log_b', 'sigma_log_b', 'log_b_sp',
+                                         "mu_bchill_b", "sigma_bchill_b", "bchill_b",
+                                         "mu_a_pv", "sigma_a_pv", "a_pv",
+                                         "mu_bchill_pv", "sigma_bchill_pv", "bchill_pv"), 
+                                         check_arrays = T)
+util$check_all_expectand_diagnostics(base_samples)
+
+
+util$plot_pairs_by_chain(samples[['bchill_pv[13]']], 'bchill_pv[13]',
+                         samples[['beta_chill[13]']], 'beta_chill[13]')
+
+util$plot_pairs_by_chain(samples[['T0[2]']], 'T0[2]',
+                         samples[['log_k[2]']], 'log_k[2]')
+
+
+par(mfrow = c(1,1), cex.main = 1, mar = c(4,5,1,1))
+util$plot_hist_quantiles(samples, 'germ_pred', baseline_values = germ_obs)
+
+par(mfrow = c(1,1), cex.main = 1, mar = c(4,5,1,1))
+util$plot_disc_pushforward_quantiles(samples,  paste0('T0[',1:newdata$N_species,']'))
+util$plot_disc_pushforward_quantiles(samples,  paste0('bchill_b[',1:newdata$N_species,']'))
+util$plot_disc_pushforward_quantiles(samples,  paste0('bchill_pv[',1:newdata$N_species,']'))
+
+par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
+for(e in 1:newdata$N_exps){
+  
+  cs <- newdata$cens_start_idxs[e]
+  ce <- newdata$cens_end_idxs[e]
+  
+  max <- 120
+  util$plot_disc_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), 
+                                       display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)',
+                                       baseline_values = germ_obs[cs:ce])
+}
+
+
+
+
 
 
 par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
-for(e in 1:28){
+for(e in 1:newdata$N_exps){
   
   cs <- newdata$cens_start_idxs[e]
   ce <- newdata$cens_end_idxs[e]
   
   # max <- max(germ_obs[cs:ce])
-  max <- 100
+  max <- 150
   util$plot_conn_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), plot_xs = newdata$cens_day[cs:ce],
                                        display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)')
   points(x = newdata$cens_day[cs:ce], y = germ_obs[cs:ce], pch = 20, cex = 1, col = 'white')
@@ -142,7 +195,7 @@ for(e in 1:28){
 }
 
 par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
-for(e in 1:28){
+for(e in 1:newdata$N_exps){
   
   cs <- newdata$cens_start_idxs[e]
   ce <- newdata$cens_end_idxs[e]
@@ -200,5 +253,8 @@ for(s in 1){
 }
 
 
+par(mfrow = c(1,1))
+util$plot_disc_pushforward_quantiles(samples,  paste0('k[',1:newdata$N_species,']'))
 
-
+par(mfrow = c(1,1))
+util$plot_disc_pushforward_quantiles(samples,  paste0('a_pv[',1:newdata$N_species,']'))
