@@ -13,7 +13,7 @@ setwd('~/projects/egret/analyses')
 library(rstan)
 # data <- readRDS('~/projects/egret/analyses/analyseSeedCues/survival/newdata.rds')
 data <- mdl.data
-
+data <- newdata
 
 germ_days <- c()
 germ_days_prev <- c() 
@@ -103,7 +103,9 @@ newdata <- list(
   species_idxs = data$species_idxs
 )
 
-
+# ----------------------------------------------------------#
+# First model: no covariates, free parameters by experiment #
+# ----------------------------------------------------------#
 modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_accs.stan")
 # fit <- sampling(modelstan, newdata, chains = 4, cores = 4,
 #                 seed = 12345, iter = 2000, warmup = 1000)
@@ -122,139 +124,262 @@ util$check_all_expectand_diagnostics(base_samples)
 
 
 
-
-modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_firstcovariates.stan")
+# ------------------------------------#
+# Second model: germ. temp. on log(c) #
+# ------------------------------------#
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_forcinglogc.stan")
 fit2 <- sampling(modelstan, newdata, chains = 4, cores = 4,
-                seed = 12345, iter = 2000, warmup = 1000)
-diagnostics <- util$extract_hmc_diagnostics(fit)
+                seed = 12345, iter = 1500, warmup = 1000, refresh = 10)
+saveRDS(fit2, file = "/home/victor/projects/egret/analyses/analyseSeedCues/output/model/survival/fit2_forcinglogc.rds")
+diagnostics <- util$extract_hmc_diagnostics(fit2)
 util$check_all_expectand_diagnostics(diagnostics)
+get_elapsed_time(fit2)
 
-
-
-
-
-
-
-samples <- util$extract_expectand_vals(fit)
-base_samples <- util$filter_expectands(samples,
-                                       c('mu_log_c0', 'sigma_log_c0', 'log_c0',
-                                         'mu_log_k', 'sigma_log_k', 'log_k',
-                                         'mu_T0', 'sigma_T0', 'T0',
-                                         'mu_log_b', 'sigma_log_b', 'log_b_sp',
-                                         "mu_bchill_b", "sigma_bchill_b", "bchill_b",
-                                         "mu_a_pv", "sigma_a_pv", "a_pv",
-                                         "mu_bchill_pv", "sigma_bchill_pv", "bchill_pv"), 
-                                         check_arrays = T)
+samples <- util$extract_expectand_vals(fit2)
+base_samples <- util$filter_expectands(samples, 
+                                       c('mu_a_c', 'sigma_a_c', paste0('bT_c[',1:newdata$N_species,']'),
+                                         'mu_bT_c', 'sigma_bT_c', paste0('a_c[',1:newdata$N_species,']'),
+                                         paste0('log_b[',1:newdata$N_species,']'),
+                                         paste0('pv[',1:newdata$N_species,']')),
+                                       check_arrays = T)
 util$check_all_expectand_diagnostics(base_samples)
 
 
-util$plot_pairs_by_chain(samples[['bchill_pv[13]']], 'bchill_pv[13]',
-                         samples[['beta_chill[13]']], 'beta_chill[13]')
-
-util$plot_pairs_by_chain(samples[['T0[2]']], 'T0[2]',
-                         samples[['log_k[2]']], 'log_k[2]')
+util$plot_pairs_by_chain(samples[['log_b[13]']], 'log_b[13]',
+                         samples[['pv[13]']], 'pv[13]')
 
 
 par(mfrow = c(1,1), cex.main = 1, mar = c(4,5,1,1))
 util$plot_hist_quantiles(samples, 'germ_pred', baseline_values = germ_obs)
 
 par(mfrow = c(1,1), cex.main = 1, mar = c(4,5,1,1))
-util$plot_disc_pushforward_quantiles(samples,  paste0('T0[',1:newdata$N_species,']'))
-util$plot_disc_pushforward_quantiles(samples,  paste0('bchill_b[',1:newdata$N_species,']'))
-util$plot_disc_pushforward_quantiles(samples,  paste0('bchill_pv[',1:newdata$N_species,']'))
+util$plot_disc_pushforward_quantiles(samples,  paste0('a_c[',1:newdata$N_species,']'))
+util$plot_disc_pushforward_quantiles(samples,  paste0('bT_c[',1:newdata$N_species,']'),
+                                     ylab = 'beta_forc_logc', xlab = 'Species')
+# util$plot_disc_pushforward_quantiles(samples,  paste0('bchill_pv[',1:newdata$N_species,']'))
 
-par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
-for(e in 1:newdata$N_exps){
-  
-  cs <- newdata$cens_start_idxs[e]
-  ce <- newdata$cens_end_idxs[e]
-  
-  max <- 120
-  util$plot_disc_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), 
-                                       display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)',
-                                       baseline_values = germ_obs[cs:ce])
-}
-
-
-
-
-
-
-par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
-for(e in 1:newdata$N_exps){
-  
-  cs <- newdata$cens_start_idxs[e]
-  ce <- newdata$cens_end_idxs[e]
-  
-  # max <- max(germ_obs[cs:ce])
-  max <- 150
-  util$plot_conn_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), plot_xs = newdata$cens_day[cs:ce],
-                                       display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)')
-  points(x = newdata$cens_day[cs:ce], y = germ_obs[cs:ce], pch = 20, cex = 1, col = 'white')
-  points(x = newdata$cens_day[cs:ce], y = germ_obs[cs:ce], pch = 20, cex = 0.5, col = 'black')
-}
-
-par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
-for(e in 1:newdata$N_exps){
-  
-  cs <- newdata$cens_start_idxs[e]
-  ce <- newdata$cens_end_idxs[e]
-  
-  max <- 120
-  util$plot_disc_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), 
-                                       display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)',
-                                       baseline_values = germ_obs[cs:ce])
-}
-
-
-par(mfrow = c(3,4), cex.main = 1, mar = c(4,5,1,1))
-for(e in 1:12){
-  
-  cs <- newdata$cens_start_idxs[e]
-  ce <- newdata$cens_end_idxs[e]
-  
-  print(newdata$species_idxs[e])
-  
-  # max <- max(germ_obs[cs:ce])
-  max <- 150
-  util$plot_conn_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), plot_xs = newdata$cens_day[cs:ce],
-                                       display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)')
-  points(x = newdata$cens_day[cs:ce], y = germ_obs[cs:ce], pch = 20, cex = 1, col = 'white')
-  points(x = newdata$cens_day[cs:ce], y = germ_obs[cs:ce], pch = 20, cex = 0.5, col = 'black')
-  text(x = 0, y = 160, adj = 0,
-       labels = paste0('Forcing=', newdata$germ_temp[e], ', chilling=', newdata$chill_cond[e]))
-}
-
-
-
-for(e in 1:newdata$N_exps){
-  
-  samples[[paste0('t50[',e,']')]] <-
-    log(samples[[paste0('b[',e,']')]]/log(2))/samples[[paste0('c[',e,']')]]
-  
-}
 
 par(mfrow = c(2,2), cex.main = 1, mar = c(4,5,1,1))
-for(s in 1){
-  idxs <- which(newdata$species_idxs == s)
-  idxs <- idxs[order(newdata$germ_temp[idxs])]
-  
-  chill <- newdata$chill_cond[idxs]
-  germtemp <- newdata$germ_temp[idxs]
-  for(c in unique(chill)){
-    
-    idxs_here <- which(chill == c)
-    util$plot_conn_pushforward_quantiles(samples, paste0('c[', idxs[idxs_here],']'),
-                                         plot_xs = germtemp[idxs_here])
-    
-  }
-  
-  
-}
+prior <- rnorm(1e6, log(0.1), 1)
+util$plot_expectand_pushforward(samples[['mu_a_c']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+prior <- rnorm(1e6, 0, 0.5)
+util$plot_expectand_pushforward(samples[['sigma_a_c']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+prior <- rnorm(1e6, 0.1, 0.1)
+util$plot_expectand_pushforward(samples[['mu_bT_c']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+prior <- rnorm(1e6, 0, 0.05)
+util$plot_expectand_pushforward(samples[['sigma_bT_c']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
 
 
-par(mfrow = c(1,1))
-util$plot_disc_pushforward_quantiles(samples,  paste0('k[',1:newdata$N_species,']'))
+# ----------------------------------------------#
+# Third model: germ. temp. on log(c) AND log(b) #
+# ----------------------------------------------#
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_forcinglogc_forcinglogb.stan")
+fit3 <- sampling(modelstan, newdata, chains = 4, cores = 4,
+                 seed = 123456, iter = 1500, warmup = 1000, refresh = 10,
+                 control = list(max_treedepth = 8))
+saveRDS(fit3, file = "/home/victor/projects/egret/analyses/analyseSeedCues/output/model/survival/fit3_forcinglogc_forcinglogb.rds")
+diagnostics <- util$extract_hmc_diagnostics(fit3)
+util$check_all_expectand_diagnostics(diagnostics)
+get_elapsed_time(fit3)
 
-par(mfrow = c(1,1))
-util$plot_disc_pushforward_quantiles(samples,  paste0('a_pv[',1:newdata$N_species,']'))
+samples <- util$extract_expectand_vals(fit3)
+base_samples <- util$filter_expectands(samples, 
+                                       c('mu_a_c', 'sigma_a_c', paste0('bT_c[',1:newdata$N_species,']'),
+                                         'mu_bT_c', 'sigma_bT_c', paste0('a_c[',1:newdata$N_species,']'),
+                                         'mu_a_b', 'sigma_a_b', paste0('bT_b[',1:newdata$N_species,']'),
+                                         'mu_bT_b', 'sigma_bT_b', paste0('a_b[',1:newdata$N_species,']'),
+                                         paste0('log_b[',1:newdata$N_species,']'),
+                                         paste0('pv[',1:newdata$N_species,']')),
+                                       check_arrays = T)
+util$check_all_expectand_diagnostics(base_samples, min_ess_hat_per_chain = 50)
+
+util$plot_pairs_by_chain(samples[['a_c[19]']], 'a_c[19]',
+                         samples[['a_b[19]']], 'a_b[19]')
+
+
+par(mfrow = c(2,1), cex.main = 1, mar = c(4,5,1,1))
+util$plot_disc_pushforward_quantiles(samples,  paste0('bT_b[',1:newdata$N_species,']'))
+util$plot_disc_pushforward_quantiles(samples,  paste0('bT_c[',1:newdata$N_species,']'),
+                                     ylab = 'beta_forc_logc', xlab = 'Species')
+
+
+par(mfrow = c(2,2), cex.main = 1, mar = c(4,5,1,1))
+prior <- rnorm(1e6, log(0.1), 1)
+util$plot_expectand_pushforward(samples[['mu_a_c']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+prior <- rnorm(1e6, 0, 0.5)
+util$plot_expectand_pushforward(samples[['sigma_a_c']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+prior <- rnorm(1e6, 0, 0.1)
+util$plot_expectand_pushforward(samples[['mu_bT_c']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+prior <- rnorm(1e6, 0, 0.05)
+util$plot_expectand_pushforward(samples[['sigma_bT_c']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+
+prior <- rnorm(1e6, 4, 2)
+util$plot_expectand_pushforward(samples[['mu_a_b']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+prior <- rnorm(1e6, 0, 1)
+util$plot_expectand_pushforward(samples[['sigma_a_b']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+prior <- rnorm(1e6, -0.2, 0.2)
+util$plot_expectand_pushforward(samples[['mu_bT_b']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+prior <- rnorm(1e6, 0, 0.1)
+util$plot_expectand_pushforward(samples[['sigma_bT_b']], 30, flim = range(prior))
+lines(density(prior), lwd = 2, col = util$c_light_teal)
+
+
+
+# -------------------------------------------------------------------#
+# Fourth model: germ. temp. on log(c) AND log(b), chilling on log(b) #
+# -------------------------------------------------------------------#
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_forcinglogc_forcinglogb_chillinglogb.stan")
+fit4 <- sampling(modelstan, newdata, chains = 4, cores = 4,
+                 seed = 123456, iter = 1500, warmup = 1000, refresh = 10)
+saveRDS(fit4, file = "/home/victor/projects/egret/analyses/analyseSeedCues/output/model/survival/fit4_forcinglogc_forcinglogb_chillinglogb.rds")
+diagnostics <- util$extract_hmc_diagnostics(fit4)
+util$check_all_expectand_diagnostics(diagnostics)
+get_elapsed_time(fit4)
+
+
+samples <- util$extract_expectand_vals(fit4)
+base_samples <- util$filter_expectands(samples, 
+                                       c('mu_a_c', 'sigma_a_c', paste0('bT_c[',1:newdata$N_species,']'),
+                                         'mu_bT_c', 'sigma_bT_c', paste0('a_c[',1:newdata$N_species,']'),
+                                         'mu_a_b', 'sigma_a_b', paste0('a_b[',1:newdata$N_species,']'),
+                                         'mu_bT_b', 'sigma_bT_b', paste0('bT_b[',1:newdata$N_species,']'),
+                                         'mu_bC_b', 'sigma_bC_b', paste0('bC_b[',1:newdata$N_species,']'),
+                                         paste0('log_b[',1:newdata$N_species,']'),
+                                         paste0('pv[',1:newdata$N_species,']')),
+                                       check_arrays = T)
+util$check_all_expectand_diagnostics(base_samples, min_ess_hat_per_chain = 50)
+
+util$plot_pairs_by_chain(samples[['a_b[3]']], 'a_b[3]',
+                         samples[['bC_b[3]']], 'bC_b[3]')
+util$plot_pairs_by_chain(samples[['bT_b[3]']], 'bT_b[3]',
+                         samples[['bC_b[3]']], 'bC_b[3]')
+util$plot_pairs_by_chain(samples[['a_b[3]']], 'a_b[3]',
+                         samples[['bT_b[3]']], 'bT_b[3]')
+
+util$plot_pairs_by_chain(samples[['a_b[10]']], 'a_b[10]',
+                         samples[['bC_b[10]']], 'bC_b[10]')
+util$plot_pairs_by_chain(samples[['bT_b[10]']], 'bT_b[10]',
+                         samples[['bC_b[10]']], 'bC_b[10]')
+util$plot_pairs_by_chain(samples[['a_b[10]']], 'a_b[10]',
+                         samples[['bT_b[10]']], 'bT_b[10]')
+
+
+# -------------------------------------------------------------------#
+# Fourth model: germ. temp. on log(c) AND log(b), chilling on log(b) #
+# -------------------------------------------------------------------#
+modelstan <- stan_model("~/projects/egret/analyses/stan/generative/survival/egret_surv_forcinglogc_forcinglogb_chillinglogb_chillingpv.stan")
+fit4 <- sampling(modelstan, newdata, chains = 4, cores = 4,
+                 seed = 123456, iter = 15, warmup = 10, refresh = 10)
+saveRDS(fit4, file = "/home/victor/projects/egret/analyses/analyseSeedCues/output/model/survival/fit4_forcinglogc_forcinglogb_chillinglogb.rds")
+diagnostics <- util$extract_hmc_diagnostics(fit4)
+util$check_all_expectand_diagnostics(diagnostics)
+get_elapsed_time(fit4)
+
+
+# 
+# par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
+# for(e in 1:newdata$N_exps){
+#   
+#   cs <- newdata$cens_start_idxs[e]
+#   ce <- newdata$cens_end_idxs[e]
+#   
+#   max <- 120
+#   util$plot_disc_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), 
+#                                        display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)',
+#                                        baseline_values = germ_obs[cs:ce])
+# }
+# 
+# 
+# 
+# 
+# 
+# 
+# par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
+# for(e in 1:newdata$N_exps){
+#   
+#   cs <- newdata$cens_start_idxs[e]
+#   ce <- newdata$cens_end_idxs[e]
+#   
+#   # max <- max(germ_obs[cs:ce])
+#   max <- 150
+#   util$plot_conn_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), plot_xs = newdata$cens_day[cs:ce],
+#                                        display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)')
+#   points(x = newdata$cens_day[cs:ce], y = germ_obs[cs:ce], pch = 20, cex = 1, col = 'white')
+#   points(x = newdata$cens_day[cs:ce], y = germ_obs[cs:ce], pch = 20, cex = 0.5, col = 'black')
+# }
+# 
+# par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
+# for(e in 1:newdata$N_exps){
+#   
+#   cs <- newdata$cens_start_idxs[e]
+#   ce <- newdata$cens_end_idxs[e]
+#   
+#   max <- 120
+#   util$plot_disc_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), 
+#                                        display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)',
+#                                        baseline_values = germ_obs[cs:ce])
+# }
+# 
+# 
+# par(mfrow = c(3,4), cex.main = 1, mar = c(4,5,1,1))
+# for(e in 1:12){
+#   
+#   cs <- newdata$cens_start_idxs[e]
+#   ce <- newdata$cens_end_idxs[e]
+#   
+#   print(newdata$species_idxs[e])
+#   
+#   # max <- max(germ_obs[cs:ce])
+#   max <- 150
+#   util$plot_conn_pushforward_quantiles(samples, paste0('germ_pred[',cs:ce,']'), plot_xs = newdata$cens_day[cs:ce],
+#                                        display_ylim = c(0, max*1.2), ylab = 'Observed germination\n(#seeds, at each census)')
+#   points(x = newdata$cens_day[cs:ce], y = germ_obs[cs:ce], pch = 20, cex = 1, col = 'white')
+#   points(x = newdata$cens_day[cs:ce], y = germ_obs[cs:ce], pch = 20, cex = 0.5, col = 'black')
+#   text(x = 0, y = 160, adj = 0,
+#        labels = paste0('Forcing=', newdata$germ_temp[e], ', chilling=', newdata$chill_cond[e]))
+# }
+# 
+# 
+# 
+# for(e in 1:newdata$N_exps){
+#   
+#   samples[[paste0('t50[',e,']')]] <-
+#     log(samples[[paste0('b[',e,']')]]/log(2))/samples[[paste0('c[',e,']')]]
+#   
+# }
+# 
+# par(mfrow = c(2,2), cex.main = 1, mar = c(4,5,1,1))
+# for(s in 1){
+#   idxs <- which(newdata$species_idxs == s)
+#   idxs <- idxs[order(newdata$germ_temp[idxs])]
+#   
+#   chill <- newdata$chill_cond[idxs]
+#   germtemp <- newdata$germ_temp[idxs]
+#   for(c in unique(chill)){
+#     
+#     idxs_here <- which(chill == c)
+#     util$plot_conn_pushforward_quantiles(samples, paste0('c[', idxs[idxs_here],']'),
+#                                          plot_xs = germtemp[idxs_here])
+#     
+#   }
+#   
+#   
+# }
+# 
+# 
+# par(mfrow = c(1,1))
+# util$plot_disc_pushforward_quantiles(samples,  paste0('k[',1:newdata$N_species,']'))
+# 
+# par(mfrow = c(1,1))
+# util$plot_disc_pushforward_quantiles(samples,  paste0('a_pv[',1:newdata$N_species,']'))

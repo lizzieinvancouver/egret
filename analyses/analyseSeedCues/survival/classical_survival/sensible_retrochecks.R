@@ -8,8 +8,9 @@ util$plot_hist_quantiles(samples, 'germ_pred', baseline_values = germ_obs,
                          bin_min=10, bin_max=100, bin_delta=10)
 
 
-par(mfrow = c(7,4), cex.main = 1, mar = c(4,5,1,1))
-exps <- sample(1:newdata$N_exps, 28)
+par(mfrow = c(4,4), cex.main = 1, mar = c(4,5,1,1))
+exps <- which(newdata$species_idxs == 2)
+# exps <- sample(1:newdata$N_exps, 16)
 # exps <- list_exps
 for(e in exps){
   
@@ -45,8 +46,8 @@ for(e in exps){
   
   
   plot(1, type="n", main=e,
-       xlim=c(0, max(x)), xlab='Day',
-       ylim=c(0, 160), ylab='Germination\n(#seeds per census bin)')
+       xlim=c(0, max(x)), xlab='',
+       ylim=c(0, 200), ylab='Germination\n(#seeds per census bin)')
   
   
   
@@ -80,7 +81,12 @@ for(e in exps){
           col='black', lwd=2)
   }
   
-  abline(h = c(55,65), lty = 2)
+  # abline(h = c(55,65), lty = 2)
+  
+  text(0, y = 195, adj = 0,
+       labels = paste0('Germ. temp.: ', newdata$germ_temp[e]))
+  text(0, y = 175, adj = 0,
+       labels = paste0('Chilling: ', newdata$chill_cond[e]))
 }
 
 par(mfrow = c(5,3), cex.main = 1, mar = c(4,5,1,1))
