@@ -236,6 +236,11 @@ filteredd[filteredd$datasetID %in% 'jang22' & filteredd$study %in% 'exp7' & filt
 filteredd[filteredd$datasetID %in% 'jang22' & filteredd$study %in% 'exp7' & filteredd$treatment %in% 'Dark', 'other.treatment'] <-
   'dark'
 
+# Add Sept 18 (2026) scrapping mistake in harrington09
+times <- c("0", "2.958", "4.133", "4.804")
+newd[newd$datasetID == 'harrington09' & newd$study == 'exp2' & newd$figure == 'figure2' & is.na(newd$chillDuration) &
+       newd$germDuration %in% times, 'responseValueNum'] <- rep(0, 4)
+
 
 # -----------------------------
 # FOR PEOPLE CHECKING: MODIFY HERE
