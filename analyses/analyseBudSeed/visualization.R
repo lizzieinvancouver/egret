@@ -214,7 +214,7 @@ lambda$parameter <- rownames(lambda)
 colnames(lambda)[grep("25%", colnames(lambda))] <- "low"
 colnames(lambda)[grep("75%", colnames(lambda))] <- "high"
 
-pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/lambdaAngio.pdf", width = 20, height = 20)
+pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/lambdaAngio.pdf", width = 5, height = 5)
 ggplot(lambda, aes(x = mean, y = parameter)) +
   geom_point(size = 2, alpha = 1) + 
   geom_errorbar(aes(xmin = low, 
@@ -263,56 +263,6 @@ df_degen <- data.frame(
 all_data <- rbind(df_prop, df_degen)
 
 all_data$species_name <- species_names[all_data$species_idx]
-
-testing <- FALSE
-if(testing){
-pdf("analyseBudSeed/figures/predictedRawAngioTest.pdf",
-      width = 14, height = 11)
-  
-  all_data <- arrange(all_data, species_idx)
-  unique_spp <- unique(all_data$species_name)
-  
-  plots <- lapply(unique_spp, function(sp_name) {
-    sp_raw <- subset(all_data, species_name == sp_name)
-    
-    p <- ggplot(sp_raw, aes(x = chill)) +
-      ylim(0, 1) +
-      labs(title = sp_name, x = "Chilling", y = "Response") +
-      theme_bw() +
-      theme(plot.title = element_text(size = 8))
-    
-    if (nrow(sp_raw) > 1) {
-      p <- p +
-        geom_ribbon(aes(ymin = quantile10, ymax = quantile90),
-                    fill = "blue", alpha = 0.2) +
-        geom_line(aes(y = predicted),
-                  color = "blue", linewidth = 1)
-    } else {
-      p <- p +
-        geom_errorbar(aes(ymin = quantile10, ymax = quantile90),
-                      width = 0.05, color = "blue") +
-        geom_point(aes(y = predicted),
-                   color = "blue", size = 2)
-    }
-    
-    p +
-      geom_point(aes(y = observed),
-                 color = "black", size = 1.5)
-  })
-  
-  # ---- CHUNK INTO GROUPS OF 20 ----
-  chunk_size <- 20
-  n_pages <- ceiling(length(plots) / chunk_size)
-  
-  for (i in seq_len(n_pages)) {
-    idx <- ((i - 1) * chunk_size + 1):min(i * chunk_size, length(plots))
-    
-    grid.arrange(grobs = plots[idx], ncol = 5, nrow = 4)
-  }
-  
-  dev.off()
-}
-###Hmm this didn't work
 
 
 ## Gymnosperm
@@ -514,6 +464,7 @@ lambda$parameter <- rownames(lambda)
 colnames(lambda)[grep("25%", colnames(lambda))] <- "low"
 colnames(lambda)[grep("75%", colnames(lambda))] <- "high"
 
+pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/lambdaGymno.pdf", width = 5, height = 5)
 
 ggplot(lambda, aes(x = mean, y = parameter)) +
   geom_point(size = 2, alpha = 1) + 
@@ -530,6 +481,8 @@ ggplot(lambda, aes(x = mean, y = parameter)) +
   ) +
   theme_minimal() +
   scale_y_discrete(limits = rev)  
+
+dev.off()
 
 # Make the line using a fixed mean forcing, which is not retrodictive check
 draws_a  <- as.matrix(fit, pars = "a")
@@ -556,103 +509,6 @@ all_data <- rbind(df_prop, df_degen)
 all_data$species_name <- species_names[all_data$species_idx]
 all_data <- arrange(all_data,species_idx)
 unique_spp <- unique(all_data$species_name)
-
-pdf("analyseBudSeed/figures/chillingPredictedAngio.pdf", width = 14, height = 11)
-
-par(mfrow = c(4, 5))
-
-for (i in 1:length(unique_spp)) {
-  sp_name <- unique_spp[i]
-  sp_idx  <- which(unique_spp == sp_name)
-  sp_raw <- all_data[all_data$species_name == sp_name, ]
-
-  chill_seq <- seq(min(sp_raw$chill), max(sp_raw$chill), length.out = 10)
-  a_i  <- draws_a[, sp_idx]
-  bc_i <- draws_bc[, sp_idx]
-  bf_i <- draws_bf[, sp_idx]
-  f_i  <- sp_forcing[sp_idx]
-  
-  a_i_mean <- mean(a_i)
-  bc_i_mean <- mean(bc_i)
-  bf_i_mean <- mean(bf_i)
-  
-  mu_mean <- plogis(a_i_mean + bc_i_mean * chill_seq + bf_i_mean * f_i)
-  
-  a_i_low <- quantile(a_i, probs = 0.1, na.rm = FALSE)
-  bc_i_low <- quantile(bc_i, probs = 0.1, na.rm = FALSE)
-  bf_i_low <- quantile(bf_i, probs = 0.1, na.rm = FALSE)
-  
-  mu_low <- plogis(a_i_low + bc_i_low * chill_seq + bf_i_low * f_i)
-  
-  a_i_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
-  bc_i_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
-  bf_i_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
-  
-  mu_high <- plogis(a_i_high + bc_i_high * chill_seq + bf_i_high * f_i)
-  
-  
-  plot(sp_raw$chill, sp_raw$observed, 
-       type = "n",
-       ylim = c(0, 1), 
-       xlab = "Chilling", ylab = "Response",
-       main = sp_name, cex.main = 0.8)
-  
-  polygon(c(chill_seq, rev(chill_seq)), 
-          c(mu_low, rev(mu_high)), 
-          col = "grey", border = NA)
-  
-  
-  lines(chill_seq, mu_mean, col = "blue", lwd = 2)
-  
-  points(sp_raw$chill, sp_raw$observed, pch = 16, col = "black", cex = 0.8)
-
-}
-
-draws_a_z  <- as.matrix(fit, pars = "a_z")
-draws_a_z <- as.numeric(draws_a_z)
-draws_bc_z <- as.matrix(fit, pars = "bc_z")
-draws_bc_z <- as.numeric(draws_bc_z)
-draws_bf_z <- as.matrix(fit, pars = "bf_z")
-draws_bf_z <- as.numeric(draws_bf_z)
-global_forcing <- mean(c(mdl.dataAngio$f_prop, mdl.dataAngio$f_degen))
-
-
-global_chill_seq <- seq(min(all_data$chill), max(all_data$chill), length.out = 10)
-
-draws_a_z_mean <- mean(draws_a_z)
-draws_bc_z_mean <- mean(draws_bc_z)
-draws_bf_z_mean <- mean(draws_bf_z)
-
-global_mu <- plogis(draws_a_z_mean + draws_bc_z_mean * global_chill_seq + draws_bf_z_mean * f_i)
-
-draws_a_z_low <- quantile(draws_a_z, probs = 0.1, na.rm = FALSE)
-draws_bc_z_low <- quantile(draws_bc_z, probs = 0.1, na.rm = FALSE)
-draws_bf_z_low <- quantile(draws_bf_z, probs = 0.1, na.rm = FALSE)
-
-global_mu_low <- plogis(draws_a_z_low + draws_bc_z_low * global_chill_seq + draws_bf_z_low * f_i)
-
-draws_a_z_high <- quantile(a_i, probs = 0.9, na.rm = FALSE)
-draws_bc_z_high <- quantile(bc_i, probs = 0.9, na.rm = FALSE)
-draws_bf_z_high <- quantile(bf_i, probs = 0.9, na.rm = FALSE)
-
-global_mu_high <- plogis(draws_a_z_high + draws_bc_z_high * global_chill_seq + draws_bf_z_high * f_i)
-
-
-plot(all_data$chill, all_data$observed, 
-     type = "n", 
-     ylim = c(0, 1),
-     xlab = "Chilling", 
-     ylab = "Response")
-
-polygon(c(global_chill_seq, rev(global_chill_seq)), 
-        c(global_mu_low, rev(global_mu_high)), 
-        col = "grey", border = NA) 
-
-lines(global_chill_seq, global_mu_mean, col = "blue", lwd = 2)
-
-
-
-dev.off()
 
 # retrodictive check with Mike's functions
 pdf("analyseBudSeed/figures/retrodictiveChecksSpp.pdf",
@@ -860,7 +716,7 @@ for (sp in prop_sp) {
 }
 dev.off()
 
-#Manually plot the model results with CI
+#Manually plot the model results with CI for each individual species
 fit <- readRDS("analyseBudSeed/output/fit_full_angio.rds")
 summ <- readRDS("analyseBudSeed/output/summary_full_angio.rds")
 diagnostics <- readRDS("analyseBudSeed/output/diagnostics_full_angio.rds")
