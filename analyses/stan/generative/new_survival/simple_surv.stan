@@ -124,7 +124,7 @@ model {
   // Germination observed in each census
   for (i in 1:N_census) {
     if (N_germ[i] > 0) {
-      real logpg = log(pv) * log_diff_exp(logGxs_end[i], logGxs_start[i]);
+      real logpg = log(pv) + log_diff_exp(logGxs_end[i], logGxs_start[i]);
       target += N_germ[i] * logpg;
     }
   }
