@@ -420,6 +420,7 @@ modeld_noforc2$coldStratDur <- scale(modeld_noforc2$coldStratDur)[,1]
 modeld_noforc2$germDuration <- as.numeric(modeld_noforc2$germDuration)
 modeld_noforc2$germDuration <- scale(modeld_noforc2$germDuration)[,1]
 
+# above was to check whether zscoring changed anything
 
 # check which species I'm getting back when I don't drop forcing
 nrow(modeld_noforc2) - nrow(modeld)
@@ -479,7 +480,7 @@ if(runmodels){
 smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo_noforcing.stan")
 fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data,
                         iter = 1000, warmup = 500, chains = 4)
-# saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")
+# saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing_noZ.rds")
 }
 
 fit_nophy_noforcing <- readRDS("/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing.rds")

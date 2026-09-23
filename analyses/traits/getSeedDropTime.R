@@ -77,6 +77,17 @@ df$latbi_cleaned <- checks$scientificName[match(paste(df$Genus, df$Species),
 setdiff(df$latbi_cleaned, paste(df$Genus, df$Species))
 
 # Still need to make additional checks to make sure these species names still correpond to the egret database
+degret <- read.csv("output/egretclean.csv")
+
+df$fruiting <- gsub("na", NA, df$fruiting)
+df_nona <- df[!is.na(df$fruiting),]
+
+intersect(paste(degret$genus, degret$species), df_nona$latbi_cleaned)
+
+sub <- subset(df_nona, latbi_cleaned %in% intersect(paste(degret$genus, degret$species), df_nona$latbi_cleaned))
+
+table(sub$latbi_cleaned, sub$fruiting)
+
 
 # Some minor cleaning
 ds$type[ds$type == "Annual"] <- "annual"
