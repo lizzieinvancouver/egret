@@ -63,6 +63,14 @@ ggplot(unique_scar_perc, aes(x = scarification, y = responseValueNum, fill = sca
   theme_minimal() +
   theme(legend.position = "none")
 
+ggplot(unique_scar_perc, aes(x = scarification, y = responseValueNum, fill = scarification)) +
+  geom_boxplot() +
+  labs(
+    x = "Scarification",
+    y = "Percent germination") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
 # subset each single dataset
 bhatt00exp4 <- unique_scar_perc[unique_scar_perc$datasetIDstudy == "bhatt00exp4", ]
 bhatt00exp5 <- unique_scar_perc[unique_scar_perc$datasetIDstudy == "bhatt00exp5", ]
