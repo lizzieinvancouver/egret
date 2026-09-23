@@ -81,49 +81,14 @@ chemstudies <- unique(chemstudiesall)
 # ... and then get the min and max response for each unique set of ALL possible columns (from above)
 
 # Here I get started on my own...
-colztocontrolplusrespvar <- c("responseVar", colztocontrol)
+colztocontrolplusrespvar <- c("responseVar", "datasetIDstudy", colztocontrol)
 dathere <- d[which(d$datasetIDstudy %in% chemstudies),]
 
-## START HERE! I need to review what the below is doing and make sure that I am happy with it. 
+## START HERE! 
+# My current thought (22 September 2026) is to just code this myself, as it is extremely annoying otherwise. 
 
-## Below is from chatGPT (9 Sep 2026, Freeversion)
-# Find unique combinations of all grouping columns
-uniquestuff <- unique(d[colztocontrolplusrespvar])
 
-# For each unique combination, calculate min and max responseValueNum
-minmaxlist <- lapply(seq_len(nrow(uniquestuff)), function(i) {
-  
-  # Identify rows belonging to this combination
-  keep <- rep(TRUE, nrow(dathere))
-  
-  for (j in seq_along(colztocontrolplusrespvar)) {
-    x <- dathere[[colztocontrolplusrespvar[j]]]
-    val <- uniquestuff[i, colztocontrolplusrespvar[j]]
-    
-    if (is.na(val)) {
-      keep <- keep & is.na(x)
-    } else {
-      keep <- keep & x == val
-    }
-  }
-  
-  y <- dathere$responseValueNum[keep]
-  y <- y[!is.na(y)]
-  
-  if (length(y) == 0) {
-    c(min = NA, max = NA)
-  } else {
-    c(min = min(y), max = max(y))
-  }
-})
 
-minmax <- do.call(rbind, minmaxlist)
-
-# Create final dataframe
-result <- cbind(
-  uniquestuff,
-  minmax
-)
 
 # things I still care about and have not dealt with ...
 if(FALSE){
