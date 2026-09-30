@@ -105,7 +105,7 @@ intersect(ds$genus, dm$Genus) # no species overlap; only 1 genus!
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Clean dm to prepare to merge with ds ####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-subset(ds, type != "annual" & != "Annual")
+# subset(ds, type == "annual" & == "Annual")
 
 # here I add a column for "type", but they're all annual
 dm$type <- "Annual"
@@ -113,3 +113,22 @@ dm2 <- dm[, c("name", "type")]
 
 # Some species cleaning:
 dm$Species[dm$Species == "strigosis"] <- "strigosus"
+
+# From iNaturalist -------------------------------------------------------------
+sub50 <- read.csv("~/github/egret/analyses/traits/sub50_filled.csv")
+
+hist(sub50$seed.t,
+     breaks = seq(0.5, 12.5, by = 1),
+     xaxt = "n",
+     main = "Fruit or seeds peak observation month",
+     xlab = "Month")
+axis(1, at = 1:12, labels = 1:12)
+
+hist(sub50$n.fruits.seeds,
+     xaxt = "n",
+     breaks = seq(0, 1500, by = 100),
+     main = "",
+     xlab = "Number of observations at peak month")
+axis(1, at = seq(0, 1500, by = 100), las = 2)
+
+     
