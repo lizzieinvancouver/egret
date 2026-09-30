@@ -65,7 +65,6 @@ for(colhere in seq_along(colztocontrol)){
 howmanylevels$howmanymodan2 <- nrow(studydesign)-howmanylevels$howmany1-howmanylevels$howmany2
 howmanylevels[with(howmanylevels, order(-howmany1)), ]
 
-# START HERE ... 
 # Okay, that was a fun and not super important detour ...
 # Next, I will subset to the studies that vary 
 #   "chemicalCor"         
@@ -78,22 +77,43 @@ chemstudiesall <- c(studydesign$datasetIDstudy[which(studydesign$chemicalCor>1)]
   studydesign$datasetIDstudy[which(studydesign$chemicalConcent>1)])  
 
 chemstudies <- unique(chemstudiesall)
+dchem <- d[which(d$datasetIDstudy %in% chemstudies),]
 # ... and then get the min and max response for each unique set of ALL possible columns (from above)
 
-# Here I get started on my own...
-colztocontrolplusrespvar <- c("responseVar", "datasetIDstudy", colztocontrol)
+colztocontrolplus <- c("responseVar", "datasetIDstudy", colztocontrol)
 dathere <- d[which(d$datasetIDstudy %in% chemstudies),]
 
-## START HERE! 
-# My current thought (22 September 2026) is to just code this myself, as it is extremely annoying otherwise. 
+colztocontrolminchem <- colztocontrolplus[which(!colztocontrolplus %in% 
+  c("chemicalConcent"))]
 
+# Ugly way to built a dataframe!
+minmax <- dchem[1,]
+minmax$counter <- NA
+minmax <- minmax[-1,] 
 
-
-
-# things I still care about and have not dealt with ...
-if(FALSE){
-  "responseVar"         
-  "chemicalCor"         
-  "chemicalConcent"     
-  "chemicalConcentUnit"
+# I am a VERY slow loop (like a minute or two I think....)
+for(studyhere in seq_along(chemstudies)){
+  subby <- dchem[which(dchem$datasetIDstudy==chemstudies[studyhere]),]
+  # For subby, get the unique treatments ... 
+  uniquestuff <- unique(subby[colztocontrolminchem])
+  for(i in c(1:length(uniquestuff))){
+    # merge in the full data and find examples where there are >2 rows 
+    uniquestuffind <- merge(dchem, uniquestuff[i,])
+    uniquestuffind$counter <- rep(i, nrow(uniquestuffind))
+    if (nrow(uniquestuffind)>1 & length(unique(uniquestuffind$chemicalConcent))>1) {
+      minmax <- rbind(minmax, uniquestuffind)
+     }
+   }
 }
+
+minmax$datasetIDstudycount <- paste(minmax$datasetIDstudy, minmax$counter)
+unique(minmax$datasetIDstudycount)
+
+table(minmax$datasetIDstudycount)
+
+onestudy <- subset(minmax, datasetIDstudy=="li21exp4")
+
+library(ggplot2)
+ggplot(onestudy, aes(x=as.numeric(chemicalConcent), y=as.numeric(responseValueNum))) + 
+  geom_point() + 
+  facet_wrap(counter~.)
