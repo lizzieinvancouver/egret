@@ -14,6 +14,8 @@
 *.aux
 *.log
 *.blg
+*.snm
+*.nav
 
 notposting/
 .Rproj.user
