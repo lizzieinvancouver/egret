@@ -27,7 +27,7 @@ library(caper)
 # library(pez)
 # library(cowplot)
 library(reshape2)
- library(shinystan)
+library(shinystan)
 
 # 1. get the egret+usda data
 # source("analyseBudSeed/prepEgretUsda.R")
@@ -70,7 +70,6 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 da$numspp = as.integer(factor(da$latbi, levels = colnames(cphy)))
 da$chillDurationS <- scale(da$chillDuration)
 da$tempDayS <- scale(da$germTempGen)
-
 
 # get ospree data:
 ###read in ospree
@@ -130,15 +129,16 @@ dataEO =list(
           Vphy_ospree = vcv(phyloO, corr = TRUE),
           shared_sp_ospree = ospreeShared$sppnum,
           shared_sp_egret = egretShared$numspp,
+          shared_sp = as.numeric(factor(sharedSp)),
           N_shared = length(sharedSp)
             )
 
-fitOspree <- stan("stan/ospreeEgretMdl_2for1_v2.stan",
+fit <- stan("stan/ospreeEgretMdl.stan",
             data = dataEO,
             iter = 2000,
             warmup = 1000, 
-            chains = 4
-)
+            chains = 4) #, control = list(adapt_delta = 0.99))
+
 
 summ <- data.frame(summary(fit)[["summary"]])
 sampler_params  <- get_sampler_params(fitOspree, inc_warmup = FALSE)
@@ -149,39 +149,14 @@ diagnostics <- list(
   min_ess = min(summ$n_eff, na.rm = TRUE)
 )
 
-saveRDS(fitOspree, file = 'analyseBudSeed/output/fit_combinedMdl_fitOspree.rds')
-saveRDS(summ, file = 'analyseBudSeed/output/summary_combinedMdl_fitOspree.rds')
-saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_combinedMdl_fitOspree.rds')
-
-fitEgret <- stan("stan/ospreeEgretMdl_egretOnly.stan",
-                  data = dataEO,
-                  iter = 2000,
-                  warmup = 1000, 
-                  chains = 4
-)
-
-summE <- data.frame(summary(fitEgret)[["summary"]])
-sampler_params  <- get_sampler_params(fitEgret, inc_warmup = FALSE)
-diagnosticsE <- list(
-  max_treedepth= max(sapply(sampler_params, function(x) max(x[, "treedepth__"]))),
-  max_divergence = max(sapply(sampler_params, function(x) sum(x[, "divergent__"]))),
-  max_rhat = max(summ$Rhat, na.rm = TRUE),
-  min_ess = min(summ$n_eff, na.rm = TRUE)
-)
-
-saveRDS(fitEgret, file = 'analyseBudSeed/output/fit_combinedMdl_fitEgret.rds')
-saveRDS(summE, file = 'analyseBudSeed/output/summary_combinedMdl_fitEgret.rds')
-saveRDS(diagnosticsE, file = 'analyseBudSeed/output/diagnostics_combinedMdl_fitEgret.rds')
-
-fit <- readRDS("analyseBudSeed/output/fit_combinedMdl_fitOspree.rds")
-
-
-ssm <-  as.shinystan(fit)
-launch_shinystan(ssm)
+saveRDS(fit, file = 'analyseBudSeed/output/fit_combinedMdl_fit.rds')
+saveRDS(summ, file = 'analyseBudSeed/output/summary_combinedMdl_fit.rds')
+saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_combinedMdl_fit.rds')
 
 util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
+source('analyseBudSeed/stan_utility.R')
 
 ## Angiosperm
 fit <- readRDS("analyseBudSeed/output/fit_combinedMdl_fitOspree.rds")
@@ -201,6 +176,7 @@ base_samples <- util$filter_expectands(samples,
 util$check_all_expectand_diagnostics(base_samples)
 
 # Retrodictive check
+pdf("analyseBudSeed/figures/retroDic_histQuant.pdf")
 par(mfrow=c(1, 1), mar = c(4,4,2,2))
 names <- c(sapply(1:dataEO$N_prop, function(n) paste0('y_prop_gen[',n,']')),
            sapply(1:dataEO$N_degen, function(n) paste0('y_degen_gen[',n,']')))
@@ -209,9 +185,10 @@ names(preds) <- sapply(1:length(preds), function(n) paste0('y_gen[',n,']'))
 util$plot_hist_quantiles(preds, 'y_gen', 0, 1, 0.1,
                          baseline_values=c(dataEO$y_prop, dataEO$y_degen),
                          xlab="Germination perc.")
-
+dev.off()
 # Posterior inference
-par(mfrow=c(3, 2), mar = c(4,4,1,1))
+pdf("analyseBudSeed/figures/retroDic_indivParam.pdf")
+par(mfrow=c(5, 5), mar = c(4,4,1,1))
 
 util$plot_expectand_pushforward(samples[['a_z_egret']], 20,
                                 display_name = "a_z_egret")
@@ -279,6 +256,54 @@ util$plot_expectand_pushforward(samples[['a_both']], 20,
                                 display_name = "a_both")
 util$plot_expectand_pushforward(samples[['sigma_y_both']], 20,
                                 display_name = "sigma_y_both")
+dev.off()
+
+
+diagnostics <- util$extract_hmc_diagnostics(fit)
+util$check_all_expectand_diagnostics(diagnostics)
+
+samples <- util$extract_expectand_vals(fit)
+samples$a_both
+
+pdf("analyseBudSeed/figures/retroDic_divTrans.pdf")
+util$plot_div_pairs()
+dev.off()
+
+util$plot_div_pairs('a_both', 'b_both', samples, diagnostics)
+util$plot_div_pairs('sigma_y_both', 'b_both', samples, diagnostics)
+util$plot_div_pairs('sigma_y_both', 'a_both', samples, diagnostics)
+
+util$plot_div_pairs('a_egret[100]', 'a_both', samples, diagnostics)
+util$plot_div_pairs('a_ospree[1]', 'a_both', samples, diagnostics)
+util$plot_div_pairs('a_egret[1]', 'b_both', samples, diagnostics)
+
+
+##### old school plots:
+post <- rstan::extract(fit)
+par(mfrow=c(1,1), mar = c(4,4,1,1))
+
+# histograms
+
+plot(hist(post$a_both), col=rgb(0,0,1,1/4), xlim = c(-10,10))
+hist(rnorm(1000, 0,1), col=rgb(1,0,1,1/4), add = T)
+
+plot(hist(post$sigma_y_both), col=rgb(0,0,1,1/4), xlim = c(-10,10))
+hist(rnorm(1000, 0,1), col=rgb(1,0,1,1/4), add = T)
+
+plot(hist(post$b_both), col=rgb(0,0,1,1/4), xlim = c(-10,10))
+hist(rnorm(1000, 0,1), col=rgb(1,0,1,1/4), add = T)
+
+###### Pairs plots ############################
+
+pairs(fit, pars = c("a_both", "b_both", "sigma_y_both", "lp__")) 
+
+y <- post$bf_egret
+
+y.ext <- post$y_both_gen
+
+# pdf(file = "figures/mdl_densityplot_temp.pdf", width = 4, height = 4)
+# par(mfrow = c(1,2))
+ppc_dens_overlay(y, y.ext[1:1000, ])
 
 # species_names <- tapply(da$latbi, da$numspp, unique)
 # species_names <- as.character(species_names)

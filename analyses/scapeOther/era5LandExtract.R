@@ -17,25 +17,22 @@ library(stringr)
 
 d <- read.csv("..//output/egretclean.csv")
 # d <- read.csv("output/egretclean.csv")
+# d <- read.csv("..//egretclean.csv")
 
 dGeog <- unique(d[,c("datasetID","provenance.lat","provenance.long","continent")])
 dGeog <- dGeog[complete.cases(dGeog$provenance.lat),] # n = 419
 
-# 1. list of files
-# 2. unzip folder
-# 3. for each .csv file---extract the data
-# 4. Complete the data table with the lat/long of interest
-
-# the lat/long values we want to extract---probably easier to extract and then merge back with datasetID
-
 zipped<- list.files("global/", pattern = "\\.zip$")
-zip_dir <- "global"
+# zipped<- list.files(pattern = "\\.zip$")
+
+# zip_dir <- "global"
+zip_dir <- getwd()
 extracted_dir <- file.path("extracted_files")
 
 
 folder_name <- tools::file_path_sans_ext(basename(zipped))
 
-setwd("~/Documents/github/egret/analyses/era5landOutput/global")
+setwd("global/")
 
 
 for(i in 1:length(zipped)){
@@ -56,15 +53,20 @@ for(i in 1:length(zipped)){
   soilTemp <- vector()
   
   
-  for (r in 1:length(smFile)){
-  smRast <- rotate(rast(smFile[r]))
+  for (r in 1:5){# length(smFile)){
+    r <- 1
+  smRast <- rast(smFile[r])
   stRast <- rast(stFile[r])
   
       for(s in 1:nrow(dGeog)){
+        
         target_lat <- dGeog[s, "provenance.lat"]
         target_lon <- dGeog[s, "provenance.long"]
-        
-        extSm <- terra::extract(smRast, data.frame(lon = target_lon, lat = target_lat))
+       
+        extSm <- terra::extract(smRast, 
+                                data.frame(lon = target_lon, lat = target_lat)#, search_radius = 12000
+                                #cells = TRUE, xy = TRUE
+                                )
         temp <- str_split_fixed(smFile[r], "_", 8)
         extSm$year <- temp[,6]
         extSm$month <- temp[,7]
@@ -84,17 +86,37 @@ for(i in 1:length(zipped)){
         soilTemp <- rbind(soilTemp, extSt)
       }    
   }
-
+              
 soilMoist$month <- gsub(".zip","", soilMoist$month)
 soilTemp$month <- gsub(".zip","", soilTemp$month)
 
-write.csv(soilMoist, "..//..//output/era5LandSoilMoisture.csv", row.names = FALSE)
-write.csv(soilTemp, "..//..//output/era5LandSoilTemp.csv", row.names = FALSE)
+# fix the NA's for sites near the coast, using the mean estimates from a set radius
+temp <- soilMoist[!complete.cases(soilMoist),]; tempLL <- unique(temp[,c("lat", "long")])
+
+pts <- vect(tempLL, geom = c("lat", "long"))
+buffered <- buffer(pts, width = 500) #bigger buffer needed for that last one
+
+extracted_mean <- extract(smRast, buffered, fun = mean, na.rm = TRUE)
+extracted_mean <- cbind(tempLL, extracted_mean)
+
+soilMoistC <- soilMoist[complete.cases(soilMoist),]; tempLL <- unique(temp[,c("lat", "long")])
+
+soilMoistFull <- rbind(soilMoistC, extracted_mean)
+
+# Repeat for temp:
+temp <- soilTemp[!complete.cases(soilTemp),]; tempLL <- unique(temp[,c("lat", "long")])
+
+pts <- vect(tempLL, geom = c("lat", "long"))
+buffered <- buffer(pts, width = 500) #bigger buffer needed for that last one
+
+extracted_mean <- extract(stRast, buffered, fun = mean, na.rm = TRUE)
+extracted_mean <- cbind(tempLL, extracted_mean)
+
+soilTempC <- soilTemp[complete.cases(soilTemp),]; tempLL <- unique(temp[,c("lat", "long")])
+
+soilTempFull <- rbind(soilTempC, extracted_mean)
+
+write.csv(soilMoistFull, "..//..//output/era5LandSoilMoisture.csv", row.names = FALSE)
+write.csv(soilTempFull, "..//..//output/era5LandSoilTemp.csv", row.names = FALSE)
 
 
-temp2 <- soilMoist[!complete.cases(soilMoist),]
-temp2 <- unique(temp2[,c("lat","long")]) # 18 missing 
-names(soilMoist)
-
-tempNA <- unique(temp2)
-tempyNA <- unique(temp)
