@@ -2,7 +2,7 @@ library(bayesplot)
 library(ggplot2)
 library(posterior)
 library(gridExtra)
-
+library(ggnewscale)
 rm(list=ls()) 
 options(stringsAsFactors = FALSE)
 
@@ -84,6 +84,24 @@ lookup <- data.frame(
   species_name = species_names
 )
 
+# Group by dormancy class
+# Adding in the dormancy type data here
+dormancyEgret <- read.csv("output/baskinegretclean.csv", header = TRUE)
+dormancyUsda <- read.csv("output/baskinusdaclean.csv", header = TRUE)
+dormancyCombined <- unique(rbind(dormancyEgret, dormancyUsda))
+# Some species have multiple dormancy classes, let's combine them and have a look
+dormancyCombined1 <- dormancyCombined %>%
+  group_by(Genus_species) %>% 
+  summarise(Dormancy.Class = paste(unique(Dormancy.Class),collapse = ", "))%>%ungroup()
+# ND: No dormancy; PD: physiological dormancy; MD: morphological dormancy; MPD: morphophysiological dormancy; PY: physical dormancy; PYPD:combined dormancy, thus multiple dormancy classes doesn't really make sense, I made following decisions  
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "ND, PD")] <- "PD"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "MPD, PD")] <- "MPD"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PY, PYPD")] <- "PYPD"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "ND, PY")] <- "PY"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PYPD, PY")] <- "PYPD"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PD, ND")] <- "PD"
+
+
 # Plot for chilling
 parameter_bc <- c("bc_z", names(fit)[grep("^bc\\[", names(fit))])
 stats <- summary(fit, pars = parameter_bc, probs = c(0.25, 0.75))$summary
@@ -108,42 +126,23 @@ df_bc <- rbind(
   df_bc[df_bc$name != "Global Mean", ]
 )
 
-# Adding in the dormancy type data here
-dormancyEgret <- read.csv("output/baskinegretclean.csv", header = TRUE)
-dormancyUsda <- read.csv("output/baskinusdaclean.csv", header = TRUE)
-dormancyCombined <- unique(rbind(dormancyEgret, dormancyUsda))
-# Some species have multiple dormancy classes, let's combine them and have a look
-dormancyCombined1 <- dormancyCombined %>%
-  group_by(Genus_species) %>% 
-  summarise(Dormancy.Class = paste(unique(Dormancy.Class),collapse = ", "))%>%ungroup()
-# ND: No dormancy; PD: physiological dormancy; MD: morphological dormancy; MPD: morphophysiological dormancy; PY: physical dormancy; PYPD:combined dormancy, thus multiple dormancy classes doesn't really make sense, I made following decisions
-dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "ND, PD")] <- "PD"
-dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "MPD, PD")] <- "MPD"
-dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PY, PYPD")] <- "PYPD"
-dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "ND, PY")] <- "PY"
-dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PYPD, PY")] <- "PYPD"
-dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PD, ND")] <- "PD"
-
 df_bc$name <- gsub("_", " ", df_bc$name)
+colnames(df_bc)[9] <- "Type"
+df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 
-d <- df_bc %>%
-  left_join(dormancyCombined1, by = c("name" = "Genus_species"))
-
-#df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 pdf("analyseBudSeed/figures/fullChillingAngio.pdf", width = 20, height = 50)
 ggplot(df_bc, aes(x = mean, y = name)) +
-  geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
+  geom_errorbar(aes(xmin = low, xmax = high, color = Type), 
                 width = 0,
-                linewidth = 1.5) +
+                linewidth = 1.5) + 
+  scale_color_manual(values = c("Global Mean" = "firebrick", "Species" = "black")) + 
   geom_point(size = 2.5) +
-  
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
-  
-  scale_color_manual(values = c("Global Mean" = "firebrick", "Species" = "black")) +
-  labs(title = "bc",
-       x = "Posterior Estimate", y = NULL) +
+  labs(title = "Effect of chilling",
+       x = "Posterior Estimate", y = NULL) + 
   theme_minimal()
 dev.off()
+
 
 # Plot for forcing
 parameter_bf <- c("bf_z", names(fit)[grep("^bf\\[", names(fit))])
@@ -168,6 +167,9 @@ df_bf <- rbind(
   df_bf[df_bf$name == "Global Mean", ],
   df_bf[df_bf$name != "Global Mean", ]
 )
+
+df_bf$name <- gsub("_", " ", df_bf$name)
+colnames(df_bf)[9] <- "Type"
 df_bf$name <- factor(df_bf$name, levels = rev(df_bf$name))
 
 
@@ -209,6 +211,9 @@ df_a <- rbind(
   df_a[df_a$name == "Global Mean", ],
   df_a[df_a$name != "Global Mean", ]
 )
+
+df_a$name <- gsub("_", " ", df_a$name)
+colnames(df_a)[9] <- "Type"
 df_a$name <- factor(df_a$name, levels = rev(df_a$name))
 
 
@@ -227,6 +232,60 @@ ggplot(df_a, aes(x = mean, y = name)) +
   theme_minimal()
 dev.off()
 
+### Make a boxplot showing different dormancy classes for angiosperm
+df_bc <- df_bc %>%
+  left_join(dormancyCombined1, by = c("name" = "Genus_species"))
+df_bc_Dorm <- df_bc[!is.na(df_bc$Dormancy.Class), ]
+df_bc_Dorm$Dormancy.Class <- factor(df_bc_Dorm$Dormancy.Class, levels=c("MD", "MPD", "PY", "PD", "PYPD", "ND"))
+n_df <- df_bc_Dorm %>% group_by(Dormancy.Class) %>% summarise(n = n(),y = max(mean, na.rm = TRUE))
+
+df_bf <- df_bf %>%  left_join(dormancyCombined1, by = c("name" = "Genus_species"))
+df_bf_Dorm <- df_bf[!is.na(df_bf$Dormancy.Class), ]
+df_bf_Dorm$Dormancy.Class <- factor(df_bf_Dorm$Dormancy.Class, levels=c("MD", "MPD", "PY", "PD", "PYPD", "ND"))
+
+df_a <- df_a %>%  left_join(dormancyCombined1, by = c("name" = "Genus_species"))
+df_a_Dorm <- df_a[!is.na(df_a$Dormancy.Class), ]
+df_a_Dorm$Dormancy.Class <- factor(df_a_Dorm$Dormancy.Class, levels=c("MD", "MPD", "PY", "PD", "PYPD", "ND"))
+
+pdf("analyseBudSeed/figures/dormancyAngio.pdf", width = 5, height = 5)
+ggplot(df_bc_Dorm, aes(x = Dormancy.Class, y = mean)) +
+  geom_boxplot(aes(color = Dormancy.Class)) +
+  geom_text(data = n_df,aes(x = Dormancy.Class, y = -1.5, label = paste0(n))) +
+  scale_color_manual(values = c("MD" = "#72aaa1", "MPD" = "#f1eac8", "ND" = "darkgrey","PD" = "#d98994", "PY" = "#56B4E9", "PYPD" = "#CC79A7")) + geom_hline(yintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
+  labs(x = "Dormancy Class", y = "Posterier Mean") +
+  theme_minimal()
+
+ggplot(df_bf_Dorm, aes(x = Dormancy.Class, y = mean)) +
+  geom_boxplot(aes(color = Dormancy.Class)) +
+  geom_text(data = n_df,aes(x = Dormancy.Class, y = -1, label = paste0(n))) +
+  scale_color_manual(values = c("MD" = "#72aaa1", "MPD" = "#f1eac8", "ND" = "darkgrey","PD" = "#d98994", "PY" = "#56B4E9", "PYPD" = "#CC79A7")) + geom_hline(yintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
+  labs(x = "Dormancy Class", y = "Posterier Mean") +
+  theme_minimal()
+
+ggplot(df_a_Dorm, aes(x = Dormancy.Class, y = mean)) +
+  geom_boxplot(aes(color = Dormancy.Class)) +
+  geom_text(data = n_df,aes(x = Dormancy.Class, y = -3.2, label = paste0(n))) +
+  scale_color_manual(values = c("MD" = "#72aaa1", "MPD" = "#f1eac8", "ND" = "darkgrey","PD" = "#d98994", "PY" = "#56B4E9", "PYPD" = "#CC79A7")) + geom_hline(yintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
+  labs(x = "Dormancy Class", y = "Posterier Mean") +
+  theme_minimal()
+dev.off()
+
+# plotting the Global mean for all parameters together for angiosperm
+globalMean <- rbind(df_a[1,], df_bc[1,], df_bf[1,])
+globalMean$parameter <- c("Intercept","Chilling","Forcing")
+globalMean$parameter <- factor(globalMean$parameter, levels=c("Intercept", "Chilling", "Forcing"))
+
+pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/globalMeanAngio.pdf", width = 5, height = 5)
+ggplot(globalMean, aes(x = mean, y = parameter)) +
+  geom_point(size = 2, alpha = 1) + 
+  geom_errorbar(aes(xmin = low, 
+                    xmax = high), 
+                width = 0, alpha = 1, linewidth = 1) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black") +
+  labs(y = "", x = "Posterior Estimates") + theme(legend.position="none") +
+  theme_minimal() +
+  scale_y_discrete(limits = rev)  
+dev.off()
 # Lambda
 parameter_lambda <- c(names(fit)[grep("lambda", names(fit))])
 stats <- summary(fit, pars = parameter_lambda, probs = c(0.25, 0.75))$summary
@@ -320,6 +379,7 @@ base_samples <- util$filter_expectands(samples,
                                        check_arrays=TRUE)
 util$check_all_expectand_diagnostics(base_samples)
 
+
 # Retrodictive check
 par(mfrow=c(1, 1), mar = c(4,4,2,2))
 names <- c(sapply(1:mdl.dataUSDA$N_prop, function(n) paste0('y_prop_gen[',n,']')),
@@ -367,7 +427,6 @@ df_bc$parameter <- rownames(df_bc)
 colnames(df_bc)[grep("25%", colnames(df_bc))] <- "low"
 colnames(df_bc)[grep("75%", colnames(df_bc))] <- "high"
 
-
 df_bc$is_mean <- ifelse(df_bc$parameter == "bc_z", "Global Mean", "Species")
 
 # making new columns to seperate global mean and sp level mean
@@ -380,6 +439,9 @@ df_bc <- rbind(
   df_bc[df_bc$name == "Global Mean", ],
   df_bc[df_bc$name != "Global Mean", ]
 )
+
+df_bc$name <- gsub("_", " ", df_bc$name)
+colnames(df_bc)[9] <- "Type"
 df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 
 pdf("analyseBudSeed/figures/fullChillingGymno.pdf", width = 20, height = 50)
@@ -420,6 +482,8 @@ df_bf <- rbind(
   df_bf[df_bf$name == "Global Mean", ],
   df_bf[df_bf$name != "Global Mean", ]
 )
+df_bf$name <- gsub("_", " ", df_bf$name)
+colnames(df_bf)[9] <- "Type"
 df_bf$name <- factor(df_bf$name, levels = rev(df_bf$name))
 
 pdf("analyseBudSeed/figures/fullForcingGymno.pdf", width = 20, height = 50)
@@ -460,6 +524,8 @@ df_a <- rbind(
   df_a[df_a$name == "Global Mean", ],
   df_a[df_a$name != "Global Mean", ]
 )
+df_a$name <- gsub("_", " ", df_a$name)
+colnames(df_a)[9] <- "Type"
 df_a$name <- factor(df_a$name, levels = rev(df_a$name))
 
 pdf("analyseBudSeed/figures/fullInterceptGymno.pdf", width = 20, height = 50)
@@ -475,6 +541,63 @@ ggplot(df_a, aes(x = mean, y = name)) +
   labs(title = "a",
        x = "Posterior Estimate", y = NULL) +
   theme_minimal()
+dev.off()
+
+### Make a boxplot showing different dormancy classes
+df_bc <- df_bc %>%
+  left_join(dormancyCombined1, by = c("name" = "Genus_species"))
+df_bc_Dorm <- df_bc[!is.na(df_bc$Dormancy.Class), ]
+df_bc_Dorm$Dormancy.Class <- factor(df_bc_Dorm$Dormancy.Class, levels=c("MD", "MPD", "PY", "PD", "PYPD", "ND"))
+n_df <- df_bc_Dorm %>% group_by(Dormancy.Class) %>% summarise(n = n(),y = max(mean, na.rm = TRUE))
+
+df_bf <- df_bf %>%  left_join(dormancyCombined1, by = c("name" = "Genus_species"))
+df_bf_Dorm <- df_bf[!is.na(df_bf$Dormancy.Class), ]
+df_bf_Dorm$Dormancy.Class <- factor(df_bf_Dorm$Dormancy.Class, levels=c("MD", "MPD", "PY", "PD", "PYPD", "ND"))
+
+df_a <- df_a %>%  left_join(dormancyCombined1, by = c("name" = "Genus_species"))
+df_a_Dorm <- df_a[!is.na(df_a$Dormancy.Class), ]
+df_a_Dorm$Dormancy.Class <- factor(df_a_Dorm$Dormancy.Class, levels=c("MD", "MPD", "PY", "PD", "PYPD", "ND"))
+
+pdf("analyseBudSeed/figures/dormancyGymno.pdf", width = 5, height = 5)
+ggplot(df_bc_Dorm, aes(x = Dormancy.Class, y = mean)) +
+  geom_boxplot(aes(color = Dormancy.Class)) +
+  geom_text(data = n_df,aes(x = Dormancy.Class, y = -0.1, label = paste0(n))) +
+  scale_color_manual(values = c("MD" = "#72aaa1", "MPD" = "#f1eac8", "ND" = "darkgrey","PD" = "#d98994", "PY" = "#56B4E9", "PYPD" = "#CC79A7")) + geom_hline(yintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
+  labs(x = "Dormancy Class", y = "Posterier mean") +
+  theme_minimal()
+
+ggplot(df_bf_Dorm, aes(x = Dormancy.Class, y = mean)) +
+  geom_boxplot(aes(color = Dormancy.Class)) +
+  geom_text(data = n_df,aes(x = Dormancy.Class, y = -0.27, label = paste0(n))) +
+  scale_color_manual(values = c("MD" = "#72aaa1", "MPD" = "#f1eac8", "ND" = "darkgrey","PD" = "#d98994", "PY" = "#56B4E9", "PYPD" = "#CC79A7")) + geom_hline(yintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
+  labs(x = "Dormancy Class", y = "Posterier mean") +
+  theme_minimal()
+
+ggplot(df_a_Dorm, aes(x = Dormancy.Class, y = mean)) +
+  geom_boxplot(aes(color = Dormancy.Class)) +
+  geom_text(data = n_df,aes(x = Dormancy.Class, y = -1.1, label = paste0(n))) +
+  scale_color_manual(values = c("MD" = "#72aaa1", "MPD" = "#f1eac8", "ND" = "darkgrey","PD" = "#d98994", "PY" = "#56B4E9", "PYPD" = "#CC79A7")) + geom_hline(yintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
+  labs(x = "Dormancy Class", y = "Posterier mean") +
+  theme_minimal()
+
+
+dev.off()
+
+# plotting the Global mean for all parameters together for gymnosperm
+globalMean <- rbind(df_a[1,], df_bc[1,], df_bf[1,])
+globalMean$parameter <- c("Intercept","Chilling","Forcing")
+globalMean$parameter <- factor(globalMean$parameter, levels=c("Intercept", "Chilling", "Forcing"))
+
+pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/globalMeanGym.pdf", width = 5, height = 5)
+ggplot(globalMean, aes(x = mean, y = parameter)) +
+  geom_point(size = 2, alpha = 1) + 
+  geom_errorbar(aes(xmin = low, 
+                    xmax = high), 
+                width = 0, alpha = 1, linewidth = 1) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black") +
+  labs(y = "", x = "Posterior Estimates") + theme(legend.position="none") +
+  theme_minimal() +
+  scale_y_discrete(limits = rev)  
 dev.off()
 
 # Lambda
