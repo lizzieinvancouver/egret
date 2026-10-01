@@ -20,10 +20,10 @@ if(runworldflora){
   names_changed <- setdiff(baskin$Genus_species, d_species_fix)
   names_changed
 }
-
 # write.csv(checks, "cleaningOther/baskin/checksFull.csv")
 
 checks <- read.csv("cleaningOther/baskin/checksFull.csv", header = T)
+d_species_fix <- unique(checks$scientificName)
 # Ok, there are way too many species names need to be fixed, including species we might not end up using.
 # Only correct species names appears in egret dataset
 source("cleaning/source/mergeData.R") 
@@ -46,6 +46,7 @@ sp_name_changed <- merge(baskin_egret,shared_sp_list, by = "Genus_species", all.
 # This could work, but I realized that there are some species with multiple accepted names, which needs decisions, so I will do it manually anyway...
 names_changed <- setdiff(sp_name_changed$Genus_species, sp_name_changed$scientificName)
 names_changed
+
 baskin_egret$Genus_species[which(baskin_egret$Genus_species == "Acer kawakamii")] <- "Acer caudatifolium"
 baskin_egret$Genus_species[which(baskin_egret$Genus_species == "Acer morrisonense")] <- "Acer caudatifolium"
 baskin_egret$Genus_species[which(baskin_egret$Genus_species == "Anigozanthos manglesii")] <- "Anigozanthos flavidus"
