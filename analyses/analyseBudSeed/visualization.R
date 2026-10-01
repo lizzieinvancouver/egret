@@ -97,7 +97,7 @@ colnames(df_bc)[grep("75%", colnames(df_bc))] <- "high"
 
 df_bc$is_mean <- ifelse(df_bc$parameter == "bc_z", "Global Mean", "Species")
 
-# making new columns to seperate global mean and sp level mean
+# making new columns to separate global mean and sp level mean
 df_bc$index <- as.numeric(gsub("\\D", "", df_bc$parameter))
 df_bc$name <- ifelse(is.na(df_bc$index), 
                      "Global Mean", 
@@ -107,8 +107,29 @@ df_bc <- rbind(
   df_bc[df_bc$name == "Global Mean", ],
   df_bc[df_bc$name != "Global Mean", ]
 )
-df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 
+# Adding in the dormancy type data here
+dormancyEgret <- read.csv("output/baskinegretclean.csv", header = TRUE)
+dormancyUsda <- read.csv("output/baskinusdaclean.csv", header = TRUE)
+dormancyCombined <- unique(rbind(dormancyEgret, dormancyUsda))
+# Some species have multiple dormancy classes, let's combine them and have a look
+dormancyCombined1 <- dormancyCombined %>%
+  group_by(Genus_species) %>% 
+  summarise(Dormancy.Class = paste(unique(Dormancy.Class),collapse = ", "))%>%ungroup()
+# ND: No dormancy; PD: physiological dormancy; MD: morphological dormancy; MPD: morphophysiological dormancy; PY: physical dormancy; PYPD:combined dormancy, thus multiple dormancy classes doesn't really make sense, I made following decisions
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "ND, PD")] <- "PD"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "MPD, PD")] <- "MPD"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PY, PYPD")] <- "PYPD"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "ND, PY")] <- "PY"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PYPD, PY")] <- "PYPD"
+dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PD, ND")] <- "PD"
+
+df_bc$name <- gsub("_", " ", df_bc$name)
+
+d <- df_bc %>%
+  left_join(dormancyCombined1, by = c("name" = "Genus_species"))
+
+#df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
 pdf("analyseBudSeed/figures/fullChillingAngio.pdf", width = 20, height = 50)
 ggplot(df_bc, aes(x = mean, y = name)) +
   geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
