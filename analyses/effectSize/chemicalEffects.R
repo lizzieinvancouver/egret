@@ -206,11 +206,58 @@ ggplot(gastuff[which(gastuff$responseVar=="percent.germ"),],
   geom_point() + 
   facet_wrap(latbi~.)
 
-
 ggplot(gastuff[which(gastuff$responseVar=="percent.germ"),], 
   aes(x=as.numeric(chemicalConcent), y=as.numeric(responseValueNum), color=latbi)) + 
   geom_point() 
 
 write.csv(gastuff, "effectSize/output/biggestEffectDataGA.csv", row.names=FALSE)
 
-# Now, I need to do (b) ... that seems hard so I stop for now... 
+# Now, I need to do (b) 
+# I probably need just ONE of my counters from each study ... 
+# I could find the highest average germination per study of the counters and then look at min/max for ANY chemical 
+# I think I will do that... and can adjust later
+
+
+
+pergerm <- minmax[which(minmax$responseVar=="percent.germ"),]
+pergermstudies <- unique(pergerm$datasetIDstudy)
+pergermstudiescount <- unique(pergerm$datasetIDstudycount)
+howmanypergerm <- length(unique(pergerm$datasetIDstudycount))
+
+meanbycounter <- data.frame(datasetIDstudycount=unique(pergerm$datasetIDstudycount),
+  datasetIDstudy=rep(NA, howmanypergerm), counter=rep(NA, howmanypergerm),
+  meanhere=rep(NA, howmanypergerm))
+
+for(studyhere in seq_along(pergermstudiescount)){
+  subby <- pergerm[which(pergerm$datasetIDstudycount==pergermstudiescount[studyhere]),]
+  meanbycounter$datasetIDstudy[studyhere] <- subby$datasetIDstudy[1]
+  meanbycounter$counter[studyhere] <- subby$counter[1]
+  meanbycounter$meanhere[studyhere] <- mean(subby$responseValueNum, na.rm=TRUE)
+  }
+
+# Okay, now I need to get the max mean and go back to the minmax data...
+# I did a very quick visual check and I think this works... 
+maxones <- c()
+gothruthese <- unique(meanbycounter$datasetIDstudy)
+
+for(datasetIDstudyhere in seq_along(gothruthese)){
+    subby <- meanbycounter[which(meanbycounter$datasetIDstudy==gothruthese[datasetIDstudyhere]),]
+    maxones[datasetIDstudyhere] <- subby$datasetIDstudycount[which(subby$meanhere==max(subby$meanhere))][1] # take the first for cases with ties (yes, this is cheap)
+}
+
+# Finally ... get the min and max response from these ... 
+highestmeangerm <- pergerm[which(pergerm$datasetIDstudycount %in% maxones),]
+# Ugly way to built a dataframe!
+minmaxoneperstudy <- minmax[1,]
+minmaxoneperstudy <- minmaxoneperstudy[-1,] 
+
+diffs <- data.frame(datasetIDstudy=character(), respDiff=numeric(),
+  chemicalConcentDiff=numeric(), chemical=character()
+  )
+
+for(studyhere in seq_along(unique(highestmeangerm$datasetIDstudy))){
+  subby <- highestmeangerm[which(highestmeangerm$datasetIDstudy==unique(highestmeangerm$datasetIDstudy)[studyhere]),]
+  minmaxoneperstudy <- rbind(minmaxoneperstudy,
+    subby[which(subby$responseValueNum==max(subby$responseValueNum)),],
+    subby[which(subby$responseValueNum==min(subby$responseValueNum)),]) # now you get both rows when there is a duplicate ...
+  }
