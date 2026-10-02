@@ -110,6 +110,10 @@ minmax$datasetIDstudycount <- paste(minmax$datasetIDstudy, minmax$counter)
 unique(minmax$datasetIDstudycount)
 
 table(minmax$datasetIDstudycount)
+length(table(minmax$datasetIDstudycount)) # boff, 640 unique things happened -- oy!
+
+# So now we need to know what varies in each study I think.... 
+# li21exp4, for example, is easy -- it looks like they just varied the chemical 
 
 onestudy <- subset(minmax, datasetIDstudy=="li21exp4")
 
@@ -117,3 +121,94 @@ library(ggplot2)
 ggplot(onestudy, aes(x=as.numeric(chemicalConcent), y=as.numeric(responseValueNum))) + 
   geom_point() + 
   facet_wrap(counter~.)
+
+ggplot(subset(minmax, datasetIDstudy=="li21exp4"), aes(x=as.numeric(chemicalConcent), y=as.numeric(responseValueNum), 
+    color=chemical)) + 
+  geom_point() + 
+  geom_line()
+
+howmanyhere <- length(unique(minmax$datasetIDstudycount))
+# I could figure this out by stepping through each column and then grabbing what is varying ...
+whathappenedwcounter <- data.frame(datasetIDstudycount=unique(minmax$datasetIDstudycount),
+  datasetIDstudy=rep(NA, howmanyhere), counter=rep(NA, howmanyhere),
+  responseVar=rep(NA, howmanyhere),
+  chemical=rep(NA, howmanyhere), chemicalConcent=rep(NA, howmanyhere))
+
+for(i in c(1:howmanyhere)){
+  subby <- minmax[which(minmax$datasetIDstudycount==unique(minmax$datasetIDstudycount)[i]),]
+  whathappenedwcounter$datasetIDstudy[i] <- subby$datasetIDstudy[1]
+  whathappenedwcounter$counter[i] <- subby$counter[1]
+  whathappenedwcounter$responseVar[i] <- subby$responseVar[1]
+  whathappenedwcounter$chemical[i] <- length(unique(subby$chemical))
+  whathappenedwcounter$chemicalConcent[i] <- length(unique(subby$chemicalConcent))
+}
+
+whathappenedwcounter <- whathappenedwcounter[with(whathappenedwcounter, order(-chemicalConcent, -chemical)),]
+
+# Wait, the above does each counter... I need each study... 
+howmanyhere <- length(unique(minmax$datasetIDstudy))
+# I could figure this out by stepping through each column and then grabbing what is varying ...
+whathappened <- data.frame(datasetIDstudy=unique(minmax$datasetIDstudy),
+  responseVar=rep(NA, howmanyhere),
+  chemical=rep(NA, howmanyhere), chemicalConcent=rep(NA, howmanyhere))
+addmeplease <- data.frame(matrix(ncol = length(colztocontrol), nrow=howmanyhere))
+names(addmeplease) <- colztocontrol
+whathappened <- cbind(whathappened, addmeplease)
+
+
+for(i in c(1:howmanyhere)){
+  subby <- minmax[which(minmax$datasetIDstudy==unique(minmax$datasetIDstudy)[i]),]
+  whathappened$responseVar[i] <- subby$responseVar[1]
+  whathappened$chemical[i] <- length(unique(subby$chemical))
+  whathappened$chemicalConcent[i] <- length(unique(subby$chemicalConcent))
+  for(j in c(1:length(colztocontrol))){ # 7 onward ... 
+    whathappened[i,colztocontrol[j]] <- length(unique(subby[,colztocontrol[j]]))-1 # so I can get 0 back
+  }
+}
+
+countingstuff <- data.frame(whatcol=colztocontrol, howmanystudies=rep(NA, length(colztocontrol)),
+  howmanylevels=rep(NA, length(colztocontrol)))
+for(j in c(1:length(colztocontrol))){ 
+  countingstuff$whatcol[j] <- colztocontrol[j]
+  countingstuff$howmanystudies[j] <- sum(whathappened[,colztocontrol[j]] !=0) 
+  countingstuff$howmanylevels[j] <- sum(whathappened[,colztocontrol[j]])
+}
+
+countingstuff[with(countingstuff, order(-howmanystudies)),]
+whathappened[with(whathappened, order(-chemical)),]
+
+# Okay! Of 89 studies 27 vary chillDuration (top hit!)
+table(minmax$chemicalCor)
+# citric acid is C6H8O7
+# salicylic acid is C7H6O73
+# thiourea is some sort of organosulfur CH4N2S
+table(whathappened$chemical)
+
+# So I could do ...
+# (a) GA stuff (and maybe some salts?) with chemical concentration
+# (b) I could probably do ANY chemical min and max response....
+
+# Okay, so here's a start to (a)
+ganames <- c("GA", "GA3", "GA4")
+gastuff <- minmax[which(minmax$chemicalCor %in% ganames),]
+
+table(gastuff$responseVar)
+
+# Most of the observed other variation explained by chillDuration and germTempGen
+# not much to see for scarifTypeGen
+ggplot(gastuff[which(gastuff$responseVar=="percent.germ"),], 
+  aes(x=as.numeric(chemicalConcent), y=as.numeric(responseValueNum), group=latbi, color=chillDuration)) + 
+  geom_point() + 
+  facet_wrap(latbi~.)
+
+ggplot(gastuff[which(gastuff$responseVar=="percent.germ"),], 
+  aes(x=as.numeric(chemicalConcent), y=as.numeric(responseValueNum), group=latbi, color=germTempGen)) + 
+  geom_point() + 
+  facet_wrap(latbi~.)
+
+
+ggplot(gastuff[which(gastuff$responseVar=="percent.germ"),], 
+  aes(x=as.numeric(chemicalConcent), y=as.numeric(responseValueNum), color=latbi)) + 
+  geom_point() 
+
+# Now, I need to do (b) ... that seems hard so I stop for now... 
