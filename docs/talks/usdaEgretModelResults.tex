@@ -49,43 +49,128 @@
 
 		\frame{
 		\frametitle{How the model works}
-		\framesubtitle{Grab from provenance model?}
 			\begin{align*}
-			\hat{y} & = \alpha_0 + \alpha_{provenance} + \beta (C) \\ % percent germination!
-			\alpha_{provenance} & \sim MVN(0, \sigma_{\alpha}^2)\\
-			y & \sim normal(\hat{y}, \sigma_y^2)\\
+		p(\mu_i | \theta) &= \begin{cases} 
+   1 -  logit^{-1}(\mu_i - k_1) & \text{if } \mu_i = 0 \\
+    [logit^{-1}(\mu_i - k_1) - logit^{-1}(\mu_i - k_2)] \\
+    \times \text{Beta\_proportion}(logit^{-1}(\mu_i), k_1) & \text{if } \mu_i \in (0, 1) \\
+    logit^{-1}(\mu_i - k_2) & \text{if } \mu_i = 1
+\end{cases} \\
+		\mu_i &= \alpha_{[sp]} +  \beta_{f[sp]}  \cdot \text{forcing} +  \beta_{cs[sp]} \cdot \text{chilling} \\
 			\end{align*}
 	}
 
 	\frame{
-		\frametitle{Results so far ... forcing/chilling}
+		\frametitle{Results so far ... chilling/forcing}
 		\framesubtitle{Overall: Gymnosperms vs. angiosperms}
-		\noindent \includegraphics[width=0.6\textwidth]{} 
+		 \begin{columns}[T]
+        		 \begin{column}{0.48\textwidth}
+            	\centering
+            	\includegraphics[width=\textwidth]{..//..//analyses/analyseBudSeed/figures/globalMeanGym.pdf}
+            	
+       		 \end{column}
+
+        		\begin{column}{0.48\textwidth}
+            	\centering
+           	 \includegraphics[width=\textwidth]{..//..//analyses/analyseBudSeed/figures/globalMeanAngio.pdf}
+       		 \end{column}
+    \end{columns}
 	}
 	
 		\frame{
-		\frametitle{Results so far ... forcing/chilling and intercept}
-		\framesubtitle{Overall: Gymnosperms vs. angiosperms}
-		\noindent \includegraphics[width=0.6\textwidth]{} 
-	}
-	
-		\frame{
-		\frametitle{Results so far ... forcing/chilling}
-		\framesubtitle{Phylogenetic effects: intercept, chilling, forcing (angio and gymno)}
-		\noindent \includegraphics[width=0.6\textwidth]{..//..//analyses/analyseBudSeed/figures/lambdaAngio.pdf} 
+		\frametitle{Results so far ... chilling/forcing}
+		\framesubtitle{Phylogenetic effects: intercept, chilling, forcing (Gymnosperms vs. angiosperms)}
+		\begin{columns}[T]
+        		 \begin{column}{0.48\textwidth}
+            	\centering
+            	\includegraphics[width=\textwidth]{..//..//analyses/analyseBudSeed/figures/lambdaGymno.pdf}
+            	
+       		 \end{column}
+
+        		\begin{column}{0.48\textwidth}
+            	\centering
+           	 \includegraphics[width=\textwidth]{..//..//analyses/analyseBudSeed/figures/lambdaAngio.pdf}
+       		 \end{column}
+   		 \end{columns}
 	}
 	
 			\frame{
-		\frametitle{Results so far ... forcing/chilling}
-		\framesubtitle{Many species!}
-		\noindent \includegraphics[width=0.6\textwidth]{} 
+		\frametitle{Results so far ... chilling/forcing}
+		\framesubtitle{Individual species (Gymnosperms)}
+		\begin{columns}[T]
+        		 \begin{column}{0.48\textwidth}
+            	\centering
+            	\includegraphics[height=0.8\textheight, width=\textwidth, keepaspectratio]{..//..//analyses/analyseBudSeed/figures/fullChillingGymno.pdf}
+            	
+       		 \end{column}
+
+        		\begin{column}{0.48\textwidth}
+            	\centering
+           	 \includegraphics[height=0.8\textheight, width=\textwidth, keepaspectratio]{..//..//analyses/analyseBudSeed/figures/fullForcingGymno.pdf}
+       		 \end{column}
+   		 \end{columns}      	
+	}
+	
+				\frame{
+		\frametitle{Results so far ... chilling/forcing}
+		\framesubtitle{Individual species (Angiosperms)}
+		\begin{columns}[T]
+        		 \begin{column}{0.48\textwidth}
+            	\centering
+            	\includegraphics [height=0.8\textheight, width=\textwidth, keepaspectratio]{..//..//analyses/analyseBudSeed/figures/fullChillingAngio.pdf}
+            	
+       		 \end{column}
+
+        		\begin{column}{0.48\textwidth}
+            	\centering
+           	 \includegraphics[height=0.8\textheight, width=\textwidth, keepaspectratio]{..//..//analyses/analyseBudSeed/figures/fullForcingAngio.pdf}
+       		 \end{column}
+   		 \end{columns}      	
 	}
 	
 		
 			\frame{
-		\frametitle{Results so far ... forcing/chilling}
-		\framesubtitle{Dormancy classes}
-		\noindent \includegraphics[width=0.6\textwidth]{} 
+		\frametitle{Results so far ... chilling/forcing}
+		\framesubtitle{Dormancy classes (Gymnosperms)}
+		\begin{columns}[T]
+        		\begin{column}{0.48\textwidth}
+            	\centering
+            	\includegraphics[page=1, width=\textwidth]{../../analyses/analyseBudSeed/figures/dormancyGymno.pdf}
+       		 \end{column}
+
+	        \begin{column}{0.48\textwidth}
+            	\centering
+            	\includegraphics[page=2, width=\textwidth]{../../analyses/analyseBudSeed/figures/dormancyGymno.pdf}
+       		 \end{column}
+       		 \end{columns}
+       		 \begin{center}
+       		  MPD: morphophysiological dormancy\\
+       		  PD: physiological dormancy\\
+		  ND: No dormancy
+		 \end{center}
+	}
+	
+				\frame{
+		\frametitle{Results so far ... chilling/forcing}
+		\framesubtitle{Dormancy classes (Angiosperms)}
+		\begin{columns}[T]
+        		\begin{column}{0.48\textwidth}
+            	\centering
+            	\includegraphics[page=1, width=\textwidth]{../../analyses/analyseBudSeed/figures/dormancyAngio.pdf}
+       		 \end{column}
+
+	        \begin{column}{0.48\textwidth}
+            	\centering
+            	\includegraphics[page=2, width=\textwidth]{../../analyses/analyseBudSeed/figures/dormancyAngio.pdf}
+       		 \end{column}
+       		 \end{columns}
+       		 \begin{center}
+       		  MD: morphological dormancy\\
+       		  MPD: morphophysiological dormancy\\
+       		  PY: physical dormancy\\
+       		  PD: physiological dormancy\\
+       		  PYPD:combined dormancy ND: No dormancy
+       		  \end{center}
 	}
 	
 		\frame{
