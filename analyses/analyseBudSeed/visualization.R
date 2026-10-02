@@ -293,6 +293,8 @@ lambda <- as.data.frame(stats)
 lambda$parameter <- rownames(lambda)
 colnames(lambda)[grep("25%", colnames(lambda))] <- "low"
 colnames(lambda)[grep("75%", colnames(lambda))] <- "high"
+lambda$parameter <- c("Intercept","Chilling","Forcing")
+lambda$parameter <- factor(lambda$parameter, levels=c("Intercept", "Chilling", "Forcing"))
 
 pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/lambdaAngio.pdf", width = 5, height = 5)
 ggplot(lambda, aes(x = mean, y = parameter)) +
@@ -607,6 +609,8 @@ lambda <- as.data.frame(stats)
 lambda$parameter <- rownames(lambda)
 colnames(lambda)[grep("25%", colnames(lambda))] <- "low"
 colnames(lambda)[grep("75%", colnames(lambda))] <- "high"
+lambda$parameter <- c("Intercept","Chilling","Forcing")
+lambda$parameter <- factor(lambda$parameter, levels=c("Intercept", "Chilling", "Forcing"))
 
 pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/lambdaGymno.pdf", width = 5, height = 5)
 
