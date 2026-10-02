@@ -211,4 +211,6 @@ ggplot(gastuff[which(gastuff$responseVar=="percent.germ"),],
   aes(x=as.numeric(chemicalConcent), y=as.numeric(responseValueNum), color=latbi)) + 
   geom_point() 
 
+write.csv(gastuff, "effectSize/output/biggestEffectDataGA.csv", row.names=FALSE)
+
 # Now, I need to do (b) ... that seems hard so I stop for now... 
