@@ -80,6 +80,24 @@ ggplot(unique_scar_perc, aes(x = scarification, y = responseValueNum, fill = sca
 bhatt00exp4 <- unique_scar_perc[unique_scar_perc$datasetIDstudy == "bhatt00exp4", ]
 bhatt00exp5 <- unique_scar_perc[unique_scar_perc$datasetIDstudy == "bhatt00exp5", ]
 bhatt00exp6 <- unique_scar_perc[unique_scar_perc$datasetIDstudy == "bhatt00exp6", ]
+parmenter96exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "parmenter96exp1", ]
+parmenter96exp2 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "parmenter96exp2", ]
+alptekin02exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "alptekin02exp1", ]
+amini18exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "amini18exp1", ] # potential problem?
+amini18exp2 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "amini18exp2", ] # potential problem?
+cho18bexp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "cho18bexp1", ]
+chuanren04exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "chuanren04exp1", ]
+dalling99exp4 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "dalling99exp4", ]
+naseri18exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "naseri18exp1", ]
+naseri18exp2 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "naseri18exp2", ]
+rafiq21exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "rafiq21exp1", ] # potential problem
+teimouri13exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "teimouri13exp1", ]
+thomsen02exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "thomsen02exp1", ]
+arslan11exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "arslan11exp1", ]
+sharma03exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "sharma03exp1", ]
+zhou03exp3 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "zhou03exp3", ]
+li11exp2 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "li11exp2", ]
+fulbright86exp1 <-  unique_scar_perc[unique_scar_perc$datasetIDstudy == "fulbright86exp1", ]
 
 ### Run a model on scarification checking for effect size
 unique_scar_perc$responseValueNum <- ifelse(
