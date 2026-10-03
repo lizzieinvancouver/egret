@@ -87,8 +87,9 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 # Prepare data for Stan - chilling hours between -20 and 10
 
 da$numspp = as.integer(factor(da$latbi, levels = colnames(cphy)))
-da$chillDurationS <- scale(da$chillDuration)
-da$tempDayS <- scale(da$germTempGen)
+#da$chillDurationS <- scale(da$chillDuration)
+da$chillDurationBW <- da$chillDuration/14
+#da$tempDayS <- scale(da$germTempGen)
 
 mdl.dataAngio <- list(N_degen = sum(da$responseValue %in% c(0,1)),
                  N_prop = sum(da$responseValue>0 & da$responseValue<1),
@@ -104,14 +105,14 @@ mdl.dataAngio <- list(N_degen = sum(da$responseValue %in% c(0,1)),
                  y_prop = array(da$responseValue[da$responseValue>0 & da$responseValue<1],
                                 dim = sum(da$responseValue>0 & da$responseValue<1)),
                  
-                 c_degen = array(da$chillDurationS[da$responseValue %in% c(0,1)],
+                 c_degen = array(da$chillDurationBW[da$responseValue %in% c(0,1)],
                                  dim = sum(da$responseValue%in% c(0,1))),
-                 c_prop = array(da$chillDurationS[da$responseValue>0 & da$responseValue<1],
+                 c_prop = array(da$chillDurationBW[da$responseValue>0 & da$responseValue<1],
                                 dim = sum(da$responseValue>0 & da$responseValue<1)),
                  
-                 f_degen = array(da$tempDayS[da$responseValue %in% c(0,1)],
+                 f_degen = array(da$germTempGen[da$responseValue %in% c(0,1)],
                                  dim = sum(da$responseValue%in% c(0,1))),
-                 f_prop = array(da$tempDayS[da$responseValue>0 & da$responseValue<1],
+                 f_prop = array(da$germTempGen[da$responseValue>0 & da$responseValue<1],
                                 dim = sum(da$responseValue>0 & da$responseValue<1)),
                  Vphy = cphy)
 
@@ -119,9 +120,18 @@ runmodel <- FALSE
 if(runmodel){
 # Compile and run model
 smordbeta <-stan_model("stan/orderedbetalikelihood_2slopes.stan")
+init_fun <- function() {
+  list(
+    a = rep(0, mdl.dataAngio$Nsp), a_z = 0, lambda_a = 0.5, sigma_a = 0.5,
+    bc = rep(0, mdl.dataAngio$Nsp), bc_z = 0, lambda_bc = 0.5, sigma_bc = 0.5,
+    bf = rep(0, mdl.dataAngio$Nsp), bf_z = 0, lambda_bf = 0.5, sigma_bf = 0.5,
+    cutpoints = c(-1, 1), kappa = 5
+  )
+}
+
 fit <- sampling(smordbeta, mdl.dataAngio, 
                 iter = 4000, warmup = 3000,
-                chains = 4)
+                chains = 4, init = init_fun)
 
 summ <- data.frame(summary(fit)[["summary"]])
 sampler_params  <- get_sampler_params(fit, inc_warmup = FALSE)
