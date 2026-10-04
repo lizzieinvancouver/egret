@@ -60,6 +60,9 @@ d$germTemp[which(d$datasetID == "ma18" & d$germ.temp == "25 to 15")] <- 15
 d$germ.temp[which(d$datasetID == "naseri18" & d$chill.duration == "Continuous cold stratification")] <- "2-4"
 d$germTemp[which(d$datasetID == "naseri18" & d$chill.duration == "Continuous cold stratification")] <- 3
 
+# "pipinis12": "20°C (6h dark) + 25°C (18h light)"
+d$germTemp[which(d$germTemp == "20°C (6h dark) + 25°C (18h light)")] <- "20/25" 
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -204,7 +207,7 @@ d$germTemp[which(d$datasetID == "yeom21" & d$figure == "Figure 4" & d$response =
 # Making new columns for temperature regime class (constant or alternating), temperature 1, and temperature 2
 # To make things easier turn the +/- temperature regimes into just their median value in germTemp column
 
-d$germTemp <- sub("\\+.*",NA,d$germTemp)
+d$germTemp <- sub("\\+.*","",d$germTemp)
 d$tempClass <- ifelse(grepl(",|/|alternating|night|-",d$germTemp) & !grepl("+/-",d$germTemp),"alternating","constant")
 
 d$germTemp[which(d$germTemp == "10-20")] <- "10/20"
@@ -229,7 +232,6 @@ d$germTemp[which(d$germTemp == "5 to 15")] <- "5/15"
 d$germTemp[which(d$germTemp == "10 to 15")] <- "10/15"
 d$germTemp[which(d$germTemp == "25 to 15")] <- "25/15"
 d$germTemp[which(d$germTemp == "21/18 day/night")] <- "21/18"
-d$germTemp[which(d$germTemp == "20°C (6h dark) ")] <- "20/25"
 d$germTemp[which(d$germTemp == "15 - 25")] <- "15/25"
 d$germTemp[which(d$germTemp == "24/30 (varying)")] <- "24/30"
 d$germTemp[which(d$germTemp == "19-24")] <- "19/24"
@@ -398,6 +400,9 @@ d$tempDay[which(d$datasetID == "parmenter96" & d$species == "purpurea")] <- d$te
 d$tempNight[which(d$datasetID == "pipinis09" & d$species == "fruiticans")] <- d$tempDayCopy[which(d$datasetID == "pipinis09" & d$species == "fruiticans")]
 d$tempDay[which(d$datasetID == "pipinis09" & d$species == "fruiticans")] <- d$tempNightCopy[which(d$datasetID == "pipinis09" & d$species == "fruiticans")]
 
+d$tempNight[which(d$datasetID == "pipinis12")] <- d$tempDayCopy[which(d$datasetID == "pipinis12" )] 
+d$tempDay[which(d$datasetID == "pipinis12")] <- d$tempNightCopy[which(d$datasetID == "pipinis12")]
+
 d$tempNight[which(d$datasetID == "pipinis20" & d$species == "avellana")] <- d$tempDayCopy[which(d$datasetID == "pipinis20" & d$species == "avellana")]
 d$tempDay[which(d$datasetID == "pipinis20" & d$species == "avellana")] <- d$tempNightCopy[which(d$datasetID == "pipinis20" & d$species == "avellana")]
 
@@ -477,6 +482,8 @@ d$germPhotoperiod[which(d$photoperiod == "0/24 ")] <- "0/24"
 d$germPhotoperiod[which(d$photoperiod == "white 24h")] <- "24/0"
 d$germPhotoperiod[which(d$photoperiod == "not.specified")] <- NA
 
+# pipinis12:"20°C (6h dark) + 25°C (18h light)" but this was entered wrong it should be: 16h dark and 8h light (this was entered correctly in the photoperiod column)
+d$germPhotoperiod[which(d$datasetID == "pipinis12")] <- "8/16"
 
 # Figuring out the papers that these weird photoperiod values came from
 # d$datasetID[which(d$photoperiod == "0/16")] #gianni19 and goggans74
@@ -562,7 +569,6 @@ for(i in 1:nrow(d)){
     d$germTempGen[i] <- (d$tempDay[i]*d$germPhotoperiodDay[i])/24+(d$tempNight[i]*d$germPhotoperiodNight[i])/24
   }
 }
-# Now what about the columns in which there's constant temperature and therefore only values in tempDay and not in tempNight?
 # We can do regular mean average in these ones then
 for(i in 1:nrow(d)){
   if(is.na(d$tempNight[i] && !is.na(d$tempDay[i]))){
