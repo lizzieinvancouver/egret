@@ -214,29 +214,45 @@ write.csv(gastuff, "effectSize/output/biggestEffectDataGA.csv", row.names=FALSE)
 
 # Now, I need to do (b) 
 # I probably need just ONE of my counters from each study ... 
-# I could find the highest average germination per study of the counters and then look at min/max for ANY chemical 
-# I think I will do that... and can adjust later
-
-
+# I first though I could find the highest average germination per study of the counters and then look at min/max for ANY chemical 
+# ... and decided better is to find the min max response in EACH counter and THEN...
+# Find the biggest difference across counter
 
 pergerm <- minmax[which(minmax$responseVar=="percent.germ"),]
 pergermstudies <- unique(pergerm$datasetIDstudy)
 pergermstudiescount <- unique(pergerm$datasetIDstudycount)
 howmanypergerm <- length(unique(pergerm$datasetIDstudycount))
 
-meanbycounter <- data.frame(datasetIDstudycount=unique(pergerm$datasetIDstudycount),
+minmaxbycounter <- data.frame(datasetIDstudycount=unique(pergerm$datasetIDstudycount),
   datasetIDstudy=rep(NA, howmanypergerm), counter=rep(NA, howmanypergerm),
-  meanhere=rep(NA, howmanypergerm))
+  min=rep(NA, howmanypergerm), max=rep(NA, howmanypergerm),
+  minChemCon=rep(NA, howmanypergerm), maxChemCon=rep(NA, howmanypergerm),
+  minChem=rep(NA, howmanypergerm), maxChem=rep(NA, howmanypergerm),
+  minrows=rep(NA, howmanypergerm), maxrows=rep(NA, howmanypergerm))
 
 for(studyhere in seq_along(pergermstudiescount)){
   subby <- pergerm[which(pergerm$datasetIDstudycount==pergermstudiescount[studyhere]),]
-  meanbycounter$datasetIDstudy[studyhere] <- subby$datasetIDstudy[1]
-  meanbycounter$counter[studyhere] <- subby$counter[1]
-  meanbycounter$meanhere[studyhere] <- mean(subby$responseValueNum, na.rm=TRUE)
+  minmaxbycounter$datasetIDstudy[studyhere] <- subby$datasetIDstudy[1]
+  minmaxbycounter$counter[studyhere] <- subby$counter[1]
+  minmaxbycounter$min[studyhere] <- min(subby$responseValueNum, na.rm=TRUE)
+  minmaxbycounter$max[studyhere] <- max(subby$responseValueNum, na.rm=TRUE)
+  minmaxbycounter$minChemCon[studyhere] <- subby$chemicalConcent[which(subby$responseValueNum==min(subby$responseValueNum, na.rm=TRUE))][1]
+  minmaxbycounter$maxChemCon[studyhere] <- subby$chemicalConcent[which(subby$responseValueNum==max(subby$responseValueNum, na.rm=TRUE))][1]
+  minmaxbycounter$minChem[studyhere] <- subby$chemicalCor[which(subby$responseValueNum==min(subby$responseValueNum, na.rm=TRUE))][1]
+  minmaxbycounter$maxChem[studyhere] <- subby$chemicalCor[which(subby$responseValueNum==max(subby$responseValueNum, na.rm=TRUE))][1]
+  minmaxbycounter$minrows[studyhere] <- length(subby$responseValueNum==min(subby$responseValueNum, na.rm=TRUE))
+  minmaxbycounter$maxrows[studyhere] <- length(subby$responseValueNum==max(subby$responseValueNum, na.rm=TRUE))
   }
+
+# START here...
+# The above is a start but it would be better to think of how to handle ties! And time-series data ... (maybe do a MERGE to grab everything?)
+# And I need to take the diffs and then get the MAX diff in response to re-do the figures (pick the biggest response)
+
+## STILL WORKING BELOW!!!
 
 # Okay, now I need to get the max mean and go back to the minmax data...
 # I did a very quick visual check and I think this works... 
+if(FALSE){
 maxones <- c()
 gothruthese <- unique(meanbycounter$datasetIDstudy)
 
@@ -260,4 +276,16 @@ for(studyhere in seq_along(unique(highestmeangerm$datasetIDstudy))){
   minmaxoneperstudy <- rbind(minmaxoneperstudy,
     subby[which(subby$responseValueNum==max(subby$responseValueNum)),],
     subby[which(subby$responseValueNum==min(subby$responseValueNum)),]) # now you get both rows when there is a duplicate ...
+    diffsadd <- data.frame(datasetIDstudy=unique(highestmeangerm$datasetIDstudy)[studyhere],
+      respDiff=subby$responseValueNum[which(subby$responseValueNum==max(subby$responseValueNum))][1]-
+        subby$responseValueNum[which(subby$responseValueNum==min(subby$responseValueNum))][1],
+      chemicalConcentDiff=mean(as.numeric(subby$chemicalConcent[which(subby$responseValueNum==max(subby$responseValueNum))]))-
+        mean(as.numeric(subby$chemicalConcent[which(subby$responseValueNum==min(subby$responseValueNum))])),
+      chemical=subby$chemical[1])
+    diffs <- rbind(diffs,diffsadd)
   }
+
+ggplot(diffs, aes(x=chemicalConcentDiff, y=respDiff)) + # color=datasetIDstudy
+  geom_point() + 
+  facet_wrap(chemical~., scales="free")
+}
