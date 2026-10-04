@@ -412,7 +412,6 @@ modeld_noforc2$responseValueRounded <- round(modeld_noforc2$responseValueNum,3) 
 modeld_noforc_wodup <- modeld_noforc2[!duplicated(modeld_noforc2[c('datasetID', 'study', 'genusspecies', 'responseValueRounded', 'warmStratDur', 'coldStratDur', 'germDuration')]),]
 nrow(modeld_noforc2)-nrow(modeld_noforc_wodup) # 14() when responseValue rounded to 3 digits (XX.X%)
 modeld_noforc2 <- modeld_noforc_wodup 
-rm(modeld_noforc_wodup)
 
 # I hate doing this, but I want to go swimmmmmiiiiing
 modeld_noforc2$warmStratDur <- scale(modeld_noforc2$warmStratDur)[,1]
@@ -915,4 +914,74 @@ points(
   col = adjustcolor("#a00e00", alpha.f = 0.5)
 )
 dev.off()
+}
+
+# No z-scored ----
+modeld_noforc2 <- modeld_noforc_wodup 
+
+# I hate doing this, but I want to go swimmmmmiiiiing
+# modeld_noforc2$coldStratDur <- scale(modeld_noforc2$coldStratDur)[,1]
+# modeld_noforc2$germDuration <- as.numeric(modeld_noforc2$germDuration)
+# modeld_noforc2$germDuration <- scale(modeld_noforc2$germDuration)[,1]
+hist(modeld_noforc2$coldStratDur)
+hist(modeld_noforc2$germDuration)
+median(modeld_noforc2$coldStratDur)
+median(modeld_noforc2$germDuration)
+
+# check which species I'm getting back when I don't drop forcing
+nrow(modeld_noforc2) - nrow(modeld)
+setdiff(modeld_noforc2$genusspecies, modeld$genusspecies)
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+# some checks to figure out where species get dropped out
+length(unique(newd$genusspecies)) # 4 species lost when phylogeny gets dropped out because of forcing
+length(unique(modeld_noforc2$genusspecies))
+
+# which species
+setdiff(unique(newd$genusspecies), unique(modeld_noforc2$genusspecies))
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+## Prepare data for Stan -------------------------------------------------------
+modeld_noforc2$numspp  <- as.integer(factor(modeld_noforc2$genusspecies))
+modeld_noforc2$numprov <- as.integer(factor(modeld_noforc2$provLatLonAlt))
+
+# trim the \t weird thingy
+modeld_noforc2$provLatLonAlt <- trimws(modeld_noforc2$provLatLonAlt)
+
+mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
+                 N_prop = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1),
+                 
+                 Nsp =  length(unique(modeld_noforc2$numspp)),
+                 sp_degen = array(modeld_noforc2$numspp[modeld_noforc2$responseValueNum %in% c(0,1)],
+                                  dim = sum(modeld_noforc2$responseValueNum%in% c(0,1))),
+                 sp_prop = array(modeld_noforc2$numspp[modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1],
+                                 dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)),
+                 
+                 Nprov =  length(unique(modeld_noforc2$numprov)),
+                 prov_degen = array(modeld_noforc2$numprov[modeld_noforc2$responseValueNum %in% c(0,1)],
+                                    dim = sum(modeld_noforc2$responseValueNum%in% c(0,1))),
+                 prov_prop = array(modeld_noforc2$numprov[modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1],
+                                   dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)),
+                 
+                 y_degen = array(modeld_noforc2$responseValueNum[modeld_noforc2$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld_noforc2$responseValueNum%in% c(0,1))),
+                 y_prop = array(modeld_noforc2$responseValueNum[modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1],
+                                dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)),
+                 
+                 t_degen = array(modeld_noforc2$germDuration[modeld_noforc2$responseValueNum %in% c(0,1)],
+                                 dim = sum(modeld_noforc2$responseValueNum%in% c(0,1))),
+                 t_prop = array(modeld_noforc2$germDuration[modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1],
+                                dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)),
+                 
+                 cs_degen = array(modeld_noforc2$coldStratDur[modeld_noforc2$responseValueNum %in% c(0,1)],
+                                  dim = sum(modeld_noforc2$responseValueNum%in% c(0,1))),
+                 cs_prop = array(modeld_noforc2$coldStratDur[modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1],
+                                 dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)))
+
+
+if(runmodels){
+  smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo_noforcing_noZ.stan")
+  fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data, init = 0,
+                                  iter = 2000, warmup = 1000, chains = 4)
+  # saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing_noZ.rds")
 }

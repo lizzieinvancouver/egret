@@ -169,19 +169,17 @@ model {
   }
   
   // priors
-  a_z ~ normal(0, 1.5); 
+  a_z ~ normal(0, 5);
   bt_z ~ normal(0.5, 1); 
-  // bf_z ~ normal(0.5, 1); 
   bcs_z ~ normal(0.5, 1); 
   
-  sigma_a ~ normal(0, 1);
+  // increasing priors to check non scaled values
+  sigma_a ~ normal(0, 3);
   sigma_bt ~ normal(0, 1);
-  // sigma_bf ~ normal(0, 1);
   sigma_bcs ~ normal(0, 1);
   
-  sigma_a_prov ~ normal(0, 1);
+  sigma_a_prov ~ normal(0, 3);
   sigma_bt_prov ~ normal(0, 1);
-  // sigma_bf_prov ~ normal(0, 1);
   sigma_bcs_prov ~ normal(0, 1);
   
   
