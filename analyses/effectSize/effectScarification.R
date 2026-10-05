@@ -32,7 +32,7 @@ summary(d$scarifTypeGen)
 d_scar <- d[!is.na(d$scarification), ]
 summary(d_scar$scarification)
 
-treatment_cols <- c("source.population","chillTemp","chillDuration","germTemp","germDuration","germPhotoperiod","chemicalCor","storageType","storageTemp","storageDuration","photoperiodCor","provLatLon","provLatLonAlt","treatmentOverview")
+treatment_cols <- c("provLatLon", "provLatLonAlt", "chillTemp","chillDuration","germTemp","germDuration","germPhotoperiod","chemicalCor","storageType","storageTemp","storageDuration","photoperiodCor","provLatLon","provLatLonAlt","treatmentOverview","other.treatment")
 
 group_cols <- c("datasetIDstudy","latbi", treatment_cols)
 
