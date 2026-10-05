@@ -8,6 +8,8 @@
 rm(list=ls()) 
 options(stringsAsFactors = FALSE)
 
+library(ggplot2)
+
 if(length(grep("lizzie", getwd()) > 0)) {
   setwd("/Users/lizzie/Documents/git/projects/egret/analyses")
 } else if(length(grep("Xiaomao", getwd()) > 0)) {
@@ -117,7 +119,6 @@ length(table(minmax$datasetIDstudycount)) # boff, 640 unique things happened -- 
 
 onestudy <- subset(minmax, datasetIDstudy=="li21exp4")
 
-library(ggplot2)
 ggplot(onestudy, aes(x=as.numeric(chemicalConcent), y=as.numeric(responseValueNum))) + 
   geom_point() + 
   facet_wrap(counter~.)
@@ -175,7 +176,7 @@ for(j in c(1:length(colztocontrol))){
 }
 
 countingstuff[with(countingstuff, order(-howmanystudies)),]
-whathappened[with(whathappened, order(-chemical)),]
+# whathappened[with(whathappened, order(-chemical)),]
 
 # Okay! Of 89 studies 27 vary chillDuration (top hit!)
 table(minmax$chemicalCor)
@@ -227,7 +228,7 @@ minmaxbycounter <- data.frame(datasetIDstudycount=unique(pergerm$datasetIDstudyc
   datasetIDstudy=rep(NA, howmanypergerm), counter=rep(NA, howmanypergerm),
   min=rep(NA, howmanypergerm), max=rep(NA, howmanypergerm),
   minChemCon=rep(NA, howmanypergerm), maxChemCon=rep(NA, howmanypergerm),
-  minChem=rep(NA, howmanypergerm), maxChem=rep(NA, howmanypergerm),
+  chemical=rep(NA, howmanypergerm), # I already loop over this so there is ONLY one chemical per counter
   minrows=rep(NA, howmanypergerm), maxrows=rep(NA, howmanypergerm))
 
 for(studyhere in seq_along(pergermstudiescount)){
@@ -238,54 +239,32 @@ for(studyhere in seq_along(pergermstudiescount)){
   minmaxbycounter$max[studyhere] <- max(subby$responseValueNum, na.rm=TRUE)
   minmaxbycounter$minChemCon[studyhere] <- subby$chemicalConcent[which(subby$responseValueNum==min(subby$responseValueNum, na.rm=TRUE))][1]
   minmaxbycounter$maxChemCon[studyhere] <- subby$chemicalConcent[which(subby$responseValueNum==max(subby$responseValueNum, na.rm=TRUE))][1]
-  minmaxbycounter$minChem[studyhere] <- subby$chemicalCor[which(subby$responseValueNum==min(subby$responseValueNum, na.rm=TRUE))][1]
-  minmaxbycounter$maxChem[studyhere] <- subby$chemicalCor[which(subby$responseValueNum==max(subby$responseValueNum, na.rm=TRUE))][1]
+  minmaxbycounter$chemical[studyhere] <- subby$chemicalCor[which(subby$responseValueNum==min(subby$responseValueNum, na.rm=TRUE))][1]
   minmaxbycounter$minrows[studyhere] <- length(subby$responseValueNum==min(subby$responseValueNum, na.rm=TRUE))
   minmaxbycounter$maxrows[studyhere] <- length(subby$responseValueNum==max(subby$responseValueNum, na.rm=TRUE))
   }
 
-# START here...
-# The above is a start but it would be better to think of how to handle ties! And time-series data ... (maybe do a MERGE to grab everything?)
-# And I need to take the diffs and then get the MAX diff in response to re-do the figures (pick the biggest response)
+# TODO!! 
+# The above is a start but it would be better to think of how to handle ties! There seem to be quite a few ... 
+# And also some time-series data ... (I think perhaps do a MERGE to grab everything?)
 
-## STILL WORKING BELOW!!!
+minmaxbycounter$respDiff <- minmaxbycounter$max-minmaxbycounter$min
+minmaxbycounter$chemicalConcentDiff <- as.numeric(minmaxbycounter$maxChemCon)-as.numeric(minmaxbycounter$minChemCon)
 
-# Okay, now I need to get the max mean and go back to the minmax data...
-# I did a very quick visual check and I think this works... 
-if(FALSE){
+# Okay, now I need to get the one that is the maximum response per STUDY
 maxones <- c()
-gothruthese <- unique(meanbycounter$datasetIDstudy)
+gothruthese <- unique(minmaxbycounter$datasetIDstudy)
 
 for(datasetIDstudyhere in seq_along(gothruthese)){
-    subby <- meanbycounter[which(meanbycounter$datasetIDstudy==gothruthese[datasetIDstudyhere]),]
-    maxones[datasetIDstudyhere] <- subby$datasetIDstudycount[which(subby$meanhere==max(subby$meanhere))][1] # take the first for cases with ties (yes, this is cheap)
+    subby <- minmaxbycounter[which(minmaxbycounter$datasetIDstudy==gothruthese[datasetIDstudyhere]),]
+    maxones[datasetIDstudyhere] <- subby$datasetIDstudycount[which(subby$respDiff==max(subby$respDiff))][1] # take the first for cases with ties (yes, this is cheap)
 }
 
-# Finally ... get the min and max response from these ... 
-highestmeangerm <- pergerm[which(pergerm$datasetIDstudycount %in% maxones),]
-# Ugly way to built a dataframe!
-minmaxoneperstudy <- minmax[1,]
-minmaxoneperstudy <- minmaxoneperstudy[-1,] 
+# Make a column for the max ...
+minmaxbycounter$maxone <- rep("N", nrow(minmaxbycounter))
+minmaxbycounter$maxone[which(minmaxbycounter$datasetIDstudycount %in% maxones)] <- "Y"
 
-diffs <- data.frame(datasetIDstudy=character(), respDiff=numeric(),
-  chemicalConcentDiff=numeric(), chemical=character()
-  )
-
-for(studyhere in seq_along(unique(highestmeangerm$datasetIDstudy))){
-  subby <- highestmeangerm[which(highestmeangerm$datasetIDstudy==unique(highestmeangerm$datasetIDstudy)[studyhere]),]
-  minmaxoneperstudy <- rbind(minmaxoneperstudy,
-    subby[which(subby$responseValueNum==max(subby$responseValueNum)),],
-    subby[which(subby$responseValueNum==min(subby$responseValueNum)),]) # now you get both rows when there is a duplicate ...
-    diffsadd <- data.frame(datasetIDstudy=unique(highestmeangerm$datasetIDstudy)[studyhere],
-      respDiff=subby$responseValueNum[which(subby$responseValueNum==max(subby$responseValueNum))][1]-
-        subby$responseValueNum[which(subby$responseValueNum==min(subby$responseValueNum))][1],
-      chemicalConcentDiff=mean(as.numeric(subby$chemicalConcent[which(subby$responseValueNum==max(subby$responseValueNum))]))-
-        mean(as.numeric(subby$chemicalConcent[which(subby$responseValueNum==min(subby$responseValueNum))])),
-      chemical=subby$chemical[1])
-    diffs <- rbind(diffs,diffsadd)
-  }
-
-ggplot(diffs, aes(x=chemicalConcentDiff, y=respDiff)) + # color=datasetIDstudy
+# And I finally plot this ... 
+ggplot(minmaxbycounter, aes(x=chemicalConcentDiff, y=respDiff, color=maxone)) +
   geom_point() + 
   facet_wrap(chemical~., scales="free")
-}
