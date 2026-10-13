@@ -979,6 +979,44 @@ mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
                                  dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)))
 
 
+## Prior predictive checks -----------------------------------------------------
+a_z <- rnorm(1e6, -2, 0.25)
+
+mu <- boot::inv.logit(a_z)
+k <- 10
+
+germperc <- rbeta(1e6, mu*k, (1-mu)*k)
+
+hist(germperc, breaks = 50, main = '', 
+     col = '#ef350090', border = 'white')
+
+# this makes sense! It says that 95% of the seeds would have a 33% germination before any treatment is done, including forcing. Quite high, but whatever
+round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
+
+# now, let's add species and provenance effects!
+n <- 1e6
+
+# absotulte because sd can't be negative
+sigma_a <- abs(rnorm(n, 0, 0.5))
+sp_offset <- rnorm(n, 0, sigma_a)
+
+# assuming a smaller deviation for provenance
+sigma_a_prov <- abs(rnorm(n, 0, 0.5))
+prov_offset <- rnorm(n, 0, sigma_a_prov)
+
+mu <- boot::inv.logit(a_z + sp_offset + prov_offset)
+k <- 10
+
+alpha_shape <- mu*k
+beta_shape <- (1-mu) *k
+
+germperc <- rbeta(n, alpha_shape, beta_shape)
+
+hist(germperc, breaks = 50, main = '', 
+     col = '#ef350090', border = 'white')
+
+round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
+
 if(runmodels){
   smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo_noforcing_noZ.stan")
   fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data, init = 0,

@@ -167,11 +167,11 @@ model {
     // y_prop[n] ~ beta_proportion(inv_logit(calc_prop[n]),kappa);
     target += beta_proportion_lpdf(y_prop[n] | inv_logit(calc_prop[n]),kappa);
   }
-  
+    
   // priors
   a_z ~ normal(0, 5);
-  bt_z ~ normal(0.5, 1); 
-  bcs_z ~ normal(0.5, 1); 
+  bt_z ~ normal(0, 1); 
+  bcs_z ~ normal(0, 1); 
   
   // increasing priors to check non scaled values
   sigma_a ~ normal(0, 3);
