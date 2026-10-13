@@ -171,8 +171,9 @@ cphy <- vcv.phylo(phylo,corr=TRUE)
 
 dg$numspp = as.integer(factor(dg$latbi, levels = colnames(cphy)))
 
-dg$chillDurationS <- scale(dg$chillDuration)
-dg$tempDayS <- scale(dg$germTempGen)
+#dg$chillDurationS <- scale(dg$chillDuration)
+#dg$tempDayS <- scale(dg$germTempGen)
+dg$chillDurationBW <- dg$chillDuration/14
 
 mdl.dataGym <- list(N_degen = sum(dg$responseValue %in% c(0,1)),
                      N_prop = sum(dg$responseValue>0 & dg$responseValue<1),
@@ -188,14 +189,14 @@ mdl.dataGym <- list(N_degen = sum(dg$responseValue %in% c(0,1)),
                      y_prop = array(dg$responseValue[dg$responseValue>0 & dg$responseValue<1],
                                     dim = sum(dg$responseValue>0 & dg$responseValue<1)),
                      
-                     c_degen = array(dg$chillDurationS[dg$responseValue %in% c(0,1)],
+                     c_degen = array(dg$chillDurationBW[dg$responseValue %in% c(0,1)],
                                      dim = sum(dg$responseValue%in% c(0,1))),
-                     c_prop = array(dg$chillDurationS[dg$responseValue>0 & dg$responseValue<1],
+                     c_prop = array(dg$chillDurationBW[dg$responseValue>0 & dg$responseValue<1],
                                     dim = sum(dg$responseValue>0 & dg$responseValue<1)),
                      
-                     f_degen = array(dg$tempDayS[dg$responseValue %in% c(0,1)],
+                     f_degen = array(dg$germTempGen[dg$responseValue %in% c(0,1)],
                                      dim = sum(dg$responseValue%in% c(0,1))),
-                     f_prop = array(dg$tempDayS[dg$responseValue>0 & dg$responseValue<1],
+                     f_prop = array(dg$germTempGen[dg$responseValue>0 & dg$responseValue<1],
                                     dim = sum(dg$responseValue>0 & dg$responseValue<1)),
                      Vphy = cphy)
 
