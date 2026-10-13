@@ -36,7 +36,9 @@ if(length(grep("deirdre", getwd()) > 0)) {
   setwd('~/projects/egret/analyses')
 } 
 
-source("analyseBudSeed/prepEgretUsda.R")
+# source("analyseBudSeed/prepEgretUsda.R")
+
+d <- read.csv("output/egretUSDA.csv", header = TRUE)
 # removing the rows with incomplete data:
 d <- d[complete.cases(d),] 
 
@@ -130,7 +132,7 @@ init_fun <- function() {
 }
 
 fit <- sampling(smordbeta, mdl.dataAngio, 
-                iter = 4000, warmup = 3000,
+                iter = 1000, warmup = 500,
                 chains = 4, init = init_fun)
 
 summ <- data.frame(summary(fit)[["summary"]])

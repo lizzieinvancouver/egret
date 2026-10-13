@@ -173,4 +173,6 @@ usdaData$responseValue <- usdaData$responseValue/100
 
 d <- rbind(usdaData, egretData)
 
+write.csv(d,"output/egretUSDA.csv", row.names = FALSE)
+
 #length(unique(d$latbi)) #568 spp if left incomplete
