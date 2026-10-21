@@ -5,15 +5,10 @@
 functions {
   matrix lambda_vcv(matrix vcv, real lambda, real sigma){
     matrix[rows(vcv),cols(vcv)] local_vcv;
-   // matrix[rows(vcv),cols(vcv)] sigma_mat;  
     local_vcv = vcv * lambda;
     for(i in 1:rows(local_vcv))
       local_vcv[i,i] = vcv[i,i];
       return(quad_form_diag(local_vcv, rep_vector(sigma, rows(vcv))));
-    //sigma_mat = diag_matrix(rep_vector(sigma, rows(vcv)));
-    //return(sigma_mat * local_vcv * sigma_mat);
-    
-    
   }
   
   // prior from Michael Betancourt for ordered cutpoints
@@ -77,8 +72,8 @@ data {
   
   //combined slope model:
   int<lower=0> N_shared;
-  array[N_shared] int shared_sp_ospree;
-  array[N_shared] int shared_sp_egret;
+  array[N_shared] int shared_sp;
+  // array[N_shared] int shared_sp_egret;
 
 }
 
@@ -126,9 +121,9 @@ parameters {
   real a_z_ospree;
   
   // for the combined 
+   real a_both;
+   real b_both;
   
-  real b_both;
-  real a_both;
   real<lower=0> sigma_y_both; 
 
 }
@@ -158,8 +153,6 @@ transformed parameters{
   for(i in 1:N_prop){
     
     calc_prop[i] = a_egret[sp_prop[i]] + bc_egret[sp_prop[i]] * c_prop[i] + bf_egret[sp_prop[i]] * f_prop[i];
-  
-
 }
 
 }
@@ -223,23 +216,11 @@ model {
   
   kappa ~ exponential(.1); // 
   
-  //ospree
-//  array[N_ospree] real y_ospree_hat;
-//        
-        matrix[N_ospreeSp,N_ospreeSp] vcv_a_ospree;     // phylogeny
-        matrix[N_ospreeSp,N_ospreeSp] vcv_bf_ospree;     // phylogeny
-        matrix[N_ospreeSp,N_ospreeSp] vcv_bc_ospree;     // phylogeny
-        matrix[N_ospreeSp,N_ospreeSp] vcv_bp_ospree;     // phylogeny
-// 
-//        
-//        	for(i in 1:N_ospree){
-//             y_ospree_hat[i] = 
-// 	      a_ospree[spOspree[i]] 
-// 	      + b_force_ospree[spOspree[i]] * x1_ospree[i] 
-// 	      + b_chill_ospree[spOspree[i]] * x2_ospree[i] 
-// 	      + b_photo_ospree[spOspree[i]] * x3_ospree[i];
-// 			     	}
-  
+  matrix[N_ospreeSp,N_ospreeSp] vcv_a_ospree;     // phylogeny
+  matrix[N_ospreeSp,N_ospreeSp] vcv_bf_ospree;     // phylogeny
+  matrix[N_ospreeSp,N_ospreeSp] vcv_bc_ospree;     // phylogeny
+  matrix[N_ospreeSp,N_ospreeSp] vcv_bp_ospree;     // phylogeny
+
 	vcv_a_ospree = cholesky_decompose(lambda_vcv(Vphy_ospree, lam_interceptsa_ospree, sigma_interceptsa_ospree));
   vcv_bf_ospree = cholesky_decompose(lambda_vcv(Vphy_ospree, lam_interceptsbf_ospree, sigma_interceptsbf_ospree));
   vcv_bc_ospree = cholesky_decompose(lambda_vcv(Vphy_ospree, lam_interceptsbc_ospree, sigma_interceptsbc_ospree));
@@ -254,39 +235,93 @@ model {
   y_ospree ~ normal(y_ospree_hat, sigma_y_ospree);
 
  // Priors -- keep in Stan code, better for reproducibility and runs faster
-    a_z_ospree ~ normal(30, 10); // Same as before, seems okay
-    b_zf_ospree ~ normal(-2, 10); // updated prior ... I think we should also try 0, 10
-    b_zc_ospree ~ normal(-2, 10); // updated prior
-    b_zp_ospree ~ normal(0, 5); // updated prior
+  a_z_ospree ~ normal(30, 10); // Same as before, seems okay
+  b_zf_ospree ~ normal(-2, 10); // updated prior ... I think we should also try 0, 10
+  b_zc_ospree ~ normal(-2, 10); // updated prior
+  b_zp_ospree ~ normal(0, 5); // updated prior
 
     // All below: same as before, seems okay
-    lam_interceptsa_ospree ~ beta(1, 1);
-    lam_interceptsbf_ospree ~ beta(1, 1);
-    lam_interceptsbc_ospree~ beta(1, 1);
-    lam_interceptsbp_ospree ~ beta(1, 1);
+  lam_interceptsa_ospree ~ beta(1, 1);
+  lam_interceptsbf_ospree ~ beta(1, 1);
+  lam_interceptsbc_ospree~ beta(1, 1);
+  lam_interceptsbp_ospree ~ beta(1, 1);
 
     // I don't have a good sense of how to set these, so keeping a little wide
-    sigma_interceptsa_ospree ~ normal(30, 20);
-    sigma_interceptsbf_ospree ~ normal(1, 5);
-    sigma_interceptsbc_ospree ~ normal(1, 5);
-    sigma_interceptsbp_ospree ~ normal(1, 5);
+  sigma_interceptsa_ospree ~ normal(30, 20);
+  sigma_interceptsbf_ospree ~ normal(1, 5);
+  sigma_interceptsbc_ospree ~ normal(1, 5);
+  sigma_interceptsbp_ospree ~ normal(1, 5);
     
-    sigma_y_ospree ~ normal(10, 10); // updated prior
+  sigma_y_ospree ~ normal(10, 10); // updated prior
     
     // New combined model:
+  vector[N_shared] mu;
+  
+for(i in 1:N_shared){
+     mu[i]= a_both + b_both * b_force_ospree[shared_sp[i]];
+  } 
+  
+  a_both ~ normal(10, 10); // values from the extracted analysis
+  b_both ~ normal(0, 10); // Add value
+  sigma_y_both ~ normal(1,10); // Add value
+  
     
-    //zero one of whether they agree and then index on that to subset down
-    // in transformed data build the spp set the is the zero and 1
-//     for (i in 1:N_degen) {
-//   if (sp_shared_egret == 1) {
-//     // use species_effect[species_id[i]]
-//   }
-// }
-   vector[N_shared] mu;
-   
-    mu = a_both + b_both * b_force_ospree[shared_sp_ospree];
-    
-    bf_egret[shared_sp_egret] ~ normal(mu, sigma_y_both);
+  bf_egret[shared_sp] ~ normal(mu, sigma_y_both);
 
 }
+
+
+generated quantities {
+  
+  array[N_prop] real y_prop_gen;
+  array[N_degen] real y_degen_gen;
+  
+  array[N_ospree] real y_ospree_gen;
+  
+  array[N_shared] real y_both_gen;
+  
+  real logisticvariate;
+  
+  if(N_degen>0) {
+    for(i in 1:N_degen) {
+      
+      logisticvariate = ordered_logistic_rng(calc_degen[i] ,cutpoints);
+       
+      if(logisticvariate==1) {
+        y_degen_gen[i] = 0;
+      } else if(logisticvariate==3) {
+        y_degen_gen[i] = 1;
+      } else {
+        y_degen_gen[i] = beta_proportion_rng(inv_logit(calc_degen[i]),kappa);
+      }
+    
+    }
+  }
+  for(i in 1:N_prop) {
+      
+    logisticvariate = ordered_logistic_rng(calc_prop[i] ,cutpoints);
+       
+    if(logisticvariate==1) {
+        y_prop_gen[i] = 0;
+    } else if(logisticvariate==3) {
+        y_prop_gen[i] = 1;
+    } else {
+        y_prop_gen[i] = beta_proportion_rng(inv_logit(calc_prop[i]),kappa);
+    }
+  }
+  
+    for (i in 1:N_ospree){
+    y_ospree_gen[i] = normal_rng(a_ospree[spOspree[i]] 
+	      + b_force_ospree[spOspree[i]] * x1_ospree[i] 
+	      + b_chill_ospree[spOspree[i]] * x2_ospree[i] 
+	      + b_photo_ospree[spOspree[i]] * x3_ospree[i], sigma_y_ospree);
+  }
+  
+  for (i in 1:N_shared){
+    y_both_gen[i] = normal_rng(a_both +
+    b_both* b_force_ospree[shared_sp[i]], sigma_y_both);
+  }
+} 
+  
+
 

@@ -97,14 +97,43 @@ ospreeShared <- unique(osp[, c("latbi", "sppnum")])
 ospreeShared <- ospreeShared[ospreeShared$latbi %in% sharedSp, ]
 ospreeShared <- ospreeShared[order(ospreeShared$latbi),]
 
+# Mikes code to fix the indexing issue:
+all_sp <- c(egretSp, ospreeSp)
+uniq_sp <- sort(unique(all_sp))
+N_sp <- length(uniq_sp)
+
+all_idxs <- factor(all_sp,  #race_entrant_f_idxs 
+                              levels=uniq_sp, 
+                              labels=1:N_sp)
+
+egret_idxs <- factor(egretSp,  #race_entrant_dnf_idxs
+                                levels=uniq_sp, 
+                                labels=seq_along(uniq_sp))
+egret_idxs <- factor(egret_idxs)
+
+temp <- data.frame(latbi = egretSp, egret_idxs = egret_idxs)
+da <- merge(da, temp, by = "latbi")
+
+ospree_idxs <- factor(ospreeSp,  #race_entrant_dnf_idxs
+                     levels=uniq_sp, 
+                     labels=seq_along(uniq_sp))
+ospree_idxs <- factor(ospree_idxs)
+temp <- data.frame(latbi = ospreeSp, ospree_idxs = ospree_idxs)
+osp <- merge(osp, temp, by = "latbi")
+
+shared_idxs <- factor(sharedSp,  #race_entrant_dnf_idxs
+                      levels=uniq_sp, 
+                      labels=seq_along(uniq_sp))
+shared_idxs <- factor(shared_idxs)
+
 # combine in data list:
 dataEO =list(
           N_degen = sum(da$responseValue %in% c(0,1)),
           N_prop = sum(da$responseValue>0 & da$responseValue<1),
           N_spEgret =  length(unique(da$latbi)),
-          sp_degen = array(da$numspp[da$responseValue %in% c(0,1)],
+          sp_degen = array(da$egret_idxs[da$responseValue %in% c(0,1)],
                    dim = sum(da$responseValue%in% c(0,1))),
-          sp_prop = array(da$numspp[da$responseValue>0 & da$responseValue<1],
+          sp_prop = array(da$egret_idxs[da$responseValue>0 & da$responseValue<1],
                   dim = sum(da$responseValue>0 & da$responseValue<1)),
           y_degen = array(da$responseValue[da$responseValue %in% c(0,1)],
                   dim = sum(da$responseValue%in% c(0,1))),
@@ -121,17 +150,18 @@ dataEO =list(
           Vphy_egret = cphy,
           N_ospree = nrow(osp),
           N_ospreeSp = nspeciesO,
-          spOspree = osp$sppnum,
+          spOspree = as.numeric(osp$ospree_idxs),
           x1_ospree = osp$force.z,
           x2_ospree = osp$chill.z,
           x3_ospree = osp$photo.z,
           y_ospree = osp$resp,
           Vphy_ospree = vcv(phyloO, corr = TRUE),
-          shared_sp_ospree = ospreeShared$sppnum,
-          shared_sp_egret = egretShared$numspp,
-          shared_sp = as.numeric(factor(sharedSp)),
+          shared_sp = as.numeric(shared_idxs),
+          # shared_sp_egret = egretShared$numspp,
+          # shared_sp = as.numeric(factor(sharedSp)),
           N_shared = length(sharedSp)
             )
+
 
 fit <- stan("stan/ospreeEgretMdl.stan",
             data = dataEO,
@@ -141,7 +171,7 @@ fit <- stan("stan/ospreeEgretMdl.stan",
 
 
 summ <- data.frame(summary(fit)[["summary"]])
-sampler_params  <- get_sampler_params(fitOspree, inc_warmup = FALSE)
+sampler_params  <- get_sampler_params(fit, inc_warmup = FALSE)
 diagnostics <- list(
   max_treedepth= max(sapply(sampler_params, function(x) max(x[, "treedepth__"]))),
   max_divergence = max(sapply(sampler_params, function(x) sum(x[, "divergent__"]))),
@@ -159,7 +189,7 @@ source('mcmc_visualization_tools.R', local=util)
 source('analyseBudSeed/stan_utility.R')
 
 ## Angiosperm
-fit <- readRDS("analyseBudSeed/output/fit_combinedMdl_fitOspree.rds")
+fit <- readRDS("analyseBudSeed/output/fit_combinedMdl_Sept30.rds")
 summ <- readRDS("analyseBudSeed/output/summary_combinedMdl_fitOspree.rds")
 diagnostics <- readRDS("analyseBudSeed/output/diagnostics_combinedMdl_fitOspree.rds")
 
@@ -188,7 +218,7 @@ util$plot_hist_quantiles(preds, 'y_gen', 0, 1, 0.1,
 dev.off()
 # Posterior inference
 pdf("analyseBudSeed/figures/retroDic_indivParam.pdf")
-par(mfrow=c(5, 5), mar = c(4,4,1,1))
+par(mfrow=c(4,4), mar = c(4,4,1,1))
 
 util$plot_expectand_pushforward(samples[['a_z_egret']], 20,
                                 display_name = "a_z_egret")
@@ -212,40 +242,40 @@ util$plot_expectand_pushforward(samples[['sigma_bf_egret']], 20,
                                 flim = c(0,6),
                                 display_name="sigma_bf_egret")
 util$plot_expectand_pushforward(samples[['lam_interceptsa_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(-1,1),
                                 display_name="lam_interceptsa_ospree")
 util$plot_expectand_pushforward(samples[['lam_interceptsbc_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(-1,2),
                                 display_name="lam_interceptsbc_ospree")
 util$plot_expectand_pushforward(samples[['lam_interceptsbf_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(-1,2),
                                 display_name="lam_interceptsbf_ospree")
 util$plot_expectand_pushforward(samples[['lam_interceptsbp_ospree']], 20,
                                 flim = c(0,6),
                                 display_name="lam_interceptsbp_ospree")
 util$plot_expectand_pushforward(samples[['b_zf_ospree']], 20, # weird
-                                flim = c(0,6),
+                                flim = c(-20,10),
                                 display_name="b_zf_ospree")
 util$plot_expectand_pushforward(samples[['b_zc_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(-20,20),
                                 display_name="b_zc_ospree")
 util$plot_expectand_pushforward(samples[['b_zp_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(-30,6),
                                 display_name="b_zp_ospree")
 util$plot_expectand_pushforward(samples[['a_z_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(-1,50),
                                 display_name="a_z_ospree")
 util$plot_expectand_pushforward(samples[['sigma_y_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(10,15),
                                 display_name="sigma_y_ospree")
 util$plot_expectand_pushforward(samples[['sigma_interceptsa_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(10,30),
                                 display_name="sigma_interceptsa_ospree")
 util$plot_expectand_pushforward(samples[['sigma_interceptsbf_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(0,15),
                                 display_name="sigma_interceptsbf_ospree")
 util$plot_expectand_pushforward(samples[['sigma_interceptsbc_ospree']], 20,
-                                flim = c(0,6),
+                                flim = c(0,16),
                                 display_name="sigma_interceptsbc_ospree")
 util$plot_expectand_pushforward(samples[['sigma_interceptsbp_ospree']], 20,
                                 flim = c(0,6),
@@ -263,22 +293,17 @@ diagnostics <- util$extract_hmc_diagnostics(fit)
 util$check_all_expectand_diagnostics(diagnostics)
 
 samples <- util$extract_expectand_vals(fit)
-samples$a_both
 
-pdf("analyseBudSeed/figures/retroDic_divTrans.pdf")
-util$plot_div_pairs()
-dev.off()
 
+pdf("analyseBudSeed/figures/retroDic_divTrans_Oct2.pdf")
 util$plot_div_pairs('a_both', 'b_both', samples, diagnostics)
 util$plot_div_pairs('sigma_y_both', 'b_both', samples, diagnostics)
 util$plot_div_pairs('sigma_y_both', 'a_both', samples, diagnostics)
-
-util$plot_div_pairs('a_egret[100]', 'a_both', samples, diagnostics)
-util$plot_div_pairs('a_ospree[1]', 'a_both', samples, diagnostics)
-util$plot_div_pairs('a_egret[1]', 'b_both', samples, diagnostics)
-
-
+util$plot_div_pairs('a_egret[100]', 'bf_egret[100]', samples, diagnostics)
+util$plot_div_pairs('a_ospree[100]', 'b_force_ospree[100]', samples, diagnostics)
+dev.off()
 ##### old school plots:
+
 post <- rstan::extract(fit)
 par(mfrow=c(1,1), mar = c(4,4,1,1))
 
@@ -295,9 +320,9 @@ hist(rnorm(1000, 0,1), col=rgb(1,0,1,1/4), add = T)
 
 ###### Pairs plots ############################
 
-pairs(fit, pars = c("a_both", "b_both", "sigma_y_both", "lp__")) 
-
-y <- post$bf_egret
+pairs(fit, pars = c("b_zf_ospree","bf_z_egret","a_both", "b_both", "sigma_y_both", "lp__")) 
+post$b_
+y <- post$bf_z_egret
 
 y.ext <- post$y_both_gen
 
