@@ -978,10 +978,98 @@ mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
                  cs_prop = array(modeld_noforc2$coldStratDur[modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1],
                                  dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)))
 
+# scale predictors to initilization is easier
+mdl.data$t_degen <- mdl.data$t_degen
+mdl.data$t_prop <- mdl.data$t_prop
+mdl.data$cs_degen <- mdl.data$cs_degen
+mdl.data$cs_prop <- mdl.data$cs_prop
+
+## Prior predictive checks -----------------------------------------------------
+a_z <- rnorm(1e6, -2, 0.25)
+
+mu <- boot::inv.logit(a_z)
+k <- 10
+
+germperc <- rbeta(1e6, mu*k, (1-mu)*k)
+
+hist(germperc, breaks = 50, main = '', 
+     col = '#ef350090', border = 'white')
+
+# this makes sense! It says that 95% of the seeds would have a 33% germination before any treatment is done, including forcing. Quite high, but whatever
+round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
+
+# now, let's add species and provenance effects!
+n <- 1e6
+
+# absotulte because sd can't be negative
+sigma_a <- abs(rnorm(n, 0, 0.5))
+sp_offset <- rnorm(n, 0, sigma_a)
+
+# assuming a smaller deviation for provenance
+sigma_a_prov <- abs(rnorm(n, 0, 0.5))
+prov_offset <- rnorm(n, 0, sigma_a_prov)
+
+mu <- boot::inv.logit(a_z + sp_offset + prov_offset)
+k <- 10
+
+alpha_shape <- mu*k
+beta_shape <- (1-mu) *k
+
+germperc <- rbeta(n, alpha_shape, beta_shape)
+
+hist(germperc, breaks = 50, main = '', 
+     col = '#ef350090', border = 'white')
+
+round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
 
 if(runmodels){
   smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo_noforcing_noZ.stan")
-  fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data, init = 0,
+  fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data, 
+                                  init = 0,
                                   iter = 2000, warmup = 1000, chains = 4)
   # saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing_noZ.rds")
 }
+
+## Prior vs posterior ----
+pal <- c("#E54E21", "#6C8645")
+post <- rstan::extract(fit_nophy_noforcing)
+
+# prior draws: these must match the priors written in the .stan file you fit
+n <- 1e6
+prior_a_z <- rnorm(n, -2, 0.25)
+prior_sigma_a <- abs(rnorm(n, 0, 0.5))
+prior_sigma_a_prov <- abs(rnorm(n, 0, 0.5))
+
+par(mfrow = c(2, 2))
+
+# a_z
+plot(density(prior_a_z), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_a_z", 
+     xlab = "a_z", ylim = c(0, 4))
+lines(density(post$a_z), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
+
+# sigma_a
+plot(density(prior_sigma_a), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_sigma_a", 
+     xlab = "sigma_a", ylim = c(0, 4))
+lines(density(post$sigma_a), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
+
+# sigma_a_prov
+plot(density(prior_sigma_a_prov), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_sigma_a_prov", 
+     xlab = "sigma_a_prov", ylim = c(0, 4))
+lines(density(post$sigma_a_prov), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
+
+# mu at t = 0, cs = 0
+plot(density(boot::inv.logit(prior_a_z)), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_mu", 
+     xlab = "mu (t = 0, cs = 0)", ylim = c(0, 20))
+lines(density(boot::inv.logit(post$a_z)), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
