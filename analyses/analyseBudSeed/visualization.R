@@ -35,7 +35,8 @@ util <- new.env()
 source('mcmc_analysis_tools_rstan.R', local=util)
 source('mcmc_visualization_tools.R', local=util)
 
-## Angiosperm
+#Scaled data ----
+## Angiosperm ----
 fit <- readRDS("analyseBudSeed/output/fit_full_angio.rds")
 summ <- readRDS("analyseBudSeed/output/summary_full_angio.rds")
 diagnostics <- readRDS("analyseBudSeed/output/diagnostics_full_angio.rds")
@@ -47,7 +48,7 @@ base_samples <- util$filter_expectands(samples,
                                        check_arrays=TRUE)
 util$check_all_expectand_diagnostics(base_samples)
 
-# Retrodictive check
+### Retrodictive check ----
 par(mfrow=c(1, 1), mar = c(4,4,2,2))
 names <- c(sapply(1:mdl.dataAngio$N_prop, function(n) paste0('y_prop_gen[',n,']')),
            sapply(1:mdl.dataAngio$N_degen, function(n) paste0('y_degen_gen[',n,']')))
@@ -57,7 +58,7 @@ util$plot_hist_quantiles(preds, 'y_gen', 0, 1, 0.1,
                          baseline_values=c(mdl.dataAngio$y_prop, mdl.dataAngio$y_degen), 
                          xlab="Germination perc.")
 
-# Posterior inference
+### Posterior inference ----
 par(mfrow=c(3, 2), mar = c(4,4,1,1))
 util$plot_expectand_pushforward(samples[['sigma_a']], 20,
                                 flim = c(0,6),
@@ -102,7 +103,8 @@ dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PYPD
 dormancyCombined1$Dormancy.Class[which(dormancyCombined1$Dormancy.Class == "PD, ND")] <- "PD"
 
 
-# Plot for chilling
+### Plot for parameters ----
+#### Chilling ----
 parameter_bc <- c("bc_z", names(fit)[grep("^bc\\[", names(fit))])
 stats <- summary(fit, pars = parameter_bc, probs = c(0.25, 0.75))$summary
 
@@ -144,7 +146,7 @@ ggplot(df_bc, aes(x = mean, y = name)) +
 dev.off()
 
 
-# Plot for forcing
+#### Forcing ----
 parameter_bf <- c("bf_z", names(fit)[grep("^bf\\[", names(fit))])
 stats <- summary(fit, pars = parameter_bf, probs = c(0.25, 0.75))$summary
 
@@ -172,10 +174,9 @@ df_bf$name <- gsub("_", " ", df_bf$name)
 colnames(df_bf)[9] <- "Type"
 df_bf$name <- factor(df_bf$name, levels = rev(df_bf$name))
 
-
 pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullForcingAngio.pdf", width = 20, height = 50)
 ggplot(df_bf, aes(x = mean, y = name)) +
-  geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
+  geom_errorbar(aes(xmin = low, xmax = high, color = Type), 
                 width = 0,
                 linewidth = 1.5) +
   geom_point(size = 2.5) +
@@ -183,12 +184,12 @@ ggplot(df_bf, aes(x = mean, y = name)) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
   
   scale_color_manual(values = c("Global Mean" = "firebrick", "Species" = "black")) +
-  labs(title = "bf",
+  labs(title = "Effect of forcing",
        x = "Posterior Estimate", y = NULL) +
   theme_minimal()
 dev.off()
 
-# intercept
+#### Intercept ----
 parameter_a <- c("a_z", names(fit)[grep("^a\\[", names(fit))])
 stats <- summary(fit, pars = parameter_a, probs = c(0.25, 0.75))$summary
 
@@ -219,7 +220,7 @@ df_a$name <- factor(df_a$name, levels = rev(df_a$name))
 
 pdf("analyseBudSeed/figures/fullInterceptAngio.pdf", width = 20, height = 50)
 ggplot(df_a, aes(x = mean, y = name)) +
-  geom_errorbar(aes(xmin = low, xmax = high, color = is_mean), 
+  geom_errorbar(aes(xmin = low, xmax = high, color = Type), 
                 width = 0,
                 linewidth = 1.5) +
   geom_point(size = 2.5) +
@@ -227,12 +228,13 @@ ggplot(df_a, aes(x = mean, y = name)) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
   
   scale_color_manual(values = c("Global Mean" = "firebrick", "Species" = "black")) +
-  labs(title = "a",
+  labs(title = "Intercept",
        x = "Posterior Estimate", y = NULL) +
   theme_minimal()
 dev.off()
 
-### Make a boxplot showing different dormancy classes for angiosperm
+#### By dormancy class ----
+#Make a boxplot showing different dormancy classes for angiosperm
 df_bc <- df_bc %>%
   left_join(dormancyCombined1, by = c("name" = "Genus_species"))
 df_bc_Dorm <- df_bc[!is.na(df_bc$Dormancy.Class), ]
@@ -286,7 +288,8 @@ ggplot(globalMean, aes(x = mean, y = parameter)) +
   theme_minimal() +
   scale_y_discrete(limits = rev)  
 dev.off()
-# Lambda
+
+#### Lambda ----
 parameter_lambda <- c(names(fit)[grep("lambda", names(fit))])
 stats <- summary(fit, pars = parameter_lambda, probs = c(0.25, 0.75))$summary
 lambda <- as.data.frame(stats)
@@ -314,6 +317,7 @@ ggplot(lambda, aes(x = mean, y = parameter)) +
   scale_y_discrete(limits = rev)  
 dev.off()
 
+#### Manual retrodictive check ----
 # visualize with raw data and predicted values from model for angio
 y_prop_hat  <- colMeans(rstan::extract(fit)$y_prop_gen)
 y_degen_hat <- colMeans(rstan::extract(fit)$y_degen_gen)
@@ -347,7 +351,7 @@ all_data <- rbind(df_prop, df_degen)
 all_data$species_name <- species_names[all_data$species_idx]
 
 
-## Gymnosperm
+## Gymnosperm ----
 dg <- gym
 phylo <- gymPhy
 subby <- unique(dg$latbi)
@@ -382,7 +386,7 @@ base_samples <- util$filter_expectands(samples,
 util$check_all_expectand_diagnostics(base_samples)
 
 
-# Retrodictive check
+### Retrodictive check ----
 par(mfrow=c(1, 1), mar = c(4,4,2,2))
 names <- c(sapply(1:mdl.dataUSDA$N_prop, function(n) paste0('y_prop_gen[',n,']')),
            sapply(1:mdl.dataUSDA$N_degen, function(n) paste0('y_degen_gen[',n,']')))
@@ -392,7 +396,7 @@ util$plot_hist_quantiles(preds, 'y_gen', 0, 1, 0.1,
                          baseline_values=c(mdl.dataUSDA$y_prop, mdl.dataUSDA$y_degen), 
                          xlab="Germination perc.")
 
-# Posterior inference
+### Posterior inference ----
 par(mfrow=c(3, 2), mar = c(4,4,1,1))
 util$plot_expectand_pushforward(samples[['sigma_a']], 20,
                                 flim = c(0,6),
@@ -419,7 +423,8 @@ lookup <- data.frame(
   species_name = species_names
 )
 
-# Plot for chilling
+### Plot for parameters ----
+#### Chilling ----
 parameter_bc <- c("bc_z", names(fit)[grep("^bc\\[", names(fit))])
 stats <- summary(fit, pars = parameter_bc, probs = c(0.25, 0.75))$summary
 
@@ -461,7 +466,7 @@ ggplot(df_bc, aes(x = mean, y = name)) +
   theme_minimal()
 dev.off()
 
-# Plot for forcing
+#### Forcing ----
 parameter_bf <- c("bf_z", names(fit)[grep("^bf\\[", names(fit))])
 stats <- summary(fit, pars = parameter_bf, probs = c(0.25, 0.75))$summary
 
@@ -503,7 +508,7 @@ ggplot(df_bf, aes(x = mean, y = name)) +
   theme_minimal()
 dev.off()
 
-# intercept
+#### Intercept ----
 parameter_a <- c("a_z", names(fit)[grep("^a\\[", names(fit))])
 stats <- summary(fit, pars = parameter_a, probs = c(0.25, 0.75))$summary
 
@@ -545,7 +550,8 @@ ggplot(df_a, aes(x = mean, y = name)) +
   theme_minimal()
 dev.off()
 
-### Make a boxplot showing different dormancy classes
+#### By dormancy class ----
+# Make a boxplot showing different dormancy classes
 df_bc <- df_bc %>%
   left_join(dormancyCombined1, by = c("name" = "Genus_species"))
 df_bc_Dorm <- df_bc[!is.na(df_bc$Dormancy.Class), ]
@@ -602,7 +608,7 @@ ggplot(globalMean, aes(x = mean, y = parameter)) +
   scale_y_discrete(limits = rev)  
 dev.off()
 
-# Lambda
+#### Lambda ----
 parameter_lambda <- c(names(fit)[grep("lambda", names(fit))])
 stats <- summary(fit, pars = parameter_lambda, probs = c(0.25, 0.75))$summary
 lambda <- as.data.frame(stats)
@@ -1163,4 +1169,156 @@ points(
   cex = 0.8
 )
 
+dev.off()
+
+
+# Natural unit ----
+## Angiosperm ----
+fit <- readRDS("analyseBudSeed/output/fit_full_angio_natural.rds")
+summ <- readRDS("analyseBudSeed/output/summary_full_angio_natural.rds")
+
+diagnostics <- util$extract_hmc_diagnostics(fit)
+samples <- util$extract_expectand_vals(fit)
+print(util$check_all_hmc_diagnostics(diagnostics))
+
+base_samples <- util$filter_expectands(samples,
+                                       c('a_z', 'lambda_a', 'sigma_a', 'a', 'bf_z', 'lambda_bf', 'sigma_bf', 'bf','cutpoints', 'kappa'),
+                                       check_arrays=TRUE)
+util$check_all_expectand_diagnostics(base_samples)
+
+species_names <- tapply(da$latbi, da$numspp, unique)
+species_names <- as.character(species_names)
+
+# Create a data frame that maps the index to the Name
+lookup <- data.frame(
+  index = 1:length(species_names),
+  species_name = species_names
+)
+### Plot for parameters ----
+#### Chilling ----
+parameter_bc <- c("bc_z", names(fit)[grep("^bc\\[", names(fit))])
+stats <- summary(fit, pars = parameter_bc, probs = c(0.25, 0.75))$summary
+
+df_bc <- as.data.frame(stats)
+df_bc$parameter <- rownames(df_bc)
+
+colnames(df_bc)[grep("25%", colnames(df_bc))] <- "low"
+colnames(df_bc)[grep("75%", colnames(df_bc))] <- "high"
+
+
+df_bc$is_mean <- ifelse(df_bc$parameter == "bc_z", "Global Mean", "Species")
+
+# making new columns to separate global mean and sp level mean
+df_bc$index <- as.numeric(gsub("\\D", "", df_bc$parameter))
+df_bc$name <- ifelse(is.na(df_bc$index), 
+                     "Global Mean", 
+                     species_names[df_bc$index])
+df_bc <- df_bc[order(df_bc$index), ]
+df_bc <- rbind(
+  df_bc[df_bc$name == "Global Mean", ],
+  df_bc[df_bc$name != "Global Mean", ]
+)
+
+df_bc$name <- gsub("_", " ", df_bc$name)
+colnames(df_bc)[9] <- "Type"
+df_bc$name <- factor(df_bc$name, levels = rev(df_bc$name))
+
+pdf("analyseBudSeed/figures/fullChillingAngioNatural.pdf", width = 20, height = 50)
+ggplot(df_bc, aes(x = mean, y = name)) +
+  geom_errorbar(aes(xmin = low, xmax = high, color = Type), 
+                width = 0,
+                linewidth = 1.5) + 
+  scale_color_manual(values = c("Global Mean" = "firebrick", "Species" = "black")) + 
+  geom_point(size = 2.5) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
+  labs(title = "Effect of chilling",
+       x = "Posterior Estimate", y = NULL) + 
+  theme_minimal()
+dev.off()
+
+
+#### Forcing ----
+parameter_bf <- c("bf_z", names(fit)[grep("^bf\\[", names(fit))])
+stats <- summary(fit, pars = parameter_bf, probs = c(0.25, 0.75))$summary
+
+df_bf <- as.data.frame(stats)
+df_bf$parameter <- rownames(df_bf)
+
+colnames(df_bf)[grep("25%", colnames(df_bf))] <- "low"
+colnames(df_bf)[grep("75%", colnames(df_bf))] <- "high"
+
+
+df_bf$is_mean <- ifelse(df_bf$parameter == "bf_z", "Global Mean", "Species")
+
+# making new columns to separate global mean and sp level mean
+df_bf$index <- as.numeric(gsub("\\D", "", df_bf$parameter))
+df_bf$name <- ifelse(is.na(df_bf$index), 
+                     "Global Mean", 
+                     species_names[df_bf$index])
+df_bf <- df_bf[order(df_bf$index), ]
+df_bf <- rbind(
+  df_bf[df_bf$name == "Global Mean", ],
+  df_bf[df_bf$name != "Global Mean", ]
+)
+
+df_bf$name <- gsub("_", " ", df_bf$name)
+colnames(df_bf)[9] <- "Type"
+df_bf$name <- factor(df_bf$name, levels = rev(df_bf$name))
+
+pdf("C:/PhD/Project/egret/analyses/analyseBudSeed/figures/fullForcingAngioNatural.pdf", width = 20, height = 50)
+ggplot(df_bf, aes(x = mean, y = name)) +
+  geom_errorbar(aes(xmin = low, xmax = high, color = Type), 
+                width = 0,
+                linewidth = 1.5) + 
+  scale_color_manual(values = c("Global Mean" = "firebrick", "Species" = "black")) + 
+  geom_point(size = 2.5) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
+  labs(title = "Effect of forcing",
+       x = "Posterior Estimate", y = NULL) + 
+  theme_minimal()
+dev.off()
+
+
+#### Intercept ----
+parameter_a <- c("a_z", names(fit)[grep("^a\\[", names(fit))])
+stats <- summary(fit, pars = parameter_a, probs = c(0.25, 0.75))$summary
+
+df_a <- as.data.frame(stats)
+df_a$parameter <- rownames(df_a)
+
+colnames(df_a)[grep("25%", colnames(df_a))] <- "low"
+colnames(df_a)[grep("75%", colnames(df_a))] <- "high"
+
+
+df_a$is_mean <- ifelse(df_a$parameter == "a_z", "Global Mean", "Species")
+
+df_a$index <- as.numeric(gsub("\\D", "", df_a$parameter))
+
+df_a$name <- ifelse(is.na(df_a$index), 
+                    "Global Mean", 
+                    species_names[df_a$index])
+df_a <- df_a[order(df_a$index), ]
+df_a <- rbind(
+  df_a[df_a$name == "Global Mean", ],
+  df_a[df_a$name != "Global Mean", ]
+)
+
+df_a$name <- gsub("_", " ", df_a$name)
+colnames(df_a)[9] <- "Type"
+df_a$name <- factor(df_a$name, levels = rev(df_a$name))
+
+
+pdf("analyseBudSeed/figures/fullInterceptAngioNatural.pdf", width = 20, height = 50)
+ggplot(df_a, aes(x = mean, y = name)) +
+  geom_errorbar(aes(xmin = low, xmax = high, color = Type), 
+                width = 0,
+                linewidth = 1.5) +
+  geom_point(size = 2.5) +
+  
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.5) +
+  
+  scale_color_manual(values = c("Global Mean" = "firebrick", "Species" = "black")) +
+  labs(title = "a",
+       x = "Posterior Estimate", y = NULL) +
+  theme_minimal()
 dev.off()
