@@ -979,10 +979,10 @@ mdl.data <- list(N_degen = sum(modeld_noforc2$responseValueNum %in% c(0,1)),
                                  dim = sum(modeld_noforc2$responseValueNum>0 & modeld_noforc2$responseValueNum<1)))
 
 # scale predictors to initilization is easier
-mdl.data$t_degen <- mdl.data$t_degen
-mdl.data$t_prop <- mdl.data$t_prop
-mdl.data$cs_degen <- mdl.data$cs_degen
-mdl.data$cs_prop <- mdl.data$cs_prop
+mdl.data$t_degen <- mdl.data$t_degen / 10
+mdl.data$t_prop <- mdl.data$t_prop / 10
+mdl.data$cs_degen <- mdl.data$cs_degen / 10
+mdl.data$cs_prop <- mdl.data$cs_prop / 10
 
 ## Prior predictive checks -----------------------------------------------------
 a_z <- rnorm(1e6, -2, 0.25)
@@ -1025,7 +1025,7 @@ round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
 if(runmodels){
   smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo_noforcing_noZ.stan")
   fit_nophy_noforcing <- sampling(smordbeta_nophy, mdl.data, 
-                                  init = 0,
+                                  init = 1,
                                   iter = 2000, warmup = 1000, chains = 4)
   # saveRDS(fit_nophy_noforcing, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noforcing_noZ.rds")
 }
