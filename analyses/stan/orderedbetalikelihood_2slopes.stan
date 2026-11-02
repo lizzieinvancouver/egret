@@ -144,15 +144,15 @@ model {
   }
   
   // priors
-  a_z ~ normal(0, 1.5); 
-  bc_z ~ normal(0, 0.05); 
+  a_z ~ normal(-2, 0.25); 
+  bc_z ~ normal(0, 0.5); 
   bf_z ~ normal(0, 0.05); 
   
   lambda_a ~ beta(1.5, 1.5);
-  sigma_a ~ normal(0, 1);
+  sigma_a ~ normal(0, 0.5);
   
   lambda_bc ~ beta(1.5, 1.5);
-  sigma_bc ~ normal(0, 0.05);
+  sigma_bc ~ normal(0, 0.5);
   
   lambda_bf ~ beta(1.5, 1.5);
   sigma_bf ~ normal(0, 0.05);

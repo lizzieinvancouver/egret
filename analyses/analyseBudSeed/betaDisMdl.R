@@ -117,6 +117,58 @@ mdl.dataAngio <- list(N_degen = sum(da$responseValue %in% c(0,1)),
                                 dim = sum(da$responseValue>0 & da$responseValue<1)),
                  Vphy = cphy)
 
+###Prior predictive check for running the model with natural units ----
+a_z <- rnorm(1e6, -2, 0.25)
+
+mu <- boot::inv.logit(a_z)
+k <- 10
+
+germperc <- rbeta(1e6, mu*k, (1-mu)*k)
+
+hist(germperc, breaks = 50, main = '', 
+     col = '#ef350090', border = 'white')
+round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
+
+# now, let's add species effect!
+n <- 1e6
+
+# absotulte because sd can't be negative
+sigma_a <- abs(rnorm(n, 0, 0.5))
+sp_offset <- rnorm(n, 0, sigma_a)
+
+mu <- boot::inv.logit(a_z + sp_offset)
+k <- 10
+
+alpha_shape <- mu*k
+beta_shape <- (1-mu) *k
+
+germperc <- rbeta(n, alpha_shape, beta_shape)
+
+hist(germperc, breaks = 50, main = '', 
+     col = '#ef350090', border = 'white')
+
+round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
+
+chill <- 5
+bc_z <- rnorm(n, 0, 0.5)
+sigma_bc <- abs(rnorm(n, 0, 0.5))
+bc <- bc_z + rnorm(n, 0, sigma_bc)
+
+forcing <- 20
+bf_z <- rnorm(n, 0, 0.05)
+sigma_bf <- abs(rnorm(n, 0, 0.05))
+bf <- bf_z + rnorm(n, 0, sigma_bf)
+
+mu <- boot::inv.logit(a_z + sp_offset + bc * chill + bf * forcing)
+
+alpha_shape <- mu*k
+beta_shape <- (1-mu) *k
+
+germperc <- rbeta(n, alpha_shape, beta_shape)
+
+hist(germperc, breaks = 50, main = '', 
+     col = '#ef350090', border = 'white')
+
 runmodel <- FALSE
 if(runmodel){
 # Compile and run model
@@ -125,7 +177,7 @@ init_fun <- function() {
   list(
     a = rep(0, mdl.dataAngio$Nsp), a_z = 0, lambda_a = 0.5, sigma_a = 0.5,
     bc = rep(0, mdl.dataAngio$Nsp), bc_z = 0, lambda_bc = 0.5, sigma_bc = 0.5,
-    bf = rep(0, mdl.dataAngio$Nsp), bf_z = 0, lambda_bf = 0.5, sigma_bf = 0.5,
+    bf = rep(0, mdl.dataAngio$Nsp), bf_z = 0, lambda_bf = 0.5, sigma_bf = 0.05,
     cutpoints = c(-1, 1), kappa = 5
   )
 }
@@ -219,6 +271,9 @@ saveRDS(fit, file = 'analyseBudSeed/output/fit_full_gymno.rds')
 saveRDS(summ, file = 'analyseBudSeed/output/summary_full_gymno.rds')
 saveRDS(diagnostics, file = 'analyseBudSeed/output/diagnostics_full_gymno.rds')
 }
+
+
+
 diagnostic <- FALSE
 if(diagnostic){
 source('modeling/mcmc_analysis_tools_rstan.R', local=util)
