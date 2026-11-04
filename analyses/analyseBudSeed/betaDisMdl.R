@@ -169,6 +169,73 @@ germperc <- rbeta(n, alpha_shape, beta_shape)
 hist(germperc, breaks = 50, main = '', 
      col = '#ef350090', border = 'white')
 
+
+## Prior vs posterior ----
+fit <- readRDS("analyseBudSeed/output/fit_full_angio_natural.rds")
+pal <- c("#E54E21", "#6C8645")
+post <- rstan::extract(fit)
+
+# prior draws: these must match the priors written in the .stan file you fit
+n <- 1e6
+prior_a_z <- rnorm(n, -2, 0.25)
+prior_sigma_a <- abs(rnorm(n, 0, 0.5))
+prior_bc_z <- rnorm(n, 0, 0.5)
+prior_sigma_bc <- abs(rnorm(n, 0, 0.5))
+prior_bf_z <- rnorm(n, 0, 0.05)
+prior_sigma_bf <- abs(rnorm(n, 0, 0.05))
+
+par(mfrow = c(3, 2))
+
+# a_z
+plot(density(prior_a_z), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_a_z", 
+     xlab = "a_z", ylim = c(0, 4))
+lines(density(post$a_z), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
+
+# sigma_a
+plot(density(prior_sigma_a), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_sigma_a", 
+     xlab = "sigma_a", ylim = c(0, 4))
+lines(density(post$sigma_a), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
+
+# bc_z
+plot(density(prior_bc_z), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_bc_z", 
+     xlab = "bc_z")
+lines(density(post$bc_z), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
+
+# sigma_bc
+plot(density(prior_sigma_bc), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_sigma_bc", 
+     xlab = "sigma_bc")
+lines(density(post$sigma_bc), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
+
+# bf_z
+plot(density(prior_bf_z), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_bf_z", 
+     xlab = "bf_z")
+lines(density(post$bf_z), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
+
+# sigma_bf
+plot(density(prior_sigma_bf), 
+     col = pal[1], lwd = 2, 
+     main = "priorVSposterior_sigma_bf", 
+     xlab = "sigma_bf")
+lines(density(post$sigma_bf), col = pal[2], lwd = 2)
+legend("topright", legend = c("Prior", "Posterior"), col = pal, lwd = 2)
+
+
+
 runmodel <- FALSE
 if(runmodel){
 # Compile and run model
