@@ -45,6 +45,7 @@ runmodels <- FALSE
 rundecisionrules <- FALSE
 runPPC <- FALSE
 
+# this takes too long, so Ill just read a csv instead
 if(rundecisionrules){
 source('analyseSeedCues/provenance/decisionRules.R')
 write.csv(newd, "analyseSeedCues/provenance/newd.csv")
@@ -54,7 +55,7 @@ newd <- read.csv("analyseSeedCues/provenance/newd.csv")
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # Model WITH forcing ####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-##### Prep data #####
+## Prep data #####
 # (1) - removing rows where we do not have any info on forcing) 
 modeld <- newd[!is.na(newd$germDuration) & !is.na(newd$germTempGen) & newd$germDuration != 'unknown' & newd$germTempGen != "ambient",] 
 
@@ -161,7 +162,7 @@ mdl.data <- list(N_degen = sum(modeld$responseValueNum %in% c(0,1)),
                                  dim = sum(modeld$responseValueNum>0 & modeld$responseValueNum<1)))
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
-##### Run model with forcing, no phylogeny #####
+## Run model with forcing, no phylogeny #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 if(runmodels){
 smordbeta_nophy <- stan_model("stan/provenance/orderedbetalikelihood_3slopes_provenance_nophylo.stan")
@@ -174,7 +175,7 @@ fit_nophy_noprov <- sampling(smordbeta_nophy_noprov, mdl.data,
 # saveRDS(fit_nophy_noprov, "/Users/christophe_rouleau-desrochers/Desktop/UBC/egretLOCAL/fit_nophy_noprov.rds")
 }
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
-##### Diagnostics #####
+## Diagnostics #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 if(runPPC) {
 # read model on christophe's computer
@@ -238,7 +239,7 @@ util$plot_expectand_pushforward(samples[['sigma_bcs_prov']], 20,
                                 display_name="sigma_bcs_prov")
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Time #####
+## Retrodictive checks: Time #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
     width = 8, height = 6)
@@ -297,7 +298,7 @@ for(i in all_timeids) { # i = 2
 dev.off()
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Chilling #####
+## Retrodictive checks: Chilling #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
     width = 8, height = 6)
@@ -435,7 +436,7 @@ setdiff(unique(newd$genusspecies), unique(modeld_noforc2$genusspecies))
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-###### Prepare data for Stan ######
+### Prepare data for Stan ######
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Prepare data for Stan
 modeld_noforc2$numspp  <- as.integer(factor(modeld_noforc2$genusspecies))
@@ -488,7 +489,7 @@ util$check_all_hmc_diagnostics(diagnostics)
 samples <- util$extract_expectand_vals(fit_nophy_noforcing)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Chilling, grouped by time #####
+## Retrodictive checks: Chilling, grouped by time #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 if(runPPC){
 pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppChilling.pdf",
@@ -549,7 +550,7 @@ for(i in all_timeids) { # i = 8
 dev.off()
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-##### Retrodictive checks: Time grouped by chilling #####
+## Retrodictive checks: Time grouped by chilling #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 pdf("analyseSeedCues/provenance/figures/retrodictiveChecks/provpersppTime.pdf",
     width = 8, height = 6)
@@ -608,10 +609,10 @@ for(i in all_chillids) { # i = 2
 dev.off()
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-# Maos code ####
+# Posterior predictive checks ####
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
-##### Spp facet with Chilling as the predictor, averaged across time #####
+## Spp facet with Chilling as the predictor, averaged across time #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 df_prop <- data.frame(
   chill     = mdl.data$cs_prop,
@@ -721,7 +722,7 @@ for(sp_idx in sort(unique(all_data$species_idx))) { # sp_idx = 4
 dev.off()
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
-##### Spp facet with Time as the predictor, averaged across chilling #####
+## Spp facet with Time as the predictor, averaged across chilling #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 sp_chill <- tapply(all_data$chill, sp, mean)
 draws_a  <- as.matrix(fit_nophy_noforcing, pars = "a")
@@ -805,7 +806,7 @@ for(sp_idx in sort(unique(all_data$species_idx))) { # sp_idx = 4
 dev.off()
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
-##### ONE PLOT with Chilling as the predictor, averaged across time #####
+## ONE PLOT with Chilling as the predictor, averaged across time #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 # global mean with all data
 draws_az  <- as.matrix(fit_nophy_noforcing, pars = "a_z")
@@ -865,7 +866,7 @@ points(
 dev.off()
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
-##### ONE PLOT with Time as the predictor, averaged across chilling #####
+## ONE PLOT with Time as the predictor, averaged across chilling #####
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 draws_az  <- as.matrix(fit_nophy_noforcing, pars = "a_z")
 draws_bcsz <- as.matrix(fit_nophy_noforcing, pars = "bcs_z")
@@ -919,12 +920,49 @@ dev.off()
 # No z-scored ----
 modeld_noforc2 <- modeld_noforc_wodup 
 
-# I hate doing this, but I want to go swimmmmmiiiiing
-# modeld_noforc2$coldStratDur <- scale(modeld_noforc2$coldStratDur)[,1]
-# modeld_noforc2$germDuration <- as.numeric(modeld_noforc2$germDuration)
-# modeld_noforc2$germDuration <- scale(modeld_noforc2$germDuration)[,1]
+## Quick data vizualization ----
+# Color germ duration histogram color coded by id
+par(mfrow = c(1,1))
+png("analyseSeedCues/provenance/figures/empiricalData/germDurationByID.png",
+    width = 1200, height = 700)
+d <- modeld_noforc2
+# theres too many ids so only color code the ids above 80
+keep <- d$germDuration > 80
+brks <- hist(d$germDuration, breaks = 30, plot = FALSE)$breaks
+hist(d$germDuration, breaks = brks, col = "grey80", border = "white", 
+     main = "Germination duration color coded by id", 
+     xlab = "Germination duration (days)", ylim = c(0, 50))
+ids <- unique(d$datasetID[d$germDuration > 80])
+cols <- hcl.colors(length(ids), "Dark 3")
+# thanks to claude for the stacking of these bins
+for (i in seq_along(ids)) {
+  hist(d$germDuration[keep & d$datasetID %in% ids[i:length(ids)]], breaks = brks, col = cols[i], border = "white", add = TRUE)
+}
+legend("top", legend = ids, fill = cols, bty = "n")
+dev.off()
+
+# Color germ duration histogram color coded by id
+par(mfrow = c(1,1))
+png("analyseSeedCues/provenance/figures/empiricalData/chillDurationByID.png",
+    width = 1200, height = 700)
+keep <- d$coldStratDur > 80
+brks <- hist(d$coldStratDur, breaks = 30, plot = FALSE)$breaks
+hist(d$coldStratDur, breaks = brks, col = "grey80", border = "white", 
+     main = "Chilling duration color coded by id", 
+     xlab = "Chilling duration (days)", ylim = c(0, 50))
+ids <- unique(d$datasetID[d$coldStratDur > 80])
+cols <- hcl.colors(length(ids), "Dark 3")
+# thanks to claude for the stacking of these bins
+for (i in seq_along(ids)) {
+  hist(d$coldStratDur[keep & d$datasetID %in% ids[i:length(ids)]], 
+       breaks = brks, col = cols[i], border = "white", add = TRUE)
+}
+legend("top", legend = ids, fill = cols, bty = "n")
+dev.off()
+
 hist(modeld_noforc2$coldStratDur)
 hist(modeld_noforc2$germDuration)
+
 median(modeld_noforc2$coldStratDur)
 median(modeld_noforc2$germDuration)
 
