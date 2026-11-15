@@ -77,9 +77,11 @@ N_seeds <- round(runif(sum(N_conditions), 30, 300))
 N_obs <- round(10 * rbeta(sum(N_conditions), 1, 2)) + 1
 
 sp <- 1:50
-sp_start <- rep(NA, N_species)
-sp_end <- rep(NA, N_species)
+sp_id_by_sl <- rep(1:sum(N_species), times = N_seedlots)
 sl <- rep(NA, sum(N_seedlots))
+
+sp_id <- rep(sp_id_by_sl, times = N_conditions)
+sl_id <- rep(1:sum(N_seedlots), times = N_conditions)
 cond <- rep(NA, sum(N_conditions))
 phase <- rep(NA, sum(N_phases))
 temp <- rep(NA, sum(N_phases))
@@ -228,21 +230,31 @@ for(i in 1:N_species){
   }
 }
 
-N_species <- 50
-N_seedlots <- ceiling(3 * rbeta(N_species, 2, 5))
-N_conditions <- ceiling(3 * rbeta(sum(N_seedlots), 5, 5))
-N_phases <- ceiling(3 * rbeta(sum(N_conditions), 5, 5) + 2.01)
-N_seeds <- round(runif(sum(N_conditions), 30, 300))
-N_obs <- round(10 * rbeta(sum(N_conditions), 1, 2)) + 1
+# N_species <- 50
+# N_seedlots <- ceiling(3 * rbeta(N_species, 2, 5))
+# N_conditions <- ceiling(3 * rbeta(sum(N_seedlots), 5, 5))
+# N_phases <- ceiling(3 * rbeta(sum(N_conditions), 5, 5) + 2.01)
+# N_seeds <- round(runif(sum(N_conditions), 30, 300))
+# N_obs <- round(10 * rbeta(sum(N_conditions), 1, 2)) + 1
 
 data <- list("N_species" = N_species,
-             "N_seedlots" = N_seedlots,
-             "N_conditions" = N_conditions,
-             "N_phases" = N_phases,
-             "N_seeds" = N_seeds,
-             "N_obs" = N_obs,
-             "temp" = temp,
-             "dur" = dur,
-             "moist" = moist,
-             "obs" = obs,
-             "germ" = germ)
+             "N_seedlots" = sum(N_seedlots),
+             "N_condition_sets" = sum(N_conditions),
+             "species" = sp_id,
+             "seedlots" = sl_id,
+             "N_phases" = sum(N_phases),
+             "num_phases" = N_phases,
+             "phase_start_idxs" = cumsum(N_phases) - N_phases + 1,
+             "durations" = dur,
+             "temps" = temp,
+             "moisture" = moist,
+             "N_observations" = sum(N_obs),
+             "num_seeds" = N_seeds,
+             "num_observations" = N_obs,
+             "obs_start_idxs" = cumsum(N_obs) - N_obs + 1,
+             "observations" = obs,
+             "germinated_seeds" = germ)
+
+fit <- stan(file = "stan/storTest.stan",
+            data = data, init = "random", seed = 8838184,
+            warmup = 1, iter = 2, chains = 1)

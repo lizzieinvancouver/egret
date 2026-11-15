@@ -52,156 +52,182 @@ functions {
 data {
   int<lower=1> N_species;
   int<lower=1> N_seedlots;
-  int<lower=1> N_conditions;
+  int<lower=1> N_condition_sets;
   
-  array[N_conditions] int<lower=1, upper=N_species> species;
-  array[N_conditions] int<lower=1, upper=N_seedlots> seedlots;
+  array[N_condition_sets] int<lower=1, upper=N_species> species;
+  array[N_condition_sets] int<lower=1, upper=N_seedlots> seedlots;
   
   int<lower=1> N_phases;
-  array[N_conditions] int<lower=1> num_phases;
-  array[N_conditions] int<lower=1, upper=N_phases> cond_start_idxs;
+  array[N_condition_sets] int<lower=1> num_phases;
+  array[N_condition_sets] int<lower=1, upper=N_phases> phase_start_idxs;
   
   array[N_phases] int<lower=1> durations;
-  array[N_phases] int<lower=1> phase_start_idxs;
+  // array[N_phases] int<lower=1> phase_start_idxs;
   array[N_phases] real temps;
   array[N_phases] int<lower=0, upper=1> moisture;
   
   int<lower=1> N_observations;
-  array[N_conditions] int<lower=1> num_seeds;
-  array[N_conditions] int<lower=1> num_observations;
-  array[N_conditions] int<lower=1, upper=N_observations> obs_start_idxs;
+  array[N_condition_sets] int<lower=1> num_seeds;
+  array[N_condition_sets] int<lower=1> num_observations;
+  array[N_condition_sets] int<lower=1, upper=N_observations> obs_start_idxs;
   array[N_observations] int<lower=1> observations;
   array[N_observations] int<lower=0> germinated_seeds;
 }
 
 parameters {
+  // Germinability parameters
+  array[N_seedlots] real logit_viability; // Logit viability (unitless)
+  array[N_species] real xi_logit_viability;
+  array[N_species] real upsilon_logit_viability;
+  real nu_xi_logit_viability;
+  real<lower=0> tau_xi_logit_viability;
   
-  // forcing function parameters (simple logistic)
-  vector<lower=0>[N_species] T0; // temperature at which the forcing function is half the optimum
-  vector<lower=0>[N_species] k;  // steepness of forcing function
+  array[N_seedlots] real log_decay; // Log decay (unitless)
+  array[N_species] real xi_log_decay;
+  array[N_species] real upsilon_log_decay;
+  real nu_xi_log_decay;
+  real<lower=0> tau_xi_log_decay;
   
-  // seed viability
-  // vector<lower=0, upper=1>[N_species] pv;   
+  array[N_species] real logit_phi_decay_d; // Logit germinability change scaling factor by dry conditions (unitless)
+  real nu_logit_phi_decay_d;
+  real<lower=0> tau_logit_phi_decay_d;
+  array[N_species] real logit_phi_decay_m; // Logit germinability change scaling factor by moist conditions (unitless)
+  real nu_logit_phi_decay_m;
+  real<lower=0> tau_logit_phi_decay_m;
   
-  // phenological transition parameters
-  vector[N_species] log_Psi0; // t50 dependent on daily forcing (log forcing units)
-  vector[N_species] log_sigma; // spread, related to t75 - t25, dependent on daily forcing (log forcing units)
+  // Dormancy breaking parameters
+  array[N_species] real logit_B_0; // Logit initial dormancy breaking progress (unitless)
+  real nu_logit_B_0;
+  real<lower=0> tau_logit_B_0;
+  
+  array[N_species] real breaking; // Breaking progress with temperature (K-1)
+  real nu_breaking;
+  real<lower=0> tau_breaking;
+  
+  array[N_species] real breaking_midtemp; // Temperature at which dormancy progression response switches between breaking and forming (C)
+  real nu_breaking_midtemp;
+  real<lower=0> tau_breaking_midtemp;
+  
+  array[N_species] real logit_phi_break_d; // Dormancy breaking scaling factor by dry conditions (unitless)
+  real nu_logit_phi_break_d;
+  real<lower=0> tau_logit_phi_break_d;
+  
+  array[N_species] real logit_phi_break_m; // Dormancy breaking scaling factor by moist conditions (untiless)
+  real nu_logit_phi_break_m;
+  real<lower=0> tau_logit_phi_break_m;
+  
+  // Forcing parameters
+  real T_min; // Minimum temperature for non-zero forcing (C)
+  real T_max; // Maximum temperature for non-zero forcing (C)
+  
+  array[N_species] real<lower=0> log_delta; // Shape parameter controlling breadth of forcing function across temperature (unitless)
+  real nu_log_delta;
+  real<lower=0> tau_log_delta;
+  
+  array[N_species] real logit_x_opt; // Logit of optimal temperature along range of non-zero forcing (unitless)
+  real nu_logit_x_opt;
+  real<lower=0> tau_logit_x_opt;
+  
+  array[N_species] real logit_phi_force_d; // Forcing scaling factor by dry conditions (unitless)
+  real nu_logit_phi_force_d;
+  real<lower=0> tau_logit_phi_force_d;
+  
+  array[N_species] real logit_phi_force_m; // Forcing scaling factor by moist conditions (untiless)
+  real nu_logit_phi_force_m;
+  real<lower=0> tau_logit_phi_force_m;
+  
+  // // Phenological transition parameters
+  // array[N_groups] real log_Psi0;     // Log phenology threshold (Log Forcing Units)
+  // real nu_log_Psi0;            // Log phenology threshold mean (Log Forcing Units)
+  // real<lower=0> tau_log_Psi0;  // Log phenology threshold sd (Log Forcing Units)
+  // 
+  // array[N_groups] real log_sigma;    // Log phenology threshold scale (Log Forcing Units)
+  // real nu_log_sigma;           // Log phenology threshold scale mean (Log Forcing Units)
+  // real<lower=0> tau_log_sigma; // Log phenology threshold scale sd (Log Forcing Units)
+  // 
+  // Phenological transition parameters
+  array[N_species] real log_Psi0; // t50 dependent on daily forcing (log forcing units)
+  array[N_species] real log_sigma; // spread, related to t75 - t25, dependent on daily forcing (log forcing units)
 }
-
 
 transformed parameters {
-  vector[N_species] Psi0 = exp(log_Psi0);
-  vector[N_species] sigma = exp(log_sigma);
+  // Germinability parameters
+  array[N_seedlots] real viability = inv_logit(logit_viability);
+  array[N_seedlots] real decay = exp(log_decay);
+  array[N_species] real phi_decay_d = inv_logit(logit_phi_decay_d);
+  array[N_species] real phi_decay_m = inv_logit(logit_phi_decay_m);
+  
+  // Dormancy breaking parameters
+  array[N_species] real B_0 = inv_logit(logit_B_0);
+  array[N_species] real phi_break_d = inv_logit(logit_phi_break_d);
+  array[N_species] real phi_break_m = inv_logit(logit_phi_break_m);
+  
+  // Forcing parameters
+  array[N_species] real delta = exp(log_delta);
+  array[N_species] real x_opt = inv_logit(logit_x_opt);
+  array[N_species] real phi_force_d = inv_logit(logit_phi_force_d);
+  array[N_species] real phi_force_m = inv_logit(logit_phi_force_m);
+  
+  // Phenological transition parameters
+  array[N_species] real Psi0 = exp(log_Psi0);
+  array[N_species] real sigma = exp(log_sigma);
 }
 
-
 model {
-  for(cond in 1:N_conditions){
+  for(cond_set in 1:N_condition_sets){
     // Subset condition environment data
-    int cond_start_idx = phase_start_idxs[cond];
-    int cond_end_idx = phase_start_idx + num_phases[cond] - 1;
+    int phase_start_idx = phase_start_idxs[cond_set];
+    int phase_end_idx = phase_start_idx + num_phases[cond_set] - 1;
     
-    array[num_phases[cond]] real cond_temps = temps[cond_start_idx:cond_end_idx];
-    array[num_phases[cond]] int cond_durs = durations[cond_start_idx:cond_end_idx];
-    array[num_phases[cond]] int cond_moist = moisture[cond_start_idx:cond_end_idx];
+    array[num_phases[cond_set]] real phase_temps = temps[phase_start_idx:phase_end_idx];
+    array[num_phases[cond_set]] int phase_durs = durations[phase_start_idx:phase_end_idx];
+    array[num_phases[cond_set]] int phase_moist = moisture[phase_start_idx:phase_end_idx];
     
     // Subset condition observation data
-    int obs_start_idx = obs_start_idxs[cond];
-    int obs_end_idx = obs_start_idx + num_observations[cond] - 1;
+    int obs_start_idx = obs_start_idxs[cond_set];
+    int obs_end_idx = obs_start_idx + num_observations[cond_set] - 1;
     
-    array[num_observations[cond]] int cond_obs = observations[obs_start_idx:obs_end_idx];
-    array[num_observations[cond]] int cond_germ = germinated_seeds[obs_start_idx:obs_end_idx];
+    array[num_observations[cond_set]] int obs = observations[obs_start_idx:obs_end_idx];
+    array[num_observations[cond_set]] int germ = germinated_seeds[obs_start_idx:obs_end_idx];
     
     // Make additive germinability, dormancy breaking, and forcing time series
-    vector[sum(cond_durs)] real log_germinability;
-    vector[sum(cond_durs)] real logit_dorm_break;
-    vector[sum(cond_durs)] real forcing;
-    vector[sum(cond_durs)] real moisture_series;
+    vector[sum(phase_durs)] log_germinability;
+    vector[sum(phase_durs)] logit_dorm_break;
+    vector[sum(phase_durs)] temp_forcing;
+    vector[sum(phase_durs)] moisture_series;
     
-    int phase_start_idx = 0;
-    int phase_end_idx = 0;
-    for(phase in 1:num_observations[cond]){
-      phase_start_idx = phase_end_idx + 1;
-      phase_end_idx = phase_start_idx + cond_durs[phase] - 1;
+    int cond_start_idx = 0;
+    int cond_end_idx = 0;
+    for(phase in 1:num_phases[cond_set]){
+      cond_start_idx = cond_end_idx + 1;
+      cond_end_idx = cond_start_idx + phase_durs[phase] - 1;
       
-      real change_germ = - log(2) * cond_moist[phase] / dcy_sl[seedlots[cond]];
-      real change_dorm_break = (drc[species[cond]] * (1 - cond_moist[phase]) + wtc[species[cond]] * cond_moist[phase]) * dbr[species[cond]] * (cond_temps[phase] - dth[species[cond]]);
-      real change_forcing = forcing(cond_temps[phase], T_min, x_opt[species[cond]] * (T_max - T_min), T_max, delta[cond]);
+      real change_germ = - log(2) * (phi_decay_d[species[cond_set]] * (1 - phase_moist[phase]) + phi_decay_m[species[cond_set]] * phase_moist[phase]) / decay[seedlots[cond_set]];
+      real change_dorm_break = (phi_break_d[species[cond_set]] * (1 - phase_moist[phase]) + phi_break_m[species[cond_set]] * phase_moist[phase]) * breaking[species[cond_set]] * (phase_temps[phase] - breaking_midtemp[species[cond_set]]);
+      real change_temp_forcing = forcing(phase_temps[phase], T_min, x_opt[species[cond_set]] * (T_max - T_min), T_max, delta[species[cond_set]]);
       
-      moisture_series[phase_start_idx:phase_end_idx] = rep_vector(cond_moist[phase], cond_durs[phase]);
-      log_germinability[phase_start_idx:phase_end_idx] = rep_vector(change_germ, cond_durs[phase]);
-      logit_dorm_break[phase_start_idx:phase_end_idx] = rep_vector(change_dorm_break, cond_durs[phase]);
-      forcing[phase_start_idx:phase_end_idx] = rep_array(change_forcing, cond_durs[phase]);
+      moisture_series[cond_start_idx:cond_end_idx] = rep_vector(phase_moist[phase], phase_durs[phase]);
+      log_germinability[cond_start_idx:cond_end_idx] = rep_vector(change_germ, phase_durs[phase]);
+      logit_dorm_break[cond_start_idx:cond_end_idx] = rep_vector(change_dorm_break, phase_durs[phase]);
+      temp_forcing[cond_start_idx:cond_end_idx] = rep_vector(change_temp_forcing, phase_durs[phase]);
     }
     
-    logit_dorm_break[1] = logit_dorm_break[1] + logitdrm[i];
+    logit_dorm_break[1] = logit_dorm_break[1] + logit_B_0[species[cond_set]];
     
-    vector[sum(cond_durs)] real accum_germinability = vbl_sl[seedlots[cond]] * exp(cumsum(log_germinability));
-    vector[sum(cond_durs)] real accum_dorm_break = invlogit(cumsum(logit_dorm_break));
-    // vector[sum(cond_durs)] real accum_forcing = cumsum(forcing);
-    vector[sum(cond_durs)] real hazard = (drg[species[cond]] .* (1 - moisture_series) + wtg[species[cond]] .* moisture_series) .* accum_dorm_break .* forcing;
-    vector[sum(cond_durs)] real accum_hazard = cumsum(hazard);
+    vector[sum(phase_durs)] accum_germinability = viability[seedlots[cond_set]] * exp(cumulative_sum(log_germinability));
+    vector[sum(phase_durs)] accum_dorm_break = inv_logit(cumulative_sum(logit_dorm_break));
+    // vector[sum(cond_durs)] real accum_forcing = cumulative_sum(forcing);
+    vector[sum(phase_durs)] hazard = (phi_force_d[species[cond_set]] .* (1 - moisture_series) + phi_force_m[species[cond_set]] .* moisture_series) .* accum_dorm_break .* temp_forcing;
+    vector[sum(phase_durs)] accum_hazard = cumulative_sum(hazard);
     
-    target += cond_germ[1] * (log(accum_germinability[cond_obs[1]]) + log1m(survival_function(accum_hazard[cond_obs[1]]), Psi_0[species[cond]], sigma[species[cond]]))
-    if(num_observations[cond] > 1){
-      for(obs in 2:num_observations[cond]){
-        target += cond_germ[obs] * (log(accum_germinability[cond_obs[obs]]) + log(survival_function(accum_hazard[cond_obs[obs - 1]]), Psi_0[species[cond]], sigma[species[cond]] - survival_function(accum_hazard[cond_obs[obs]]), Psi_0[species[cond]], sigma[species[cond]]));
+    target += germ[1] * (log(accum_germinability[obs[1]]) + log1m(survival_function(accum_hazard[obs[1]], Psi0[species[cond_set]], sigma[species[cond_set]])));
+    
+    if(num_observations[cond_set] > 1){
+      for(ob in 2:num_observations[cond_set]){
+        target += germ[ob] * (log(accum_germinability[obs[ob]]) + log(survival_function(accum_hazard[obs[ob - 1]], Psi0[species[cond_set]], sigma[species[cond_set]]) - survival_function(accum_hazard[obs[ob]], Psi0[species[cond_set]], sigma[species[cond_set]])));
       }
     }
     
-    target += (num_seeds[cond] - sum(cond_germ)) * log_sum_exp(log1m(accum_germinability[cond_obs[obs]]), log(accum_germinability[cond_obs[obs]]) + log1m(survival_function(accum_hazard[cond_obs[obs]]), Psi_0[species[cond]], sigma[species[cond]]));
-    num_seeds[cond] - sum(cond_germ)
+    target += (num_seeds[cond_set] - sum(germ)) * log_sum_exp(log1m(accum_germinability[obs[num_observations[cond_set]]]), log(accum_germinability[obs[num_observations[cond_set]]]) + log(survival_function(accum_hazard[obs[num_observations[cond_set]]], Psi0[species[cond_set]], sigma[species[cond_set]])));
   }
 }
-
-// generated quantities {
-// 
-//   array[N_exps] int N_obs_pred; // total germianted seeds
-//   array[N_exps] int N_ungerm_pred;
-//   
-//   array[N_exps, max_days] int dgerm_pred; // daily germination
-//   array[N_exps, max_days] int cumgerm_pred; // cumulative germination
-// 
-//   for (e in 1:N_exps) {
-//     
-//     int sp = species_idxs[e];
-//     
-//     vector[max_days + 1] fday; // daily forcing
-//     vector[max_days + 1] cumF; // cumulative sum of forcing
-// 
-//     for (d in 1:(max_days + 1))
-//       fday[d] = inv_logit(k[sp] * (germ_temp[e] - T0[sp]));
-//     cumF = cumulative_sum(fday);
-// 
-//     N_obs_pred[e] = 0;
-//     N_ungerm_pred[e] = 0;
-//     for (day in 1:max_days)
-//       dgerm_pred[e, day] = 0;
-// 
-//     // for each seed in the experiment...
-//     for (s in 1:(N_obs[e] + N_ungerm[e])) {
-//       
-//       if (bernoulli_rng(pv[sp]) == 0) {
-//         N_ungerm_pred[e] += 1;
-//       } else {
-//         
-//         real l = logistic_rng(Psi0[sp], sigma[sp]); // threshold to reach
-//         
-//         if (l < cumF[1] || l >= cumF[max_days + 1]) {
-//           N_ungerm_pred[e] += 1;  
-//         } else {
-//           
-//           // latest d with cumPsi[d] < psi
-//           int day = 1;                        
-//           while (day < max_days && cumF[day + 1] < l)
-//             day += 1;
-//           dgerm_pred[e, day] += 1;
-//           N_obs_pred[e] += 1;
-//         }
-//       }
-//       
-//     }
-//     
-//     cumgerm_pred[e,1:max_days] = cumulative_sum(dgerm_pred[e,1:max_days]);
-//   }
-// }
