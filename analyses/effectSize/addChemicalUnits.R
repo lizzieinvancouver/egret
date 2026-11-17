@@ -9,6 +9,8 @@ library(dplyr)
 #Read the cleaned file including chemical concent and datasetID
 original <- read_csv("analyses/effectSize/output/biggestEffectDataGA.csv")
 
+
+
 #Add a new empty column to the original database
 original[,'chemicalUnit']<-NA
 
@@ -58,7 +60,10 @@ original$chemicalUnit[which(original$datasetID %in%
                               c("airi09",
                                "necajeva13",
                                "jang22",
-                               "scocco98"))] <- "mM"
+                               "scocco98",
+                               "kolodziejek15",
+                               "mamut20"
+                               ))] <- "mM"
 #Add unit 'ug/L'
 original$chemicalUnit[which(original$datasetID =="boscagli01")]<- "ug/L"
 #Add unit 'M'
@@ -66,16 +71,32 @@ original$chemicalUnit[which(original$datasetID %in%
                               c("aldridge92",
                                 "watanabe02",
                                  "morozowska02"))]<- "M"
-#Add unit 'mmol/L'
-original$chemicalUnit[which(original$datasetID =="mamut20")]<-"mmol/L"
 #Add unit 'uM'
 original$chemicalUnit[which(original$datasetID %in%
                               c("chien10",
                                 "moeini21"))] <- "uM"
-#Add unit 'mM/L'
-original$chemicalUnit[which(original$datasetID =="kolodziejek15")]<-"mM/L"
+
 #Add unit '%'
 original$chemicalUnit[which(original$datasetID =="teimouri13")]<-"%"
+
+#Change value into mg/L for comparison
+original <- original |>
+  mutate(convertValue = case_when (
+    is.na(chemicalConcent) ~ NA_real_,
+    chemicalUnit=="mg/L" ~ chemicalConcent,
+    chemicalUnit=="M" ~ chemicalConcent * 1000 * 346.37,
+    chemicalUnit=="uM" ~ chemicalConcent / 1000 * 346.37,
+    chemicalUnit=="ppm" ~ chemicalConcent,
+    chemicalUnit=="ug/L" ~ chemicalConcent /1000,
+    chemicalUnit=="mM" ~ chemicalConcent * 346.37
+  ))
+
+# Check whether the converted values are comparable
+# Issue 1: scocco98 has extremely large values (>10,000) due to concentrations of 350 and 3500 mM.
+# Issue 2: boscagli01 has an extremely small value (<0.001) due to a concentration of 0.05 ug/L.
+check <- original |>
+  filter(convertValue <0.01, convertValue != 0)|>
+  select(datasetID, chemicalConcent, chemicalUnit, convertValue)
 
 #Save the dataframe
 write_csv (original, "analyses/effectSize/output/biggestEffectDataGAUnit.csv")
