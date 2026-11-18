@@ -149,8 +149,9 @@ hist(germperc, breaks = 50, main = '',
 
 round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
 
+# now add in chilling
 chill <- 4
-bc_z <- rnorm(n, 0.2, 0.1)
+bc_z <- rnorm(n, 0.5, 0.1)
 sigma_bc <- abs(rnorm(n, 0, 0.1))
 bc <- bc_z + rnorm(n, 0, sigma_bc)
 
@@ -162,7 +163,7 @@ hist(germperc, breaks = 50, main = '',
 round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
 
 forcing <- 20
-bf_z <- rnorm(n, 0.05, 0.01)
+bf_z <- rnorm(n, 0.01, 0.01)
 sigma_bf <- abs(rnorm(n, 0, 0.01))
 bf <- bf_z + rnorm(n, 0, sigma_bf)
 
