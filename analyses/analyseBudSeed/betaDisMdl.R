@@ -149,14 +149,21 @@ hist(germperc, breaks = 50, main = '',
 
 round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
 
-chill <- 5
-bc_z <- rnorm(n, 0, 0.5)
-sigma_bc <- abs(rnorm(n, 0, 0.5))
+chill <- 4
+bc_z <- rnorm(n, 0.2, 0.1)
+sigma_bc <- abs(rnorm(n, 0, 0.1))
 bc <- bc_z + rnorm(n, 0, sigma_bc)
 
+mu <- boot::inv.logit(a_z + sp_offset + bc * chill)
+
+germperc <- rbeta(n, mu * k, (1 - mu) * k)
+hist(germperc, breaks = 50, main = '', 
+     col = '#ef350090', border = 'white')
+round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
+
 forcing <- 20
-bf_z <- rnorm(n, 0, 0.05)
-sigma_bf <- abs(rnorm(n, 0, 0.05))
+bf_z <- rnorm(n, 0.05, 0.01)
+sigma_bf <- abs(rnorm(n, 0, 0.01))
 bf <- bf_z + rnorm(n, 0, sigma_bf)
 
 mu <- boot::inv.logit(a_z + sp_offset + bc * chill + bf * forcing)
@@ -168,14 +175,14 @@ germperc <- rbeta(n, alpha_shape, beta_shape)
 
 hist(germperc, breaks = 50, main = '', 
      col = '#ef350090', border = 'white')
-
+round(quantile(germperc, c(0.05, 0.25, 0.5, 0.75, 0.95)), 2)
 
 ## Prior vs posterior ----
 fit <- readRDS("analyseBudSeed/output/fit_full_angio_natural.rds")
 pal <- c("#E54E21", "#6C8645")
 post <- rstan::extract(fit)
 
-# prior draws: these must match the priors written in the .stan file you fit
+# prior draw
 n <- 1e6
 prior_a_z <- rnorm(n, -2, 0.25)
 prior_sigma_a <- abs(rnorm(n, 0, 0.5))
@@ -240,18 +247,10 @@ runmodel <- FALSE
 if(runmodel){
 # Compile and run model
 smordbeta <-stan_model("stan/orderedbetalikelihood_2slopes.stan")
-init_fun <- function() {
-  list(
-    a = rep(0, mdl.dataAngio$Nsp), a_z = 0, lambda_a = 0.5, sigma_a = 0.5,
-    bc = rep(0, mdl.dataAngio$Nsp), bc_z = 0, lambda_bc = 0.5, sigma_bc = 0.5,
-    bf = rep(0, mdl.dataAngio$Nsp), bf_z = 0, lambda_bf = 0.5, sigma_bf = 0.05,
-    cutpoints = c(-1, 1), kappa = 5
-  )
-}
 
 fit <- sampling(smordbeta, mdl.dataAngio, 
                 iter = 4000, warmup = 2000,
-                chains = 4, init = init_fun)
+                chains = 4)
 
 summ <- data.frame(summary(fit)[["summary"]])
 sampler_params  <- get_sampler_params(fit, inc_warmup = FALSE)
