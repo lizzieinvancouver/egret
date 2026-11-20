@@ -1,6 +1,6 @@
 ###Add Chemical Units to the origianl file ###
 ###Started by Chuning ###
-###Last edit on Nov. 13th 2026 ###
+###Last edit on Nov. 20th 2026 ###
 
 library(tidyverse)
 library(repr)
@@ -80,7 +80,7 @@ original$chemicalUnit[which(original$datasetID %in%
 original$chemicalUnit[which(original$datasetID =="teimouri13")]<-"%"
 
 #Change value into mg/L for comparison
-#Convert the log value in aldridge92, morozowska02 and watanabe02 are the other two studies using M as unit
+#Convert the log values in aldridge92, morozowska02 and watanabe02 are the other two studies using M as the unit.
 #Molecular weight was adapted from Millipore Sigma
 original <- original |>
   mutate(convertChemicalConcent = case_when (
